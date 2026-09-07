@@ -1,0 +1,76 @@
+# Lake/mathlib build and dependency state
+.lake/
+
+# Rocq/Coq build artifacts
+*.vo
+*.vok
+*.vos
+*.glob
+*.aux
+.*.aux
+.lia.cache
+.nia.cache
+.nra.cache
+*.cmi
+*.cmo
+*.cmx
+Makefile.coq
+Makefile.coq.conf
+.Makefile.coq.d
+
+# General build output
+[Bb]in/
+[Oo]bj/
+out/
+build/
+dist/
+
+# Per-worktree Lean build drivers.  Serializing `lake` one module at a time is
+# a machine-local necessity (see Analysis/FabiusFunction/AGENTS.md), and the
+# module list is specific to whatever closure a worktree is currently building,
+# so neither belongs in history.
+/order.txt
+/build_closure.sh
+
+# Repository policy: package-local SHA256SUMS ledgers are abolished.
+**/SHA256SUMS
+**/SHA256SUMS.*
+
+# IDE and user-specific files
+.vs/
+.vscode/
+*.DotSettings.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Python proof-support tooling
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.venv/
+venv/
+
+# Logs and operating-system metadata
+/tmp-pwsh-*.json
+.DS_Store
+Thumbs.db
+
+# LaTeX auxiliary files (rendered PDFs are tracked deliberately)
+*.toc
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bbl
+*.blg
+*.idx
+*.ind
+*.ilg
+/build_closure.pid
