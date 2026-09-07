@@ -582,7 +582,7 @@ shortestVector[ns_, len_] := Module[{ints, red},
 tryPair[gd_, pr_, mt_, t_, a_, d_] := Module[{EE = pr[[1]]["FixedField"], FF = pr[[2]]["FixedField"], ns, u, uExact, q, b, cc, degs},
   ns = NullSpace[Join[Transpose[EE], -mt . Transpose[FF], 2]];
   If[ns === {}, Return[$Failed]];
-  u = shortestVector[ns, Length[EE]] . EE;
+  u = Take[shortestVector[ns, Length[EE]], Length[EE]] . EE;
   uExact = elementToAlgebraic[gd, u];
   q = niceScale[uExact];
   b = principalRoot[RootReduce[q uExact], t];

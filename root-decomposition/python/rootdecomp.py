@@ -936,7 +936,9 @@ def root_of_algebraic(u: AlgebraicNumber, t: int, prec_bits: int) -> AlgebraicNu
         return u
     coeffs = _fmpz_list(u.poly.coeffs())
     inflated = fmpz_poly([coeffs[i // t] if i % t == 0 else 0 for i in range(t * len(coeffs) - t + 1)])
-    val = u.value(prec_bits) ** (acb(1) / acb(t))   # principal branch
+    with ctx.workprec(prec_bits):
+        uv = u.value(prec_bits)
+        val = acb_poly([-uv] + [acb(0)] * (t - 1) + [acb(1)]).roots(tol=arb(2) ** (-(prec_bits - 20)))[0]
     for g, _ in inflated.factor()[1]:
         if g.degree() > 0 and acb_poly(g)(val).contains(0):
             return AlgebraicNumber.from_value(g, val, prec_bits)
