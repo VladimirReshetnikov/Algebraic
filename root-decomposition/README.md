@@ -108,10 +108,14 @@ rational linear algebra run in FLINT.
 
 | Task | Wolfram | Python |
 | --- | --- | --- |
-| Both examples, fast path in `Q(a)`, certified optimal | about 1 s | about 2 s |
-| Splitting-field data of the degree-9 examples (group of order 36) | 18–21 s | 3 s |
+| Product example, fast path in `Q(a)`, certified optimal | 0.2 s | 1.9 s |
+| Sum example, fast path in `Q(a)`, certified optimal | 1.3 s | 0.4 s |
+| Splitting-field data of the degree-9 examples (group of order 36) | 18–21 s | 3–5 s |
 | `D+(ap) = 6` with cached splitting-field data | 0.2 s | 0.15 s |
 | `ToNumberField[roots, All]` for the same field (the reports' design) | 14 min | – |
+
+The Wolfram suite (39 tests, `wolfram -script RunTests.wl`) and the Python suite
+(18 checks, `python test_rootdecomp.py`) pass on this machine.
 
 ## Main mathematical results
 

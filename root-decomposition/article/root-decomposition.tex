@@ -150,8 +150,8 @@ the components ranging over all algebraic numbers.  The main results are the fol
   and all decision problems above become exact rational linear algebra.  A fast path works inside
   $\Q(a)$ without the Galois group.  The Wolfram package answers the two examples in about a second
   (fast path) and certifies global optimality; the Python port (python-flint, Arb ball arithmetic)
-  computes the full splitting-field data in about three seconds, against about twenty seconds in the
-  Wolfram kernel.
+  computes the full splitting-field data in three to five seconds, against about twenty seconds in
+  the Wolfram kernel.
 \end{enumerate}
 
 \subsection{Conventions}
@@ -671,9 +671,9 @@ $L$ of $a$ of degree less than $8$ equals $a$; the optimal factors lie outside $
 Write $r=\sqrt2$, $s=\sqrt3$, $A=1+r$, $B=1+s$, $B_0=\Q(r,s)$.  The four conjugates of $a^2=AB$ are
 distinct, so $\Q(a^2)=B_0$; $AB$ is negative at some real embedding of the totally real field $B_0$,
 so it is not a square there and $\dg a=8$.  Put $B_1=B_0(i)$ and $L=B_1(a)$.  Since $a$ is real and
-$B_1\cap\R=B_0\not\ni a$, $[L:\Q]=16$.  The conjugates of $a$ are $\pm a,\pm iB/a,\pm irA/a,\pm r/a$
-(each squares to a conjugate of $AB$: e.g.\ $(iB/a)^2=-B^2/(AB)=-B/A=B(1-r)/(-1)\cdot$, a conjugate of
-$AB$), all in $L$; conversely the splitting field contains $a\cdot iB/a=iB$, hence $i$, and $B_0$, so
+$B_1\cap\R=B_0\not\ni a$, $[L:\Q]=16$.  The conjugates of $a$ are $\pm a,\pm iB/a,\pm irA/a,\pm r/a$: each squares to a conjugate of
+$AB$, for instance $(iB/a)^2=-B^2/(AB)=-B/A=B(1-r)=(1+s)(1-r)$ because $(1+r)(1-r)=-1$; all of them
+lie in $L$; conversely the splitting field contains $a\cdot iB/a=iB$, hence $i$, and $B_0$, so
 $L$ is exactly the splitting field.  Let $z$ fix $B_1$ and send $a\mapsto-a$; let $\sigma,\tau,\kappa$
 be the involutions acting by $(r,s,i,a)\mapsto(-r,s,i,iB/a)$, $(r,-s,i,irA/a)$ and $(r,s,-i,a)$ (complex
 conjugation).  Direct substitution shows $z$ is central, $[\sigma,\tau]=[\sigma,\kappa]=[\tau,\kappa]=z$,
@@ -711,10 +711,9 @@ transfer.
 \begin{example}\label{ex:eta}
 $\eta_3=(1+\sqrt2)(1+\sqrt3)(1+\sqrt5)$ has degree $8$ (all eight coordinates in the multiquadratic
 basis are nonzero, so no sign change fixes it) and $\Dt(\eta_3)=2$ by the prime bound.  But two factors
-of degree at most $3$ cannot work: their compositum has degree at most $9$, is divisible by $8$ only if
-it is $8$, which is impossible for a compositum of fields of degrees $\le3$ (degrees $\le 3\cdot3=9$
-and $8$ requires a quadratic and a quartic, or two quartics, and quartics are excluded).  So
-$\Dtt(\eta_3)=4$, attained e.g.\ by $(1+\sqrt2)(1+\sqrt3)\cdot(1+\sqrt5)$.
+of degree at most $3$ cannot work: the compositum of two fields of degree at most $3$ has degree in
+$\{1,2,3,4,6,9\}$, never a multiple of $8$, so it cannot contain $\eta_3$.  Hence $\Dtt(\eta_3)=4$,
+attained e.g.\ by $(1+\sqrt2)(1+\sqrt3)\cdot(1+\sqrt5)$.
 \end{example}
 
 \begin{example}\label{ex:w}
@@ -1038,16 +1037,17 @@ in $\Q(a)$ is the best choice for both examples.
 \toprule
 Task & Wolfram & Python\\
 \midrule
-Splitting-field data of the degree-9 examples ($|G|=36$) & 18--21 s & 3 s\\
-Product example, fast path in $\Q(a)$, certified optimal & $\approx1$ s & --\\
-Sum example, fast path in $\Q(a)$, certified optimal & $\approx1$ s & --\\
+Product example, fast path in $\Q(a)$, certified optimal & 0.2 s & 1.9 s\\
+Sum example, fast path in $\Q(a)$, certified optimal & 1.3 s & 0.4 s\\
+Splitting-field data of the degree-9 examples ($|G|=36$) & 18--21 s & 3--5 s\\
 $\Dp(\alpha_\times)=6$ with the splitting-field data cached & 0.2 s & 0.15 s\\
-$\sqrt{(1+\sqrt2)(1+\sqrt3)}$, $|G|=16$, two-factor with $t=2$ & 4 s & 0.4 s\\
-$x^4-x-1$ pair sum, $|G|=24$ & 3 s & 0.7 s\\
+$\sqrt{(1+\sqrt2)(1+\sqrt3)}$, $|G|=16$, two-factor with $t=2$ & 4 s & 0.4--2 s\\
+$x^4-x-1$ pair sum, $|G|=24$ & 3 s & 0.5 s\\
+Product search for $\alpha_+$ (two-factor, tensor families, recursion) & 30 s & 110 s\\
 \code{ToNumberField[roots, All]} for the degree-9 examples & 14 min & --\\
 \bottomrule
 \end{tabular}
-\caption{Timings; the fast-path figures are for the Wolfram package.}\label{tab:timing}
+\caption{Wall-clock times (Wolfram 15.0.1; Python 3.14 with python-flint 0.8 and SymPy 1.14).  The regression suites (39 Wolfram tests, 18 Python checks) pass.}\label{tab:timing}
 \end{table}
 
 \subsection{Limits and scope of the certificates}
