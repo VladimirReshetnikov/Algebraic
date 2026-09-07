@@ -724,6 +724,192 @@ def _conj_vector_at(gd: GaloisData, w, prec):
     return out
 
 
+
+# ---------------------------------------------------------------------------
+# input-field engine: subfields of K = Q(a) via principal subfields (SymPy
+# factorization over K), no Galois group.  Elements are coordinate vectors in
+# the power basis of theta = scale * a.
+# ---------------------------------------------------------------------------
+
+@dataclass
+class InputFieldData:
+    poly: fmpz_poly            # monic integer polynomial of theta
+    scale: int
+    n: int
+    theta: "AlgebraicNumber"   # the actual root (theta = scale * a)
+    factor_degrees: list
+    galois: bool
+    subgroups: list            # dicts: index (= degree), fixed (rows), elements None
+    traces: list               # power sums p_0..p_{n-1}
+    prec: int = 300
+    kind: str = "InputField"
+
+    @property
+    def order(self):
+        return self.n
+
+    def mult_matrix(self, v) -> fmpq_mat:
+        """matrix of multiplication by sum v_j theta^j in the power basis"""
+        n = self.n
+        coeffs = _fmpz_list(self.poly.coeffs())
+        cols = []
+        cur = [fmpq(x) for x in v]
+        for k in range(n):
+            cols.append(cur)
+            # multiply by theta: shift and reduce
+            nxt = [fmpq(0)] + cur[:-1]
+            top = cur[-1]
+            if top != 0:
+                nxt = [nxt[i] - top * coeffs[i] for i in range(n)]
+            cur = nxt
+        M = fmpq_mat(n, n)
+        for j, col in enumerate(cols):
+            for i in range(n):
+                M[i, j] = col[i]
+        return M
+
+    def mean_trace(self, v) -> fmpq:
+        return sum((fmpq(v[j]) * int(self.traces[j]) for j in range(self.n)), fmpq(0)) / self.n
+
+    def to_algebraic(self, v) -> "AlgebraicNumber":
+        v = _vec_fmpq(v)
+        if all(q == 0 for q in v):
+            return AlgebraicNumber.from_rational(0)
+        if all(q == 0 for q in v[1:]):
+            return AlgebraicNumber.from_rational(Fraction(int(v[0].p), int(v[0].q)))
+        M = self.mult_matrix(v)
+        cp = M.charpoly()                       # fmpq_poly, = minpoly^(n/d)
+        den = 1
+        for c in cp.coeffs():
+            den = den * int(c.q) // math.gcd(den, int(c.q))
+        ip = fmpz_poly([int(c * den) for c in cp.coeffs()])
+        with ctx.workprec(self.prec):
+            th = self.theta.value(self.prec)
+            val = acb(0)
+            for j in range(self.n - 1, -1, -1):
+                val = val * th + _fmpq_to_acb(v[j])
+            for g, _ in ip.factor()[1]:
+                if g.degree() > 0 and acb_poly(g)(val).contains(0):
+                    return AlgebraicNumber.from_value(g, val, self.prec)
+        raise PrecisionError("minimal polynomial not identified")
+
+
+def power_sums(P: fmpz_poly, n: int):
+    c = _fmpz_list(P.coeffs())
+    e = lambda k: (-1) ** k * c[n - k]
+    s = {0: n}
+    for k in range(1, n):
+        acc = sum((-1) ** (i - 1) * e(i) * s[k - i] for i in range(1, min(k - 1, n) + 1))
+        if k <= n:
+            acc += (-1) ** (k - 1) * k * e(k)
+        s[k] = acc
+    return [s[j] for j in range(n)]
+
+
+def _canonical_rows(rows, n):
+    return rowspace_basis(rows, n)
+
+
+def _intersect_rowspaces(A, B, n):
+    ca = fmpq_nullspace(fmpq_mat([[fmpq(x) for x in r] for r in A])) if A else None
+    cb = fmpq_nullspace(fmpq_mat([[fmpq(x) for x in r] for r in B])) if B else None
+    if not ca:
+        return B
+    if not cb:
+        return A
+    return fmpq_nullspace(fmpq_mat([[fmpq(x) for x in r] for r in ca + cb]))
+
+
+_ifcache: dict = {}
+
+
+def input_field_data(p: fmpz_poly, a: "AlgebraicNumber", prec_bits: int = 300) -> InputFieldData:
+    import sympy as sp
+    p = primitive(p)
+    n = p.degree()
+    c = int(p.leading_coefficient())
+    coeffs = _fmpz_list(p.coeffs())
+    mon = fmpz_poly([coeffs[i] * c ** (n - 1 - i) for i in range(n)] + [1])
+    key = tuple(_fmpz_list(mon.coeffs()))
+    theta = AlgebraicNumber.from_value(mon, a.value(prec_bits) * c, prec_bits)
+    if key in _ifcache:
+        d = _ifcache[key]
+        return InputFieldData(d.poly, c, n, theta, d.factor_degrees, d.galois, d.subgroups, d.traces, prec_bits)
+    x, y = sp.symbols('x y')
+    P = sum(sp.Integer(int(mon[i])) * x ** i for i in range(n + 1))
+    root = sp.CRootOf(P, 0)
+    K = sp.QQ.algebraic_field(root)
+    fac = sp.Poly(P.subs(x, y), y, domain=K).factor_list()[1]
+
+    def vec(el):
+        el = K.convert(el)
+        vals = [Fraction(int(q.numerator), int(q.denominator)) for q in reversed(el.to_list())]
+        return [fmpq(v.numerator, v.denominator) for v in vals] + [fmpq(0)] * (n - len(vals))
+
+    factor_degrees = sorted(g.degree() for g, _ in fac)
+    galois = all(g.degree() == 1 for g, _ in fac)
+    principal = []
+    theta_el = K.from_sympy(root)
+    for g, _ in fac:
+        m = g.degree()
+        if m == 1:
+            continue
+        rows = []
+        thpow = K.one
+        for j in range(n):
+            r = sp.Poly(y ** j, y, domain=K) - sp.Poly(thpow, y, domain=K)
+            r = r.rem(g)
+            coeffs_r = list(reversed(r.rep.to_list()))  # low to high, domain elements
+            coeffs_r = coeffs_r + [K.zero] * (m - len(coeffs_r))
+            rows.append([vec(cc) for cc in coeffs_r])
+            thpow = thpow * theta_el
+        eqs = []
+        for i in range(m):
+            for k in range(n):
+                eqs.append([rows[j][i][k] for j in range(n)])
+        principal.append(_canonical_rows(fmpq_nullspace(fmpq_mat(eqs)), n))
+    ident = [[fmpq(1) if i == j else fmpq(0) for j in range(n)] for i in range(n)]
+    subfields = [ident]
+    for V in principal:
+        new = list(subfields)
+        for S in subfields:
+            new.append(_canonical_rows(_intersect_rowspaces(S, V, n), n))
+        uniq = []
+        seen = set()
+        for S in new:
+            key2 = tuple(tuple(str(q) for q in r) for r in S)
+            if key2 not in seen:
+                seen.add(key2)
+                uniq.append(S)
+        subfields = uniq
+    one = [[fmpq(1)] + [fmpq(0)] * (n - 1)]
+    if not any(len(S) == 1 for S in subfields):
+        subfields.append(one)
+    subs = [dict(index=len(S), fixed=S, elements=None, order=n // len(S)) for S in subfields]
+    d = InputFieldData(mon, c, n, theta, factor_degrees, galois, subs, power_sums(mon, n), prec_bits)
+    _ifcache[key] = d
+    return d
+
+
+def _galois_mult_matrix(gd, v):
+    return multiplication_matrix_of(gd, v)
+
+
+def fd_mult_matrix(fd, v):
+    return fd.mult_matrix(v) if isinstance(fd, InputFieldData) else multiplication_matrix_of(fd, v)
+
+
+def fd_to_algebraic(fd, v):
+    return fd.to_algebraic(v) if isinstance(fd, InputFieldData) else element_to_algebraic(fd, v)
+
+
+def fd_mean_trace(fd, v):
+    return fd.mean_trace(v) if isinstance(fd, InputFieldData) else mean_trace(fd, v)
+
+
+def fd_is_galois(fd):
+    return fd.galois if isinstance(fd, InputFieldData) else True
+
 # ---------------------------------------------------------------------------
 # results
 # ---------------------------------------------------------------------------
@@ -763,13 +949,19 @@ def stabilizer(gd: GaloisData, target: int):
     return frozenset(i for i, p in enumerate(gd.perms) if p[target] == target)
 
 
-def candidate_fields(gd: GaloisData, d: int, stab=None):
+def field_contains(big, small, n):
+    M = fmpq_mat([[fmpq(x) for x in r] for r in big + small])
+    return M.rank() == len(big)
+
+
+def candidate_fields(gd, d: int, stab=None):
     subs = [H for H in gd.subgroups if H["index"] <= d]
     if stab is not None:
         subs = [H for H in subs if stab <= H["elements"]]
+    n = gd.order
     out = []
     for H in subs:
-        if not any(K["order"] < H["order"] and K["elements"] <= H["elements"] for K in subs):
+        if not any(K["index"] > H["index"] and field_contains(K["fixed"], H["fixed"], n) for K in subs):
             out.append(H)
     return out
 
@@ -812,52 +1004,64 @@ def find_sum_representation(spaces, v, max_terms):
     return None
 
 
+def _sum_search(fd, a, va, stab, n, lb, dmax, scope, max_terms, method, complete):
+    extra = {"ambient_degree": fd.order} if isinstance(fd, InputFieldData) else {"group_order": fd.order}
+    dlist = range(lb, n) if dmax is None else [dmax]
+    for d in dlist:
+        cf = candidate_fields(fd, d, stab)
+        spaces = [dict(index=H["index"], basis=H["fixed"]) for H in cf]
+        rep = find_sum_representation(spaces, va, max_terms)
+        if rep is None:
+            continue
+        rational = fmpq(0)
+        terms = []
+        for sp_, e in rep:
+            m = fd_mean_trace(fd, e)
+            rational += m
+            t = list(e)
+            t[0] = t[0] - m
+            if any(x != 0 for x in t):
+                terms.append(fd_to_algebraic(fd, t))
+        if rational != 0:
+            terms.append(AlgebraicNumber.from_rational(Fraction(int(rational.p), int(rational.q))))
+        degs = [t.degree for t in terms]
+        return Decomposition("Plus", terms, degs, max(degs), lb,
+                             dmax is None and (complete or max(degs) == lb), dmax is None, scope, method, extra)
+    if dmax is None:
+        return Decomposition("Plus", [a], [n], n, lb, complete, True, scope, "CompleteSearch", extra)
+    return None
+
+
 def sum_decomposition(a: AlgebraicNumber, dmax: Optional[int] = None, scope: str = "Global",
-                      max_terms: Optional[int] = None, prec_bits: int = 300, maxorder: int = 400) -> Decomposition:
+                      max_terms: Optional[int] = None, prec_bits: int = 300, maxorder: int = 400,
+                      engine: str = "auto") -> Decomposition:
     n = a.degree
     lb = lower_bound(a.poly) if n > 1 else 1
 
     def trivial(method="Trivial", optimal=None):
-        return Decomposition("Plus", [a], [n], n, lb, lb == n if optimal is None else optimal,
-                             lb == n if optimal is None else optimal, scope, method)
+        opt = (lb == n) if optimal is None else optimal
+        return Decomposition("Plus", [a], [n], n, lb, opt, opt, scope, method)
 
     if n == 1 or (dmax is not None and dmax >= n) or lb == n:
         return trivial()
+    res = None
+    if engine != "splitting":
+        fd = input_field_data(a.poly, a, prec_bits)
+        va = [fmpq(0), fmpq(1, fd.scale)] + [fmpq(0)] * (n - 2)
+        method = "GaloisInputField" if fd.galois else "InputFieldSubfields"
+        res = _sum_search(fd, a, va, None, n, lb, dmax, scope, max_terms, method, fd.galois)
+        if fd.galois or scope == "InputField" or engine == "input" or (res is not None and res.max_degree == lb):
+            return res
     gd = galois_data(a.poly, prec_bits, maxorder)
     with ctx.workprec(gd.prec):
         target = locate_target(gd, a)
-        c = gd.scale
-        va = [q / c for q in gd.root_coords[target]]
+        va = [q / gd.scale for q in gd.root_coords[target]]
         stab = stabilizer(gd, target) if scope == "InputField" else None
         lb = max(lb, exponent_bound(gd.exponent))
         if lb >= n:
             return trivial("CompleteSearch", True)
-        dlist = range(lb, n) if dmax is None else [dmax]
-        for d in dlist:
-            cf = candidate_fields(gd, d, stab)
-            spaces = [dict(index=H["index"], basis=H["fixed"]) for H in cf]
-            rep = find_sum_representation(spaces, va, max_terms)
-            if rep is None:
-                continue
-            rational = fmpq(0)
-            terms = []
-            for sp, e in rep:
-                m = mean_trace(gd, e)
-                rational += m
-                t = list(e)
-                t[0] = t[0] - m
-                if any(x != 0 for x in t):
-                    terms.append(element_to_algebraic(gd, t))
-            if rational != 0:
-                terms.append(AlgebraicNumber.from_rational(Fraction(int(rational.p), int(rational.q))))
-            degs = [t.degree for t in terms]
-            method = "SplittingFieldFixedSpaces" if scope == "Global" else "InputFieldSubfields"
-            return Decomposition("Plus", terms, degs, max(degs), lb,
-                                 dmax is None and (scope == "Global" or max(degs) == lb),
-                                 dmax is None, scope, method, {"group_order": gd.order})
-        if dmax is None:
-            return trivial("CompleteSearch", scope == "Global")
-        return None
+        method = "SplittingFieldFixedSpaces" if scope == "Global" else "InputFieldSubfields"
+        return _sum_search(gd, a, va, stab, n, lb, dmax, scope, max_terms, method, scope == "Global")
 
 
 # ---------------------------------------------------------------------------
@@ -956,22 +1160,23 @@ def quotient_algebraic(a: AlgebraicNumber, b: AlgebraicNumber, bt_over_field_pol
     raise PrecisionError("quotient not identified")
 
 
-def two_factor_search(gd: GaloisData, target: int, a: AlgebraicNumber, n: int, d: int, stab):
-    c = gd.scale
-    tmax = min(d, d * d // n) if stab is None else 1
+def two_factor_search(fd, va, a: AlgebraicNumber, n: int, d: int, stab):
+    tmax = min(d, d * d // n) if (stab is None and fd_is_galois(fd)) else 1
+    Ma = fd_mult_matrix(fd, va)
     for t in range(1, tmax + 1):
-        subs = [H for H in gd.subgroups if t * H["index"] <= d]
+        subs = [H for H in fd.subgroups if t * H["index"] <= d]
         if stab is not None:
             subs = [H for H in subs if stab <= H["elements"]]
         if not subs:
             continue
-        yv = [gd.roots[p[target]] ** t for p in gd.perms]
-        Mt = multiplication_matrix(gd, yv) / (c ** t)
+        Mt = Ma
+        for _ in range(t - 1):
+            Mt = Mt * Ma
         pairs = [(subs[i], subs[j]) for i in range(len(subs)) for j in range(i, len(subs))
                  if n <= t * subs[i]["index"] * subs[j]["index"]]
         pairs.sort(key=lambda pr: (max(pr[0]["index"], pr[1]["index"]), pr[0]["index"] + pr[1]["index"]))
         for E, F in pairs:
-            res = _try_pair(gd, E, F, Mt, t, a, d, target)
+            res = _try_pair(fd, E, F, Mt, Ma, t, a, d, va)
             if res is not None:
                 return res
     return None
@@ -992,8 +1197,8 @@ def shortest_vector(ns, length):
     return [fmpq(x) for x in rows[0]]
 
 
-def _try_pair(gd, E, F, Mt, t, a, d, target):
-    ord_ = gd.order
+def _try_pair(fd, E, F, Mt, Ma, t, a, d, va):
+    ord_ = fd.order
     BE, BF = E["fixed"], F["fixed"]
     cols = len(BE) + len(BF)
     M = fmpq_mat(ord_, cols)
@@ -1009,21 +1214,18 @@ def _try_pair(gd, E, F, Mt, t, a, d, target):
         return None
     x = shortest_vector(ns, len(BE))
     u = [sum((x[i] * BE[i][j] for i in range(len(BE))), fmpq(0)) for j in range(ord_)]
-    u_alg = element_to_algebraic(gd, u)
+    u_alg = fd_to_algebraic(fd, u)
     q = nice_scale(u_alg.poly)
-    qu = scale_algebraic(u_alg, q, gd.prec)
-    b = root_of_algebraic(qu, t, gd.prec)
-    # c^t = a^t / (q u): coordinates of a^t/(qu) in L
-    va = [v / gd.scale for v in gd.root_coords[target]]
+    qu = scale_algebraic(u_alg, q, fd.prec)
+    b = root_of_algebraic(qu, t, fd.prec)
+    # c^t = a^t / (q u)
     at = va
-    Ma = multiplication_matrix_of(gd, va)
     for _ in range(t - 1):
         at = apply_matrix(Ma, at)
-    # divide by q u:  solve (qu) * z = a^t
-    Mqu = multiplication_matrix_of(gd, [fmpq(q.numerator, q.denominator) * ui for ui in u])
+    Mqu = fd_mult_matrix(fd, [fmpq(q.numerator, q.denominator) * ui for ui in u])
     z = fmpq_solve(Mqu, at)
-    ct_alg = element_to_algebraic(gd, z)
-    cc = quotient_algebraic(a, b, ct_alg.poly, t, gd.prec)
+    ct_alg = fd_to_algebraic(fd, z)
+    cc = quotient_algebraic(a, b, ct_alg.poly, t, fd.prec)
     if max(b.degree, cc.degree) <= d:
         return dict(terms=[b, cc], t=t, fields=(E["index"], F["index"]))
     return None
@@ -1044,7 +1246,7 @@ def families_with_product(subs, target, min_size):
     return out
 
 
-def tensor_search(gd: GaloisData, va, d, stab):
+def tensor_search(gd, va, d, stab):
     subs = [H for H in gd.subgroups if 1 < H["index"] <= d]
     if stab is not None:
         subs = [H for H in subs if stab <= H["elements"]]
@@ -1091,7 +1293,7 @@ def tensor_test(gd, fam, va, cache):
         for b in B:
             key = tuple(b)
             if key not in cache:
-                cache[key] = multiplication_matrix_of(gd, b)
+                cache[key] = fd_mult_matrix(gd, b)
             row.append(cache[key])
         mats.append(row)
     # product basis: columns ordered lexicographically by (i_1, ..., i_r)
@@ -1148,9 +1350,65 @@ def tensor_test(gd, fam, va, cache):
     return elems
 
 
+def _product_search(fd, a, va, stab, n, lb, dmax, scope, max_factors, depth, tensor, prec_bits, maxorder, engine, complete):
+    extra = {"ambient_degree": fd.order, "ambient_galois": fd.galois} if isinstance(fd, InputFieldData) else {"group_order": fd.order}
+    dlist = list(range(max(lb, math.isqrt(n - 1) + 1), n)) if dmax is None else [dmax]
+    two = None
+    for d in dlist:
+        two = two_factor_search(fd, va, a, n, d, stab)
+        if two is not None:
+            break
+    best = None
+    if two is not None:
+        degs = [t.degree for t in two["terms"]]
+        best = Decomposition("Times", two["terms"], degs, max(degs), lb, max(degs) == lb, dmax is None, scope,
+                             "NormIntersection", dict(two_factor_optimal=(dmax is None and complete), t=two["t"], **extra))
+    elif dmax is None:
+        best = Decomposition("Times", [a], [n], n, lb, False, True, scope, "CompleteTwoFactorSearch",
+                             dict(two_factor_optimal=complete, t=1, **extra))
+    if max_factors == 2:
+        return best
+    if best is not None and best.max_degree == lb:
+        return best
+    if tensor:
+        for d in dlist:
+            if best is not None and d >= best.max_degree:
+                break
+            tens = tensor_search(fd, va, d, stab)
+            if tens is not None:
+                terms = clean_product_terms([fd_to_algebraic(fd, e) for e in tens], prec_bits)
+                degs = [t.degree for t in terms]
+                if best is None or max(degs) < best.max_degree:
+                    best = Decomposition("Times", terms, degs, max(degs), lb, max(degs) == lb, False, scope,
+                                         "TensorRankOne", dict(two_factor_optimal=False, t=1, **extra))
+                break
+    if best is not None and best.max_degree == lb:
+        return best
+    if best is not None and depth > 0 and len(best.terms) >= 2:
+        terms = []
+        for f in best.terms:
+            if f.degree > lb:
+                sub = product_decomposition(f, depth=depth - 1, tensor=tensor, prec_bits=prec_bits, maxorder=maxorder, engine=engine)
+                terms.extend(sub.terms if sub is not None else [f])
+            else:
+                terms.append(f)
+        degs = [t.degree for t in terms]
+        if max(degs) < best.max_degree:
+            best = Decomposition("Times", terms, degs, max(degs), lb, max(degs) == lb, False, scope,
+                                 "RecursiveSplitting", dict(two_factor_optimal=False, t=1, **extra))
+    if best is not None and best.max_degree > lb:
+        for dd in range(lb, min(3, best.max_degree - 1) + 1):
+            res = bounded_decomposition(a, "Times", dd, 3, 3)
+            if res is not None and res.max_degree < best.max_degree:
+                res.scope = scope
+                best = res
+                break
+    return best
+
+
 def product_decomposition(a: AlgebraicNumber, dmax: Optional[int] = None, scope: str = "Global",
                           max_factors: Optional[int] = None, depth: int = 3, tensor: bool = True,
-                          prec_bits: int = 300, maxorder: int = 400) -> Decomposition:
+                          prec_bits: int = 300, maxorder: int = 400, engine: str = "auto") -> Decomposition:
     n = a.degree
     lb = lower_bound(a.poly) if n > 1 else 1
 
@@ -1160,6 +1418,14 @@ def product_decomposition(a: AlgebraicNumber, dmax: Optional[int] = None, scope:
 
     if n == 1 or (dmax is not None and dmax >= n) or lb == n:
         return trivial()
+    res = None
+    if engine != "splitting":
+        fd = input_field_data(a.poly, a, prec_bits)
+        va = [fmpq(0), fmpq(1, fd.scale)] + [fmpq(0)] * (n - 2)
+        with ctx.workprec(prec_bits):
+            res = _product_search(fd, a, va, None, n, lb, dmax, scope, max_factors, depth, tensor, prec_bits, maxorder, engine, fd.galois)
+        if fd.galois or scope == "InputField" or engine == "input" or (res is not None and res.max_degree == lb):
+            return res
     gd = galois_data(a.poly, prec_bits, maxorder)
     with ctx.workprec(gd.prec):
         target = locate_target(gd, a)
@@ -1168,53 +1434,7 @@ def product_decomposition(a: AlgebraicNumber, dmax: Optional[int] = None, scope:
         lb = max(lb, exponent_bound(gd.exponent))
         if lb >= n:
             return trivial("Trivial", True)
-        dlist = list(range(max(lb, math.isqrt(n - 1) + 1), n)) if dmax is None else [dmax]
-        two = None
-        for d in dlist:
-            two = two_factor_search(gd, target, a, n, d, stab)
-            if two is not None:
-                break
-        best = None
-        if two is not None:
-            degs = [t.degree for t in two["terms"]]
-            best = Decomposition("Times", two["terms"], degs, max(degs), lb, max(degs) == lb, dmax is None, scope,
-                                 "NormIntersection", {"two_factor_optimal": dmax is None, "t": two["t"],
-                                                      "group_order": gd.order})
-        elif dmax is None:
-            best = trivial("CompleteTwoFactorSearch", False)
-            best.extra["two_factor_optimal"] = True
-        if max_factors == 2:
-            return best
-        if best is not None and best.max_degree == lb:
-            return best
-        if tensor:
-            for d in dlist:
-                if best is not None and d >= best.max_degree:
-                    break
-                tens = tensor_search(gd, va, d, stab)
-                if tens is not None:
-                    terms = clean_product_terms([element_to_algebraic(gd, e) for e in tens], gd.prec)
-                    degs = [t.degree for t in terms]
-                    if best is None or max(degs) < best.max_degree:
-                        best = Decomposition("Times", terms, degs, max(degs), lb, max(degs) == lb, False, scope,
-                                             "TensorRankOne", {"two_factor_optimal": False, "t": 1,
-                                                               "group_order": gd.order})
-                    break
-        if best is not None and best.max_degree == lb:
-            return best
-        if best is not None and depth > 0 and len(best.terms) >= 2:
-            terms = []
-            for f in best.terms:
-                if f.degree > lb:
-                    sub = product_decomposition(f, depth=depth - 1, tensor=tensor, prec_bits=prec_bits, maxorder=maxorder)
-                    terms.extend(sub.terms if sub is not None else [f])
-                else:
-                    terms.append(f)
-            degs = [t.degree for t in terms]
-            if max(degs) < best.max_degree:
-                best = Decomposition("Times", terms, degs, max(degs), lb, max(degs) == lb, False, scope,
-                                     "RecursiveSplitting", {"two_factor_optimal": False, "t": 1, "group_order": gd.order})
-        return best
+        return _product_search(gd, a, va, stab, n, lb, dmax, scope, max_factors, depth, tensor, prec_bits, maxorder, engine, True)
 
 
 def clean_product_terms(terms, prec_bits):
@@ -1240,6 +1460,122 @@ def clean_product_terms(terms, prec_bits):
         rest.append(AlgebraicNumber.from_rational(1 / q))
     return rest
 
+
+
+
+# ---------------------------------------------------------------------------
+# exact arithmetic on algebraic numbers via numerically computed composed
+# polynomials (rigorously rounded), and the bounded dictionary search
+# ---------------------------------------------------------------------------
+
+def _integral_form(a: AlgebraicNumber):
+    """(monic polynomial, scale c) with c*a a root of the monic polynomial"""
+    p = a.poly
+    n = p.degree()
+    c = int(p.leading_coefficient())
+    coeffs = _fmpz_list(p.coeffs())
+    mon = fmpz_poly([coeffs[i] * c ** (n - 1 - i) for i in range(n)] + [1])
+    return mon, c
+
+
+def combine_algebraic(a: AlgebraicNumber, b: AlgebraicNumber, op: str, prec_bits: int = 300) -> AlgebraicNumber:
+    """a+b, a-b, a*b or a/b as an algebraic number"""
+    if op == "/":
+        # b^{-1}: reverse the polynomial
+        coeffs = _fmpz_list(b.poly.coeffs())[::-1]
+        binv = AlgebraicNumber.from_value(primitive(fmpz_poly(coeffs)), 1 / b.value(prec_bits), prec_bits)
+        return combine_algebraic(a, binv, "*", prec_bits)
+    if op == "-":
+        coeffs = _fmpz_list(b.poly.coeffs())
+        neg = fmpz_poly([(-1) ** i * coeffs[i] for i in range(len(coeffs))])
+        bneg = AlgebraicNumber.from_value(primitive(neg), -b.value(prec_bits), prec_bits)
+        return combine_algebraic(a, bneg, "+", prec_bits)
+    ma, ca = _integral_form(a)
+    mb, cb = _integral_form(b)
+    prec = prec_bits
+    for attempt in range(6):
+        try:
+            with ctx.workprec(prec):
+                ra = poly_roots(ma, prec)
+                rb = poly_roots(mb, prec)
+                if op == "+":
+                    vals = [cb * x + ca * y for x in ra for y in rb]   # ca*cb*(a_i + b_j)
+                    scale = ca * cb
+                else:
+                    vals = [x * y for x in ra for y in rb]             # ca*cb*(a_i*b_j)
+                    scale = ca * cb
+                comp = _round_poly(_poly_from_roots(vals))
+                target = (a.value(prec) + b.value(prec)) if op == "+" else a.value(prec) * b.value(prec)
+                tv = target * scale
+                for g, _ in comp.factor()[1]:
+                    if g.degree() > 0 and acb_poly(g)(tv).contains(0):
+                        # descale: g(scale*x)
+                        gc = _fmpz_list(g.coeffs())
+                        q = poly_from_fractions([Fraction(gc[i]) * Fraction(scale) ** i for i in range(len(gc))])
+                        cand = AlgebraicNumber.from_value(q, target, prec)
+                        if (cand.value(prec) - target).contains(0):
+                            return cand
+                raise PrecisionError("factor not identified")
+        except PrecisionError:
+            prec *= 2
+    raise PrecisionError("combine_algebraic failed")
+
+
+def catalog(d: int, h: int) -> list:
+    """roots of all irreducible primitive integer polynomials of degree <= d and height <= h"""
+    out = []
+    for m in range(1, d + 1):
+        for coeffs in itertools.product(range(-h, h + 1), repeat=m + 1):
+            if coeffs[-1] <= 0:
+                continue
+            g = 0
+            for c in coeffs:
+                g = math.gcd(g, abs(c))
+            if g != 1:
+                continue
+            p = fmpz_poly(list(coeffs))
+            fac = p.factor()[1]
+            if len(fac) != 1 or fac[0][1] != 1:
+                continue
+            for k in range(1, m + 1):
+                out.append(AlgebraicNumber(p, k))
+    return out
+
+
+def bounded_decomposition(a: AlgebraicNumber, op: str, d: int, h: int, r: int, prec_bits: int = 300):
+    """Decomposition of a into at most r components of degree <= d, all but the last from the catalog."""
+    n = a.degree
+    lb = lower_bound(a.poly) if n > 1 else 1
+    if n <= d:
+        return Decomposition(op, [a], [n], n, lb, lb == n, True, "Bounded", "Trivial")
+    cat = [c for c in catalog(d, h) if c.degree > 1]
+    if op == "Times":
+        cat = [c for c in cat if c.as_fraction() != 0]
+
+    def residual(prefix):
+        res = a
+        for b in prefix:
+            res = combine_algebraic(res, b, "-" if op == "Plus" else "/", prec_bits)
+        return res
+
+    def search(prefix, start, slots):
+        res = residual(prefix)
+        deg = res.degree
+        if deg <= d:
+            return prefix + [res]
+        if slots <= 1 or deg > d ** slots or largest_prime_factor(deg) > d:
+            return None
+        for i in range(start, len(cat)):
+            found = search(prefix + [cat[i]], i, slots - 1)
+            if found is not None:
+                return found
+        return None
+
+    found = search([], 0, r)
+    if found is None:
+        return None
+    degs = [t.degree for t in found]
+    return Decomposition(op, found, degs, max(degs), lb, max(degs) == lb, False, "Bounded", "DictionarySearch")
 
 # ---------------------------------------------------------------------------
 # numeric verification

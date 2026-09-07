@@ -1,0 +1,1126 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=25mm]{geometry}
+\usepackage{amsmath,amsthm,amssymb,mathtools}
+\usepackage{microtype}
+\usepackage{booktabs,longtable,array,tabularx}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage[colorlinks=true,linkcolor=blue!40!black,citecolor=blue!40!black,urlcolor=blue!50!black]{hyperref}
+
+\lstset{basicstyle=\ttfamily\small,columns=fullflexible,keepspaces=true,breaklines=true,
+  frame=single,framerule=0.3pt,rulecolor=\color{black!30},xleftmargin=4pt,xrightmargin=4pt,
+  aboveskip=6pt,belowskip=6pt,showstringspaces=false}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{problem}[theorem]{Open problem}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\Qbar}{\overline{\Q}}
+\newcommand{\Gal}{\operatorname{Gal}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\Nm}{\operatorname{N}}
+\newcommand{\Res}{\operatorname{Res}}
+\newcommand{\Stab}{\operatorname{Stab}}
+\newcommand{\lcm}{\operatorname{lcm}}
+\newcommand{\rk}{\operatorname{rank}}
+\newcommand{\dg}{\deg}
+\newcommand{\Dp}{D_{+}}
+\newcommand{\Dt}{D_{\times}}
+\newcommand{\Dtt}{D_{\times,2}}
+\newcommand{\Dpp}{D_{+,2}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\Root}{\code{Root}}
+
+\title{Decomposing algebraic numbers into sums and products of minimal degree\\[4pt]
+\large A unified account of the theory, with complete algorithms for sums and for two-factor products,
+and an implementation in the Wolfram Language and in Python}
+\author{Prepared for Vladimir Reshetnikov\\ \small in answer to Mathematica StackExchange question 105933}
+\date{September 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Given an algebraic number $a$ of degree $n$, we ask for a representation of $a$ as a sum, or as a
+product, of algebraic numbers whose largest degree is as small as possible.  This article unifies nine
+independent technical reports written on the question and adds several results.  We prove that the
+additive problem has a complete finite algorithm (trace descent to the splitting field, then rational
+linear algebra on fixed fields of subgroups of the Galois group), that the two-factor multiplicative
+problem has a complete finite algorithm (norm descent with an explicit radical exponent), and that the
+arbitrary-length multiplicative problem is genuinely different: optimal factors may lie outside the
+splitting field, two-factor optima are not many-factor optima, and no complete algorithm is known.  We
+prove rigorous lower bounds valid against any finite number of components, including a computable bound
+from Frobenius cycle types, and we settle the two examples of the question: both have globally optimal
+maximum degree three.  We also answer a further question: a \Root{} can be a flat sum of \Root{}s of
+smaller degree, even with Gaussian rational coefficients, while no sequence of binary additive or
+multiplicative splittings into two \Root{}s of smaller degree exists; the number $\sqrt2+\sqrt3+\sqrt6$
+is such an example.  The accompanying Wolfram Language package and its Python counterpart implement all
+algorithms with a new engine (numerical resolvents for the Galois group, a trace-form basis of the
+splitting field) that avoids the impractically slow number-field conversions proposed in the reports;
+every returned identity is verified exactly.
+\end{abstract}
+
+\tableofcontents
+
+\section{Introduction}
+
+The question \cite{question} asks, for a polynomial \Root{} object such as
+\begin{equation}\label{eq:examples}
+\begin{aligned}
+ \alpha_\times&=\Root[-1 - \# + 3 \#^3 - \#^4 + \#^5 - 3 \#^6 + 2 \#^7 + \#^9 \&, 1],\\
+ \alpha_+&=\Root[8 - 4 \# + 24 \#^2 - 15 \#^3 + 3 \#^5 + 6 \#^6 + \#^9 \&, 1],
+\end{aligned}
+\end{equation}
+for a representation as a product, respectively a sum, of \Root{} objects of the smallest possible
+maximum degree.  The expected answers are
+\begin{equation}\label{eq:answers}
+\begin{aligned}
+ \alpha_\times&=\Root[1+\#+\#^3\&,1]\cdot\Root[1-\#+\#^3\&,1],\\
+ \alpha_+&=\Root[1+\#+\#^3\&,1]+\Root[1-\#+\#^3\&,1].
+\end{aligned}
+\end{equation}
+The constructive answer on the site \cite{question} guesses the shape of the answer (two cubics), forms
+the characteristic polynomial of a Kronecker product or Kronecker sum of companion matrices with
+symbolic coefficients, and solves the resulting coefficient equations.  This finds the decomposition once
+its shape is known, but it neither discovers the shape nor proves that no better one exists.
+
+Nine technical reports (\cite{r1,r2,r3,r4,r5,r6,r7,r8,r9}, reproduced verbatim in the repository)
+were written on the question.  They agree on the core theory and differ in emphasis, examples and
+implementation.  None of them executed its Wolfram Language code, and the number-field construction they
+all propose turns out to be impractical in Mathematica (Section~\ref{sec:impl}).  This article gives one
+coherent account of the mathematics, proves everything that is used, records the examples and
+counterexamples that the reports contributed, adds a treatment of binary versus flat decompositions and
+of Gaussian rational coefficients, and describes an implementation that has actually been run.
+
+\subsection{Summary of results}
+
+Write $\dg(b)=[\Q(b):\Q]$ for the absolute degree of an algebraic number $b$, and define
+\begin{align*}
+ \Dp(a)&=\min\Bigl\{\max_i\dg(b_i): a=b_1+\dots+b_r,\ r\ge1\Bigr\},\\
+ \Dt(a)&=\min\Bigl\{\max_i\dg(b_i): a=b_1\cdots b_r,\ r\ge1\Bigr\},
+\end{align*}
+the components ranging over all algebraic numbers.  The main results are the following.
+\begin{enumerate}[label=(\roman*)]
+\item \emph{Lower bounds} (Section~\ref{sec:bounds}).  Every prime divisor of $\dg(a)$ is at most
+  $\Dp(a)$ and at most $\Dt(a)$; the exponent of the Galois group $G$ of the normal closure of $\Q(a)$
+  divides $\lcm(1,\dots,d)$ for $d=\Dp(a)$ or $d=\Dt(a)$; and orders of Frobenius elements, read off from
+  factorization patterns modulo primes, give a rigorous lower bound without computing $G$.
+\item \emph{Sums} (Section~\ref{sec:sums}).  $\Dp(a)\le d$ if and only if $a$ lies in the $\Q$-linear
+  span of the subfields of degree at most $d$ of the splitting field $L$ of $a$.  Equivalently, $a$ lies
+  in the span of the subset sums of its conjugates of degree at most $d$.  This is a complete finite
+  algorithm.
+\item \emph{Two-factor products} (Section~\ref{sec:products}).  $a=bc$ with $\dg b,\dg c\le d$ if and
+  only if there are subfields $E,F\subseteq L$ and an integer $t\ge1$ with $t[E:\Q]\le d$, $t[F:\Q]\le d$
+  and $E\cap a^tF\ne\{0\}$.  The exponent $t$ cannot be dropped: for $a=\sqrt{(1+\sqrt2)(1+\sqrt3)}$
+  the optimal factors $\sqrt{1+\sqrt2}$ and $\sqrt{1+\sqrt3}$ lie outside $L$, and no elements of $L$
+  of degree below $8$ multiply or add up to $a$.
+\item \emph{Many factors} (Section~\ref{sec:many}).  $\Dt$ can be smaller than the two-factor
+  minimum: $(1+\sqrt2)(1+\sqrt3)(1+\sqrt5)$ has $\Dt=2$ but no two factors of degree below $8$.
+  Products inside a fixed field are a multiplicative, not a linear, problem; arithmetic obstructions
+  exist beyond Galois theory ($\Dp(1+\sqrt2+\sqrt3)=2$ but $\Dt(1+\sqrt2+\sqrt3)=4$).  We give the
+  necessary norm condition, a sufficient radical condition, an exact rank-one tensor criterion for
+  linearly disjoint families, and state the open problem.
+\item \emph{Binary versus flat} (Section~\ref{sec:binary}).  A decomposition into two components of
+  smaller degree, iterated, is strictly weaker than a flat decomposition: $\sqrt2+\sqrt3+\sqrt6$ is a sum
+  of three quadratic numbers but is neither a sum nor a product of two algebraic numbers of degree below
+  four, even if Gaussian rational coefficients are allowed at every binary step.  With Gaussian
+  coefficients the flat additive problem is again linear algebra, in $L(i)$.
+\item \emph{The examples} (Section~\ref{sec:examples}).  Both numbers in \eqref{eq:examples} have
+  globally optimal maximum degree $3$, attained by \eqref{eq:answers}.  Moreover $\Dp(\alpha_\times)=6$,
+  attained by two sextics that do not lie in $\Q(\alpha_\times)$, whereas every additive decomposition
+  of $\alpha_\times$ inside $\Q(\alpha_\times)$ has maximum degree $9$.
+\item \emph{Implementation} (Section~\ref{sec:impl}).  The Galois group is computed by numerical
+  resolvents, the splitting field is represented in a tower basis with coordinates obtained from traces,
+  and all decision problems above become exact rational linear algebra.  A fast path works inside
+  $\Q(a)$ without the Galois group.  The Wolfram package answers the two examples in about a second
+  (fast path) and certifies global optimality; the Python port (python-flint, Arb ball arithmetic)
+  computes the full splitting-field data in about three seconds, against about twenty seconds in the
+  Wolfram kernel.
+\end{enumerate}
+
+\subsection{Conventions}
+
+All fields are subfields of $\C$, so every algebraic extension is separable.  A number field is a
+finite extension of $\Q$.  For a finite Galois extension $L/\Q$ with group $G=\Gal(L/\Q)$, subfields of
+$L$ correspond to subgroups $H\le G$ via $H\mapsto L^H$, and $[L^H:\Q]=[G:H]$.  The degree of an element
+$b\in L$ is the index of its stabilizer, equivalently the size of its $G$-orbit.  We write $\Res_y(f,g)$
+for the resultant with respect to $y$, and $\Tr_{M/L}$, $\Nm_{M/L}$ for relative trace and norm.
+
+Mathematica's \code{Root[f,k]} denotes the $k$th root of $f$ in the following order: real roots first,
+increasing; then the non-real roots in conjugate pairs, ordered by increasing real part and then by
+increasing $|\mathrm{Im}|$, the root of negative imaginary part first within a pair.  The Python code
+uses the same order so that both implementations index roots identically.
+
+\section{The problem}\label{sec:problem}
+
+\begin{definition}\label{def:D}
+For $a\in\Qbar$ put
+\begin{align*}
+ \Dp(a)&=\min\{\max_i\dg(b_i): r\ge1,\ b_i\in\Qbar,\ a=b_1+\dots+b_r\},\\
+ \Dt(a)&=\min\{\max_i\dg(b_i): r\ge1,\ b_i\in\Qbar^\times,\ a=b_1\cdots b_r\}\quad(a\ne0),
+\end{align*}
+and $\Dt(0)=1$.  Let $\Dpp(a)$ and $\Dtt(a)$ be the same minima restricted to $r\le2$.  For a field
+$K\ni a$ let $\Dp^K(a)$, $\Dt^K(a)$ be the minima with all components in $K$.
+\end{definition}
+
+The one-component representation shows that all these quantities are at most $\dg(a)$, and
+$\Dt\le\Dtt$, $\Dp\le\Dpp$, $\Dp\le\Dp^K$, $\Dt\le\Dt^K$.  Several elementary remarks fix the
+conventions.
+
+\begin{enumerate}[label=(\alph*)]
+\item Degrees are absolute.  A displayed \Root{} may be a root of a reducible polynomial, and a
+  polynomial of small degree with algebraic coefficients says nothing about absolute degree: $x-a$ has
+  degree one over $\Q(a)$.  Degrees are therefore measured with the rational minimal polynomial.
+\item Rational scalars are free: for $q\in\Q^\times$, $\Q(qb)=\Q(b)$.  A rational linear combination of
+  low-degree numbers is a permitted sum, and a rational multiple of a factor may be moved to another
+  factor.  Rational numbers have degree one.  Inverses and negatives do not change degrees.
+\item Components are allowed to be complex even when $a$ is real; requiring real components is a
+  different problem (Remark~\ref{rem:real}).
+\item The number of components, the coefficient heights and the printed size of the answer are not
+  minimized; they are secondary objectives.  A flat sum $b_1+\dots+b_r$ is not a nested expression such
+  as $b_1+b_2b_3$; Section~\ref{sec:binary} compares the two.
+\item Three ambient domains matter: $K=\Q(a)\subseteq L\subseteq\Qbar$, where $L$ is the splitting
+  field of the minimal polynomial of $a$.  For sums, $L$ is always large enough; for products not even
+  $L$ is (Section~\ref{sec:products}).  Restricting to $K$ can change both answers.
+\end{enumerate}
+
+\section{Composed sums and products}\label{sec:resultants}
+
+Let $f,g\in\Q[x]$ be monic of degrees $m,k$ with roots $u_1,\dots,u_m$ and $v_1,\dots,v_k$ (with
+multiplicity).  Their \emph{composed sum} and \emph{composed product} are
+\begin{equation}\label{eq:composed}
+\begin{aligned}
+ (f\oplus g)(x)&=\Res_y\bigl(f(y),g(x-y)\bigr)=\prod_{i,j}(x-u_i-v_j),\\
+ (f\otimes g)(x)&=\Res_y\bigl(f(y),\,y^k g(x/y)\bigr)=\prod_{i,j}(x-u_iv_j).
+\end{aligned}
+\end{equation}
+Both identities follow from $\Res_y(f,h)=\prod_i h(u_i)$ for monic $f$; the second argument of the
+product resultant is the polynomial $\sum_j g_jx^jy^{k-j}$, which handles a zero root correctly.
+Equivalently, $f\oplus g$ and $f\otimes g$ are the characteristic polynomials of $C_f\otimes I+I\otimes
+C_g$ and $C_f\otimes C_g$, where $C_f,C_g$ are companion matrices; this is the construction used in the
+answer on the site.  Fast algorithms for composed sums and products exist \cite{BFSS}; here only small
+degrees occur.
+
+\begin{proposition}\label{prop:divides}
+Let $p$ be the minimal polynomial of $a$.  Some pair of roots $(u_i,v_j)$ satisfies $a=u_i+v_j$
+(respectively $a=u_iv_j$) if and only if $p$ divides $f\oplus g$ (respectively $f\otimes g$).
+\end{proposition}
+
+\begin{proof}
+If $a=u_i+v_j$ then $a$ is a root of $f\oplus g$, and the irreducible $p$ divides it.  Conversely, if
+$p\mid f\oplus g$ then $a$ is a root of the product in \eqref{eq:composed}, so some linear factor
+vanishes at $a$.  The product case is identical.
+\end{proof}
+
+Divisibility cannot be replaced by equality: $(x^2-2)\oplus(x^2-2)=x^2(x^2-8)$ and
+$(x^2-2)\otimes(x^2-3)=(x^2-6)^2$, while $\sqrt2+\sqrt2$ and $\sqrt2\cdot\sqrt3$ have minimal
+polynomials $x^2-8$ and $x^2-6$.  Nor need $\dg(a)$ divide $mk$: with $u=\sqrt[3]{2}$ and
+$\omega=e^{2\pi i/3}$ the number $u-\omega u$ has minimal polynomial $x^6+108$, of degree $6\nmid9$.
+The correct general statement is $\dg(a)\le[\Q(b_1,\dots,b_r):\Q]\le\prod\dg(b_i)$.
+
+For the two cubics of \eqref{eq:answers} one computes
+\begin{equation}\label{eq:resultants}
+\begin{aligned}
+ (x^3+x+1)\oplus(x^3-x+1)&=x^9+6x^6+3x^5-15x^3+24x^2-4x+8,\\
+ (x^3+x+1)\otimes(x^3-x+1)&=x^9+2x^7-3x^6+x^5-x^4+3x^3-x-1,
+\end{aligned}
+\end{equation}
+exactly the polynomials in \eqref{eq:examples}.
+
+\subsection{Inverse composition: fix one polynomial}
+
+Guessing both polynomials with unknown coefficients leads to a nonlinear system whose solutions over
+$\C$ may have algebraic coefficients (which do not certify absolute degrees) and whose normalizations
+need justification (rescaling $u\mapsto qu$, $v\mapsto v/q$ with $q\in\Q^\times$ preserves a product,
+but making a constant term equal to $1$ requires a rational $m$th root).  A cheaper exact device fixes
+one candidate polynomial $f$ and recovers the partner: if $a=u+v$ with $f(u)=0$ then $v$ is a root of
+$\Res_y(f(y),p(x+y))$, and if $a=uv$ then $v$ is a root of $\Res_y(f(y),p(xy))$ (for $f(0)\ne0$).
+Factoring these resultants over $\Q$ and keeping the factors of degree at most $d$ gives a complete
+search for a fixed first polynomial.  For $f=x^3+x+1$ and both examples the resultant factors as
+$(x^3-x+1)^3h_{18}(x)$ with $h_{18}$ irreducible \cite{r2,r4}.  Enumerating first polynomials of
+bounded degree and coefficient height, including non-monic primitive polynomials (otherwise
+$\tfrac12$ would be missed), gives the \emph{bounded dictionary search}: complete within its box, a
+positive semi-decision procedure in general, never a proof of impossibility.  Even the smallest box,
+cubics with coefficients in $\{-1,0,1\}$, discovers both cubics of \eqref{eq:answers}.
+
+\section{The examples: identities, degrees, branches}\label{sec:examples}
+
+Let $u$ and $v$ be the real roots of $f=x^3+x+1$ and $g=x^3-x+1$.  Both cubics are irreducible (no
+rational roots) with discriminants $-31$ and $-23$, so each has exactly one real root and Galois group
+$S_3$.  Write $P_\times$ and $P_+$ for the two polynomials in \eqref{eq:examples}.
+
+\begin{proposition}\label{prop:examples}
+$P_\times$ and $P_+$ are irreducible, each has exactly one real root, and $\alpha_\times=uv$,
+$\alpha_+=u+v$.  Moreover $\Q(uv)=\Q(u+v)=\Q(u,v)$ has degree nine, and
+\begin{equation}\label{eq:recover}
+ u=\frac{\alpha_\times^3-\alpha_\times^2-1}{\alpha_\times^4+\alpha_\times^2-\alpha_\times+1},\quad
+ v=\frac{\alpha_\times}{u};\qquad
+ u=\frac{3\alpha_+^5-5\alpha_+^3-3\alpha_+^2+2\alpha_+-4}{6\alpha_+^4-6\alpha_++4},\quad v=\alpha_+-u.
+\end{equation}
+Also $u=-(\alpha_\times^7+2\alpha_\times^5-2\alpha_\times^4+1)/2$ and
+$v=-(\alpha_\times^7+2\alpha_\times^5-2\alpha_\times^4+2\alpha_\times^3+2\alpha_\times-1)/2$.
+\end{proposition}
+
+\begin{proof}
+The splitting fields $L_f,L_g$ of the cubics are $S_3$-extensions whose unique quadratic subfields
+$\Q(\sqrt{-31})$ and $\Q(\sqrt{-23})$ differ.  A nontrivial common Galois quotient of two copies of
+$S_3$ is $C_2$ or $S_3$, and either would force a common quadratic subfield; hence $L_f\cap L_g=\Q$ and
+$\Gal(L_fL_g/\Q)=S_3\times S_3$, acting transitively on the nine ordered pairs $(u_i,v_j)$ of roots.
+If two pairs had the same sum, $u_i-u_k=v_l-v_j\in L_f\cap L_g=\Q$; a nonzero rational difference of
+two conjugates is impossible, since iterating an automorphism mapping $u_k\mapsto u_i$ would produce
+arbitrarily large differences.  If two pairs had the same product, $u_i/u_k\in\Q^\times$ would be a root
+of unity, hence $\pm1$, and $-1$ is excluded because $f(x)+f(-x)=2\ne0$.  So the nine sums and the nine
+products are distinct, the resultants \eqref{eq:resultants} are the minimal polynomials, and both are
+irreducible of degree nine.  A real conjugate of $uv$ or $u+v$ is fixed by complex conjugation, which
+permutes the pairs; the only pair fixed by conjugation is $(u,v)$, so each polynomial has exactly one
+real root, namely $uv$, respectively $u+v$; by the root ordering this is \code{Root[\ldots,1]}.
+
+The recovery formulas are verified by exact polynomial arithmetic modulo $P_\times$ and $P_+$: the
+denominators are coprime to the respective polynomial, and substituting the right-hand sides into
+$f$ and $g$ gives zero modulo $P_\times$, respectively $P_+$.  (The package runs these checks; all
+identities in this article were verified in Wolfram 15.0.1.)  They show $u,v\in\Q(\alpha_\times)$ and
+$u,v\in\Q(\alpha_+)$; since $[\Q(u,v):\Q]=9$, all three fields coincide.
+\end{proof}
+
+\section{Lower bounds valid for any number of components}\label{sec:bounds}
+
+\begin{theorem}[normal closure obstruction]\label{thm:bound}
+Let $n=\dg(a)$, let $L$ be the splitting field of the minimal polynomial of $a$ and $G=\Gal(L/\Q)$.
+Suppose $a$ lies in the field generated by finitely many algebraic numbers $b_1,\dots,b_r$ of degrees at
+most $d$ (in particular, if $a$ is a sum or a product of them).  Then
+\begin{enumerate}[label=(\roman*)]
+\item every prime divisor of $|G|$, hence of $n$, is at most $d$;
+\item $\exp(G)$ divides $\lcm(1,2,\dots,d)$; in particular $d\ge$ the largest prime power dividing $\exp(G)$;
+\item if $d\le4$ then $G$ is solvable.
+\end{enumerate}
+Consequently $\Dp(a)$ and $\Dt(a)$ are at least the largest prime divisor of $n$ and at least the
+largest prime power dividing $\exp(G)$.
+\end{theorem}
+
+\begin{proof}
+Let $M_i$ be the normal closure of $\Q(b_i)$ and $M=M_1\cdots M_r$.  $\Gal(M_i/\Q)$ acts faithfully on
+the $m_i\le d$ conjugates of $b_i$, so it embeds in $S_{m_i}$, and restriction embeds $\Gal(M/\Q)$ into
+$\prod_i\Gal(M_i/\Q)\le\prod_iS_{m_i}$.  Every prime divisor of $|\prod S_{m_i}|=\prod m_i!$ is at most
+$d$, the exponent of $\prod S_{m_i}$ is $\lcm(1,\dots,d)$ (orders of permutations are lcm's of cycle
+lengths), and $S_{m}$ is solvable for $m\le4$.  These properties pass to subgroups and to quotients.
+Since $M/\Q$ is normal and contains $a$, it contains all conjugates of $a$, hence $L$, and restriction
+maps $\Gal(M/\Q)$ onto $G$.  Finally $n=[\Q(a):\Q]$ divides $|G|=[L:\Q]$.
+\end{proof}
+
+For the examples, $n=9$ gives the bound $3$, which \eqref{eq:answers} attains; so
+$\Dt(\alpha_\times)=\Dp(\alpha_+)=3$ globally, against any finite number of complex components.  The
+exponent bound is genuinely stronger than the prime bound: for $\zeta_5$ ($G=C_4$) and for
+$\sqrt{2+\sqrt2}$ ($G=C_4$) it gives $\Dp=\Dt=4$ although the prime bound is $2$; for $2^{1/4}$
+($G=D_4$, exponent $4$) it gives $4$; for a root of $x^4-x-1$ ($G=S_4$, exponent $12$) it gives $4$.
+
+\begin{proposition}[Frobenius bound]\label{prop:frobenius}
+Let $P\in\Z[x]$ be the primitive minimal polynomial of $a$ and let $q$ be a prime dividing neither the
+leading coefficient nor the discriminant of $P$.  If $P$ factors modulo $q$ into irreducible factors of
+degrees $e_1,\dots,e_s$, then $G$ contains an element of order $\lcm(e_1,\dots,e_s)$, so this number
+divides $\exp(G)$.  Hence $\Dp(a),\Dt(a)\ge$ the largest prime power dividing
+$\lcm_q\lcm(e_1,\dots,e_s)$, the outer lcm over any finite set of such primes.
+\end{proposition}
+
+\begin{proof}
+For unramified $q$ the Frobenius element at a prime of $L$ above $q$ acts on the roots with cycle type
+$(e_1,\dots,e_s)$ (Dedekind's theorem, e.g.\ \cite[Th.~4.37]{Cohen}), hence has order
+$\lcm(e_1,\dots,e_s)$.
+\end{proof}
+
+The Frobenius bound is cheap (a few factorizations modulo small primes) and is the bound the
+implementations use before any Galois group is computed.  For $x^4-x-1$ the factorizations modulo $2$
+and $7$ have patterns $(4)$ and $(1,3)$, giving exponent multiple $12$ and the bound $4$.  In general
+the bound may be weaker than the true exponent bound; the full Galois data, when available, sharpens
+it.
+
+\begin{proposition}[length-dependent bound]\label{prop:length}
+If $a=b_1\circ\dots\circ b_r$ (sums or products) with $\dg(b_i)\le d$, then $n\le d^r$.  In particular a
+two-component representation needs $d\ge\lceil\sqrt n\rceil$.
+\end{proposition}
+
+\begin{proof}
+$\Q(a)\subseteq\Q(b_1,\dots,b_r)$, whose degree is at most $\prod\dg(b_i)$.
+\end{proof}
+
+The bounds of this section are necessary conditions.  They are not sufficient even for sums:
+$2^{1/4}$ has $\Dp=4$ while its degree has prime bound $2$ and $D_4$ has exponent $4$; and they are not
+sufficient for products even when the Galois group is elementary abelian (Theorem~\ref{thm:sign}).
+
+\section{Sums: a complete finite algorithm}\label{sec:sums}
+
+\subsection{Trace descent}
+
+\begin{lemma}[trace projection]\label{lem:trace}
+Let $L/\Q$ be a finite Galois extension, $a\in L$, and $a=b_1+\dots+b_r$ with arbitrary algebraic $b_i$.
+Then there are $c_i\in L\cap\Q(b_i)$ with $a=c_1+\dots+c_r$; in particular $\dg(c_i)\le\dg(b_i)$.
+\end{lemma}
+
+\begin{proof}
+Choose a finite Galois extension $M/\Q$ containing $L$ and all $b_i$; put $\Gamma=\Gal(M/\Q)$ and
+$N=\Gal(M/L)$, a normal subgroup of $\Gamma$ since $L/\Q$ is Galois.  Define the $\Q$-linear projection
+\[
+ \pi(z)=\frac1{|N|}\sum_{\sigma\in N}\sigma(z)=\frac{\Tr_{M/L}(z)}{[M:L]},\qquad M\to L,
+\]
+which fixes $L$ pointwise.  Normality of $N$ gives $\gamma\pi(z)=\pi(\gamma z)$ for all
+$\gamma\in\Gamma$: conjugation by $\gamma$ permutes $N$.  Hence every automorphism fixing $b_i$ fixes
+$\pi(b_i)$, and by the Galois correspondence $\pi(b_i)\in\Q(b_i)$.  Put $c_i=\pi(b_i)\in L\cap\Q(b_i)$;
+then $\sum c_i=\pi(a)=a$.
+\end{proof}
+
+Normality of $L$ is essential: averaging over $\Gal(M/\Q(a))$ for non-normal $\Q(a)$ is not
+$\Gamma$-equivariant, and Example~\ref{ex:quartic} shows that restricting summands to $\Q(a)$ can
+change the answer.
+
+\subsection{The fixed-space criterion}
+
+For $L$ Galois with group $G$ and $d\ge1$ define the $\Q$-vector subspace
+\begin{equation}\label{eq:Wd}
+ W_d(L)=\sum_{H\le G,\ [G:H]\le d}L^H\ \subseteq L,
+\end{equation}
+a sum of subspaces, not a compositum of fields.
+
+\begin{theorem}[complete additive criterion]\label{thm:sum}
+Let $a\in L$ with $L/\Q$ finite Galois.  Then $\Dp(a)\le d$ if and only if $a\in W_d(L)$.  In
+particular $\Dp(a)=\min\{d: a\in W_d(L)\}$, and this is computable by finitely many rational
+linear-algebra operations once $G$ and its subgroups are known.  If $a$ is not rational the minimum
+is attained by a representation with at most $[L:\Q]$ nonzero summands.
+\end{theorem}
+
+\begin{proof}
+If $a=\sum b_i$ with $\dg(b_i)\le d$, Lemma~\ref{lem:trace} gives $a=\sum c_i$ with $c_i\in L$ and
+$\dg(c_i)\le d$; each $c_i$ lies in the subfield $\Q(c_i)=L^{H_i}$ with $[G:H_i]\le d$, so
+$a\in W_d(L)$.  Conversely an element of $W_d(L)$ is a finite sum of elements of fields of degree at
+most $d$, each of which has degree at most $d$.  Choosing a basis of $W_d(L)$ from the union of bases of
+the fields and absorbing the rational coefficients gives at most $\dim W_d(L)\le[L:\Q]$ summands.
+The minimum is attained at some $d\le\dg(a)$ because $\Q(a)\subseteq L$ is itself one of the fields.
+\end{proof}
+
+Only the subgroups $H$ that are minimal among those of index at most $d$ matter, since $L^{H'}\supseteq
+L^H$ for $H'\le H$.  Writing $B_d$ for the matrix whose columns are the coordinate vectors of bases of
+these fields, $a\in W_d(L)$ if and only if $B_dc=\operatorname{vec}(a)$ has a rational solution, and the
+solution grouped by field gives the summands.
+
+\subsection{The permutation-module reformulation}
+
+The criterion can be pushed down from $L$ to the $\Q$-span of the conjugates of $a$, which has dimension
+at most $n$ and needs no basis of $L$.  Let $a_1,\dots,a_n$ be the conjugates of $a$ and
+$V=\operatorname{span}_\Q\{a_1,\dots,a_n\}\subseteq L$, a $G$-stable subspace.  For $S\subseteq
+\{1,\dots,n\}$ write $s_S=\sum_{i\in S}a_i$.
+
+\begin{theorem}[conjugate-subset criterion, \cite{r1}]\label{thm:subsets}
+$\Dp(a)\le d$ if and only if $a$ lies in the $\Q$-span of the subset sums $s_S$ with $\dg(s_S)\le d$.
+\end{theorem}
+
+\begin{proof}
+Since $\Q[G]$ is semisimple, $V$ has a $G$-stable complement in $L$ and there is a $G$-equivariant
+projection $P:L\to V$ (average any projection over $G$).  $P$ is the identity on $V$, so $P(a)=a$, and
+$P(L^H)\subseteq V^H$ for every $H$.  Hence $a\in W_d(L)$ implies $a\in\sum_{[G:H]\le d}V^H$; the
+converse holds because $V^H\subseteq L^H$.  Finally $V^H$ is spanned by the $H$-orbit sums of the $a_i$:
+the surjection $\Q^n\to V$, $e_i\mapsto a_i$, is $G$-equivariant, so by averaging lifts over $H$ it
+restricts to a surjection $(\Q^n)^H\to V^H$, and $(\Q^n)^H$ is spanned by the indicator vectors of the
+$H$-orbits.  Each orbit sum is fixed by $H$ and so has degree at most $[G:H]\le d$.
+\end{proof}
+
+Thus the additive problem lives entirely in the permutation module of $G$ on the roots.  The only
+information beyond the group that it needs is the space of $\Q$-linear relations among the conjugates
+(the kernel of $\Q^n\to V$), which the implementation obtains from the trace form
+(Section~\ref{sec:impl}).
+
+\subsection{Examples}
+
+\begin{example}[the sum example]
+For $\alpha_+$ the splitting field is $L=L_fL_g$ of degree $36$ with $G=S_3\times S_3$.  The subgroup
+counts by index are $1,3,6,1,20,9,4,15,1$ for indices $1,2,3,4,6,9,12,18,36$ (sixty subgroups).  The
+six cubic subfields are the fields generated by the conjugates of $u$ and of $v$, and
+$\alpha_+\in\Q(u)+\Q(v)$ recovers \eqref{eq:answers}.  Since $3$ is also the prime lower bound, the
+answer is globally optimal.
+\end{example}
+
+\begin{example}[the product root as a sum]\label{ex:sextic}
+The same field serves $\alpha_\times=uv$.  Inside $K=\Q(uv)$, whose subfields have degrees $1,3,3,9$
+(they are $\Q$, $\Q(u)$, $\Q(v)$, $K$), the sum $\Q(u)+\Q(v)=\operatorname{span}\{1,u,u^2,v,v^2\}$ does
+not contain $uv$ because $\{u^iv^j\}_{0\le i,j\le2}$ is a basis of $K$; so $\Dp^K(uv)=9$.  Globally,
+label the roots $u_1=u,u_2,u_3$ and $v_1=v,v_2,v_3$ and put $w_\pi=\sum_ju_jv_{\pi(j)}$ for
+$\pi\in S_3$.  The two permutations fixing $1$ give real numbers $w_1,w_2$ with
+\[
+ w_1+w_2=2uv+(u_2+u_3)(v_2+v_3)=3uv
+\]
+because both cubics have zero trace.  The six values $w_\pi$ are the roots of the irreducible sextic
+\begin{equation}\label{eq:R}
+ R(x)=x^6+6x^4-27x^3+9x^2-81x+4=\Bigl(x^3+3x-\tfrac{27}2\Bigr)^2-\tfrac{713}4,
+\end{equation}
+which has exactly two real roots; indeed $w_1,w_2$ satisfy $w^2-3uv\,w+3u^2-3v^2+4=0$ and eliminating
+$u,v$ with the two cubics gives $R(w)^3$.  Hence
+\begin{align*}
+ \alpha_\times&=\tfrac13\Root[R,1]+\tfrac13\Root[R,2]\\
+ &=\Root[4-243\#+81\#^2-729\#^3+486\#^4+729\#^6\&,1]+\Root[4-243\#+\dots+729\#^6\&,2],
+\end{align*}
+a sum of two sextics, and $\Dp(uv)\le6$.  To see that $6$ is optimal, let $A=C_3\times C_3\le G$ be
+the Sylow $3$-subgroup, $U=\operatorname{span}\{u_1,u_2,u_3\}$ and $V=\operatorname{span}\{v_1,v_2,v_3\}$;
+these are the two-dimensional standard representations of the two factors, and linear disjointness of
+$L_f,L_g$ makes multiplication $U\otimes V\to L$ injective, so $T=\operatorname{span}\{u_iv_j\}$ is a
+four-dimensional irreducible $G$-module containing $uv$.  A subgroup $H$ of index at most $5$ has index
+$1,2,3$ or $4$.  If the index is $1,2$ or $4$ then $H\supseteq A$ (the index-$4$ subgroup is $A$
+itself), and $A$ has no nonzero fixed vector in $T$.  If the index is $3$, then $|H|=12$, $H\cap A$ has
+order $3$, and $H$ maps onto $G/A=C_2\times C_2$; the two independent sign changes act on
+$A\cong\F_3^2$ by inverting one coordinate each, and a line of $\F_3^2$ invariant under both is a
+coordinate axis, so $H\supseteq C_3\times1$ or $1\times C_3$, again giving $T^H=0$.  The equivariant
+projection $L\to T$ kills every $L^H$ with $[G:H]\le5$ and fixes $uv$, so $uv\notin W_5(L)$.  Therefore
+$\Dp(\alpha_\times)=6$, while $\Dp^{K}(\alpha_\times)=9$ and $\Dt(\alpha_\times)=3$.
+\end{example}
+
+\begin{example}[a sextic needing quartic summands outside its own field]\label{ex:quartic}
+Let $r_1<r_2$ be the real roots of $x^4-x-1$ and $s=r_1+r_2$.  Then
+$\Res_y(y^4-y-1,(x-y)^4-(x-y)-1)=(x^4-8x-16)(x^6+4x^2-1)^2$ and $s$ is the positive root of the
+irreducible sextic $x^6+4x^2-1$.  The quartic is irreducible modulo $2$ and has pattern $(1,3)$ modulo
+$7$, so its Galois group contains a $4$-cycle and a $3$-cycle and is $S_4$; the stabilizer of the pair
+$\{r_1,r_2\}$ is $\langle(12),(34)\rangle$ of index $6$, whose only proper overgroup is the dihedral
+group of order $8$.  So $\Q(s)$ has subfields of degrees $1,3,6$ only and $\Dp^{\Q(s)}(s)=6$; but
+$s=r_1+r_2$ shows $\Dp(s)\le4$, and Theorem~\ref{thm:bound}(ii) with $\exp(S_4)=12\nmid\lcm(1,2,3)$
+gives $\Dp(s)=4$.  The package returns $\Root[-1+\#+\#^4\&,1]+\Root[-1+\#+\#^4\&,3]$ for
+$\Root[-1+4\#^2+\#^6\&,3]$.
+\end{example}
+
+\begin{remark}[real summands]\label{rem:real}
+If $a$ is real and one insists on real summands, the criterion is obtained by restricting
+\eqref{eq:Wd} to subgroups containing complex conjugation: trace projection commutes with conjugation,
+so it preserves reality.
+\end{remark}
+
+\section{Binary splittings, flat sums, and Gaussian rational coefficients}\label{sec:binary}
+
+A natural strategy for producing decompositions is to split $a$ into \emph{two} \Root{}s of smaller
+degree and to iterate on the pieces.  The following question was raised while this article was
+written: can a \Root{} be a linear combination of \Root{}s of smaller degree with Gaussian rational
+coefficients, while no such iterated binary splitting exists?  The answer is yes, and the phenomenon
+already occurs with rational coefficients.
+
+\begin{definition}
+A \emph{binary additive step} for $a$ is a representation $a=b+c$ with $\dg b,\dg c<\dg a$; a
+\emph{binary multiplicative step} is $a=bc$ with the same condition.  A \emph{binary tree} for $a$
+applies such steps recursively.  Its leaves are components of degree smaller than $\dg a$; the first
+step alone already gives a decomposition into two components of smaller degree.
+\end{definition}
+
+\begin{proposition}[binary criteria]\label{prop:binary}
+Let $L$ be the splitting field of $a$, $n=\dg a$.  A binary additive step exists if and only if
+$a\in E_1+E_2$ for two subfields $E_1,E_2\subseteq L$ of degree less than $n$.  A binary multiplicative
+step exists if and only if the two-factor criterion of Theorem~\ref{thm:two} holds with $d=n-1$.
+\end{proposition}
+
+\begin{proof}
+For sums, apply Lemma~\ref{lem:trace} to $a=b+c$: the projections $\pi(b),\pi(c)$ lie in $L$, have
+degrees at most $\dg b,\dg c<n$, and add up to $a$.  The converse is clear.  The product statement is
+Theorem~\ref{thm:two}.
+\end{proof}
+
+\begin{theorem}\label{thm:flat}
+Let $\eta=\sqrt2+\sqrt3+\sqrt6$, of degree $4$ with minimal polynomial $x^4-22x^2-48x-23$.  Then
+$\Dp(\eta)=2$, attained by the flat sum $\sqrt2+\sqrt3+\sqrt6$, but $\eta$ admits no binary additive
+step and no binary multiplicative step.  The same holds if Gaussian rational coefficients are allowed in
+the binary steps, that is, there are no $c,c'\in\Q(i)$ and algebraic $X,Y$ of degree at most $3$ with
+$\eta=cX+c'Y$ or $\eta=cXY$.
+\end{theorem}
+
+\begin{proof}
+$\Q(\eta)=L=\Q(\sqrt2,\sqrt3)$ is Galois with group $C_2\times C_2$; its proper subfields are $\Q$
+and the three quadratic fields $\Q(\sqrt2),\Q(\sqrt3),\Q(\sqrt6)$.  In the basis $1,\sqrt2,\sqrt3,
+\sqrt6$ the vector-space sum of any two of these fields misses at least one of the three coordinates in
+which $\eta$ is nonzero, so $\eta\notin E_1+E_2$ and there is no binary additive step by
+Proposition~\ref{prop:binary}.  For products apply Theorem~\ref{thm:two} with $d=3$: the exponent
+satisfies $t\le\min(3,\lfloor9/4\rfloor)=2$, and $t=2$ forces $E=F=\Q$, i.e.\ $\eta^2\in\Q$, which is
+false.  For $t=1$ the fields $E,F$ are quadratic (or $\Q$), and one checks the three pairs directly: a
+product $(x_0+x_1\sqrt2)(y_0+y_1\sqrt3)$ has coordinate vector $(x_0y_0,x_1y_0,x_0y_1,x_1y_1)$, whose
+first coordinate vanishes only if the second or third does; the pairs $(\Q(\sqrt2),\Q(\sqrt6))$ and
+$(\Q(\sqrt3),\Q(\sqrt6))$ are the same computation.  So $\Dtt(\eta)=4$.
+
+Now allow Gaussian coefficients.  For sums, suppose $\eta=cX+c'Y$ with $c,c'\in\Q(i)$ and
+$\dg X,\dg Y\le3$.  Work in the Galois field $L'=L(i)=\Q(i,\sqrt2,\sqrt3)$, of degree $8$.  The
+projection $\pi:M\to L'$ of Lemma~\ref{lem:trace} is $L'$-linear, so $\eta=c\pi(X)+c'\pi(Y)$ with
+$\pi(X),\pi(Y)\in L'$ of degree at most $3$, hence lying in $\Q$ or in a quadratic subfield $\Q(\sqrt m)$,
+$m\in\{-1,\pm2,\pm3,\pm6\}$.  Take real parts: if $m>0$ then $\operatorname{Re}(cX')=\operatorname{Re}(c)
+X'\in\Q(\sqrt m)$, and if $m<0$, $X'=p+qi\sqrt{|m|}$ with $p,q\in\Q$ and $c=e+e'i$ give
+$\operatorname{Re}(cX')=ep-e'q\sqrt{|m|}\in\Q(\sqrt{|m|})$.  So $\eta$ is a sum of two elements of
+real quadratic subfields of $L$, which was excluded above.  For products, $\eta=cXY$ with $c\notin\Q$
+means that $\eta/c$ is a product of two numbers of degree at most $3$; writing $c^{-1}=e+e'i$ with
+$e'\ne0$, the element $\eta/c=e\eta+e'i\eta$ has nonzero coordinates on $i\sqrt2,i\sqrt3,i\sqrt6$ and,
+if $e\ne0$, on $\sqrt2,\sqrt3,\sqrt6$; in either case it generates $L'$ (from $i\sqrt2$ and $i\sqrt3$
+one obtains $\sqrt6$, $\sqrt3$ and $i$), so it has degree $8$, and Theorem~\ref{thm:two} with $n=8$,
+$d=3$ allows only $t=1$ and quadratic $E,F$, whose compositum has degree at most $4<8$.  If $c\in\Q$
+the rational case applies.
+\end{proof}
+
+The same argument shows that $i+\sqrt2+i\sqrt2$, of degree $4$, is the two-term Gaussian combination
+$i\cdot1+(1+i)\sqrt2$ of \Root{}s of degree $1$ and $2$ but admits no binary step with rational
+coefficients.  The general principle is that a binary step tests membership in the sum of \emph{two}
+subfields, whereas Theorem~\ref{thm:sum} allows the sum of all of them; a flat sum of $k$ terms can
+require $k$ distinct subfields none of whose pairwise sums contains $a$.
+
+\begin{theorem}[Gaussian coefficients, flat sums]\label{thm:gaussian}
+Let $L'$ be a finite Galois extension containing $a$ and $i$, with group $G'$.  Then $a=\sum_jc_jb_j$
+with $c_j\in\Q(i)$ and $\dg(b_j)\le d$ for some finite $r$ if and only if
+\[
+ a\in\sum_{H\le G',\,[G':H]\le d}\bigl(L'^H+i\,L'^H\bigr).
+\]
+\end{theorem}
+
+\begin{proof}
+The projection $\pi:M\to L'$ is $L'$-linear, hence $\Q(i)$-linear, so $a=\sum c_j\pi(b_j)$ with
+$\pi(b_j)$ in subfields $E_j$ of $L'$ of degree at most $d$, and $c_jE_j\subseteq E_j+iE_j$.  Conversely
+$E+iE$ consists of the two-term combinations $1\cdot e+i\cdot e'$.
+\end{proof}
+
+The Gaussian flat problem is therefore again exact linear algebra (the package option
+\code{"Coefficients" -> "GaussianRationals"} adjoins $i$ to the splitting field).  The lower bounds
+change: the prime $2$ becomes free, so only prime divisors $\ge3$ of $n$ bound $d$, and the exponent
+condition becomes $\exp(G')\mid2\lcm(1,\dots,d)$.  The binary Gaussian problem $a=cX+c'Y$ is, by
+contrast, not linear ($cE$ is a subspace for each fixed $c$, but their union over $c$ is not); the
+real-part argument above settles it for real targets in totally real multiquadratic fields, and the
+package answers the rational binary question through the option \code{"MaxTerms" -> 2}.
+
+\section{Products of two factors: a complete algorithm}\label{sec:products}
+
+Trace is additive; norm is multiplicative but takes $a$ to a power $a^t$.  Keeping that power is what
+makes the following criterion complete.
+
+\begin{lemma}[intersection lemma]\label{lem:intersection}
+Let $L/\Q$ be finite Galois and $b$ algebraic.  Put $E_0=L\cap\Q(b)$ and $t=[L(b):L]$.  Then
+$\dg(b)=t\,[E_0:\Q]$, the minimal polynomial of $b$ over $L$ has coefficients in $E_0$, and
+$\Nm_{L(b)/L}(b)\in E_0$.
+\end{lemma}
+
+\begin{proof}
+Let $M/\Q$ be Galois containing $L$ and $b$, $\Gamma=\Gal(M/\Q)$, $N=\Gal(M/L)\trianglelefteq\Gamma$,
+$J=\Gal(M/\Q(b))$.  The compositum $L(b)$ corresponds to $N\cap J$ and the intersection $E_0$ to $NJ$,
+which is a subgroup because $N$ is normal.  Hence $[\Q(b):E_0]=[NJ:J]=[N:N\cap J]=[L(b):L]=t$ and
+$\dg(b)=t[E_0:\Q]$.  The roots of the minimal polynomial of $b$ over $L$ form the $N$-orbit of $b$;
+an element of $J$ fixes $b$ and permutes this orbit (normality of $N$), so the coefficients of that
+polynomial, being symmetric functions of the orbit, are fixed by $NJ$ and lie in $E_0$.  The norm is
+the constant coefficient up to sign.
+\end{proof}
+
+\begin{theorem}[two-factor criterion]\label{thm:two}
+Let $L/\Q$ be finite Galois, $0\ne a\in L$, $n=\dg(a)$, and $d\ge1$.  There exist algebraic $b,c$ with
+$a=bc$ and $\dg b,\dg c\le d$ if and only if there are subfields $E,F\subseteq L$ and an integer $t\ge1$
+with
+\begin{equation}\label{eq:two}
+ t[E:\Q]\le d,\qquad t[F:\Q]\le d,\qquad E\cap a^tF\ne\{0\}.
+\end{equation}
+It suffices to consider $1\le t\le\min(d,\lfloor d^2/n\rfloor)$, and pairs with
+$n\le t[E:\Q][F:\Q]$.
+\end{theorem}
+
+\begin{proof}
+Necessity.  If $a=bc$ then $L(b)=L(c)$ because $c=a/b$ and $b=a/c$; call it $M$ and put $t=[M:L]$,
+$E=L\cap\Q(b)$, $F=L\cap\Q(c)$.  By Lemma~\ref{lem:intersection}, $\dg b=t[E:\Q]\le d$ and
+$\dg c=t[F:\Q]\le d$, and $u=\Nm_{M/L}(b)\in E$, $v=\Nm_{M/L}(c)\in F$ are nonzero with
+$uv=\Nm_{M/L}(a)=a^t$.  So $u=a^t/v\in E\cap a^tF$.
+
+Sufficiency.  Let $0\ne u\in E\cap a^tF$, say $u=a^tw$ with $w\in F$.  Choose any $t$th root $b$ of
+$u$ and put $c=a/b$.  Then $b^t=u\in E$ and $c^t=a^t/u=1/w\in F$, so $b$ and $c$ are roots of
+$X^t-u\in E[X]$ and $X^t-1/w\in F[X]$ and $\dg b\le t[E:\Q]\le d$, $\dg c\le t[F:\Q]\le d$.  The
+product is $a$ by construction; no root-of-unity ambiguity arises because $c$ is defined by division.
+
+Bounds.  If \eqref{eq:two} holds then $a^t\in EF$, so $n\le t\dg(a^t)\le t[EF:\Q]\le t[E:\Q][F:\Q]
+\le d^2/t$; and $t\le d$ since $t[E:\Q]\le d$.
+\end{proof}
+
+\begin{corollary}\label{cor:two}
+$\Dtt(a)$ is computable: test $d=\max(\lceil\sqrt n\rceil,\text{lower bounds}),\dots,n-1$ in turn, for
+each $d$ the exponents $t$ and all pairs of subfields of $L$; the first success gives $\Dtt(a)$ and a
+decomposition, and if none succeeds then $\Dtt(a)=n$.  With $t=1$ and both fields inside a fixed number
+field $K$ (not necessarily Galois), the same test decides whether $a\in E^\times F^\times$, hence
+computes the two-factor minimum inside $K$; if $K$ is Galois, it computes $\Dtt(a)$.
+\end{corollary}
+
+The condition $E\cap a^tF\ne\{0\}$ is rational linear algebra: with column bases $B_E,B_F$ and the
+matrix $M_{a^t}$ of multiplication by $a^t$, it holds if and only if $[\,B_E\ \ -M_{a^t}B_F\,]$ has a
+nonzero null vector $(x,y)$; then $u=B_Ex\ne0$ (else $y=0$ too), and $b=u^{1/t}$, $c=a/b$.  No unit
+groups, ideal factorizations or logarithms are needed for two factors.  For the product example
+\eqref{eq:examples} the pair $(\Q(u),\Q(v))$ with $t=1$ succeeds at $d=3$, which is also the lower
+bound; hence $\Dt(\alpha_\times)=\Dtt(\alpha_\times)=3$.
+
+\subsection{Optimal factors outside the splitting field}\label{sec:external}
+
+\begin{theorem}\label{thm:external}
+Let $a=\sqrt{(1+\sqrt2)(1+\sqrt3)}>0$, with minimal polynomial $x^8-4x^6-16x^4-8x^2+4$
+(it is \code{Root[\ldots,4]}).  Then $\Dt(a)=\Dtt(a)=4$, attained by
+$a=\sqrt{1+\sqrt2}\cdot\sqrt{1+\sqrt3}$ with quartic factors of minimal polynomials $x^4-2x^2-1$ and
+$x^4-2x^2-2$, and $\Dp(a)=8$.  Moreover no finite sum or product of elements of the splitting field
+$L$ of $a$ of degree less than $8$ equals $a$; the optimal factors lie outside $L$, and the criterion
+\eqref{eq:two} holds only with $t=2$.
+\end{theorem}
+
+\begin{proof}
+Write $r=\sqrt2$, $s=\sqrt3$, $A=1+r$, $B=1+s$, $B_0=\Q(r,s)$.  The four conjugates of $a^2=AB$ are
+distinct, so $\Q(a^2)=B_0$; $AB$ is negative at some real embedding of the totally real field $B_0$,
+so it is not a square there and $\dg a=8$.  Put $B_1=B_0(i)$ and $L=B_1(a)$.  Since $a$ is real and
+$B_1\cap\R=B_0\not\ni a$, $[L:\Q]=16$.  The conjugates of $a$ are $\pm a,\pm iB/a,\pm irA/a,\pm r/a$
+(each squares to a conjugate of $AB$: e.g.\ $(iB/a)^2=-B^2/(AB)=-B/A=B(1-r)/(-1)\cdot$, a conjugate of
+$AB$), all in $L$; conversely the splitting field contains $a\cdot iB/a=iB$, hence $i$, and $B_0$, so
+$L$ is exactly the splitting field.  Let $z$ fix $B_1$ and send $a\mapsto-a$; let $\sigma,\tau,\kappa$
+be the involutions acting by $(r,s,i,a)\mapsto(-r,s,i,iB/a)$, $(r,-s,i,irA/a)$ and $(r,s,-i,a)$ (complex
+conjugation).  Direct substitution shows $z$ is central, $[\sigma,\tau]=[\sigma,\kappa]=[\tau,\kappa]=z$,
+every element is uniquely $\sigma^e\tau^f\kappa^gz^h$ with exponents in $\{0,1\}$, and
+$(\sigma^e\tau^f\kappa^gz^h)^2=z^{ef+eg+fg}$; so $G=\Gal(L/\Q)$ has order $16$ and exponent $4$.
+
+\emph{Every subgroup of order at least $4$ contains $z$.}  Elements of order $4$ square to $z$.  A
+subgroup of order $4$ avoiding $z$ would be a Klein four-group of non-central involutions; these lie in
+the three cosets $\sigma\langle z\rangle,\tau\langle z\rangle,\kappa\langle z\rangle$, involutions from
+different cosets do not commute, and two from the same coset multiply to $z$.  Every larger $2$-group
+contains a subgroup of order $4$.
+
+Consequently every subfield of $L$ of degree $1,2$ or $4$, i.e.\ of degree less than $8$, is contained
+in $L^{\langle z\rangle}=B_1$, and since $a\notin B_1$ no sum or product of such elements is $a$.  Trace
+projection (Lemma~\ref{lem:trace}) moves any additive decomposition into $L$ without increasing
+degrees, so $\Dp(a)=8$.  The displayed factorization gives $\Dt(a)\le4$, and Theorem~\ref{thm:bound}(ii)
+with exponent $4\nmid\lcm(1,2,3)=6$ gives $\Dt(a)\ge4$.  In the criterion, $E=\Q(\sqrt2)$,
+$F=\Q(\sqrt3)$, $t=2$, $u=1+\sqrt2$ works: $a^2/u=1+\sqrt3\in F$.  Every pair with $t=1$ fails because
+the fields of degree at most $4$ lie in $B_1$.
+\end{proof}
+
+The reports \cite{r1,r3,r7} point out that Theorem~3.1 of the manuscript \cite{Altamirano}, as they
+read it, asserts that two lower-degree factors can always be replaced by lower-degree factors inside
+the normal closure, and that its proof divides by a coefficient that can vanish (the linear coefficient
+of $X^2-(1+\sqrt2)$ here).  We have not verified the manuscript independently; Theorem~\ref{thm:external}
+shows that any such descent statement without the exponent $t$ is false.  A related norm-and-radical
+replacement, with an explicit root of unity, appears in Samuels's work on the metric Mahler measure
+\cite{Samuels}; Mahler measure ignores roots of unity, absolute degree does not, so that result does not
+transfer.
+
+\section{Products of arbitrarily many factors}\label{sec:many}
+
+\subsection{Two factors are not enough}
+
+\begin{example}\label{ex:eta}
+$\eta_3=(1+\sqrt2)(1+\sqrt3)(1+\sqrt5)$ has degree $8$ (all eight coordinates in the multiquadratic
+basis are nonzero, so no sign change fixes it) and $\Dt(\eta_3)=2$ by the prime bound.  But two factors
+of degree at most $3$ cannot work: their compositum has degree at most $9$, is divisible by $8$ only if
+it is $8$, which is impossible for a compositum of fields of degrees $\le3$ (degrees $\le 3\cdot3=9$
+and $8$ requires a quadratic and a quartic, or two quartics, and quartics are excluded).  So
+$\Dtt(\eta_3)=4$, attained e.g.\ by $(1+\sqrt2)(1+\sqrt3)\cdot(1+\sqrt5)$.
+\end{example}
+
+\begin{example}\label{ex:w}
+$w=(1+\sqrt2)(1+\sqrt3)(1+\sqrt6)=7+4\sqrt2+3\sqrt3+2\sqrt6$ has degree $4$ and minimal polynomial
+$x^4-28x^3+128x^2-200x+100$.  $\Dt(w)=2$, but $\Dtt(w)=4$: in $L=\Q(\sqrt2,\sqrt3)$ with $d=3$ the
+exponent is $t=1$ (as in Theorem~\ref{thm:flat}), and for the three pairs of quadratic subfields the
+product $(x_0+x_1\sqrt m)(y_0+y_1\sqrt{m'})$ has rank-one coefficient matrix, while the matrices of
+$w$ are
+$\begin{psmallmatrix}7&3\\4&2\end{psmallmatrix}$,
+$\begin{psmallmatrix}7&2\\4&3/2\end{psmallmatrix}$,
+$\begin{psmallmatrix}7&2\\3&4/3\end{psmallmatrix}$
+with determinants $2,\tfrac52,\tfrac{10}3$.  Here even a greedy strategy fails: no factorization of
+$w$ into two factors of smaller degree exists at all, yet three quadratic factors do.
+\end{example}
+
+\begin{example}
+For $c$ the real root of $x^3+x+3$, the product $uvc$ of three cubic roots has degree $27$ and
+$\Dt=3$ (prime bound); no two factors of degree $\le3$ can reach degree $27>9$ \cite{r2}.
+\end{example}
+
+\subsection{Norms, radicals and the root-of-unity obstruction}
+
+\begin{proposition}[necessary condition]\label{prop:normnec}
+Let $L/\Q$ be Galois, $0\ne a\in L$, and $a=b_1\cdots b_r$ with $\dg b_i\le d$.  Put $E_i=L\cap\Q(b_i)$,
+$t_i=[L(b_i):L]$, $n_i=\Nm_{L(b_i)/L}(b_i)\in E_i$ and $T=[L(b_1,\dots,b_r):L]$.  Then $t_i[E_i:\Q]\le d$,
+$t_i\mid T$, and
+\begin{equation}\label{eq:normnec}
+ a^T=\prod_{i=1}^rn_i^{T/t_i}.
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Take norms from $M=L(b_1,\dots,b_r)$ to $L$: $\Nm_{M/L}(b_i)=\Nm_{L(b_i)/L}(b_i)^{[M:L(b_i)]}$ by
+transitivity, and $\Nm_{M/L}(a)=a^T$.  The degree statements are Lemma~\ref{lem:intersection}.
+\end{proof}
+
+\begin{proposition}[sufficient condition]\label{prop:radsuff}
+If there are subfields $E_i\subseteq L$, integers $t_i\ge1$ with $t_i[E_i:\Q]\le d$, and $n_i\in E_i^\times$
+with $a=\prod_in_i^{1/t_i}$ for some choice of the radicals, then $\Dt(a)\le d$.
+\end{proposition}
+
+\begin{proof}
+$b_i=n_i^{1/t_i}$ satisfies $X^{t_i}-n_i\in E_i[X]$, so $\dg b_i\le t_i[E_i:\Q]\le d$.
+\end{proof}
+
+The gap between the two propositions is a root of unity.  From \eqref{eq:normnec}, the radicals
+$b_i'=n_i^{1/t_i}$ satisfy $\prod b_i'=\zeta a$ with $\zeta^T=1$; if $\tau=\lcm(t_i)$ then $\zeta^\tau=
+\prod n_i^{\tau/t_i}/a^\tau\in L$, so $\zeta$ is a root of unity of order dividing $\tau\,|\mu(L)|$.
+The radicals may be adjusted by $t_i$th roots of unity, which absorb $\zeta$ when $\zeta\in\mu_\tau$,
+but not in general: $\zeta_8=(1+i)/\sqrt2$ is a product of numbers of degree $2$ although $\dg\zeta_8=4$,
+so a stray root of unity cannot simply be appended as a low-degree factor.  For two factors this issue
+does not arise ($t_1=t_2=T$, and $c$ is defined by division), which is why Theorem~\ref{thm:two} is
+complete.
+
+\begin{problem}
+Is $\Dt(a)$ computable?  Equivalently, given a Galois number field $L$, $a\in L^\times$ and $d$, decide
+whether $a$ lies in the subgroup of $\Qbar^\times$ generated by the multiplicative groups of all number
+fields of degree at most $d$.  Even the restricted question with all factors in $L$ and $t=1$ --- is
+$a\in\prod_{[E:\Q]\le d}E^\times$? --- is a question about multiplicative groups of number fields
+(units, class groups, $S$-units), not about vector spaces, and no finite criterion is known to us.  A
+positive semi-decision procedure exists (Section~\ref{sec:resultants}); what is missing is a
+terminating negative certificate.
+\end{problem}
+
+\subsection{Arithmetic obstructions beyond Galois theory}
+
+\begin{theorem}[sign obstruction, \cite{r4}]\label{thm:sign}
+Let $\theta=1+\sqrt2+\sqrt3$, of degree $4$ with minimal polynomial $x^4-4x^3-4x^2+16x-8$ and norm
+$\Nm_{\Q(\sqrt2,\sqrt3)/\Q}(\theta)=-8$.  Then $\Dp(\theta)=2$ and $\Dt(\theta)=4$.
+\end{theorem}
+
+\begin{proof}
+$\Dp(\theta)\le2$ is visible and $\theta\notin\Q$.  For products we show that no finite product of
+numbers of degree at most $3$ equals $\theta$.
+
+\emph{Step 1: cubic factors can be removed after an odd power.}  Let $\theta=\prod\beta_j$ with
+$\dg\beta_j\le3$.  Let $K$ be the compositum of $L=\Q(\sqrt2,\sqrt3)$, the quadratic fields of the
+quadratic $\beta_j$, and the quadratic resolvent fields of the cubic $\beta_j$; $K$ is multiquadratic,
+of degree a power of two.  A cubic $\beta_j$ has $[K(\beta_j):K]=3$ (a cubic with a root in a field of
+$2$-power degree is impossible), its minimal polynomial over $K$ is its rational cubic, and
+$\Nm_{K(\beta_j)/K}(\beta_j)=\Nm_{\Q(\beta_j)/\Q}(\beta_j)\in\Q^\times$.  Let $E$ be the compositum of
+$K$ with the splitting fields of the cubics; each is cyclic of degree $3$ over $K$ because the
+resolvent is already in $K$, so $[E:K]=3^s=:m$ is odd.  Taking $\Nm_{E/K}$ of the product gives
+$\theta^m=q\prod_{\dg\beta_j\le2}\beta_j^m$ with $q\in\Q^\times$: an odd power of $\theta$ is a product
+of numbers of degree at most $2$.
+
+\emph{Step 2: a product of quadratics in a totally real biquadratic field has positive norm.}  Let
+$\theta'\in L$ be a finite product of numbers of degree $\le2$.  The non-real quadratic factors have a
+real product (the other factors and $\theta'$ are real), and each non-real quadratic $\beta$ has
+$\beta\bar\beta\in\Q_{>0}$, so the square of their product is a positive rational and they may be
+replaced by a single real quadratic factor.  Now all factors are real; let $M\supseteq L$ be a totally
+real multiquadratic field containing them.  For a real quadratic $v$ the function
+$\sigma\mapsto\operatorname{sign}(\sigma v)$ on $\Gal(M/\Q)$ is a constant times a character with values
+$\pm1$, and this form is preserved under products.  Since $\theta'\in L$, the resulting function is
+constant on cosets of $\Gal(M/L)$ and descends to $\Gal(L/\Q)=C_2\times C_2$, where a constant has
+$0$ or $4$ negative values and a nontrivial character exactly $2$; so the product of the signs of the
+four conjugates of $\theta'$ is $+1$, i.e.\ $\Nm_{L/\Q}(\theta')>0$.
+
+Applying Step 2 to $\theta'=\theta^m$ gives $\Nm(\theta^m)=(-8)^m<0$, a contradiction.  Hence no
+product of numbers of degree $\le3$ equals $\theta$, and $\Dt(\theta)=4$.
+\end{proof}
+
+Here the Galois group is $C_2\times C_2$: the prime bound and the exponent bound give $2$, yet
+$\Dt=4$.  Any complete multiplicative algorithm must see arithmetic (here the sign of a norm), which is
+what makes the open problem hard.
+
+\subsection{An exact criterion for linearly disjoint families}
+
+\begin{proposition}[rank-one tensor test, \cite{r9}]\label{prop:tensor}
+Let $K$ be a number field and $E_1,\dots,E_r\subseteq K$ subfields with $\prod_i[E_i:\Q]=[K:\Q]$ such
+that the products of basis elements span $K$ (equivalently, the multiplication map
+$E_1\otimes_\Q\cdots\otimes_\Q E_r\to K$ is an isomorphism).  Write $a=\sum c_{j_1\cdots j_r}
+e_{1,j_1}\cdots e_{r,j_r}$ in the product basis.  Then $a=u_1\cdots u_r$ with $u_i\in E_i$ if and only
+if the tensor $c$ has rank one, which is decided by the pivot test: for a nonzero entry $c_p$, $c$ has
+rank one iff $c_{j_1\cdots j_r}=c_p\prod_i c_{p(j_i\to i)}/c_p$ for all indices, where $p(j\to i)$ is $p$
+with its $i$th index replaced by $j$; the factors are then read off from the slices through $p$.
+\end{proposition}
+
+\begin{proof}
+The multiplication map is an isomorphism of $\Q$-spaces, so $a$ is a product of elements of the $E_i$
+if and only if its tensor is a pure tensor, and the pivot formula characterizes pure tensors.
+\end{proof}
+
+For $\eta_3$ of Example~\ref{ex:eta}, $K=\Q(\sqrt2,\sqrt3,\sqrt5)$ and the three quadratic subfields
+satisfy the hypothesis; the tensor is $(1,1)\otimes(1,1)\otimes(1,1)$ and the three factors are
+recovered.  For $w$ of Example~\ref{ex:w} the three quadratic fields have $2\cdot2\cdot2\ne4$, the
+hypothesis fails, and indeed the test does not apply; there a bounded dictionary search finds the
+three factors.
+
+\subsection{What the implementation does for many factors}
+
+In order of cost: the complete two-factor algorithm; the tensor test over all families of subfields of
+$L$ (or of $K$) whose degrees multiply to the ambient degree; recursive splitting of the factors
+found (a heuristic: a two-factor optimum need not refine to a many-factor optimum, but it often does,
+as for $\eta_3=[(1+\sqrt2)(1+\sqrt3)]\cdot(1+\sqrt5)$); and a small bounded dictionary search.  A
+result is marked globally optimal only when its maximum degree equals a proved lower bound, and
+\emph{two-factor optimal} when the complete two-factor search has been exhausted.
+
+\section{Comparison of the nine reports}\label{sec:reports}
+
+All nine reports establish the same core: the resultant identities, irreducibility and branch
+selection for the examples, the largest-prime bound, the trace descent and the fixed-space criterion
+for sums, the intersection criterion $E\cap aF\ne0$ for two factors in a fixed field, and the
+statement that arbitrary-length products are not covered by a complete algorithm.  Table~\ref{tab:reports}
+records what each report contributed beyond that.  Every report states that its Wolfram code was not
+executed (the evaluator they had access to returned HTTP~404); the Python/SymPy checks they ran verify
+the algebraic identities, not the packages.
+
+\begin{table}[htbp]
+\centering\small
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\toprule
+Report & Distinctive contributions and remarks\\
+\midrule
+\cite{r1} & Conjugate-subset criterion (Theorem~\ref{thm:subsets}) with the equivariant-projection
+proof; a degree-eight counterexample $\sqrt{1+\sqrt2}\sqrt{1+\sqrt7}$ with group of order $32$ (an
+extraspecial central product) and the same conclusions as Theorem~\ref{thm:external}; template
+(Gr\"obner) recovery of the cubics.\\
+\cite{r2} & Residual-resultant search with a height bound on one polynomial only; the complete
+two-factor criterion with exponent $k$; the degree-27 example of three cubics; the $2^{1/4}$ example
+($\Dp=4$).\\
+\cite{r3} & Two-factor criterion with exponent $t$ and the pruning bound $n\le t[E:\Q][F:\Q]$; the
+example $w=(1+\sqrt2)(1+\sqrt3)(1+\sqrt6)$ with $\Dtt=4>\Dt=2$ and the determinant proof; a
+vanishing-linear-coefficient example $\sqrt{\sqrt2(1+\sqrt3)}=2^{1/4}\sqrt{1+\sqrt3}$; subfields by
+coefficient fields of divisors.\\
+\cite{r4} & Inverse composition with a fixed first polynomial; the sign obstruction
+(Theorem~\ref{thm:sign}); the $x^4-x-1$ pair-sum example (Example~\ref{ex:quartic}); the $\zeta_5$
+example; fixed fields by iterated intersection with $\ker(A_\sigma-I)$.\\
+\cite{r5} & Principal subfields $V_g=\{h(\theta):g\mid h(x)-h(\theta)\}$ with a self-contained proof
+(after \cite{SvH}); rational normalization of the recovered pair; explicit recovery formulas.\\
+\cite{r6} & Subfields by coefficient fields of divisors; trace centering; the sextic additive
+optimum $\Dp(uv)=6$ with the projection $T=(1-e_1)(1-e_2)$ argument; the multiplicative subgroup
+formulation $B_d(K)$.\\
+\cite{r7} & The degree-eight example of Theorem~\ref{thm:external} with a complete group-theoretic
+proof; the exponent bound with $\lcm(1,\dots,d)$; the three-quadratic example $\eta_3$; the
+many-factor norm relation \eqref{eq:normnec} and the $\zeta_8$ remark; the most complete package
+design (never executed).\\
+\cite{r8} & The nonmembership certificate (a separating functional $w^\top B_d=0$, $w^\top a\ne0$);
+the $\sqrt{2+\sqrt2}$ example; the necessary norm-descent condition (saturation of $B_d(L)$).\\
+\cite{r9} & Rank-one tensor test (Proposition~\ref{prop:tensor}); polynomial recovery certificates
+$A_\times,B_\times,A_+$; the sextic pair-product example $r_1r_2$ with $\Dt^{\Q(u)}=6>4=\Dt$; the
+example $\sqrt2+\sqrt3+\sqrt6$ as a three-term sum not reducible to two terms.\\
+\bottomrule
+\end{tabularx}
+\caption{What the nine reports added to the common core.}\label{tab:reports}
+\end{table}
+
+Points on which the reports are inconsistent with one another, or which the present work corrects:
+\begin{itemize}
+\item The reports describe the degree-eight example either as a counterexample to a published
+  descent theorem \cite{r1,r7} or only as a gap in its proof \cite{r3}.  The mathematical content
+  (Theorem~\ref{thm:external}) is not in dispute; we have phrased the attribution cautiously.
+\item All reports construct the splitting field with \code{ToNumberField[roots, All]} and convert
+  elements with \code{ToNumberField[a, theta]}.  On the examples this takes 14 minutes for the first
+  call and 10 minutes per element conversion in Wolfram 15.0.1 (Section~\ref{sec:impl}); it is not a
+  usable design.
+\item Several reports enumerate subfields of a Galois field by subsets of the linear factors of the
+  minimal polynomial ($2^{[L:\Q]-1}$ subsets) or by all subgroups without first computing the group;
+  the numerical-resolvent approach below is far cheaper.
+\item Report \cite{r9} notes that the binary product search of its package is complete only inside
+  $\Q(a)$ and that $\sqrt2+\sqrt3+\sqrt6$ needs three terms; Section~\ref{sec:binary} strengthens
+  this to a theorem covering both operations and Gaussian coefficients.
+\end{itemize}
+
+\section{Algorithms and implementation}\label{sec:impl}
+
+\subsection{Why not the power basis of a primitive element}
+
+All reports propose: compute all roots, call \code{ToNumberField[roots, All]} to obtain a primitive
+element $\theta$ of $L$ with the roots as polynomials in $\theta$, factor the minimal polynomial of
+$\theta$ over $L$ to get the automorphisms, then enumerate subgroups.  For the degree-nine examples
+($[L:\Q]=36$) the first call took about 14 minutes in Wolfram 15.0.1 and a single
+\code{ToNumberField[root, theta]} conversion a further 10 minutes.  The obstacle is not the degree
+but the power basis: a generic primitive element $\theta=\sum w_i\alpha_i$ has a minimal polynomial with
+coefficients around $10^{20}$, and the coordinates of the roots in the basis $1,\theta,\dots,\theta^{35}$
+have enormous height.  By contrast, \code{RootReduce[theta + w*Root[p,k]]}, which adjoins one root to a
+partial primitive element, takes about a second per step.  The implementation therefore never uses the
+power basis of $\theta$.
+
+\subsection{The Galois group by numerical resolvents}
+
+Let $P$ be monic with integer coefficients (replace $a$ by $c\,a$, $c$ the leading coefficient of its
+minimal polynomial, so that all roots are algebraic integers) and let $\beta_1,\dots,\beta_n$ be its
+roots, computed to high precision.  Choose integer weights $w_1,w_2,\dots$ and consider the partial
+sums $\theta_k=\sum_{i\le k}w_i\beta_i$.  The Galois group $G\le S_n$ is determined level by level: the
+set $O_k$ of $k$-tuples $\tau$ with $(\beta_{\tau(1)},\dots,\beta_{\tau(k)})$ in the $G$-orbit of
+$(\beta_1,\dots,\beta_k)$ is exactly the set of $\tau$ for which $\theta_\tau=\sum_{i\le k}
+w_i\beta_{\tau(i)}$ is a root of the minimal polynomial $m_k$ of $\theta_k$, provided the map
+$\tau\mapsto\theta_\tau$ is injective on the candidate set $\{(\tau',j):\tau'\in O_{k-1},\,j\notin\tau'\}$.
+The candidate set is $G$-stable, so $F_k(x)=\prod_{\text{candidates}}(x-\theta_\tau)$ is a monic integer
+polynomial; it is squarefree exactly when the injectivity holds, and then $m_k$ is its irreducible
+factor vanishing at $\theta_k$.  At level $n$, $O_n=G$ as a set of permutations, and closure under
+composition is verified.
+
+The Python implementation does this rigorously in Arb ball arithmetic \cite{Arb}: $F_k$ is computed
+as a ball polynomial, each coefficient ball must contain a unique integer (otherwise the precision is
+doubled), $F_k$ is factored exactly over $\Z$ with FLINT \cite{FLINT}, and $\tau\in O_k$ is tested by
+$m_k(\theta_\tau)\ni0$; since every true orbit element passes this test and the number of passing
+candidates is checked to equal $\deg m_k$, the orbit is determined exactly.  The Wolfram implementation
+obtains $m_k$ from \code{RootReduce} of $\theta_{k-1}+w_k\,\code{Root[P,k]}$ (exact), locates the roots
+numerically and applies the same counting checks; a degenerate weight (degree drop or collision) is
+detected and redrawn.  The dominant cost is the exact minimal polynomial (or the exact factorization
+of $F_k$, of degree at most $n|G|$); the method is practical for $|G|$ up to a few hundred.
+
+\subsection{The splitting field in a tower basis with trace coordinates}
+
+The levels at which $\deg m_k$ grows give a tower $L=\Q(\beta_{g_1},\dots,\beta_{g_s})$ with relative
+degrees $e_1,\dots,e_s$, $\prod e_j=|G|=N$, and the monomials $b=\prod_j\beta_{g_j}^{a_j}$,
+$0\le a_j<e_j$, form a $\Q$-basis of $L$ consisting of algebraic integers of small height.  Every
+$\sigma\in G$ acts on such a monomial by permuting the roots, so the values $\sigma(b)$ are known
+numerically for all $\sigma$ and all basis elements: an $N\times N$ matrix $\mathrm{Val}$.  The trace
+form $\Tr_{L/\Q}(b_jb_l)=\sum_\sigma\sigma(b_j)\sigma(b_l)$ is an integer matrix $\mathrm{Gram}=
+\mathrm{Val}^\top\mathrm{Val}$ (rounded rigorously), nondegenerate since $L/\Q$ is separable, and the
+coordinates of any $y\in L$ given by its conjugate vector $(\sigma(y))_\sigma$ are
+$\mathrm{Gram}^{-1}(\Tr(yb_l))_l$, again from rounded integer traces.  This yields, by exact rational
+linear algebra with integer inputs: the coordinates of all roots, the matrix $A_\sigma$ of every
+automorphism (conjugate vector of $\sigma(b_j)$ is $\tau\mapsto(\tau\sigma)(b_j)$, read from the
+multiplication table of $G$), multiplication matrices, fixed fields $L^H=\bigcap_{h\in H}
+\ker(A_h-I)$ for all subgroups (enumerated by closure from cyclic subgroups), and the linear systems of
+Theorems~\ref{thm:sum} and~\ref{thm:two}.  An element with coordinate vector $v$ is converted back to
+a \Root{} object by computing its distinct conjugates (the orbit of $v$ under the $A_\sigma$), the
+integer polynomial with those roots, and the index of the root nearest to its value.  A consistency
+check ($A_\sigma$ permutes the root coordinates as $\sigma$ does) guards the numerical steps, and every
+decomposition returned is verified with \code{RootReduce} and \code{MinimalPolynomial}.
+
+\subsection{The fast path inside $\Q(a)$}
+
+Independently of the Galois group, all subfields of $K=\Q(a)$ are obtained from the factorization
+$P=\prod g_i$ of the minimal polynomial over $K$ (\code{Factor[P, Extension -> Root[P,k]]}, $0.3$ s for
+the examples): each factor $g$ gives the principal subfield $V_g=\{h(\theta): g\mid h(x)-h(\theta)\}$,
+computed as a null space, and every subfield is an intersection of principal subfields
+\cite{SvH,r5,r9}.  In $K$ the additive criterion is complete for sums inside $K$, and the two-factor
+criterion with $t=1$ is complete for two factors inside $K$; if $K$ is Galois (all $g_i$ linear) both
+are globally complete.  The implementations try this path first and stop when it reaches a lower bound,
+which is what happens for both examples in \eqref{eq:examples}: the answers \eqref{eq:answers} are found
+and certified in about a second, without constructing the splitting field.
+
+\subsection{Normalization of the output}
+
+Linear algebra returns arbitrary elements of the solution spaces.  Summands are trace-centred (the
+rational mean of the conjugates, $\Tr(y)/[L:\Q]$, is subtracted and collected into one rational term);
+this recovers the trace-zero cubics of \eqref{eq:answers}.  For products the null vector is taken from
+an LLL-reduced basis of the integer null space, the factor $u$ is rescaled by the $p$-adically minimal
+rational $q$ making $qu$ an algebraic integer (for each prime, the least exponent $e$ with
+$v_p(c_i)+(d-i)e\ge0$ for all coefficients $c_i$ of the monic minimal polynomial), followed by a small
+search for the scaling of least coefficient height; the cofactor is divided accordingly.  This turns
+$\tfrac1{4}\cdot\Root[8+4\#+\#^3\&,1]\cdot\Root[-2+\ldots]$ into the factors of \eqref{eq:answers}.
+
+\subsection{Interface}
+
+\begin{lstlisting}
+Get["RootDecomposition.wl"];
+RootProductDecomposition[a]      RootProductDecomposition[a, d]
+RootSumDecomposition[a]          RootSumDecomposition[a, d]
+RootGaloisData[a]                RootDecompositionLowerBound[a]
+RootBoundedDecomposition[a, Plus|Times, d, height, factors]
+RootDecompositionVerify[a, terms, Plus|Times]
+\end{lstlisting}
+Results are associations with \code{"Terms"}, \code{"Degrees"}, \code{"MaximumDegree"},
+\code{"LowerBound"}, \code{"Optimal"} (globally optimal, certified), \code{"ScopeOptimal"} (optimal
+within the class searched), \code{"TwoFactorOptimal"}, \code{"NormExponent"}, \code{"Verified"},
+\code{"Method"} and an inactive \code{"Expression"}.  Options: \code{"Scope" -> "InputField"} restricts
+components to $\Q(a)$; \code{"Engine" -> "SplittingField"} forces the Galois route;
+\code{"Coefficients" -> "GaussianRationals"} and \code{"MaxTerms"} implement Section~\ref{sec:binary};
+\code{"MaxFactors" -> 2} restricts to the complete two-factor algorithm; \code{"MaxGroupOrder"} and
+\code{"WorkingPrecision"} bound the Galois computation.  The Python module \code{rootdecomp.py} exposes
+\code{sum\_decomposition}, \code{product\_decomposition}, \code{galois\_data}, \code{lower\_bound} and
+\code{parse\_wolfram\_root}, with the same semantics and root numbering.
+
+\subsection{Measurements}
+
+Table~\ref{tab:timing} lists wall-clock times on the development machine (Wolfram 15.0.1, Python 3.14
+with python-flint 0.8).  The Galois route of the Python port is faster than the Wolfram kernel because
+exact factorization of the resolvents in FLINT is cheaper than \code{RootReduce} of the partial primitive
+elements, and its rational linear algebra runs in FLINT rather than in the interpreter.  The fast path
+in $\Q(a)$ is the best choice for both examples.
+
+\begin{table}[htbp]
+\centering\small
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Task & Wolfram & Python\\
+\midrule
+Splitting-field data of the degree-9 examples ($|G|=36$) & 18--21 s & 3 s\\
+Product example, fast path in $\Q(a)$, certified optimal & $\approx1$ s & --\\
+Sum example, fast path in $\Q(a)$, certified optimal & $\approx1$ s & --\\
+$\Dp(\alpha_\times)=6$ with the splitting-field data cached & 0.2 s & 0.15 s\\
+$\sqrt{(1+\sqrt2)(1+\sqrt3)}$, $|G|=16$, two-factor with $t=2$ & 4 s & 0.4 s\\
+$x^4-x-1$ pair sum, $|G|=24$ & 3 s & 0.7 s\\
+\code{ToNumberField[roots, All]} for the degree-9 examples & 14 min & --\\
+\bottomrule
+\end{tabular}
+\caption{Timings; the fast-path figures are for the Wolfram package.}\label{tab:timing}
+\end{table}
+
+\subsection{Limits and scope of the certificates}
+
+The complete algorithms need the Galois group; the resolvent method is practical for groups of order
+up to a few hundred (the resolvent at level $k$ has degree up to $n\,|G|$).  For larger groups the fast
+path still returns decompositions inside $\Q(a)$ and the bounded search still finds small-height
+factors, but global negative statements are unavailable unless a lower bound is attained.  The Python
+Galois computation is rigorous (ball arithmetic and exact factorization); the Wolfram one relies on
+exact minimal polynomials, numerical root matching with generous margins, and the group-closure and
+automorphism-consistency checks, and every positive answer is verified exactly.  A returned
+\code{"Optimal" -> False} means \emph{not certified}, not \emph{suboptimal}.
+
+\section{Conclusion}
+
+The additive problem is completely solved by a finite algorithm, and the two-factor multiplicative
+problem likewise; the key steps are trace descent to the splitting field and norm descent with an
+explicit radical exponent, both of which reduce to rational linear algebra on fixed fields.  The
+arbitrary-length multiplicative problem is different in kind: its answer depends on arithmetic
+invisible to the Galois group, and its decidability is open.  For the two numbers of the question the
+answer is unambiguous --- the cubic decompositions \eqref{eq:answers} are globally optimal --- and the
+same machinery shows that the product root needs sextic summands, that optimal factors can live outside
+the splitting field, and that flat sums of three quadratic numbers can be inaccessible to any binary
+splitting, even with Gaussian coefficients.
+
+\begin{thebibliography}{99}\raggedright\sloppy
+\bibitem{question} V. Reshetnikov, \emph{Factor a polynomial Root into Roots of smallest possible
+  degree}, Mathematica Stack Exchange, question 105933 (2016), with an answer by yarchik (2019).
+  \url{https://mathematica.stackexchange.com/q/105933/7288}.
+\bibitem{r1} Report 1, \emph{Decomposing Algebraic Numbers into Low-Degree Roots} (2026),
+  \code{reports/report-01} in the repository.
+\bibitem{r2} Report 2, \emph{Decomposing Algebraic Numbers into Low-Degree Roots: Certified Mathematica
+  searches, global degree bounds, and exact normal-field algorithms} (2026), \code{reports/report-02}.
+\bibitem{r3} Report 3, \emph{Decomposing Polynomial Roots into Low-Degree Sums and Products} (2026),
+  \code{reports/report-03}.
+\bibitem{r4} Report 4, \emph{Decomposing Algebraic Numbers into Low-Degree Roots: Exact Mathematica
+  methods, global minimality certificates, and the distinction between sums and products} (2026),
+  \code{reports/report-04}.
+\bibitem{r5} Report 5, \emph{Decomposing algebraic numbers into low-degree Roots} (2026),
+  \code{reports/report-05}.
+\bibitem{r6} Report 6, \emph{Decomposing Algebraic Roots into Low-Degree Sums and Products} (2026),
+  \code{reports/report-06}.
+\bibitem{r7} Report 7, \emph{Decomposing Algebraic Roots into Low-Degree Sums and Products: Mathematica
+  algorithms, optimality certificates, and the role of the splitting field} (2026),
+  \code{reports/report-07}.
+\bibitem{r8} Report 8, \emph{Decomposing Algebraic Roots Into Sums and Products of Minimum Degree}
+  (2026), \code{reports/report-08}.
+\bibitem{r9} Report 9, \emph{Decomposing Algebraic Numbers into Low-Degree Sums and Products: Exact
+  algorithms, global degree bounds, and a Wolfram Language reference implementation} (2026),
+  \code{reports/report-09}.
+\bibitem{Altamirano} C. Altamirano, \emph{A Problem in Algebraic Number Theory}, MIT UROP+ final
+  paper (2017), as cited in \cite{r1,r3,r7}.
+\bibitem{Samuels} C. L. Samuels, \emph{The infimum in the metric Mahler measure}, arXiv:1408.4165
+  (2014).
+\bibitem{BFSS} A. Bostan, P. Flajolet, B. Salvy, \'E. Schost, \emph{Fast computation of special
+  resultants}, J. Symbolic Comput. 41 (2006), 1--29.
+\bibitem{Cohen} H. Cohen, \emph{A Course in Computational Algebraic Number Theory}, Graduate Texts in
+  Mathematics 138, Springer, 1993.
+\bibitem{SvH} J. Szutkoski, M. van Hoeij, \emph{The complexity of computing all subfields of an
+  algebraic number field}, J. Symbolic Comput. 93 (2019), 161--182; arXiv:1606.01140.
+\bibitem{vHKN} M. van Hoeij, J. Kl\"uners, A. Novocin, \emph{Generating subfields}, J. Symbolic
+  Comput. 52 (2013), 17--34.
+\bibitem{Stauduhar} R. P. Stauduhar, \emph{The determination of Galois groups}, Math. Comp. 27
+  (1973), 981--996.
+\bibitem{FK} C. Fieker, J. Kl\"uners, \emph{Computation of Galois groups of rational polynomials},
+  LMS J. Comput. Math. 17 (2014), 141--158.
+\bibitem{Arb} F. Johansson, \emph{Arb: efficient arbitrary-precision midpoint-radius interval
+  arithmetic}, IEEE Trans. Comput. 66 (2017), 1281--1292.
+\bibitem{FLINT} W. Hart, \emph{Fast Library for Number Theory: an introduction}, in: Mathematical
+  Software -- ICMS 2010, Lecture Notes in Computer Science 6327, Springer, 2010, 88--91;
+  python-flint, \url{https://github.com/flintlib/python-flint}.
+\bibitem{Milne} J. S. Milne, \emph{Fields and Galois Theory}, course notes, version 5.10 (2022),
+  \url{https://www.jmilne.org/math/CourseNotes/FT.pdf}.
+\end{thebibliography}
+
+\end{document}
