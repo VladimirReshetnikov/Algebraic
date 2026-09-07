@@ -1,0 +1,95 @@
+{
+  "sympy_version": "1.14.0",
+  "wolfram_runtime_tested": false,
+  "resultants_equal_input_polynomials": true,
+  "sum": {
+    "irreducible": true,
+    "real_root_count": 1,
+    "factor_degrees_over_input_field": [
+      1,
+      2,
+      2,
+      4
+    ],
+    "all_subfield_degrees": [
+      1,
+      3,
+      3,
+      9
+    ],
+    "component_degrees": [
+      3,
+      3
+    ],
+    "component_minimal_polynomials": [
+      "z**3 + 29994*z**2/20933 - 138310477*z/438190489 + 5791013117207/9172641506237",
+      "z**3 - 29994*z**2/20933 + 738070501*z/438190489 + 3792212877223/9172641506237"
+    ],
+    "component_polynomials_in_input_root": [
+      "2025*x**8/83732 + 375*x**7/41866 - 2187*x**6/41866 + 5265*x**5/41866 + 9975*x**4/83732 - 7217*x**3/20933 - 51921*x**2/83732 + 1619*x/1903",
+      "-2025*x**8/83732 - 375*x**7/41866 + 2187*x**6/41866 - 5265*x**5/41866 - 9975*x**4/83732 + 7217*x**3/20933 + 51921*x**2/83732 + 284*x/1903"
+    ],
+    "identity_verified_exactly": true,
+    "input_real_approximation": "-2.007045761072765353330393",
+    "short_rational_recovery_verified": true,
+    "normalized_component_minimal_polynomials": [
+      "z**3 - z + 1",
+      "z**3 + z + 1"
+    ],
+    "rational_normalization_verified": true
+  },
+  "product": {
+    "irreducible": true,
+    "real_root_count": 1,
+    "factor_degrees_over_input_field": [
+      1,
+      2,
+      2,
+      4
+    ],
+    "all_subfield_degrees": [
+      1,
+      3,
+      3,
+      9
+    ],
+    "component_degrees": [
+      3,
+      3
+    ],
+    "component_minimal_polynomials": [
+      "z**3 + 4*z/9 - 8/27",
+      "z**3 - 9*z/4 - 27/8"
+    ],
+    "component_polynomials_in_input_root": [
+      "x**7/3 + 2*x**5/3 - 2*x**4/3 + 1/3",
+      "3*x**7/4 + 3*x**5/2 - 3*x**4/2 + 3*x**3/2 + 3*x/2 - 3/4"
+    ],
+    "identity_verified_exactly": true,
+    "input_real_approximation": "0.9038918944583475610989590",
+    "short_rational_recovery_verified": true,
+    "normalized_component_minimal_polynomials": [
+      "z**3 + z + 1",
+      "z**3 - z + 1"
+    ],
+    "rational_normalization_verified": true
+  },
+  "sextic_ambient_field_counterexample": {
+    "polynomial": "x**6 + 4*x**2 - 1",
+    "all_subfield_degrees": [
+      1,
+      3,
+      6
+    ],
+    "not_in_sum_of_proper_subfields": true,
+    "pair_sum_resultant_identity": true,
+    "quartic_irreducible_mod_2": true,
+    "quartic_factor_degrees_mod_7": [
+      1,
+      3
+    ],
+    "internal_additive_optimum": 6,
+    "global_additive_optimum_proved_in_article": 4
+  }
+}
+PASS: exact independent checks; Wolfram Language not executed.

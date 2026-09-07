@@ -1,0 +1,14 @@
+SymPy version: 1.14.0
+Both requested resultant identities: PASSED
+Cubic discriminants: -31, -23
+Product input: degree 9, irreducible, 1 real root
+  Real root (orientation only): 0.90389189445834756110
+Sum input: degree 9, irreducible, 1 real root
+  Real root (orientation only): -2.0070457610727653533
+Matching-sum sextic: irreducible, exactly two real roots
+  Real root (orientation only): 0.049615978426287153599
+  Real root (orientation only): 2.6620597049487555297
+Counterexample to degree-product divisibility: minpoly x^6 + 108
+Three quadratic factors example: degree 8
+  Minimal polynomial: x**8 - 8*x**7 - 256*x**6 - 768*x**5 + 3008*x**4 + 6144*x**3 - 16384*x**2 + 4096*x + 4096
+All exact elementary checks PASSED

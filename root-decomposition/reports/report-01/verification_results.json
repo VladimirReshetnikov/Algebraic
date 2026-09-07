@@ -1,0 +1,187 @@
+{
+  "sum_resultant": true,
+  "product_resultant": true,
+  "p_irreducible": true,
+  "p_one_real_root": true,
+  "q_irreducible": true,
+  "q_one_real_root": true,
+  "sum9_irreducible": true,
+  "sum9_one_real_root": true,
+  "product9_irreducible": true,
+  "product9_one_real_root": true,
+  "cubic_discriminants": true,
+  "p_isolating_interval": true,
+  "q_isolating_interval": true,
+  "sum9_isolating_interval": true,
+  "product9_isolating_interval": true,
+  "product_reconstruction_a": true,
+  "product_reconstruction_b": true,
+  "product_reconstruction_multiply": true,
+  "sum_reconstruction_a": true,
+  "sum_reconstruction_b": true,
+  "sum_reconstruction_add": true,
+  "sum_template_groebner": true,
+  "product_template_groebner": true,
+  "shared_field_sum": true,
+  "disjoint_field_product_collision": true,
+  "degree_not_divisor_of_rs": true,
+  "difference6_irreducible": true,
+  "matching_sextic_elimination": true,
+  "matching_sextic_irreducible": true,
+  "matching_sextic_two_real_roots": true,
+  "matching_sum_annihilates_product9": true,
+  "matching_root1_interval": true,
+  "matching_root2_interval": true,
+  "counterexample_product_resultant": true,
+  "beta4_irreducible": true,
+  "gamma4_irreducible": true,
+  "counterexample8_irreducible": true,
+  "quadratic_subfields_disjoint": true,
+  "sum9_subset_minimum": true,
+  "sum9_subset": {
+    "minimum_degree": 3,
+    "candidate_count": 133,
+    "degree_histogram": {
+      "3": 6,
+      "6": 12,
+      "9": 55,
+      "18": 36,
+      "36": 24
+    },
+    "selected_degrees": [
+      3,
+      3,
+      3
+    ],
+    "selected_subsets_1_based": [
+      [
+        1,
+        2,
+        3
+      ],
+      [
+        4,
+        5,
+        6
+      ],
+      [
+        1,
+        4,
+        7
+      ]
+    ],
+    "coefficients": [
+      "1/3",
+      "0",
+      "1/3"
+    ]
+  },
+  "product9_subset_minimum": true,
+  "product9_subset": {
+    "minimum_degree": 6,
+    "candidate_count": 133,
+    "degree_histogram": {
+      "6": 6,
+      "9": 27,
+      "12": 12,
+      "18": 52,
+      "36": 36
+    },
+    "selected_degrees": [
+      6,
+      6,
+      6,
+      6
+    ],
+    "selected_subsets_1_based": [
+      [
+        3,
+        5,
+        7
+      ],
+      [
+        2,
+        6,
+        7
+      ],
+      [
+        3,
+        4,
+        8
+      ],
+      [
+        1,
+        6,
+        8
+      ]
+    ],
+    "coefficients": [
+      "0",
+      "-1/3",
+      "-1/3",
+      "1/3"
+    ]
+  },
+  "multiquadratic8_subset_minimum": true,
+  "multiquadratic8_subset": {
+    "minimum_degree": 2,
+    "candidate_count": 45,
+    "degree_histogram": {
+      "2": 9,
+      "4": 9,
+      "8": 27
+    },
+    "selected_degrees": [
+      2,
+      2,
+      2
+    ],
+    "selected_subsets_1_based": [
+      [
+        2,
+        3
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        5
+      ]
+    ],
+    "coefficients": [
+      "1/2",
+      "1/2",
+      "1/2"
+    ]
+  },
+  "counterexample_group_order": true,
+  "counterexample_group_center": true,
+  "counterexample_group_exponent": true,
+  "counterexample_center_free_subgroup_size_bound": true,
+  "counterexample_low_index_subgroups_fix_center": true,
+  "counterexample_group_subgroups": {
+    "count": 110,
+    "size_histogram": {
+      "1": 1,
+      "2": 19,
+      "4": 39,
+      "8": 35,
+      "16": 15,
+      "32": 1
+    },
+    "largest_avoiding_center": 4
+  },
+  "fixed_field_product_positive": true,
+  "fixed_field_product_negative": true,
+  "fixed_field_sum_positive": true,
+  "fixed_field_sum_negative": true,
+  "verification_environment": {
+    "python_backend": "SymPy",
+    "sympy_version": "1.14.0",
+    "native_wolfram_package_executed": false,
+    "native_wolfram_note": "Available Wolfram evaluator endpoint returned HTTP 404."
+  },
+  "all_assertions_passed": true
+}

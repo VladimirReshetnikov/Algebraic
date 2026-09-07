@@ -1,0 +1,52 @@
+Independent exact verification: 40 checks passed.
+Python 3.13.5; SymPy 1.14.0.
+This is not a native Wolfram Language test run.
+
+PASS  sum resultant
+PASS  product resultant
+PASS  cubic discriminants
+PASS  f irreducible over Q
+PASS  f has exactly one real root
+      [((-87819/128705, -58120/85179), 1)]
+PASS  g irreducible over Q
+PASS  g has exactly one real root
+      [((-2196491/1658082, -63760/48131), 1)]
+PASS  P irreducible over Q
+PASS  P has exactly one real root
+      [((77525/85768, 112107/124027), 1)]
+PASS  S irreducible over Q
+PASS  S has exactly one real root
+      [((-193419/96370, -358637/178689), 1)]
+PASS  product recovered u satisfies f
+PASS  product recovered v satisfies g
+PASS  product recovery identity
+PASS  sum recovered u satisfies f
+PASS  sum recovered v satisfies g
+PASS  sum recovery identity
+PASS  sum primitive-element determinant
+      -1339712
+PASS  sum rational power-basis recovery of u
+PASS  sum rational power-basis recovery of v
+PASS  product primitive-element determinant
+      -8
+PASS  product rational power-basis recovery of u
+PASS  product rational power-basis recovery of v
+PASS  sum discovered in height-one cubic box
+      ('x**3 - x + 1', 'x**3 + x + 1')
+PASS  product discovered in height-one cubic box
+      ('x**3 - x - 1', 'x**3 + x - 1')
+PASS  three-quadratic identity
+PASS  counterexample polynomial
+PASS  counterexample irreducible
+PASS  rank-one obstruction 2
+PASS  rank-one obstruction 5/2
+PASS  rank-one obstruction 10/3
+PASS  global two-factor criterion rejects degree bound 2
+PASS  global two-factor criterion rejects degree bound 3
+PASS  quadratic subfields span the biquadratic field
+PASS  polynomial and rational product u formulas agree
+PASS  polynomial and rational product v formulas agree
+PASS  zero-linear-coefficient example target degree eight
+PASS  zero-linear-coefficient example first factor degree four
+PASS  zero-linear-coefficient example second factor degree four
+PASS  Wolfram package delimiter/string/comment balance

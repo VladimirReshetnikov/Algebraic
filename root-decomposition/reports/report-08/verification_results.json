@@ -1,0 +1,57 @@
+{
+  "python_version": "3.13.5",
+  "sympy_version": "1.14.0",
+  "passed": 30,
+  "failed": 0,
+  "checks": [
+    "sum resultant equals the supplied polynomial",
+    "product resultant equals the supplied polynomial",
+    "both cubics irreducible",
+    "both nonics irreducible over Q",
+    "both nonics have exactly one real root",
+    "cubic discriminants are -31 and -23",
+    "sparse product coefficient formula",
+    "sparse sum discovery coefficients",
+    "Kronecker product agrees with the resultant",
+    "Kronecker sum agrees with the resultant",
+    "nonmonic coefficients are normalized correctly",
+    "zero product has correct multiplicity",
+    "composed polynomial may have repeated factors",
+    "minimal polynomial need only divide the resultant",
+    "actual target has smaller degree than the full resultant",
+    "height-one cubic catalog discovers a sum decomposition",
+    "height-one cubic catalog discovers a product decomposition",
+    "nonmonic catalog includes 2*x^2-1",
+    "four rational automorphism matrices close under multiplication",
+    "theta is not in the degree-one fixed space",
+    "quadratic fixed spaces span the biquadratic field",
+    "theta is a sum of elements from degree-two subfields",
+    "quartic pair-sum resultant formula",
+    "sextic pair-sum polynomial is irreducible",
+    "quartic is irreducible modulo two",
+    "quartic discriminant is -283",
+    "quartic resolvent is irreducible",
+    "three quadratic summands can require degree eight",
+    "three quadratic factors can require degree eight",
+    "nested-square-root example has absolute degree four"
+  ],
+  "height_one_cubic_count": 12,
+  "discovered_polynomial_pairs": {
+    "Sum": [
+      "x**3 - x + 1",
+      "x**3 + x + 1"
+    ],
+    "Product": [
+      "x**3 - x - 1",
+      "x**3 + x - 1"
+    ]
+  },
+  "approximations": {
+    "a": "-0.682327803828019327369483739711",
+    "b": "-1.32471795724474602596090885448",
+    "a_plus_b": "-2.00704576107276535333039259419",
+    "a_times_b": "0.903891894458347561098959026167"
+  },
+  "wolfram_language_kernel_tested": false,
+  "wolfram_connector_error": "HTTP 404, MCP SSE probe failed; no kernel result returned."
+}

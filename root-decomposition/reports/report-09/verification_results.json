@@ -1,0 +1,61 @@
+{
+  "sympy_version": "1.14.0",
+  "mathematica_runtime_tested": false,
+  "resultants": "both exact identities passed",
+  "product": {
+    "subfield_degrees": [
+      1,
+      3,
+      3,
+      9
+    ],
+    "binary_product_degree": 3,
+    "coordinate_factors": [
+      "t**7/2 + t**5 - t**4 + 1/2",
+      "t**7/2 + t**5 - t**4 + t**3 + t - 1/2"
+    ]
+  },
+  "sum": {
+    "subfield_degrees": [
+      1,
+      3,
+      3,
+      9
+    ],
+    "minimum_sum_degree": 3,
+    "coordinate_terms": [
+      "2025*t**8/83732 + 375*t**7/41866 - 2187*t**6/41866 + 5265*t**5/41866 + 9975*t**4/83732 - 7217*t**3/20933 - 51921*t**2/83732 + 1619*t/1903",
+      "-2025*t**8/83732 - 375*t**7/41866 + 2187*t**6/41866 - 5265*t**5/41866 - 9975*t**4/83732 + 7217*t**3/20933 + 51921*t**2/83732 + 284*t/1903"
+    ]
+  },
+  "recovery_certificates": "six exact polynomial remainder tests passed",
+  "three_term_sum": {
+    "polynomial": "x**4 - 22*x**2 - 48*x - 23",
+    "minimum_degree": 2,
+    "term_count": 3
+  },
+  "three_factor_product": {
+    "polynomial": "x**8 - 8*x**7 - 256*x**6 - 768*x**5 + 3008*x**4 + 6144*x**3 - 16384*x**2 + 4096*x + 4096",
+    "subfield_count": 16,
+    "minimum_degree": 2,
+    "factor_count": 3
+  },
+  "external_sum": {
+    "polynomial": "x**6 + 4*x**2 - 1",
+    "subfield_degrees": [
+      1,
+      3,
+      6
+    ]
+  },
+  "external_product": {
+    "polynomial": "x**6 + x**4 - x**3 - x**2 - 1",
+    "subfield_degrees": [
+      1,
+      3,
+      6
+    ]
+  },
+  "elapsed_seconds": 7.82,
+  "status": "all assertions passed"
+}

@@ -1,0 +1,73 @@
+{
+  "sum_resultant": true,
+  "product_resultant": true,
+  "p_irreducible_over_Q": true,
+  "p_exactly_one_real_root": true,
+  "q_irreducible_over_Q": true,
+  "q_exactly_one_real_root": true,
+  "sum_irreducible_over_Q": true,
+  "sum_exactly_one_real_root": true,
+  "product_irreducible_over_Q": true,
+  "product_exactly_one_real_root": true,
+  "cubic_discriminants": [
+    -31,
+    -23
+  ],
+  "sum_certificate_denominator_nonzero": true,
+  "sum_first_cubic_certificate": true,
+  "sum_second_denominator_nonzero": true,
+  "sum_second_cubic_certificate": true,
+  "product_certificate_denominator_nonzero": true,
+  "product_first_cubic_certificate": true,
+  "product_second_denominator_nonzero": true,
+  "product_second_cubic_certificate": true,
+  "polynomial_product_certificate": true,
+  "polynomial_u_cubic_certificate": true,
+  "polynomial_v_cubic_certificate": true,
+  "pairing_sextic_irreducible": true,
+  "pairing_sextic_two_real_roots": true,
+  "pairing_sextic_sum_resultant_contains_product_input": true,
+  "pairing_quadratic_divides_sextic_exactly": true,
+  "S3xS3_exponent_6": true,
+  "product_input_no_additive_degree_at_most_5": true,
+  "product_input_additive_degree_6_suffices": true,
+  "product_input_no_lower_additive_decomposition_inside_Qalpha": true,
+  "S3xS3_subgroup_index_counts": {
+    "1": 1,
+    "2": 3,
+    "3": 6,
+    "4": 1,
+    "6": 20,
+    "9": 9,
+    "12": 4,
+    "18": 15,
+    "36": 1
+  },
+  "external_example_square_minimal_polynomial": true,
+  "external_example_degree_8": true,
+  "external_example_four_real_roots": true,
+  "external_example_resultant_is_square_not_minimal_polynomial": true,
+  "external_example_factors_degree_4": true,
+  "order16_group_associative": true,
+  "external_example_Galois_exponent_4": true,
+  "every_degree_below_8_subfield_is_fixed_by_z": true,
+  "order16_subgroup_index_counts": {
+    "1": 1,
+    "2": 7,
+    "4": 7,
+    "8": 7,
+    "16": 1
+  },
+  "three_quadratic_factors_degree_8": true,
+  "display_values": {
+    "u": "-0.6823278038280193273694837",
+    "v": "-1.324717957244746025960909",
+    "u_plus_v": "-2.007045761072765353330393",
+    "u_times_v": "0.9038918944583475610989590"
+  },
+  "versions": {
+    "python": "3.13.5",
+    "sympy": "1.14.0"
+  },
+  "native_Wolfram_tests": "Not executed: available Wolfram evaluator returned HTTP 404."
+}

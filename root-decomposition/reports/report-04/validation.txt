@@ -1,0 +1,60 @@
+Python 3.13.5; SymPy 1.14.0
+Independent symbolic validation; Wolfram code was not kernel-executed.
+
+PASS 01: forward sum resultant
+PASS 02: forward product resultant
+PASS 03: f irreducible over Q
+PASS 04: f has exactly one real root
+PASS 05: g irreducible over Q
+PASS 06: g has exactly one real root
+PASS 07: Pm irreducible over Q
+PASS 08: Pm has exactly one real root
+PASS 09: Ps irreducible over Q
+PASS 10: Ps has exactly one real root
+PASS 11: cubic discriminants
+PASS 12: sum inverse resultant recovers g
+PASS 13: sum inverse resultant factor degrees and multiplicities
+PASS 14: product inverse resultant recovers g
+PASS 15: product inverse resultant factor degrees and multiplicities
+PASS 16: sum recovery denominator coprime to P
+PASS 17: sum recovered first root satisfies f
+PASS 18: sum second denominator coprime to P
+PASS 19: sum recovered second root satisfies g
+PASS 20: sum recovered roots combine to x
+PASS 21: product recovery denominator coprime to P
+PASS 22: product recovered first root satisfies f
+PASS 23: product second denominator coprime to P
+PASS 24: product recovered second root satisfies g
+PASS 25: product recovered roots combine to x
+PASS 26: sum branch: f has root between -683/1000 and -682/1000
+PASS 27: sum branch: g has root between -1325/1000 and -1324/1000
+PASS 28: four exact biquadratic automorphisms
+PASS 29: automorphisms all have exponent dividing 2
+PASS 30: complete V4 fixed-space enumeration has five subfields
+PASS 31: subfield dimensions
+PASS 32: additive span membership at degree threshold 1
+PASS 33: additive span membership at degree threshold 2
+PASS 34: 1+sqrt(2)+sqrt(3) minimal polynomial
+PASS 35: biquadratic norm is -8
+PASS 36: biquadratic has four real conjugates
+PASS 37: quartic pair-sum resultant factorization
+PASS 38: quartic and pair-sum polynomials irreducible
+PASS 39: quartic discriminant is -283
+PASS 40: quartic irreducible modulo two
+PASS 41: quartic resolvent irreducible with the same discriminant
+PASS 42: two cubic summands can have degree-six sum
+PASS 43: nonmonic first polynomial yields the correct quadratic complement
+PASS 44: quartic has two real roots and pair-sum polynomial has two
+PASS 45: degree-eight three-summand example
+PASS 46: degree-eight three-factor example
+PASS 47: composed sum can have repeated roots
+PASS 48: composed product can have repeated roots
+PASS 49: two rational normalized product ansatz solutions
+PASS 50: two rational depressed-cubic sum solutions
+
+All 50 exact checks passed.
+Illustrative decimals (not certificates):
+  a = -0.682327803828019327
+  b = -1.32471795724474603
+  a*b = 0.903891894458347561
+  a+b = -2.00704576107276535

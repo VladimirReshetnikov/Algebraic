@@ -1,0 +1,732 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=26mm,headheight=15pt]{geometry}
+\usepackage{microtype,amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,longtable,array,enumitem,xcolor,listings,fancyhdr}
+\usepackage[breaklinks=true,colorlinks=true,linkcolor=blue!45!black,citecolor=blue!45!black,urlcolor=blue!45!black]{hyperref}
+\usepackage{xurl}
+\hypersetup{pdftitle={Decomposing Algebraic Numbers into Low-Degree Roots},
+ pdfsubject={Exact Mathematica algorithms and degree-minimality certificates},
+ pdfauthor={OpenAI},pdfkeywords={algebraic numbers, Mathematica, subfields, resultants}}
+\definecolor{ink}{RGB}{24,48,70}
+\definecolor{codebg}{RGB}{246,247,249}
+\pagestyle{fancy}
+\fancyhf{}\fancyhead[L]{\small Low-degree algebraic decompositions}
+\fancyhead[R]{\small Exact algorithms and certificates}
+\fancyfoot[C]{\thepage}
+\setlength{\parskip}{4pt}\setlength{\parindent}{0pt}
+\setlist{nosep,leftmargin=*}
+\lstset{language=Mathematica,basicstyle=\ttfamily\footnotesize,
+ keywordstyle=\color{ink},commentstyle=\itshape\color{black!60},
+ stringstyle=\color{black!80},backgroundcolor=\color{codebg},
+ frame=single,rulecolor=\color{black!15},breaklines=true,
+ columns=fullflexible,keepspaces=true,showstringspaces=false,
+ tabsize=2,aboveskip=9pt,belowskip=9pt}
+\newcommand{\Q}{\mathbb Q}
+\newcommand{\Qbar}{\overline{\mathbb Q}}
+\newcommand{\R}{\mathbb R}
+\newcommand{\C}{\mathbb C}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\degQ}{\operatorname{deg}_{\Q}}
+\newcommand{\Gal}{\operatorname{Gal}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\Nm}{\operatorname{N}}
+\newcommand{\Res}{\operatorname{Res}}
+\newcommand{\Span}{\operatorname{span}_{\Q}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
+\title{\vspace{-12mm}\color{ink}\Huge Decomposing Algebraic Numbers\\[5pt]
+\LARGE into Low-Degree Roots\\[12pt]
+\large Exact Mathematica algorithms, global additive optimization,\\
+and certified multiplicative decompositions}
+\author{A constructive study with Wolfram Language code}
+\date{September 6, 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+Given an exact algebraic number, how can one express it as a sum or product of algebraic numbers while minimizing the largest absolute degree of a component? This article develops a field-theoretic answer and a Wolfram Language implementation. Two-component decompositions in a specified number field reduce to rational linear algebra: addition tests membership in a sum of subfields, whereas multiplication tests a nonzero intersection $F\cap\alpha E$. We construct the complete embedded subfield lattice by polynomial factorization and linear equations, without guessing the component polynomials. For arbitrary finite sums, a normalized-trace argument reduces the unrestricted problem to the normal closure of the input field, giving a complete finite algorithm. For products we provide complete two-component optimization inside an ambient field, exact resultant-based discovery, and exhaustive bounded searches for any specified number of factors; these scopes are explicitly distinguished from unrestricted global optimization. Both ninth-degree examples in the question are decomposed into the requested cubic roots, and degree three is proved globally optimal even when the number of components is unrestricted. The archive contains the complete Wolfram Language package, a local test suite, and independently executed exact-arithmetic validation.
+\end{abstract}
+\vspace{4pt}
+\begin{center}
+\fbox{\begin{minipage}{0.92\linewidth}\small
+\textbf{Scope and validation.} The mathematical solution for the two supplied examples is complete. The global finite-sum algorithm is proved complete. No general terminating optimizer for unrestricted finite products in all of $\Qbar$ is claimed. The Wolfram connector returned an HTTP 404 in this session, so the supplied Wolfram Language code was not executed in a Mathematica kernel. The algebraic identities and the principal-subfield/pair algorithms were independently checked with exact SymPy arithmetic; a Mathematica test suite is included for local execution.
+\end{minipage}}
+\end{center}
+\tableofcontents
+\newpage
+
+\section{The answer for the two examples}
+\label{sec:answer}
+Let
+\begin{align*}
+ p(X)&=X^3+X+1, & q(X)&=X^3-X+1,\\
+ a&=\code{Root[1+\#+\#\^{}3\&,1]},&
+ b&=\code{Root[1-\#+\#\^{}3\&,1]}.
+\end{align*}
+Both cubics have a unique real root. Numerically, for identification only,
+\[
+ a\approx-0.68232780382801932737,\qquad
+ b\approx-1.32471795724474602596.
+\]
+Write the input polynomials as
+\begin{align}
+ f_\times(X)&=X^9+2X^7-3X^6+X^5-X^4+3X^3-X-1,
+ \label{eq:fp}\\
+ f_+(X)&=X^9+6X^6+3X^5-15X^3+24X^2-4X+8.
+ \label{eq:fs}
+\end{align}
+The requested answers are exactly
+\[
+ \boxed{\alpha_\times=ab},\qquad
+ \boxed{\alpha_+=a+b}.
+\]
+Their maximum component degree is \emph{three}, and no finite sum or product of degree-one and degree-two numbers can represent either input. This is a global minimality statement, not merely a successful search among pairs of cubics.
+
+\subsection{Immediate exact checks in Mathematica}
+\begin{lstlisting}
+a = Root[1 + # + #^3 &, 1];
+b = Root[1 - # + #^3 &, 1];
+alphaProduct = Root[
+  -1 - # + 3 #^3 - #^4 + #^5 - 3 #^6 + 2 #^7 + #^9 &, 1];
+alphaSum = Root[
+  8 - 4 # + 24 #^2 - 15 #^3 + 3 #^5 + 6 #^6 + #^9 &, 1];
+
+RootReduce[alphaProduct - a b]     (* 0 *)
+RootReduce[alphaSum - a - b]       (* 0 *)
+Exponent[MinimalPolynomial[#, x], x] & /@ {a, b}
+(* {3, 3} *)
+\end{lstlisting}
+These comments give the mathematically established expected outputs, not a transcript from an available Mathematica kernel. \code{RootReduce} canonicalizes algebraic combinations, and \code{MinimalPolynomial} computes the absolute polynomial over $\Q$ in the unqualified form used here \cite{rootreduce,minpoly}.
+
+\subsection{Automatic discovery, without entering the cubics}
+Load the accompanying package and run:
+\begin{lstlisting}
+Get["code/RootDecomposition.wl"];
+
+productData = RootSubfieldData[alphaProduct];
+sumData = RootSubfieldData[alphaSum];
+
+productAnswer = RootPairDecompose[
+  alphaProduct, "Product", productData];
+sumAnswer = RootPairDecompose[alphaSum, "Sum", sumData];
+
+productAnswer["Components"]
+sumAnswer["Components"]
+\end{lstlisting}
+The algorithm obtains the cubic subfields from the input alone. It does not use a coefficient-height bound, an integer-relation guess, or a list of candidate cubic polynomials. Rational normalization of the two components removes the arbitrary rational scaling in the product and the arbitrary rational translation in the sum. The components are the requested $a,b$, possibly in the opposite order. The independent reference implementation, before that optional normalization, found rationally rescaled cubic factors, as expected.
+
+For both inputs the complete subfield-degree list is
+\[
+ \{1,3,3,9\},
+\]
+and the input polynomial factors over its own number field into irreducible factors of degrees
+\[
+ \{1,2,2,4\}.
+\]
+The exact independent checks found component degrees $\{3,3\}$ and verified the identities. The expected result fields include
+\begin{lstlisting}
+"MaximumDegree" -> 3
+"Verified" -> True
+"GlobalDegreeLowerBound" -> 3
+"GlobalOptimalityProved" -> True
+\end{lstlisting}
+The last field is justified by a theorem below, not by exhausting only a finite coefficient search.
+
+\section{What exactly is being minimized?}
+\label{sec:problem}
+For $\beta\in\Qbar$, define
+\[
+ \degQ(\beta)=[\Q(\beta):\Q].
+\]
+The intrinsic degree is the degree of its minimal polynomial, not the degree of an arbitrarily padded defining polynomial and not a relative degree over an algebraic coefficient field. We assume that every polynomial underlying a component \code{Root} has rational coefficients. Allowing arbitrary algebraic coefficients would trivialize the question: $X-\alpha$ has degree one over $\Q(\alpha)$.
+
+For a finite expression
+\[
+ \alpha=\beta_1+\cdots+\beta_r
+ \quad\hbox{or}\quad
+ \alpha=\beta_1\cdots\beta_r,
+\]
+its cost is $\max_i\degQ(\beta_i)$. Nonzero factors are assumed when $\alpha\ne0$. Rationals have degree one; zero is handled separately in the product routine. Adding zero, multiplying by one, or moving a rational constant between two components does not affect the minimum. Complex algebraic components are permitted unless a real-only restriction is explicitly imposed.
+
+There are three independent distinctions.
+\begin{enumerate}
+\item \textbf{Two components versus arbitrarily many.} Minimizing over pairs is a different optimization problem from minimizing over all finite expressions.
+\item \textbf{Internal versus unrestricted.} Requiring every component to lie in $K=\Q(\alpha)$ can change the answer. The input does not impose that requirement.
+\item \textbf{Discovery versus proof of optimality.} An exact identity proves an upper bound. A lower bound or a complete exhaustion theorem is needed to prove a minimum.
+\end{enumerate}
+A responsible implementation must make these distinctions visible in its output.
+
+\subsection{Why two components can be insufficient}
+For
+\[
+ u=\sqrt2+\sqrt3+\sqrt5,
+\]
+the unrestricted additive minimum is two, achieved by three summands. Its degree is eight: the eight independent sign changes give eight distinct conjugates. Two degree-at-most-two summands could generate a field of degree at most four, so a pair cannot achieve the same cost.
+
+Similarly,
+\[
+ v=(1+\sqrt2)(1+\sqrt3)(1+\sqrt5)
+\]
+has degree eight and is a product of three quadratic factors. To see its degree, expand in the standard basis of $\Q(\sqrt2,\sqrt3,\sqrt5)$; every basis coefficient is nonzero, so no nonidentity sign change fixes it. Two quadratic factors again cannot suffice. Consequently, a complete pair optimizer is not automatically a complete optimizer for finite products.
+
+\section{Universal lower bounds and global certificates}
+\label{sec:bounds}
+Let $P(n)$ denote the largest prime divisor of $n>1$, with $P(1)=1$.
+
+\begin{theorem}[Prime-divisor obstruction]
+\label{thm:prime}
+If an algebraic number of degree $n$ is a finite sum or product of numbers of degrees at most $d$, then $d\ge P(n)$. The same obstruction holds for any expression formed from such numbers by rational field operations.
+\end{theorem}
+\begin{proof}
+For each component $\beta_i$ of degree $m_i\le d$, take the normal closure $L_i$ of $\Q(\beta_i)$. Its Galois group embeds in $S_{m_i}$, so every prime dividing $[L_i:\Q]$ is at most $d$. The compositum $M$ of the finitely many $L_i$ is Galois, and restriction embeds $\Gal(M/\Q)$ in $\prod_i\Gal(L_i/\Q)$. Thus every prime dividing $[M:\Q]$ is at most $d$. Since $\Q(\alpha)\subseteq M$, the tower formula gives $n\mid[M:\Q]$, which proves the assertion.
+\end{proof}
+
+For the examples, $n=9$ and $P(n)=3$. The cubic decompositions therefore attain a universal lower bound. Equivalently, any finite compositum of quadratic fields has power-of-two degree, whereas a degree-nine field cannot be its subfield.
+
+\begin{corollary}
+An algebraic number of prime degree $p$ cannot be expressed as a finite sum or product of numbers all of degree less than $p$.
+\end{corollary}
+
+For exactly two components there is the additional elementary bound
+\[
+ \degQ(\alpha)\le[\Q(\beta,\gamma):\Q]
+ \le\degQ(\beta)\degQ(\gamma),
+\]
+so $d\ge\lceil\sqrt n\rceil$. This latter bound must not be applied unchanged to arbitrarily many components.
+
+\begin{remark}
+In general $[\Q(\beta,\gamma):\Q]$ need not divide $\degQ(\beta)\degQ(\gamma)$. For example, two distinct conjugate cubic root fields can have a compositum of degree six. The inequality is valid; the naive divisibility assertion is not. The proof of Theorem~\ref{thm:prime} deliberately uses normal closures.
+\end{remark}
+
+\subsection{A stronger Galois-group obstruction}
+Let $L$ be the normal closure of $\Q(\alpha)$ and let $G=\Gal(L/\Q)$. If all components have degree at most $d$, then
+\begin{equation}
+ \exp(G)\mid\operatorname{lcm}(1,2,\ldots,d).
+ \label{eq:exponent}
+\end{equation}
+Indeed, the group of the common normal closure embeds in a product of symmetric groups of degrees at most $d$, and $G$ is a quotient of that group. Subgroups and quotients cannot increase the exponent beyond this least common multiple. This is a necessary condition, not a sufficient one. It will distinguish an internal minimum from a global minimum in Section~\ref{sec:external}.
+
+\section{Resultants: exact discovery with clearly stated limits}
+\label{sec:resultants}
+The existing Mathematica Stack Exchange answer constructs companion matrices for guessed component polynomials, then compares a Kronecker-product or Kronecker-sum characteristic polynomial with the input \cite{question}. Resultants give the same elimination polynomials more directly; \code{Resultant} is the appropriate Wolfram Language primitive \cite{resultant}.
+
+If $p,q$ are monic of degrees $m,n$, define
+\begin{align}
+ C_+(p,q)(X)&=\Res_Y\bigl(p(Y),q(X-Y)\bigr),\\
+ C_\times(p,q)(X)&=\Res_Y\bigl(p(Y),Y^nq(X/Y)\bigr).
+ \label{eq:forwardres}
+\end{align}
+The second argument in the product formula is a polynomial after expansion. These resultants are products over all pairs of conjugates:
+\[
+ C_+(p,q)=\prod_{i,j}(X-a_i-b_j),\qquad
+ C_\times(p,q)=\prod_{i,j}(X-a_i b_j).
+\]
+They are monic of degree $mn$, including multiplicities.
+
+For the present cubics,
+\begin{align}
+ \Res_Y(Y^3+Y+1,(X-Y)^3-(X-Y)+1)&=f_+(X),\\
+ \Res_Y(Y^3+Y+1,X^3-XY^2+Y^3)&=f_\times(X).
+\end{align}
+Both equalities were checked by exact polynomial arithmetic.
+
+\subsection{The divisibility condition, not an unconditional equality}
+If the input minimal polynomial is $f$ and a proposed pair has minimal polynomials $p,q$, the necessary relation is
+\[
+ f\mid C_+(p,q)\quad\hbox{or}\quad f\mid C_\times(p,q).
+\]
+Equality requires additional degree information. For example,
+\[
+ C_+(X^2-2,X^2-2)=X^2(X^2-8),
+\]
+whereas the minimal polynomial of $2\sqrt2$ is only $X^2-8$. Equating a degree-four resultant to this degree-two target would reject a genuine decomposition.
+
+There is a second pitfall: solving the coefficient equations over $\C$ can return algebraic coefficients for $p$ and $q$. That does not solve the original rational-coefficient problem. General symbolic equation solving is not, merely by its name, a complete decision method for rational points in the coefficient space. A successful rational specialization must be checked, and failure to find one is not a proof of nonexistence.
+
+\subsection{An effective inverse-resultant method}
+A useful practical compromise is to guess or enumerate \emph{one} candidate polynomial $p$ and derive the possible partner polynomials automatically. If $f$ is the input minimal polynomial, use
+\begin{align}
+ R_+(X)&=\Res_Y\bigl(p(Y),f(X+Y)\bigr),\\
+ R_\div(X)&=\Res_Y\bigl(p(Y),f(XY)\bigr).
+ \label{eq:inverse}
+\end{align}
+If $\alpha=\beta+\gamma$ or $\alpha=\beta\gamma$ and $p(\beta)=0$, then $\gamma$ is a zero of the corresponding resultant. Factor it over $\Q$, retain factors of degree at most the target bound, and check their roots against the \emph{specified} input root. The package exposes this as
+\begin{lstlisting}
+RootPairFromPolynomial[alphaProduct, x^3+x+1, x, "Product", 3]
+RootPairFromPolynomial[alphaSum,     x^3+x+1, x, "Sum",     3]
+\end{lstlisting}
+This returns an exact certificate when successful. It is complete for the chosen candidate polynomial and partner-degree bound, but it does not prove that the chosen candidate polynomial was the only possible one.
+
+\section{Explicit rational recovery formulas for the examples}
+\label{sec:recovery}
+The components actually belong to the fields generated by their sum and product. More strongly, they can be recovered by short rational functions.
+
+\subsection{Recovering the factors from the product}
+Set $t=ab$. Substituting $b=t/a$ into $b^3-b+1=0$, then using $a^3+a+1=0$, gives
+\[
+ t a^2+a+1-t^3=0.
+\]
+Eliminating $a^2$ between this relation and the cubic yields
+\[
+ (t^4+t^2-t+1)a-t^3+t^2+1=0.
+\]
+Hence
+\begin{equation}
+ \boxed{a=\frac{t^3-t^2-1}{t^4+t^2-t+1},\qquad b=\frac{t}{a}.}
+ \label{eq:recoverp}
+\end{equation}
+The denominator is positive for real $t$, since
+\[
+ t^4+t^2-t+1=t^4+(t-\tfrac12)^2+\tfrac34>0.
+\]
+Thus this is valid for the real product in the question, with no choice of a radical branch.
+
+\subsection{Recovering the summands from the sum}
+Set $s=a+b$ and eliminate $b$ from the two cubics. The linear subresultant in $a$ is
+\[
+ (6s^4-6s+4)a-3s^5+5s^3+3s^2-2s+4.
+\]
+Consequently,
+\begin{equation}
+ \boxed{a=\frac{3s^5-5s^3-3s^2+2s-4}{6s^4-6s+4},\qquad b=s-a.}
+ \label{eq:recovers}
+\end{equation}
+Again there is no real denominator problem:
+\[
+ 6s^4-6s+4
+ =6(s^2-\tfrac12)^2+6(s-\tfrac12)^2+1>0.
+\]
+
+Here is a particularly small implementation specialized to the two examples:
+\begin{lstlisting}
+productParts[t_] := Module[{u},
+  u = RootReduce[(t^3-t^2-1)/(t^4+t^2-t+1)];
+  {u, RootReduce[t/u]}
+];
+sumParts[s_] := Module[{u},
+  u = RootReduce[(3s^5-5s^3-3s^2+2s-4)/(6s^4-6s+4)];
+  {u, RootReduce[s-u]}
+];
+productParts[alphaProduct]
+sumParts[alphaSum]
+(* Each returns the two requested cubic roots. *)
+\end{lstlisting}
+These formulas are explanatory certificates for this instance. The general subfield algorithm does not assume them.
+
+\subsection{Why the input degrees really are nine}
+The cubics $p$ and $q$ are irreducible by the rational-root test. Their discriminants are $-31$ and $-23$, respectively, so their splitting fields have Galois group $S_3$ and different quadratic subfields $\Q(\sqrt{-31})$ and $\Q(\sqrt{-23})$.
+
+The intersection of the two splitting fields is Galois over $\Q$. A common nontrivial quotient of two $S_3$ groups could be $C_2$ or $S_3$; either possibility would force the quadratic subfields to agree. Therefore the intersection is $\Q$, and the joint Galois group is $S_3\times S_3$. Its orbit on the ordered pair $(a,b)$ has size $3\cdot3=9$, proving
+\[
+ [\Q(a,b):\Q]=9.
+\]
+The recovery formulas show $\Q(ab)=\Q(a+b)=\Q(a,b)$. Thus the degree-nine resultants are the minimal polynomials, rather than extraneous multiples.
+
+Each cubic has only one real root because its discriminant is negative. Every real root of either degree-nine polynomial recovers real roots of both cubics by the displayed rational formulas, so the degree-nine polynomials also have only one real root. Wolfram's indexing convention places real roots first in increasing order \cite{root}. This proves that index $1$ is precisely the requested root in both inputs. Numerically,
+\[
+ ab\approx0.90389189445834756110,\qquad
+ a+b\approx-2.00704576107276535333.
+\]
+
+\section{The central reduction: two components in a fixed field}
+\label{sec:linear}
+Let $K/\Q$ be a finite number field containing the specified $\alpha$, with a fixed embedding into $\C$. Represent $K$ as a rational vector space. For embedded subfields $F,E\subseteq K$, choose rational bases and write their coordinate vectors as the rows of matrices $B_F,B_E$.
+
+\begin{theorem}[Additive pair test]
+There are $\beta\in F$ and $\gamma\in E$ with $\alpha=\beta+\gamma$ if and only if
+\[
+ \alpha\in F+E.
+\]
+In coordinates, this is the rational linear system
+\begin{equation}
+ [\,B_F^{\mathsf T}\; B_E^{\mathsf T}\,]
+ \begin{bmatrix}u\\v\end{bmatrix}=[\alpha].
+ \label{eq:sumlin}
+\end{equation}
+A solution gives $\beta=u^{\mathsf T}B_F$ and $\gamma=v^{\mathsf T}B_E$, interpreted as field elements.
+\end{theorem}
+\begin{proof}
+A vector is in the sum of two vector spaces precisely when it is a sum of vectors in those spaces. The displayed matrix is the coordinate form of this assertion.
+\end{proof}
+
+The product case is almost as simple, but the useful reformulation is less obvious.
+\begin{theorem}[Multiplicative pair test]
+\label{thm:productlinear}
+For $\alpha\ne0$, the following are equivalent:
+\[
+ \alpha\in F^\times E^\times
+ \quad\Longleftrightarrow\quad
+ F\cap\alpha E\ne\{0\}.
+\]
+Let $M_\alpha$ be the rational matrix of multiplication by $\alpha$ on $K$. A nonzero vector in the nullspace of
+\begin{equation}
+ [\,B_F^{\mathsf T}\;-M_\alpha B_E^{\mathsf T}\,]
+ \label{eq:prodlin}
+\end{equation}
+gives $u\in F$, $v\in E$ satisfying $u=\alpha v$, and hence the decomposition $\alpha=u\,v^{-1}$.
+\end{theorem}
+\begin{proof}
+If $\alpha=\beta\gamma$, then $\beta=\alpha\gamma^{-1}$ is a nonzero member of $F\cap\alpha E$. Conversely, a nonzero $u=\alpha v$ in that intersection has $v\ne0$, and $u\in F$, $v^{-1}\in E$ give the required factors. A nonzero nullspace vector in \eqref{eq:prodlin} cannot have $v=0$, because the columns of each basis matrix are independent in their respective coordinate maps and multiplication by $\alpha$ is invertible.
+\end{proof}
+
+This test avoids logarithms, unit-group generators, ideal factorization and rational-point searches. Those are unnecessary for the two-subfield product problem.
+
+\subsection{Optimizing the degree among pairs}
+Compute all embedded subfields $F\subseteq K$. Order all unordered pairs $(F,E)$ by
+\[
+ \max([F:\Q],[E:\Q]).
+\]
+Apply the appropriate linear test and stop at the first success. Every valid component $\beta\in K$ lies in its own generated subfield $\Q(\beta)$, whose dimension equals its absolute degree. Therefore enumerating \emph{all} subfields cannot miss a pair with smaller maximum degree. This proves completeness and optimality for pairs in $K$.
+
+A returned element may incidentally have smaller degree than its containing field, but that creates no gap in the proof: its smaller generated field is also in the enumeration. The routine remeasures the actual component degrees using \code{MinimalPolynomial} before issuing its certificate.
+
+\subsection{Rational normalization}
+Additive pairs admit the replacement $(\beta,\gamma)\mapsto(\beta-c,\gamma+c)$ for $c\in\Q$. Centering the first component by its mean conjugate removes this ambiguity in the linearly disjoint cubic example. Multiplicative pairs admit $(\beta,\gamma)\mapsto(\beta/c,c\gamma)$ for $c\in\Q^\times$. When the monic minimal polynomial's constant term has an appropriate rational root, the package uses it to remove a rational scale. These normalizations change neither the identity nor the component degrees.
+
+\section{Computing every embedded subfield in Mathematica}
+\label{sec:subfields}
+There is no need to assume an unspecified \code{Subfields} routine. The included implementation constructs the subfields explicitly. Its organizing principle is the principal-subfield method: factor a defining polynomial over its own field, form certain linear equalizers, and close them under intersections. Principal subfields and efficient intersection algorithms are studied by Szutkoski and van Hoeij \cite{subfields}. We give the needed correctness argument here.
+
+Let $K=\Q(\theta)$ have degree $N$, and let $f\in\Q[X]$ be the monic minimal polynomial of $\theta$. For each monic factor $g\mid f$ over $K$, put
+\begin{equation}
+ V_g=\{h(\theta):h\in\Q[X],\ \deg h<N,\
+                 g(X)\mid h(X)-h(\theta)\}.
+ \label{eq:vg}
+\end{equation}
+
+\begin{lemma}
+$V_g$ is a subfield of $K$. If $g_1,g_2$ are coprime factors of $f$, then
+\[
+ V_{g_1g_2}=V_{g_1}\cap V_{g_2}.
+\]
+\end{lemma}
+\begin{proof}
+Closure under rational linear combinations follows immediately from the congruence in \eqref{eq:vg}. For multiplication, multiply the two congruences and reduce the product polynomial modulo $f$; because $g\mid f$, this reduction does not change the congruence modulo $g$.
+
+For inversion, suppose $h(\theta)\ne0$. There is $k\in\Q[X]$ with $h(X)k(X)\equiv1\pmod f$, since $f$ is irreducible and does not divide $h$. Modulo $g$, the congruence $h(X)\equiv h(\theta)$ implies $k(X)\equiv h(\theta)^{-1}$. Evaluating the identity modulo $f$ at $\theta$ shows $k(\theta)=h(\theta)^{-1}$. Thus the inverse lies in $V_g$. Finally, divisibility by a product of coprime polynomials is equivalent to divisibility by each factor.
+\end{proof}
+
+\begin{lemma}
+Every intermediate field $F$ is $V_g$ for $g=\operatorname{minpoly}_F(\theta)$.
+\end{lemma}
+\begin{proof}
+If $h(\theta)\in F$, then $h(X)-h(\theta)\in F[X]$ vanishes at $\theta$, so $g$ divides it. This gives $F\subseteq V_g$.
+
+Conversely, if $h(\theta)\in V_g$, all conjugates of $\theta$ over $F$ have the same value under $h$. Since the extension is separable,
+\[
+ \Tr_{K/F}(h(\theta))=[K:F]h(\theta).
+\]
+The left side belongs to $F$, and division by $[K:F]$ is allowed in characteristic zero. Hence $h(\theta)\in F$.
+\end{proof}
+
+Factor $f=g_1\cdots g_r$ into irreducibles over $K$. The two lemmas show that every subfield is an intersection of some of the $V_{g_i}$. Starting from $K$ and successively intersecting each existing subspace with each $V_{g_i}$ produces the complete field lattice; canonical reduced row echelon forms remove duplicates.
+
+\subsection{The exact matrix for a principal subfield}
+Write $h(X)=\sum_{j=0}^{N-1}c_jX^j$ with unknown rational $c_j$. Compute
+\[
+ R_j(X)=\operatorname{rem}(X^j,g)-\theta^j.
+\]
+Expand each coefficient of $R_j$ in the basis $1,\theta,\ldots,\theta^{N-1}$. Stack those rational coordinate vectors into a column. If $A_g$ is the matrix of these columns, then
+\[
+ V_g\quad\text{has row basis}\quad\operatorname{NullSpace}(A_g).
+\]
+There are at most $N\deg g$ scalar equations in $N$ unknowns. The implementation uses exact \code{PolynomialRemainder} and rational \code{RowReduce}/\code{NullSpace} operations; it never samples numerical conjugates \cite{remainder}.
+
+\subsection{Coordinate discipline matters}
+The coordinate system must use a fixed generator. \code{ToNumberField} and \code{AlgebraicNumber} can normalize a nonintegral generator to an algebraic integer \cite{tonumberfield,algebraicnumber}. To avoid silently mixing coordinate systems, the package first replaces an input generator $\eta$ by $\theta=c\eta$, where $c$ is the leading coefficient of its primitive integer minimal polynomial. Then $\theta$ is integral and $\Q(\theta)=\Q(\eta)$.
+
+For example, if
+\[
+ cX^N+c_{N-1}X^{N-1}+\cdots+c_0=0,
+\]
+then $\theta=c\eta$ satisfies the monic integer polynomial
+\[
+ X^N+c_{N-1}X^{N-1}+c c_{N-2}X^{N-2}+\cdots+c^{N-1}c_0.
+\]
+The implementation still checks that \code{ToNumberField} returned the intended generator and that all coordinate entries are rational. \code{AlgebraicNumberPolynomial} extracts the polynomial coordinate representation \cite{anpoly}. A power basis is sufficient; computing an integral basis is not required.
+
+\section{A complete global algorithm for arbitrary finite sums}
+\label{sec:global-sum}
+In an ambient field $K$, define
+\[
+ W_d(K)=\sum_{\substack{F\subseteq K\\{}[F:\Q]\le d}} F.
+\]
+This is a \emph{vector-space sum}, not a compositum of fields.
+
+\begin{theorem}[Finite sums in an ambient field]
+An element $\alpha\in K$ is a finite sum of elements of degrees at most $d$ lying in $K$ if and only if $\alpha\in W_d(K)$.
+\end{theorem}
+\begin{proof}
+Each eligible summand belongs to its generated subfield of degree at most $d$. Conversely, membership in the vector-space sum expresses $\alpha$ as a sum of elements of the eligible fields; each such element has degree at most the field's degree.
+\end{proof}
+Thus all finite sums in $K$ can be optimized by concatenating subfield bases and solving a rational linear system. Rational coefficients are absorbed into the summands. There is no need to impose a bound on the number of summands. The deterministic solver sets free variables to zero, so at most $[K:\Q]$ basis coefficients need be nonzero; grouping by subfield gives at most that many nonzero terms.
+
+The important question is whether using $K=\Q(\alpha)$ is enough. In general it is not. The following descent theorem gives a correct global replacement.
+
+\begin{theorem}[Normalized-trace descent]
+\label{thm:descent}
+Let $L/\Q$ be a finite Galois extension and $\alpha\in L$. If $\alpha$ is a finite sum of algebraic numbers of degrees at most $d$, then it is a finite sum of elements of $L$ of degrees at most $d$. The number of nonzero summands need not increase.
+\end{theorem}
+\begin{proof}
+Take a common finite Galois extension $M/\Q$ containing $L$ and all the summands. Put $H=\Gal(M/L)$, which is normal in $\Gal(M/\Q)$, and define
+\[
+ P_L(x)=\frac1{|H|}\sum_{h\in H}h(x).
+\]
+This is a rational-linear projection onto $L$, fixing $\alpha$. Normality of $H$ implies
+\[
+ P_L(\sigma x)=\sigma P_L(x)
+ \qquad (\sigma\in\Gal(M/\Q)).
+\]
+Therefore every automorphism fixing $x$ also fixes $P_L(x)$. By the Galois correspondence,
+\[
+ P_L(x)\in\Q(x),\qquad
+ \degQ(P_L(x))\mid\degQ(x).
+\]
+In particular $P_L(x)\in L\cap\Q(x)$ and its degree does not increase. Apply $P_L$ term by term to the original sum and discard any zero terms.
+\end{proof}
+
+\begin{corollary}[Global additive optimum]
+If $L$ is the normal closure of $\Q(\alpha)$, then the unrestricted minimum for finite sums is
+\[
+ \boxed{\min\{d:\alpha\in W_d(L)\}.}
+\]
+This minimum is computable by a finite exact algorithm.
+\end{corollary}
+
+The package first tries $\Q(\alpha)$. If the result reaches the universal lower bound, it is already globally optimal and no normal closure is needed. Otherwise \code{RootGlobalSumDecompose} constructs a primitive element of the field generated by all conjugates, computes its subfields, and applies the same vector-space procedure. It deliberately uses \code{ToNumberField[...,All]}, because the \code{Automatic} setting need not use the smallest common extension \cite{tonumberfield}.
+
+\begin{lstlisting}
+RootSumDecompose[alphaSum]       (* Complete in Q(alphaSum). *)
+RootGlobalSumDecompose[alphaSum] (* Complete globally for sums. *)
+
+RootGlobalSumDecompose[Sqrt[2]+Sqrt[3]+Sqrt[5]]
+(* Maximum component degree 2, with a globally valid certificate. *)
+\end{lstlisting}
+For a real-only version, one should restrict eligible fields to subfields contained in the real part of the chosen embedding of $L$. The unrestricted implementation does not silently impose that additional requirement.
+
+\subsection{Optional minimization of the number of summands}
+After finding the smallest $d$, enumerate subcollections of eligible subfields in increasing cardinality and test whether their vector-space sum contains $\alpha$. Two summands in the same field can be combined, so this also gives a complete, although potentially expensive, secondary optimization of the number of terms. It is not needed for the requested maximum-degree objective.
+
+\section{Why the original field can be too small}
+\label{sec:outside}
+\label{sec:external}
+An explicit counterexample is instructive. Let $r_1,\ldots,r_4$ be the roots of
+\[
+ X^4-X-1,
+\]
+and let $\alpha=r_1+r_2$ be a sum of two distinct roots. The six pair sums have polynomial
+\[
+ f(X)=X^6+4X^2-1.
+\]
+For example, the sum of the two real quartic roots is the positive real root of this sextic.
+
+The quartic has Galois group $S_4$: modulo $2$ it is irreducible, giving a four-cycle, and modulo $7$ it has one linear and one irreducible cubic factor, giving a three-cycle. The transitive subgroup of $S_4$ with these cycle types is $S_4$. The stabilizer of a specified two-element subset is
+\[
+ H=\langle(12),(34)\rangle,
+\]
+of order four, so the pair sum has degree six. The only proper nontrivial overgroup of $H$ is the order-eight stabilizer of the associated unordered partition. Thus $\Q(\alpha)$ has subfield degrees exactly
+\[
+ 1,3,6,
+\]
+with unique nontrivial proper subfield $\Q(\alpha^2)$. Any sum of elements from its proper subfields stays in that cubic field, and cannot equal $\alpha$. The minimum for finite sums \emph{inside} $\Q(\alpha)$ is therefore six.
+
+But $\alpha=r_1+r_2$ is a sum of two degree-four numbers outside that field. Its normal closure has group $S_4$: from all the pair sums one recovers each quartic root, for example
+\[
+ r_1=\tfrac12\bigl((r_1+r_2)+(r_1+r_3)-(r_2+r_3)\bigr).
+\]
+Since $S_4$ contains elements of order four, obstruction \eqref{eq:exponent} rules out all expressions built from degree-at-most-three numbers. Consequently the unrestricted additive minimum is exactly four, strictly less than the internal minimum six.
+
+The independent subfield implementation also found the degree list $\{1,3,6\}$ for this sextic. This example is why the package reports the ambient-field scope instead of promoting every internal optimum to a global one.
+
+\section{Products beyond two factors: exact search, honest certificates}
+\label{sec:products}
+The two-subfield intersection test is complete and finite. Applying it recursively can be useful, but a greedy choice of one pair decomposition need not lead to a globally optimal many-factor expression. The example of three independent quadratic factors already shows that one must distinguish the two objectives.
+
+\subsection{Why the trace proof does not transfer to products}
+If $\alpha=\prod_i\beta_i$ in a common Galois extension $M$ and $L$ is a normal subfield, taking norms gives
+\[
+ \alpha^{[M:L]}=\prod_i\Nm_{M/L}(\beta_i).
+\]
+This is a relation for a \emph{power} of $\alpha$, not for $\alpha$ itself. Extracting roots can increase the absolute degrees and introduce roots of unity. Membership of a power in a multiplicative subgroup does not imply membership of the element: $i^2=-1\in\Q^\times$, yet $i\notin\Q^\times$. Thus the additive projection proof cannot be cited as a proof that a product optimum is attained in the normal closure.
+
+Likewise, taking numerical logarithms is not a replacement for an exact product test. It loses torsion information, introduces branch choices, and turns exact multiplicative relations into precision-dependent integer-relation guesses. Exact reduction of the final identity is essential.
+
+\subsection{A complete search within explicit finite bounds}
+Define the coefficient height of an algebraic number to be the maximum absolute coefficient of its primitive integer minimal polynomial with positive leading coefficient. For integers $d,H\ge1$, enumerate all polynomials
+\[
+ a_mX^m+\cdots+a_0,
+ \quad 2\le m\le d,\quad
+ 1\le a_m\le H,\quad |a_j|\le H,
+\]
+with coefficient gcd one, retaining only irreducible polynomials. Include every root of each retained polynomial. This finite catalogue includes nonmonic polynomials, so rational denominators have not been silently excluded.
+
+For a maximum of $R$ factors, enumerate multisets of at most $R-1$ catalogue elements. For each partial product $u$, compute the exact remainder factor $\gamma=\alpha/u$ and test $\degQ(\gamma)\le d$. The final factor has no coefficient-height restriction.
+
+\begin{proposition}[Bounded-product completeness]
+The search finds every representation with at most $R$ factors of degrees at most $d$ for which all but at most one nonrational factor have coefficient height at most $H$.
+\end{proposition}
+\begin{proof}
+Rational factors can be combined and absorbed into the unrestricted last factor without changing its degree. Order the remaining bounded-height factors nondecreasingly in the catalogue. Their multiset appears in the enumeration. At that step the exact quotient is the remaining factor, whose degree test succeeds.
+\end{proof}
+
+\begin{lstlisting}
+BoundedRootProduct[alphaProduct, 3, 1, 2]
+
+RootProductFromCandidates[
+  (1+Sqrt[2])(1+Sqrt[3])(1+Sqrt[5]),
+  {1+Sqrt[2],1+Sqrt[3],1+Sqrt[5]}, 2, 3]
+\end{lstlisting}
+Both are mathematically successful instances; the latter explicitly searches a three-factor quadratic decomposition. A successful result always includes an exact identity certificate. When its degree reaches the universal lower bound, it is globally optimal regardless of the search bounds.
+
+A negative result says \code{"NotFoundWithinBounds"}, not ``irreducible'' and not ``globally optimal.'' Increasing $H$ and $R$ gives a semidecision procedure for a fixed degree threshold: every existing finite product decomposition is eventually found. It does not provide a terminating nonexistence decision in all negative cases, and it does not by itself compute the global minimum over all of $\Qbar$. This article does not claim otherwise.
+
+\subsection{A practical product workflow}
+First compute an internal two-factor decomposition and the universal lower bound. If they coincide, stop: the optimum is proved. Otherwise use problem-specific candidate polynomials, the inverse-resultant filter, larger ambient fields when justified, and bounded many-factor searches. Retain the best exact upper bound and any separately established lower bounds. Never replace an unresolved gap between those bounds by a claim of minimality.
+
+\section{Implementation interface and operational details}
+\label{sec:interface}
+The complete package appears in Appendix~\ref{app:wl}; it is also supplied in the archive as \path{code/RootDecomposition.wl}. The important entry points are summarized here.
+
+\begin{longtable}{@{}p{0.37\linewidth}p{0.59\linewidth}@{}}
+\toprule
+\textbf{Function} & \textbf{Guarantee on successful completion}\\
+\midrule\endhead
+\code{RootDegree[a]} & Absolute algebraic degree; inexact input is rejected.\\[4pt]
+\code{RootDegreeLowerBound[a]} & Largest prime divisor of the input degree, valid for any finite sum or product.\\[4pt]
+\code{RootSubfieldData[theta]} & Complete list of embedded subfields of $\Q(\theta)$, represented by rational row bases.\\[4pt]
+\code{RootPairDecompose[a,op,data]} & Optimal maximum degree for two components in the supplied ambient field. Default ambient field: $\Q(a)$.\\[4pt]
+\code{RootSumDecompose[a,data]} & Optimal maximum degree for arbitrary finite sums in that ambient field.\\[4pt]
+\code{RootGlobalSumDecompose[a]} & Unrestricted global additive optimum, by normal-closure descent if needed.\\[4pt]
+\code{RootPairFromPolynomial[...]} & Complete partner search for one supplied polynomial and a partner-degree bound, with exact branch verification.\\[4pt]
+\code{BoundedRootProduct[a,d,H,R]} & Exhaustive bounded product search with an unrestricted last factor; negative results remain explicitly scoped.\\
+\bottomrule
+\end{longtable}
+
+\subsection{Exact branches and expressions}
+A minimal polynomial specifies a conjugacy class, not a particular algebraic number. Every returned expression is therefore checked against the input by
+\begin{lstlisting}
+TrueQ[RootReduce[expression - input] === 0]
+\end{lstlisting}
+The \code{"Components"} list is retained as well as the combined expression. This avoids losing the useful decomposition if subsequent evaluation or formatting recombines parts of it. Lower-degree \code{Root} objects can simplify automatically to rationals or radicals; the mathematical component degree is still measured with \code{MinimalPolynomial}, not by counting the syntactic degrees of visible \code{Root} heads \cite{root}.
+
+\subsection{Errors are not mathematical negative answers}
+The package returns a \code{Failure} when field conversion, factorization or exact verification does not complete as expected. It does not treat an unevaluated \code{ToNumberField} call as a zero coordinate vector. The documentation explicitly states that \code{ToNumberField[a,theta]} can remain unevaluated when $a$ is outside the requested field \cite{tonumberfield}.
+
+For expensive calls, a user can impose a resource limit:
+\begin{lstlisting}
+TimeConstrained[
+  RootGlobalSumDecompose[alpha],
+  120,
+  Failure["TimeLimit", <|"MathematicalConclusion" -> "None"|>]
+]
+\end{lstlisting}
+The number here is a user-chosen runtime limit, not an estimate of the routine's running time. A timeout provides no nonexistence result.
+
+\subsection{A Wolfram Language subtlety to avoid}
+The unqualified \code{MinimalPolynomial[a,x]} is used to measure absolute degree. The documented \code{Extension} form can instead return a characteristic polynomial that is a power of the relative minimal polynomial \cite{minpoly}. The implementation does not infer relative field degrees by naively taking that polynomial's degree. It obtains them from exact subfield dimensions and polynomial factorization.
+
+\section{Cost, limitations, and useful improvements}
+\label{sec:complexity}
+The algorithms are exact, but not uniformly inexpensive. If the ambient degree is $N$, principal-subfield matrices have $N$ columns and at most $N\deg g$ rows. Rational coefficient growth can matter as much as matrix dimensions. If there are $s$ subfields, the pair optimizer performs at most $s(s+1)/2$ linear tests. The complete field lattice itself can be large; faster partition-based intersection methods are available in the cited subfield literature \cite{subfields}.
+
+The most important possible blow-up is the normal closure. An input field of degree $n$ can have normal closure of degree as large as $n!$. The two supplied examples have normal closure degree $36$, but the input-field computation already attains the lower bound and avoids constructing it.
+
+Before irreducibility filtering, a coefficient catalogue contains at most
+\[
+ \sum_{m=2}^{d}H(2H+1)^m
+\]
+polynomials. The number of partial products grows combinatorially with both the catalogue size and the factor-count bound. Therefore the bounded routine is a transparent baseline and certificate finder, not a promise of practical performance at large bounds.
+
+Several improvements preserve correctness. Cache all field-coordinate conversions and multiplication matrices; use modular linear algebra with exact reconstruction; apply the inverse-resultant degree filter before expensive root comparisons; deduplicate identical partial products; replace the simple field-lattice closure by a specialized subfield implementation; and use domain knowledge to propose small candidate polynomials. Every accelerated candidate must still pass the exact identity and absolute-degree checks.
+
+\section{Validation and reproducibility}
+\label{sec:validation}
+The archive includes three kinds of evidence, deliberately kept separate.
+
+\textbf{Mathematical proofs.} The linear pair tests, completeness of the subfield construction, normalized-trace descent, and lower bounds are proved in the article. The displayed rational recovery formulas give small explicit certificates for the examples.
+
+\textbf{Executed independent checks.} The script \code{tests/exact\_validation.py} uses SymPy exact algebraic-field arithmetic. It recomputes both resultants, verifies irreducibility and the number of real roots, factors each ninth-degree polynomial over its own embedded field, constructs the principal subfields and their intersections, checks that every computed subspace contains one and is closed under multiplication, solves both pair problems, measures component degrees, and verifies the recovered identities and the short rational recovery formulas. It also checks the rational normalization of the returned pairs and the sextic counterexample in Section~\ref{sec:outside}. The recorded results are in \code{tests/validation\_results.json} and \code{tests/validation\_log.txt}. Numerical values are printed only as labels for real roots.
+
+\textbf{Supplied Mathematica tests.} \code{code/RunTests.wl} contains exact \code{VerificationTest} checks for the examples, the resultant front end, rational and zero cases, nonintegral inputs, three quadratic summands, and three quadratic factors. These tests were \emph{not executed in Mathematica in this session}: the available Wolfram MCP endpoint returned HTTP 404 for both context lookup and evaluation. This is an implementation-validation limitation, not an unresolved identity in the two examples.
+
+To reproduce locally, from the extracted archive directory:
+\begin{lstlisting}[language={}]
+python tests/exact_validation.py
+wolframscript -file code/RunTests.wl
+pdflatex -interaction=nonstopmode -halt-on-error root_decomposition.tex
+pdflatex -interaction=nonstopmode -halt-on-error root_decomposition.tex
+\end{lstlisting}
+The independent Python checks require SymPy. The Wolfram package uses documented built-in functionality and no third-party number-field package. As with any unexecuted implementation port, local tests should be run before relying on it in a larger automated workflow.
+
+\section{Conclusions}
+The useful structural move is to stop treating the problem solely as inverse symbolic polynomial composition. An algebraic number lives in a finite-dimensional rational vector space, and its low-degree components live in subfields. For two components, addition is a span test and multiplication is an intersection test. Both can be solved exactly once the embedded subfields are known.
+
+For sums, normalized trace provides the further descent needed for unrestricted global optimization. For products, the article keeps the distinction between complete ambient-field pair optimization and bounded many-factor discovery explicit. In the two ninth-degree examples, that distinction does not leave any uncertainty about the answer: the requested cubic decompositions are recovered, and the universal degree obstruction proves that three is the smallest possible maximum degree, even with arbitrarily many components.
+
+\appendix
+\section{Complete Wolfram Language implementation}
+\label{app:wl}
+The following listing is the same file distributed separately in the archive. It contains the coordinate layer, complete subfield construction, pair and additive optimizers, bounded product search, and inverse-resultant front end.
+\lstinputlisting{code/RootDecomposition.wl}
+
+\section{Local Mathematica test suite}
+\lstinputlisting{code/RunTests.wl}
+
+\begin{thebibliography}{99}
+\bibitem{question}
+Vladimir Reshetnikov, \emph{Factor a polynomial Root into Roots of smallest possible degree}, Mathematica Stack Exchange, question 105933; see also the constructive answer by yarchik and its discussion.\newline
+\url{https://mathematica.stackexchange.com/questions/105933/}
+
+\bibitem{subfields}
+Jonas Szutkoski and Mark van Hoeij, \emph{The Complexity of Computing all Subfields of an Algebraic Number Field}, arXiv:1606.01140, version 3, November 20, 2017.\newline
+\url{https://arxiv.org/abs/1606.01140}\newline
+\url{https://arxiv.org/html/1606.01140v3}
+
+\bibitem{root}
+Wolfram Research, \emph{Root}, Wolfram Language Documentation.\newline
+\url{https://reference.wolfram.com/language/ref/Root.html}
+
+\bibitem{rootreduce}
+Wolfram Research, \emph{RootReduce}, Wolfram Language Documentation.\newline
+\url{https://reference.wolfram.com/language/ref/RootReduce.html}
+
+\bibitem{minpoly}
+Wolfram Research, \emph{MinimalPolynomial}, Wolfram Language Documentation.\newline
+\url{https://reference.wolfram.com/language/ref/MinimalPolynomial.html}
+
+\bibitem{tonumberfield}
+Wolfram Research, \emph{ToNumberField}, Wolfram Language Documentation.\newline
+\url{https://reference.wolfram.com/language/ref/ToNumberField.html}
+
+\bibitem{algebraicnumber}
+Wolfram Research, \emph{AlgebraicNumber}, Wolfram Language Documentation.\newline
+\url{https://reference.wolfram.com/language/ref/AlgebraicNumber.html}
+
+\bibitem{anpoly}
+Wolfram Research, \emph{AlgebraicNumberPolynomial}, Wolfram Language Documentation.\newline
+\url{https://reference.wolfram.com/language/ref/AlgebraicNumberPolynomial.html}
+
+\bibitem{resultant}
+Wolfram Research, \emph{Resultant}, Wolfram Language Documentation.\newline
+\url{https://reference.wolfram.com/language/ref/Resultant.html}
+
+\bibitem{remainder}
+Wolfram Research, \emph{PolynomialRemainder}, Wolfram Language Documentation.\newline
+\url{https://reference.wolfram.com/language/ref/PolynomialRemainder.html}
+
+\bibitem{factorlist}
+Wolfram Research, \emph{FactorList}, Wolfram Language Documentation.\newline
+\url{https://reference.wolfram.com/language/ref/FactorList.html}
+
+\bibitem{sympy}
+SymPy Development Team, \emph{Number Fields}, SymPy documentation.\newline
+\url{https://docs.sympy.org/latest/modules/polys/numberfields.html}
+\end{thebibliography}
+\small\textit{Public sources accessed September 6, 2026. All new computations and the explicitly given proofs are part of this report; the local Wolfram Language test suite is supplied but not represented as executed.}
+\end{document}

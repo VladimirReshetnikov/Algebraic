@@ -1,0 +1,236 @@
+{
+  "python": "3.13.5",
+  "sympy": "1.14.0",
+  "passed": 40,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "sum resultant",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "product resultant",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "cubic discriminants",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "f irreducible over Q",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "f has exactly one real root",
+      "passed": true,
+      "detail": "[((-87819/128705, -58120/85179), 1)]"
+    },
+    {
+      "name": "g irreducible over Q",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "g has exactly one real root",
+      "passed": true,
+      "detail": "[((-2196491/1658082, -63760/48131), 1)]"
+    },
+    {
+      "name": "P irreducible over Q",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "P has exactly one real root",
+      "passed": true,
+      "detail": "[((77525/85768, 112107/124027), 1)]"
+    },
+    {
+      "name": "S irreducible over Q",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "S has exactly one real root",
+      "passed": true,
+      "detail": "[((-193419/96370, -358637/178689), 1)]"
+    },
+    {
+      "name": "product recovered u satisfies f",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "product recovered v satisfies g",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "product recovery identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "sum recovered u satisfies f",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "sum recovered v satisfies g",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "sum recovery identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "sum primitive-element determinant",
+      "passed": true,
+      "detail": "-1339712"
+    },
+    {
+      "name": "sum rational power-basis recovery of u",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "sum rational power-basis recovery of v",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "product primitive-element determinant",
+      "passed": true,
+      "detail": "-8"
+    },
+    {
+      "name": "product rational power-basis recovery of u",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "product rational power-basis recovery of v",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "sum discovered in height-one cubic box",
+      "passed": true,
+      "detail": "('x**3 - x + 1', 'x**3 + x + 1')"
+    },
+    {
+      "name": "product discovered in height-one cubic box",
+      "passed": true,
+      "detail": "('x**3 - x - 1', 'x**3 + x - 1')"
+    },
+    {
+      "name": "three-quadratic identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "counterexample polynomial",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "counterexample irreducible",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "rank-one obstruction 2",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "rank-one obstruction 5/2",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "rank-one obstruction 10/3",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "global two-factor criterion rejects degree bound 2",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "global two-factor criterion rejects degree bound 3",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "quadratic subfields span the biquadratic field",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "polynomial and rational product u formulas agree",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "polynomial and rational product v formulas agree",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "zero-linear-coefficient example target degree eight",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "zero-linear-coefficient example first factor degree four",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "zero-linear-coefficient example second factor degree four",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Wolfram package delimiter/string/comment balance",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "power_basis_coordinates": {
+    "sum": {
+      "u": "-(2025*z**8 + 750*z**7 - 4374*z**6 + 10530*z**5 + 9975*z**4 - 28868*z**3 - 51921*z**2 - 12496*z + 39992)/83732",
+      "v": "(2025*z**8 + 750*z**7 - 4374*z**6 + 10530*z**5 + 9975*z**4 - 28868*z**3 - 51921*z**2 + 71236*z + 39992)/83732"
+    },
+    "product": {
+      "u": "-(z**7 + 2*z**5 - 2*z**4 + 1)/2",
+      "v": "-(z**7 + 2*z**5 - 2*z**4 + 2*z**3 + 2*z - 1)/2"
+    }
+  },
+  "bounded_discoveries": {
+    "sum": {
+      "polynomials": [
+        "x**3 - x + 1",
+        "x**3 + x + 1"
+      ],
+      "pairs_tested": 63
+    },
+    "product": {
+      "polynomials": [
+        "x**3 - x - 1",
+        "x**3 + x - 1"
+      ],
+      "pairs_tested": 16
+    }
+  },
+  "native_wolfram_tests_executed": false,
+  "native_wolfram_status": "Connector returned HTTP 404; Tests.wlt is supplied, not reported as passed."
+}

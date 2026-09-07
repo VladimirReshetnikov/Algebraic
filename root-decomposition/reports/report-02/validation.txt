@@ -1,0 +1,190 @@
+{
+  "scope": "Independent exact mathematical checks. Wolfram Language tests were NOT executed.",
+  "sympy_version": "1.14.0",
+  "checks_passed": 32,
+  "checks": [
+    {
+      "name": "irreducible: f",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "exactly one real root: f",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "irreducible: g",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "exactly one real root: g",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "irreducible: product target",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "exactly one real root: product target",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "irreducible: sum target",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "exactly one real root: sum target",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "sum resultant identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "product resultant identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "nonmonic sum",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "nonmonic product",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "product zero root retained",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "composed polynomial need not be minimal",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "sum residual has second cubic with exponent three",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "sum residual factor degree/exponent profile",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "product residual has second cubic with exponent three",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "product residual factor degree/exponent profile",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "three-cubic product degree",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "three-cubic product irreducible",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "three cubics cannot be replaced by two degree <=3 factors",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "three square-root sum degree eight",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "three square-root sum irreducible",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "S3 x S3 subgroup count",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "S3 x S3 fixed-field degree distribution",
+      "passed": true,
+      "detail": "{1: 1, 2: 3, 3: 6, 4: 1, 6: 20, 9: 9, 12: 4, 18: 15, 36: 1}"
+    },
+    {
+      "name": "additive subfield-span criterion in biquadratic field",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "binary-product subspace intersection is nonzero",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "intersection witness nonzero",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "explicit quadratic product identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "balanced source delimiters: RootDecomposition.wl",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "balanced source delimiters: examples.wl",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "balanced source delimiters: tests.wlt",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "numerical_values": {
+    "a": "-0.6823278038280193273694837397110482568912",
+    "b": "-1.324717957244746025960908854478097340734",
+    "a+b": "-2.007045761072765353330392594189145597626",
+    "a*b": "0.9038918944583475610989590261665324422655"
+  },
+  "real_root_isolating_intervals": {
+    "sum_target": "[((-139296149/69403574, -121142679/60358703), 1)]",
+    "product_target": "[((76645167/84794617, 53952406/59689003), 1)]"
+  },
+  "three_cubic_product_polynomial": "x**27 - 4*x**25 + 27*x**24 + 6*x**23 - 33*x**22 + 341*x**21 + 9*x**20 + 122*x**19 + 2076*x**18 - 91*x**17 + 3048*x**16 + 8173*x**15 + 381*x**14 + 14723*x**13 + 27540*x**12 + 4672*x**11 + 35589*x**10 + 73162*x**9 + 10341*x**8 + 47403*x**7 + 96795*x**6 + 6642*x**5 + 15552*x**4 + 54675*x**3 - 6561*x + 19683",
+  "three_square_root_sum_polynomial": "x**8 - 40*x**6 + 352*x**4 - 960*x**2 + 576",
+  "subfield_degree_distribution_S3xS3": {
+    "1": 1,
+    "2": 3,
+    "3": 6,
+    "4": 1,
+    "6": 20,
+    "9": 9,
+    "12": 4,
+    "18": 15,
+    "36": 1
+  }
+}
