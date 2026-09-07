@@ -70,7 +70,7 @@ VerificationTest[RootSumDecomposition[s6, "Scope" -> "InputField"]["MaximumDegre
 
 VerificationTest[RootSumDecomposition[RootReduce[Exp[2 Pi I/5]]]["MaximumDegree"], 4, TestID -> "fifth root of unity"];
 VerificationTest[RootSumDecomposition[7/3]["Terms"], {7/3}, TestID -> "rational input"];
-VerificationTest[FailureQ[RootSumDecomposition[1.5]], True, TestID -> "inexact input rejected"];
+VerificationTest[FailureQ[RootSumDecomposition[1.5]], True, {RootDecomposition::inexact}, TestID -> "inexact input rejected"];
 
 VerificationTest[RootBoundedDecomposition[ap, Times, 3, 1, 2]["MaximumDegree"], 3, TestID -> "bounded product search"];
 VerificationTest[RootBoundedDecomposition[as, Plus, 3, 1, 2]["MaximumDegree"], 3, TestID -> "bounded sum search"];

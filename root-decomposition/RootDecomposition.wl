@@ -398,7 +398,7 @@ inputFieldData[poly_] := Module[{n, c, P, Pz, theta, fac, factors, principal, su
   principal = {};
   Do[
     m = Exponent[g, x];
-    If[m == 1, Continue[]];
+    If[m == 1 && Expand[g - (x - z)] === 0, Continue[]];   (* only the factor x - theta gives K itself *)
     rows = Table[
       r = PolynomialRemainder[x^j - z^j, g, x];
       Table[polyCoords[Coefficient[r, x, i], Pz, n], {i, 0, m - 1}],
@@ -637,7 +637,7 @@ Options[RootProductDecomposition] = {
   "MaxFactors" -> Infinity,
   "RecursionDepth" -> 3,
   "TensorTest" -> True,
-  "BoundedSearch" -> {3, 3},          (* {height, factors} for the final dictionary search, or None *)
+  "BoundedSearch" -> {2, 3},          (* {height, factors} for the final quadratic dictionary search, or None *)
   "WorkingPrecision" -> 80,
   "MaxGroupOrder" -> 400,
   "MaxTries" -> 12
@@ -649,7 +649,7 @@ integralScale[f_] := Module[{d = Exponent[f, x], c, primes, q = 1, e, v},
   c = CoefficientList[f/Coefficient[f, x, d], x];  (* monic, rational *)
   primes = Union @@ (First /@ FactorInteger[#] & /@ DeleteCases[Abs[Join[Numerator[c], Denominator[c]]], 0 | 1]);
   Do[
-    v[r_] := If[r == 0, Infinity, IntegerExponent[r, p]];
+    v[r_] := If[r == 0, Infinity, IntegerExponent[Numerator[r], p] - IntegerExponent[Denominator[r], p]];
     e = Max[Table[If[c[[i + 1]] == 0, -Infinity, Ceiling[-v[c[[i + 1]]]/(d - i)]], {i, 0, d - 1}]];
     If[e =!= -Infinity, q = q p^e],
     {p, primes}];
@@ -847,14 +847,14 @@ productSearch[fd_, a_, va_, stab_, n_, lb_, dmax_, scope_, maxFactors_, depth_, 
     If[Max[degs] < best["MaximumDegree"],
       best = makeResult[a, Times, terms, lb, scope, "RecursiveSplitting", Max[degs] == lb, False,
         Join[<|"TwoFactorOptimal" -> False, "NormExponent" -> 1|>, extra]]]];
-  (* 4. small bounded dictionary search (degrees at most 3 only; larger catalogs are enormous) *)
+  (* 4. small bounded dictionary search (quadratic dictionary only; larger catalogs are enormous) *)
   If[best =!= $Failed && best["MaximumDegree"] > lb && OptionValue[RootProductDecomposition, "BoundedSearch"] =!= None,
     Module[{bd = OptionValue[RootProductDecomposition, "BoundedSearch"], dd},
       Do[
         res = RootBoundedDecomposition[a, Times, dd, bd[[1]], bd[[2]]];
         If[! FailureQ[res] && res["Verified"] && res["MaximumDegree"] < best["MaximumDegree"],
           best = Join[res, <|"Scope" -> scope, "TwoFactorOptimal" -> False, "NormExponent" -> 1|>, extra]; Break[]],
-        {dd, lb, Min[3, best["MaximumDegree"] - 1]}]]];
+        {dd, lb, Min[2, best["MaximumDegree"] - 1]}]]];
   If[best === $Failed, failure["NotFound", "No representation with the requested maximum degree", <|"MaximumDegree" -> dmax|>], best]];
 
 (* ------------------------------------------------------------------ *)

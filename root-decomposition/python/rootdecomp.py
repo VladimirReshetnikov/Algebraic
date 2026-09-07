@@ -853,7 +853,9 @@ def input_field_data(p: fmpz_poly, a: "AlgebraicNumber", prec_bits: int = 300) -
     for g, _ in fac:
         m = g.degree()
         if m == 1:
-            continue
+            const = K.convert(g.rep.to_list()[-1])
+            if const == -theta_el:
+                continue                      # the factor y - theta gives K itself
         rows = []
         thpow = K.one
         for j in range(n):
@@ -1397,8 +1399,8 @@ def _product_search(fd, a, va, stab, n, lb, dmax, scope, max_factors, depth, ten
             best = Decomposition("Times", terms, degs, max(degs), lb, max(degs) == lb, False, scope,
                                  "RecursiveSplitting", dict(two_factor_optimal=False, t=1, **extra))
     if best is not None and best.max_degree > lb:
-        for dd in range(lb, min(3, best.max_degree - 1) + 1):
-            res = bounded_decomposition(a, "Times", dd, 3, 3)
+        for dd in range(lb, min(2, best.max_degree - 1) + 1):
+            res = bounded_decomposition(a, "Times", dd, 2, 3)
             if res is not None and res.max_degree < best.max_degree:
                 res.scope = scope
                 best = res
