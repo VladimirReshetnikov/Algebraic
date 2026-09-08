@@ -194,5 +194,12 @@ unvalidated.
 beta), recognized by `RootApproximant` as an algebraic number of degree 27 (minimal
 polynomial found in 7 s; equality holds to 400 digits).  Over $\mathbb{Q}(3^{1/6})$ its
 minimal polynomial factors into degrees 9 and 18.  Degree 27 is a prime power, so the
-Frobenius tests do not apply; see the article's notebook section for the status of the
-exact group computation.
+Frobenius tests do not apply, and `RootSolvableQ` on the degree-27 number did not finish
+in 15 minutes with `"MaxGroupOrder" -> 3000`.  The notebook's degree-9 number θ (third
+root of x^9-657x^8+6111x^7+3318x^6+19647x^5-12033x^4+3972x^3-684x^2+9x-1) has Galois
+group of order 18, exponent 6; `RootRadicalReport[θ]` returns a verified radical
+expression in 43 s (series primes {3, 3}, depth 3, 111 leaves).  The degree-9 factor
+over Q(3^(1/6)) vanishing at β0 splits over Q(3^(1/6), θ) into three cubics (237 s), so
+β0 is expressible by radicals; the full expression was not assembled.  Pitfall met again:
+`Abs[N[factor /. x -> b0, 40]] < 10^-20` on an exact zero emits `N::meprec`; substitute
+numerical values for the algebraic numbers first.

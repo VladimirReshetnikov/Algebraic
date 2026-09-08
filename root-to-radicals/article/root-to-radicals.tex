@@ -623,8 +623,9 @@ Both criteria are inconclusive in the other direction (they never prove solvabil
 and neither applies to composite prime-power degrees $4,8,9,16,\dots$; in those cases the
 implementations compute the group exactly, subject to the group order limit.  For
 $x^6-x-1$ (degree $6$, group $S_6$) and $x^6+x^4+3x^2-2x+5$ (group of order $120$) a
-$5$-cycle is found within the first few primes and nonsolvability is proved in about
-$10$ milliseconds.
+$5$-cycle is found within the first few primes and the Frobenius test proves
+nonsolvability in about $10$ milliseconds (a full \code{RootToRadicals} call takes up to
+a second more, spent in the built-in \ToRadicals{} attempt that precedes it).
 
 \section{What the notebook of the question does}\label{sec:notebook}
 
@@ -635,9 +636,24 @@ examples above.  Its target is
 \beta_0=I^{-1}_{1/9}\bigl(\tfrac13,\tfrac13\bigr),
 \]
 the inverse of the regularized incomplete beta function, which the author evaluates to
-$1000$ digits and recognizes with \code{RootApproximant} as an algebraic number of
-moderate degree; the notebook then tries to express that number through nested
-radicals and $\cos(\pi/9)$.  Its devices, in the order they appear, are:
+$1000$ digits and recognizes with \code{RootApproximant} as an algebraic number; the
+notebook then tries to express that number through nested radicals and $\cos(\pi/9)$.
+We reproduced the recognition: \code{RootApproximant} returns in $7$ seconds a monic
+integer polynomial of degree $27$ (leading terms $x^{27}+108x^{26}-2970x^{25}+\dots$,
+constant term $1$), the identity holds to $400$ digits, and over $\Q(3^{1/6})$ the
+polynomial factors into pieces of degrees $9$ and $18$, which is the tower the notebook
+finds.  Since $27=3^3$ is a prime power, neither Frobenius test of
+Section~\ref{sec:negative} applies, and the exact group of the degree-$27$ polynomial
+did not finish within $15$ minutes in Wolfram even with the order limit raised to
+$3000$.  The notebook's tower settles the question nevertheless: the degree-$9$ number
+$\theta$ that the notebook adjoins (the third root of
+$x^9-657x^8+6111x^7+3318x^6+19647x^5-12033x^4+3972x^3-684x^2+9x-1$) has a Galois group
+of order $18$, and \code{RootToRadicals} expresses it in radicals by two Kummer steps
+of prime $3$ in $43$ seconds (verified exactly; depth $3$, $111$ leaves); the degree-$9$
+factor of the minimal polynomial over $\Q(3^{1/6})$ that vanishes at $\beta_0$ splits
+over $\Q(3^{1/6},\theta)$ into three cubics ($237$ seconds), so $\beta_0$ is a root of
+a cubic with radical coefficients and therefore has a radical expression.  We have not
+assembled that expression.  The notebook's devices, in the order they appear, are:
 
 \begin{description}[nosep]
 \item[\code{radicalDepth}] the nesting depth of rational powers (and of \code{Sin},
@@ -674,9 +690,11 @@ invariant, and the reports that discuss it (04, 09) offer heuristics only.
 \end{description}
 
 The notebook's approach is sound as a discovery procedure and it does find the tower
-$\Q\subset\Q(3^{1/6})\subset\Q(3^{1/6},\theta)$ over which the target becomes quadratic;
-what it lacks is a termination guarantee and a criterion for when to stop looking.  The
-descent of Section~\ref{sec:descent} supplies both, at the price of the splitting field.
+$\Q\subset\Q(3^{1/6})\subset\Q(3^{1/6},\theta)$ over which the target becomes a root of
+a cubic; what it lacks is a termination guarantee and a criterion for when to stop
+looking.  The descent of Section~\ref{sec:descent} supplies both, at the price of the
+splitting field, and for the piece $\theta$ that the notebook could not simplify it
+produces the radical expression directly.
 
 \section{Comparison of the nine reports}\label{sec:reports}
 
