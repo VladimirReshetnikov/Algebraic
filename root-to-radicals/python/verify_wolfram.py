@@ -46,11 +46,12 @@ CASES = [
 ]
 
 
-def _wolfram_value(z, digits=50):
-    """A Wolfram number literal for the midpoint of the ball z."""
-    re = z.real.mid().str(digits, radius=False)
-    im = z.imag.mid().str(digits, radius=False)
-    return f"(({re}) + ({im}) I)"
+def _wolfram_value(z):
+    """The midpoint of the ball z as an exact rational Wolfram expression (decimal strings
+    with exponents such as 1e-759 are not valid Wolfram input)."""
+    re = z.real.mid().fmpq()
+    im = z.imag.mid().fmpq()
+    return f"(({re.p})/({re.q}) + (({im.p})/({im.q})) I)"
 
 
 def make_script():
