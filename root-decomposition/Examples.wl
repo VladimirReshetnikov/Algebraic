@@ -8,7 +8,7 @@ as = Root[8 - 4 # + 24 #^2 - 15 #^3 + 3 #^5 + 6 #^6 + #^9 &, 1];
 Print["Product example: ", RootProductDecomposition[ap]["Expression"]];
 Print["Sum example:     ", RootSumDecomposition[as]["Expression"]];
 
-(* The product root as a sum needs two sextics, and nothing inside Q(ap) works. *)
+(* The product root needs sextic summands globally; inside Q(ap) degree 9 is necessary. *)
 Print["Product root as a sum: ", RootSumDecomposition[ap]["Expression"]];
 Print["   restricted to Q(ap): ", RootSumDecomposition[ap, "Scope" -> "InputField"]["MaximumDegree"]];
 
@@ -16,7 +16,7 @@ Print["   restricted to Q(ap): ", RootSumDecomposition[ap, "Scope" -> "InputFiel
 ext = RootReduce[Sqrt[(1 + Sqrt[2]) (1 + Sqrt[3])]];
 Print["External factors: ", RootProductDecomposition[ext]["Expression"]];
 
-(* Three quadratic factors although no two factors of degree < 8 exist. *)
+(* Three quadratics attain degree 2; the optimum with at most two factors is 4. *)
 eta = RootReduce[(1 + Sqrt[2]) (1 + Sqrt[3]) (1 + Sqrt[5])];
 Print["Three factors: ", RootProductDecomposition[eta]["Expression"]];
 

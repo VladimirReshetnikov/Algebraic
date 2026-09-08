@@ -1,8 +1,10 @@
 """Regression tests and timings for rootdecomp.py (run: python test_rootdecomp.py)."""
 import time
+import unittest
+from unittest.mock import patch
 from fractions import Fraction
 
-from flint import fmpz_poly
+from flint import acb, arb, ctx, fmpz_poly
 
 import rootdecomp as rd
 
@@ -15,12 +17,24 @@ def run(label, fn, a, expect_max=None, **kw):
     t0 = time.perf_counter()
     r = fn(a, **kw)
     dt = time.perf_counter() - t0
-    ok = rd.verify_numeric(a, r) if r is not None else None
+    ok = rd.verify_exact(a, r) if r is not None else None
     if expect_max == "none":
         status = "OK" if r is None else "CHECK"
     else:
         status = "OK" if (r is not None and (expect_max is None or r.max_degree == expect_max) and ok) else "CHECK"
-    print(f"[{status}] {label} ({dt:.2f} s): {r}  numeric={ok}")
+    print(f"[{status}] {label} ({dt:.2f} s): {r}  exact={ok}", flush=True)
+    if status != "OK":
+        raise AssertionError(f"{label}: expected maximum degree {expect_max}, got {r}; exact={ok}")
+    if r is not None:
+        assert r.degrees == [term.degree for term in r.terms]
+        assert r.max_degree == max(r.degrees)
+        assert r.lower_bound <= r.max_degree
+        assert not r.optimal or r.scope_optimal
+        if kw.get("dmax") is not None:
+            assert r.max_degree <= kw["dmax"]
+        limit = kw.get("max_terms") if r.op == "Plus" else kw.get("max_factors")
+        if limit is not None:
+            assert len(r.terms) <= limit
     return r
 
 
@@ -34,21 +48,182 @@ ext = alg("Root[4 - 8 #^2 - 16 #^4 - 4 #^6 + #^8 &, 4]")     # sqrt((1+r2)(1+r3)
 s6 = alg("Root[-1 + 4 #^2 + #^6 &, 3]")                     # pair sum of roots of x^4-x-1
 z5 = alg("Root[1 + # + #^2 + #^3 + #^4 &, 4]")
 
-run("product example", rd.product_decomposition, ap, 3)
-run("sum example", rd.sum_decomposition, as_, 3)
-run("sum of product root", rd.sum_decomposition, ap, 6)
-run("sum of product root in Q(a)", rd.sum_decomposition, ap, 9, scope="InputField")
-run("sqrt2+sqrt3+sqrt6 sum", rd.sum_decomposition, e3, 2)
-run("sqrt2+sqrt3+sqrt6 sum, two terms", rd.sum_decomposition, e3, "none", dmax=3, max_terms=2)
-run("sqrt2+sqrt3+sqrt6 product", rd.product_decomposition, e3, 4)
-run("eta product", rd.product_decomposition, eta, 2)
-run("eta two factors", rd.product_decomposition, eta, 4, max_factors=2)
-run("w product", rd.product_decomposition, w, None)
-run("1+r2+r3 sum", rd.sum_decomposition, q, 2)
-run("1+r2+r3 product", rd.product_decomposition, q, 4)
-run("sqrt((1+r2)(1+r3)) product", rd.product_decomposition, ext, 4)
-run("sqrt((1+r2)(1+r3)) sum", rd.sum_decomposition, ext, 8)
-run("zeta5 sum", rd.sum_decomposition, z5, 4)
-run("x^4-x-1 pair sum", rd.sum_decomposition, s6, 4)
-run("x^4-x-1 pair sum in Q(a)", rd.sum_decomposition, s6, 6, scope="InputField")
-run("product of sum root", rd.product_decomposition, as_, 9)
+class ArticleExamples(unittest.TestCase):
+    def test_examples(self):
+        cases = [
+            ("product example", rd.product_decomposition, ap, 3, {}),
+            ("sum example", rd.sum_decomposition, as_, 3, {}),
+            ("sum of product root", rd.sum_decomposition, ap, 6, {}),
+            ("sum of product root in Q(a)", rd.sum_decomposition, ap, 9, {"scope": "InputField"}),
+            ("sqrt2+sqrt3+sqrt6 sum", rd.sum_decomposition, e3, 2, {}),
+            ("sqrt2+sqrt3+sqrt6 sum, two terms", rd.sum_decomposition, e3, "none", {"dmax": 3, "max_terms": 2}),
+            ("sqrt2+sqrt3+sqrt6 product", rd.product_decomposition, e3, 4, {}),
+            ("eta product", rd.product_decomposition, eta, 2, {}),
+            ("eta two factors", rd.product_decomposition, eta, 4, {"max_factors": 2}),
+            ("w product", rd.product_decomposition, w, 2, {}),
+            ("1+r2+r3 sum", rd.sum_decomposition, q, 2, {}),
+            ("1+r2+r3 product", rd.product_decomposition, q, 4, {}),
+            ("sqrt((1+r2)(1+r3)) product", rd.product_decomposition, ext, 4, {}),
+            ("sqrt((1+r2)(1+r3)) sum", rd.sum_decomposition, ext, 8, {}),
+            ("zeta5 sum", rd.sum_decomposition, z5, 4, {}),
+            ("x^4-x-1 pair sum", rd.sum_decomposition, s6, 4, {}),
+            ("x^4-x-1 pair sum in Q(a)", rd.sum_decomposition, s6, 6, {"scope": "InputField"}),
+            ("product of sum root", rd.product_decomposition, as_, 9, {}),
+        ]
+        for label, fn, target, degree, options in cases:
+            with self.subTest(label=label):
+                run(label, fn, target, degree, **options)
+
+
+class CorrectnessRegressions(unittest.TestCase):
+    def test_degree_bounds_and_single_component(self):
+        for fn, name in ((rd.sum_decomposition, "max_terms"), (rd.product_decomposition, "max_factors")):
+            with self.subTest(operation=fn.__name__):
+                self.assertIsNone(fn(z5, dmax=3))
+                self.assertIsNone(fn(ap, dmax=2))
+                self.assertIsNone(fn(ap, dmax=8, **{name: 1}))
+                result = fn(ap, **{name: 1})
+                self.assertEqual(len(result.terms), 1)
+                self.assertTrue(result.scope_optimal)
+                self.assertFalse(result.optimal)
+
+    def test_affine_two_term_sum(self):
+        result = run("two affine quadratic summands", rd.sum_decomposition, q, 2, max_terms=2)
+        self.assertEqual(len(result.terms), 2)
+
+    def test_constrained_optimality(self):
+        result = rd.sum_decomposition(e3, max_terms=2)
+        self.assertEqual(result.max_degree, 4)
+        self.assertTrue(result.scope_optimal)
+        self.assertFalse(result.optimal)
+        result = rd.sum_decomposition(ap, engine="input")
+        self.assertFalse(result.scope_optimal)
+        self.assertFalse(result.optimal)
+        result = rd.sum_decomposition(ap, scope="InputField")
+        self.assertTrue(result.scope_optimal)
+        self.assertFalse(result.optimal)
+        result = rd.sum_decomposition(as_, dmax=3)
+        self.assertTrue(result.optimal)
+        result = rd.product_decomposition(eta, max_factors=2)
+        self.assertTrue(result.extra["two_factor_optimal"])
+        self.assertTrue(result.scope_optimal)
+        self.assertFalse(result.optimal)
+        self.assertFalse(rd.product_decomposition(e3).scope_optimal)
+
+    def test_tensor_below_binary_degree_bound(self):
+        result = run("tensor below binary degree bound", rd.product_decomposition, eta, 2,
+                     max_factors=3, depth=0)
+        self.assertEqual(result.method, "TensorRankOne")
+        self.assertEqual(len(result.terms), 3)
+        self.assertTrue(result.scope_optimal)
+        result = run("tensor with explicit degree bound", rd.product_decomposition, eta, 2,
+                     dmax=2, max_factors=3, depth=0)
+        self.assertEqual(len(result.terms), 3)
+        self.assertIsNone(rd.product_decomposition(eta, dmax=2, max_factors=2))
+
+    def test_bounded_fallback_with_explicit_bound(self):
+        result = run("bounded fallback with explicit bound", rd.product_decomposition, w, 2,
+                     dmax=2, max_factors=3)
+        self.assertEqual(len(result.terms), 3)
+
+    def test_input_field_does_not_extract_external_radicals(self):
+        # A Galois input field still must honor the request to keep its factors
+        # in that field: norm exponent one is the applicable scoped search.
+        target = alg("Root[1 - 10 #^2 + #^4 &, 4]")
+        for engine in ("input", "splitting"):
+            result = rd.product_decomposition(target, scope="InputField", engine=engine, max_factors=2)
+            self.assertEqual(result.extra["t"], 1)
+            self.assertTrue(rd.verify_exact(target, result))
+        # The degree-eight example has no proper factorization inside Q(a).
+        result = run("external example restricted to input field", rd.product_decomposition,
+                     ext, 8, scope="InputField", max_factors=2)
+        self.assertEqual(result.extra["t"], 1)
+
+    def test_bounded_scope_optimality(self):
+        target = alg("Root[1 - 10 #^2 + #^4 &, 4]")
+        result = rd.bounded_decomposition(target, "Plus", 4, 3, 2)
+        self.assertFalse(result.scope_optimal)
+        self.assertTrue(rd.bounded_decomposition(target, "Plus", 4, 3, 1).scope_optimal)
+        result = rd.bounded_decomposition(w, "Times", 2, 2, 3)
+        self.assertTrue(result.optimal)
+        self.assertTrue(result.scope_optimal)
+        with patch.object(rd, "catalog", side_effect=AssertionError("impossible box must not be enumerated")):
+            self.assertIsNone(rd.bounded_decomposition(ap, "Plus", 8, 10 ** 6, 1))
+
+    def test_galois_cache_scale_and_resource_limit(self):
+        integer = fmpz_poly([-2, 0, 1])
+        fractional = fmpz_poly([-1, 0, 2])
+        self.assertEqual(rd.galois_data(integer).scale, 1)
+        self.assertEqual(rd.galois_data(fractional).scale, 2)
+        with self.assertRaises(ValueError):
+            rd.galois_data(integer, maxorder=1)
+        target = rd.AlgebraicNumber(fractional, 2)
+        self.assertTrue(rd.verify_exact(target, rd.sum_decomposition(target, engine="splitting")))
+
+    def test_input_validation(self):
+        rd.catalog(1, 1)
+        for degree, height in ((True, 1), (1, True), (0, 1), (1, -1)):
+            with self.subTest(catalog=(degree, height)), self.assertRaises(ValueError):
+                rd.catalog(degree, height)
+        for polynomial in ([0], [1], [-1, 0, 1], [1, -2, 1]):
+            with self.subTest(polynomial=polynomial), self.assertRaises(ValueError):
+                rd.AlgebraicNumber(fmpz_poly(polynomial), 1)
+        for index in (0, 3, -1, 1.5, True):
+            with self.subTest(index=index), self.assertRaises(ValueError):
+                rd.AlgebraicNumber(fmpz_poly([-2, 0, 1]), index)
+        for text in ("Root[-2+#junk^2&,1]", "Root[-2+#^2foo&,1]", "Root[&,1]"):
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                alg(text)
+        for fn, options in ((rd.sum_decomposition, {"max_terms": 0}),
+                            (rd.product_decomposition, {"max_factors": -1}),
+                            (rd.sum_decomposition, {"dmax": 0}),
+                            (rd.sum_decomposition, {"scope": "typo"}),
+                            (rd.product_decomposition, {"engine": "typo"})):
+            with self.subTest(options=options), self.assertRaises(ValueError):
+                fn(ap, **options)
+        with self.assertRaises(ValueError):
+            rd.lower_bound(fmpz_poly([1, -2, 1]))
+
+    def test_arithmetic_and_exact_verifier(self):
+        two = rd.AlgebraicNumber.from_rational(2)
+        three = rd.AlgebraicNumber.from_rational(3)
+        zero = rd.AlgebraicNumber.from_rational(0)
+        self.assertEqual(rd.combine_algebraic(two, three, "+").as_fraction(), 5)
+        self.assertEqual(rd.combine_algebraic(two, three, "/").as_fraction(), Fraction(2, 3))
+        self.assertEqual(rd.scale_algebraic(ap, Fraction(0), 200).as_fraction(), 0)
+        with self.assertRaises(ZeroDivisionError):
+            rd.combine_algebraic(two, zero, "/")
+        with self.assertRaises(ValueError):
+            rd.combine_algebraic(two, three, "typo")
+        wrong = rd.Decomposition("Plus", [three], [1], 1, 1, False, False, "Global", "Test")
+        self.assertFalse(rd.verify_exact(two, wrong))
+        one = rd.AlgebraicNumber.from_rational(1)
+        near_one = rd.AlgebraicNumber.from_rational(1 + Fraction(1, 2 ** 400))
+        close = rd.Decomposition("Plus", [near_one], [1], 1, 1, False, False, "Global", "Test")
+        self.assertTrue(rd.verify_numeric(one, close, 160))
+        self.assertFalse(rd.verify_exact(one, close, 160))
+        p = fmpz_poly([-2, 0, 1])
+        with self.assertRaises(rd.PrecisionError):
+            rd.AlgebraicNumber.from_value(p, acb(arb(0, 2)), 100)
+
+    def test_complex_roots_and_precision_stability(self):
+        for coeffs in ([25, 0, -2, 0, 1], [6, 0, 5, 0, 1]):
+            p = fmpz_poly(coeffs)
+            low, high = rd.poly_roots(p, 160), rd.poly_roots(p, 300)
+            self.assertTrue(all(x.overlaps(y) for x, y in zip(low, high)))
+            self.assertTrue(all(low[i].imag < 0 and low[i + 1].imag > 0 for i in range(0, 4, 2)))
+        for index in range(1, 5):
+            target = rd.AlgebraicNumber(fmpz_poly([25, 0, -2, 0, 1]), index)
+            result = rd.sum_decomposition(target, max_terms=2)
+            self.assertEqual(result.max_degree, 2)
+            self.assertTrue(rd.verify_exact(target, result))
+        # Both positive roots round to the same binary64 number.
+        m = 10 ** 30
+        p = fmpz_poly([m * m - 2, -2 * m, 1])
+        with ctx.workprec(300):
+            roots = rd.poly_roots(p, 300)
+            self.assertTrue(roots[0].real < roots[1].real)
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)

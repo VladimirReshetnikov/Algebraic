@@ -3,9 +3,12 @@
    and prints a summary; exits with a nonzero code on failure. *)
 
 SetDirectory[DirectoryName[$InputFileName /. "" -> Directory[]]];
-report = TestReport["RootDecomposition.wlt"];
+{wallSeconds, report} = AbsoluteTiming[TestReport["RootDecomposition.wlt"]];
+If[! IntegerQ[report["TestsSucceededCount"]] || ! IntegerQ[report["TestsFailedCount"]] ||
+    report["TestsSucceededCount"] + report["TestsFailedCount"] == 0,
+  Print["FAILED: no valid test report was produced: ", report]; Exit[1]];
 Print["Tests succeeded: ", report["TestsSucceededCount"], ", failed: ", report["TestsFailedCount"],
-  ", time: ", report["TimeElapsed"]];
+  ", test time: ", report["TimeElapsed"], ", total wall time: ", wallSeconds, " seconds"];
 If[report["TestsFailedCount"] > 0,
   Do[If[t["Outcome"] =!= "Success",
       Print["FAILED ", t["TestID"], " | outcome ", t["Outcome"], " | expected ", t["ExpectedOutput"],

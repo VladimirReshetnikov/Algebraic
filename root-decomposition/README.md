@@ -23,10 +23,12 @@ the complete theory with proofs; this file documents the software.
 | `RootDecomposition.wlt`, `RunTests.wl` | Regression tests (`wolfram -script RunTests.wl`). |
 | `Examples.wl` | Worked examples (`Get["Examples.wl"]`). |
 | `python/rootdecomp.py` | Independent Python implementation on python-flint (+ SymPy for the input-field factorization). |
-| `python/test_rootdecomp.py` | Python regression and timing script. |
+| `python/test_rootdecomp.py` | Python regression suite; failures exit nonzero. |
+| `python/verify_wolfram.py` | Independent exact verification of Python results in a native Wolfram kernel. |
+| `python/requirements.txt` | Python dependencies (tested with python-flint 0.8 and SymPy 1.14). |
 | `article/` | The unified article (`.tex`, `.pdf`). |
 | `reports/report-01` … `report-09` | The nine original reports, unpacked verbatim. |
-| `WOLFRAM-NOTES.md` | Subtle Wolfram Language behaviour found while developing the package. |
+| [`../WOLFRAM-NOTES.md`](../WOLFRAM-NOTES.md) | Subtle Wolfram Language behaviour found while developing the package. |
 
 ## Wolfram Language package
 
@@ -46,14 +48,14 @@ RootSumDecomposition[ap]["Terms"]
 Functions:
 
 - `RootSumDecomposition[a]`, `RootSumDecomposition[a, d]`: minimal-maximum-degree sum, or a sum with all summands of degree at most `d`.
-- `RootProductDecomposition[a]`, `RootProductDecomposition[a, d]`: the same for products.
+- `RootProductDecomposition[a]`, `RootProductDecomposition[a, d]`: search for products; the two-factor search is complete, while arbitrary-length products also use heuristics.
 - `RootGaloisData[a]` or `RootGaloisData[poly, x]`: Galois group as permutations of the roots, its order and exponent, all subgroups with their fixed fields, the tower basis of the splitting field and the automorphism matrices.
 - `RootDecompositionLowerBound[a]`: a rigorous lower bound (largest prime factor of the degree, Frobenius cycle types).
 - `RootBoundedDecomposition[a, Plus|Times, d, height, count]`: bounded dictionary search.
 - `RootDecompositionVerify[a, terms, Plus|Times]`: exact verification.
 
 Results are associations with `"Terms"`, `"Degrees"`, `"MaximumDegree"`, `"LowerBound"`,
-`"Optimal"` (globally optimal, certified), `"ScopeOptimal"` (optimal within the class that
+`"Optimal"` (global optimality, with the certification qualifications below), `"ScopeOptimal"` (optimal within the class that
 was searched), `"Verified"`, `"Method"`, `"Expression"` (an inactive sum or product), and for
 products `"TwoFactorOptimal"` and `"NormExponent"`.  A `Failure` is returned when a
 representation with the requested degree does not exist in the searched class, or when a
@@ -75,19 +77,36 @@ Options:
   many-factor heuristics.
 - `"MaxGroupOrder"` (default 400), `"WorkingPrecision"` (default 80 digits), `"MaxTries"`.
 
-What is certified: `"Optimal" -> True` means that the maximum degree equals a proved lower bound
-or that a complete algorithm (sums; two-factor products with `"MaxFactors" -> 2`) exhausted all
-smaller degrees.  For products of many factors no complete algorithm is known; the package reports
-the best verified decomposition and marks it optimal only when a lower bound is attained.
+`"Optimal"` refers to the unrestricted global problem. It is true when a proved lower bound
+is attained, or a complete unrestricted additive search excludes every smaller degree.
+`"ScopeOptimal"` refers to the requested field and component constraints; `"TwoFactorOptimal"`
+separately records two-factor optimality within the requested field scope. In particular, `(1+Sqrt[2])(1+Sqrt[3])(1+Sqrt[5])`
+has a two-factor optimum of 4 and a global product optimum of 2. Restricting `"MaxFactors"`
+to 2 must not label the degree-4 answer globally optimal.
 
-The Galois group is determined numerically (with exact minimal polynomials from `RootReduce`,
-counting checks and a group-closure check); every decomposition returned is re-verified exactly
-with `RootReduce` and `MinimalPolynomial`.  The resolvent construction is practical for Galois
-groups of order up to a few hundred.
+An explicit degree bound applies even when a lower bound already excludes it; the function
+returns failure rather than a larger trivial answer. Term and factor limits include rational
+components introduced by normalization. `"Scope" -> "InputField"` restricts the returned
+components throughout the search; radical extraction outside the field is reserved for global
+searches. Gaussian coefficients are supported for unrestricted flat sums in the Wolfram
+implementation; a finite `"MaxTerms"` in Gaussian mode is rejected because the corresponding
+coefficient-selection problem is not the fixed-space linear problem.
+
+The Wolfram Galois engine uses exact minimal polynomials from `RootReduce`, numerical root
+matching, counting checks and a group-closure check. Its search-exhaustion conclusions rely on
+that numerical matching; these are distinct from the exact positive identity and degree checks
+performed with `RootReduce` and `MinimalPolynomial`. The resolvent construction is practical
+for Galois groups of order up to a few hundred.
 
 ## Python implementation
 
-Requires `python-flint` (0.7 or later) and SymPy.
+Requires `python-flint` and SymPy; the dependency file records the tested minimum versions.
+
+```powershell
+python -m pip install -r requirements.txt
+python test_rootdecomp.py
+python verify_wolfram.py  # optional independent check; requires a native Wolfram kernel
+```
 
 ```python
 import rootdecomp as rd
@@ -97,14 +116,35 @@ print(rd.product_decomposition(ap))
 print(rd.sum_decomposition(rd.parse_wolfram_root("Root[8 - 4 # + 24 #^2 - 15 #^3 + 3 #^5 + 6 #^6 + #^9 &, 1]")))
 ```
 
-`sum_decomposition`, `product_decomposition` (same options as above: `dmax`, `scope`,
-`max_terms`, `max_factors`, `engine`), `galois_data`, `input_field_data`, `lower_bound`,
-`bounded_decomposition`, `verify_numeric`, and `parse_wolfram_root` / `AlgebraicNumber.wolfram()`
-for exchanging `Root` syntax with Mathematica (same root ordering).  The Galois computation uses
-Arb ball arithmetic, so its integer roundings are rigorous; the exact factorizations and the
-rational linear algebra run in FLINT.
+The main functions are `sum_decomposition`, `product_decomposition`, `galois_data`,
+`input_field_data`, `lower_bound`, and `bounded_decomposition`. Python uses `dmax=None` for
+automatic degree minimization, `scope="Global"` or `"InputField"`, and
+`engine="auto"`, `"input"` or `"splitting"`. The component limits are `max_terms` and
+`max_factors`, with `None` meaning unrestricted. Gaussian coefficients are a Wolfram-only
+option. A constrained search with no answer returns `None`; invalid arguments and resource
+or precision failures raise exceptions.
 
-## Timings (this machine)
+`parse_wolfram_root` and `AlgebraicNumber.wolfram()` exchange polynomial `Root` syntax with
+Mathematica. Real roots have the same increasing order. Python orders complex roots in conjugate
+pairs by real part and imaginary magnitude, negative imaginary part first. Wolfram's non-real
+indices can depend on the isolation method, so arbitrary complex interchange needs a branch
+check; it is not guaranteed merely by copying the index. See the
+[Wolfram `Root` documentation](https://reference.wolfram.com/language/ref/Root.html).
+The Python constructor requires an irreducible integer minimal polynomial (normalized to primitive form)
+and a valid one-based root index. The Galois computation uses Arb ball arithmetic with unique
+integer, factor and root identification; exact factorizations and rational linear algebra run
+in FLINT.
+
+`verify_numeric(a, result)` checks whether the difference ball contains zero. This is a useful
+consistency check but does not prove equality. `verify_exact(a, result)` reconstructs the sum
+or product using exact composed polynomials and certified root selection. The optional
+`verify_wolfram.py` independently checks returned identities and degrees using the native kernel;
+`python verify_wolfram.py --emit review.wl` writes the same checks for later execution.
+
+## Historical timings
+
+The table below is retained as provenance for the original implementation. Current review
+measurements and validation follow it.
 
 | Task | Wolfram | Python |
 | --- | --- | --- |
@@ -114,13 +154,42 @@ rational linear algebra run in FLINT.
 | `D+(ap) = 6` with cached splitting-field data | 0.2 s | 0.15 s |
 | `ToNumberField[roots, All]` for the same field (the reports' design) | 14 min | – |
 
-The Wolfram suite (39 tests, `wolfram -script RunTests.wl`) and the Python suite
-(18 checks, `python test_rootdecomp.py`) pass on this machine.
+These measurements describe the original implementation on its development machine; they are
+not performance guarantees. `python benchmark.py` measures the current checkout, and the
+regression scripts report their own results. The original Python script only printed failed
+checks; the current suite asserts its expectations and exits nonzero on failure.
+
+## Review validation (7 September 2026)
+
+- Native Wolfram 15.0.1: `wolfram -script RunTests.wl` passed **67 tests**, with no failures.
+- Python 3.14, python-flint 0.8.0, SymPy 1.14.0: `python test_rootdecomp.py` passed
+  **12 test methods**, including the 18 article examples as subtests and 11 methods covering
+  bounds, certificates, field scope, cache isolation, arithmetic and root selection. Returned
+  example identities are checked with `verify_exact`.
+- `python verify_wolfram.py` passed **12 independent exact identity and degree checks** in
+  the native kernel, including all four branches of the complex biquadratic test polynomial.
+- The revised **21-page article** was rebuilt with three serial
+  `pdflatex -interaction=nonstopmode -halt-on-error root-decomposition.tex` passes and rendered
+  for visual inspection. The final log has no warnings or overfull/underfull boxes.
+
+A serial comparison in separate fresh Python processes measured the default
+`product_decomposition` search for the degree-nine **sum** example: **55.76 s** for repository
+revision `7e2314c`, **14.69 s** for this revision, approximately **3.8 times faster** in that run.
+Both returned the same maximum degree 9 with global optimality unclaimed. Importing the module
+and the independent verification were outside the timed region; field construction was included.
+These are single-run local measurements, not a guaranteed ratio. Use `python benchmark.py --full`
+to include this case in the current benchmark.
+
+The improvements avoid repeated root isolation, multiplication-matrix construction, failed
+field-pair tests and tensor-family tests across degree thresholds. They also use balanced
+polynomial products, exact subgroup containment, the stronger compositum-degree bound, and
+early rejection of impossible bounded-search boxes. Many-factor tensor search starts at the
+unrestricted lower bound rather than the two-factor square-root bound.
 
 ## Main mathematical results
 
 - Both examples have globally optimal maximum degree 3.
 - Sums: complete finite algorithm (trace descent + fixed spaces); `D+(ap) = 6` while any sum inside `Q(ap)` needs degree 9.
 - Two-factor products: complete finite algorithm with a radical exponent `t`; optimal factors can lie outside the splitting field (`sqrt((1+sqrt2)(1+sqrt3))`).
-- Many factors: `(1+sqrt2)(1+sqrt3)(1+sqrt5)` needs three factors; `Dx(1+sqrt2+sqrt3) = 4` by an arithmetic sign obstruction; no complete algorithm is known.
+- Many factors: `(1+sqrt2)(1+sqrt3)(1+sqrt5)` needs three factors to attain maximum degree 2; `Dx(1+sqrt2+sqrt3) = 4` by an arithmetic sign obstruction. These implementations do not provide a complete arbitrary-length product algorithm.
 - `sqrt2+sqrt3+sqrt6` is a flat sum of three quadratics but admits no binary sum or product splitting, even with Gaussian rational coefficients.
