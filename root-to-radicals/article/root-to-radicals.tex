@@ -1,0 +1,924 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=25mm]{geometry}
+\usepackage{amsmath,amsthm,amssymb,mathtools}
+\usepackage{microtype}
+\usepackage{booktabs,longtable,array,tabularx}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage[colorlinks=true,linkcolor=blue!40!black,citecolor=blue!40!black,urlcolor=blue!50!black]{hyperref}
+\hypersetup{pdftitle={Expressing algebraic numbers by radicals: a complete replacement for ToRadicals}}
+
+\lstset{basicstyle=\ttfamily\small,columns=fullflexible,keepspaces=true,breaklines=true,
+  frame=single,framerule=0.3pt,rulecolor=\color{black!30},xleftmargin=4pt,xrightmargin=4pt,
+  aboveskip=6pt,belowskip=6pt,showstringspaces=false}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{algorithm}[theorem]{Algorithm}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\Qbar}{\overline{\Q}}
+\newcommand{\Gal}{\operatorname{Gal}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\Res}{\operatorname{Res}}
+\newcommand{\Stab}{\operatorname{Stab}}
+\newcommand{\AGL}{\operatorname{AGL}}
+\newcommand{\rad}{\operatorname{rad}}
+\newcommand{\Frob}{\operatorname{Frob}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\Root}{\code{Root}}
+\newcommand{\ToRadicals}{\code{ToRadicals}}
+
+\title{Expressing algebraic numbers by radicals:\\ a complete replacement for \ToRadicals}
+\author{Prepared for Vladimir Reshetnikov}
+\date{September 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+Mathematica StackExchange question 34011 asks why \ToRadicals{} cannot rewrite every
+\Root{} object that has a radical expression, whether the obstruction is undecidability
+or cost, and whether a complete replacement can be written.  We answer all three
+questions.  A radical expression exists exactly when the Galois group of the minimal
+polynomial is solvable; this is decidable, and even in polynomial time, so the built-in
+limitation is a matter of scope and cost, not of principle.  We give a complete
+algorithm: cheap structural recognizers that produce short formulas (functional
+decomposition, generalized reciprocal symmetry, Dickson polynomials, and the pair-sum
+resolvent that systematizes the search in the notebook attached to the question),
+and a general Galois--Kummer descent that is complete for every solvable input and
+proves nonsolvability otherwise.  Every step is proved.  Both examples of the question
+are worked out by hand and by machine, with a proof that the branch returned is the
+requested one.  Two implementations are provided and tested: a Wolfram Language package
+and a Python port on python-flint, both reusing the splitting-field engine of the
+companion root-decomposition project.  Every claim about running code in this article
+was executed; the measurements are reported as observed.
+\end{abstract}
+
+\tableofcontents
+
+\section{Introduction}\label{sec:intro}
+
+The documentation of \ToRadicals{} states that there are cases in which an expression in
+radicals exists but the function cannot find it.  The question gives two such cases,
+\begin{equation}\label{eq:examples}
+\alpha = \Root[x^6+x^4-x^3-x^2-1,\,2], \qquad
+\beta  = \Root[5x^5-25x^3+25x+6,\,5],
+\end{equation}
+with the closed forms
+\begin{equation}\label{eq:closedforms}
+\begin{aligned}
+\alpha&=\frac{1}{\sqrt[3]{36}}\Bigl(\frac{3}{\sqrt{\gamma}}+\frac{\gamma}{2}\Bigr),\qquad
+\gamma=\sqrt[3]{2\delta}-8\sqrt[3]{3/\delta},\qquad \delta=9+\sqrt{849},\\
+\beta&=\sqrt[5]{\tfrac{-3+4i}{5}}+\sqrt[5]{\tfrac{-3-4i}{5}},
+\end{aligned}
+\end{equation}
+and asks: what is the nature of the restriction, is the problem undecidable or merely
+expensive, and can one write a version of \ToRadicals{} that succeeds whenever a radical
+expression exists?
+
+\subsection{Summary of results}
+
+\begin{enumerate}[nosep]\sloppy
+\item \textbf{Nature of the restriction.}  An algebraic number has a radical expression
+if and only if the Galois group of its minimal polynomial is solvable
+(Theorem~\ref{thm:galois}).  Solvability of a Galois group is decidable, and Landau and
+Miller showed in 1985 that it is decidable in polynomial time~\cite{LandauMiller}.  The
+built-in function is documented to be complete through degree four and to recognize
+some special forms; on the two examples above and on the cyclic quintic
+$x^5+x^4-4x^3-3x^2+3x+1$ (whose roots are $2\cos(2\pi k/11)$) it returns the \Root{}
+object unchanged (Section~\ref{sec:builtin}).  The obstruction is therefore neither
+undecidability nor the absence of an algorithm; it is that the general construction
+requires the splitting field, whose degree can be as large as the group order.
+\item \textbf{A complete algorithm.}  Section~\ref{sec:descent} gives the general
+Galois--Kummer descent with proofs and a completeness theorem
+(Theorem~\ref{thm:complete}).  Section~\ref{sec:structural} gives four structural
+reductions that produce short formulas without the splitting field, each with a proof;
+the two examples of the question are instances of two of them
+(Section~\ref{sec:examples}).  Section~\ref{sec:negative} gives cheap proofs of
+nonsolvability from Frobenius cycle types.
+\item \textbf{Two implementations.}  \code{RootToRadicals.wl} (Wolfram Language) and
+\code{roottoradicals.py} (Python, python-flint and SymPy) implement the same
+algorithms; both were executed on the examples and on regression suites
+(Section~\ref{sec:impl}).  Both examples of the question are solved in well under a
+second by the structural layer, and in 41 and 18 seconds (Wolfram) or 24 and 12 seconds
+(Python) when the general descent is forced.
+\item \textbf{The notebook and the nine reports.}  Section~\ref{sec:notebook} explains
+what the notebook attached to the question computes and which theorem replaces each of
+its devices.  Section~\ref{sec:reports} compares the nine independently written reports
+that preceded this article.
+\end{enumerate}
+
+\subsection{Conventions}\label{sec:conventions}
+
+A \emph{radical expression} is built from rational numbers, the imaginary unit $i$,
+addition, multiplication, and powers with rational exponents, where $z^{p/q}$ denotes
+the principal branch $\exp\bigl(\tfrac{p}{q}\log z\bigr)$ with $-\pi<\operatorname{Im}\log z\le\pi$.
+This is exactly the grammar of Wolfram's \code{Plus}, \code{Times}, \code{Power} with
+rational exponents and \code{I}; in particular $\zeta_m=(-1)^{2/m}=e^{2\pi i/m}$ is a
+radical expression, so roots of unity need no special treatment.  The \emph{depth} of a
+radical expression is the nesting depth of its non-integer powers.  Throughout,
+$p\in\Z[x]$ is the minimal polynomial of the input, $n=\deg p$, $L$ is its splitting
+field in $\C$, and $G=\Gal(L/\Q)$, viewed as a permutation group on the $n$ roots.
+\Root{}$[p,k]$ denotes the $k$-th root in Wolfram's ordering (real roots first,
+increasing; then non-real roots in conjugate pairs).
+
+\section{The problem}\label{sec:problem}
+
+There are three distinct tasks.
+\begin{enumerate}[nosep]
+\item \emph{Decide} whether some radical expression equals the given number.
+\item \emph{Construct} one.
+\item \emph{Identify the requested conjugate}: the formula must equal the root with the
+given index, not merely some root of $p$.
+\end{enumerate}
+The third task is not a formality.  A formula in radicals with principal branches
+determines a single complex number, and a change of one branch usually gives a different
+conjugate; the notebook of the question spends most of its effort on exactly this point
+(Section~\ref{sec:notebook}).  Our algorithms select branches by a certified numerical
+comparison among finitely many separated candidates and then verify the final identity
+exactly.
+
+The criterion must be applied to the \emph{minimal} polynomial of the selected number.
+If the user supplies a reducible or non-minimal annihilating polynomial, its Galois
+group may be larger (even nonsolvable) although the selected root lies in a solvable
+factor.  All functions below therefore start by computing the minimal polynomial.
+
+\section{Why the built-in function fails, and why the problem is decidable}\label{sec:builtin}
+
+Wolfram's \ToRadicals{} is documented to convert \Root{} objects of degree at most four,
+and \Root{} objects of some recognized special forms (for instance binomials
+$x^m-c$ and polynomials that \code{Decompose} reduces to such pieces).  In Wolfram
+15.0.1 we measured:
+
+\begin{center}
+\begin{tabular}{@{}lcl@{}}
+\toprule
+input & \ToRadicals & remark\\
+\midrule
+$\Root[x^6+x^4-x^3-x^2-1,2]$ & unchanged & example 1 of the question\\
+$\Root[5x^5-25x^3+25x+6,5]$ & unchanged & example 2 of the question\\
+$\Root[x^5+x^4-4x^3-3x^2+3x+1,1]$ & unchanged & cyclic quintic, $2\cos(2\pi/11)$\\
+$\Root[x^3-3x+1,1]$ & radicals & degree $\le 4$\\
+$\Root[x^4-x-1,1]$ & radicals & degree $\le 4$\\
+$\Root[x^5-2,1]$, $\Root[x^8+1,1]$ & radicals & binomials\\
+$\Root[x^6-2x^3-1,1]$ & radicals & decomposable\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+None of the three failures is caused by undecidability.  The Galois group of a
+polynomial is a finite computable object (by any of the classical resolvent methods, or
+by the numerical resolvent method of our engine, Section~\ref{sec:engine}), and
+solvability of a finite group is decided by iterating the commutator subgroup.
+Landau and Miller~\cite{LandauMiller} proved that solvability by radicals can be decided
+in time polynomial in the degree and the coefficient size, without computing the Galois
+group; the \emph{construction} of an expression may however require the splitting field,
+whose degree $[L:\Q]=|G|$ can be $n!$.  This is the real cost, and it is why a
+general-purpose library function stops at degree four: beyond it there is no bound on
+the size of the answer that is polynomial in the input.
+
+\section{The criterion}\label{sec:criterion}
+
+\begin{theorem}[Galois]\label{thm:galois}
+Let $a\in\Qbar$ with minimal polynomial $p$, splitting field $L$ and $G=\Gal(L/\Q)$.
+Then $a$ is equal to a radical expression if and only if $G$ is solvable.
+\end{theorem}
+
+\begin{proof}
+See \cite[Chapter 5]{Milne} or \cite[\S 14.7]{DummitFoote}.  For the direction we use
+constructively, Section~\ref{sec:descent} gives an explicit procedure.
+\end{proof}
+
+The constructive direction needs roots of unity in the base field.  The following
+reduction is used by every algorithm in this article.
+
+\begin{lemma}[Cyclotomic base]\label{lem:base}
+Let $m=\rad|G|$ be the product of the distinct primes dividing $|G|$, $B=\Q(\zeta_m)$,
+and $M=LB$ the compositum.  Then
+\begin{enumerate}[nosep]
+\item[(i)] $H:=\Gal(M/B)\cong\Gal(L/L\cap B)$, a subgroup of $G$;
+\item[(ii)] $H$ is solvable if and only if $G$ is solvable;
+\item[(iii)] every prime dividing $|H|$ divides $m$, so $B$ contains $\zeta_q$ for every
+composition factor $q$ of $H$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) is the theorem on natural irrationalities \cite[Chapter 3]{Milne}: restriction
+$\Gal(M/B)\to\Gal(L/L\cap B)$ is an isomorphism because $M=LB$ and $L/\Q$ is Galois.
+(ii) A subgroup of a solvable group is solvable; conversely $G/\Gal(L/L\cap B)\cong\Gal(L\cap B/\Q)$
+is a quotient of the abelian group $\Gal(B/\Q)$, and an extension of a solvable group by
+an abelian group is solvable.  (iii) follows from (i) and Lagrange's theorem.
+\end{proof}
+
+The lemma converts the problem into a tower of cyclic extensions of prime degree $q$ over
+fields containing $\zeta_q$, which is the setting of Kummer theory
+(Section~\ref{sec:descent}).  Note that $m$ omits the prime $2$ in practice: $\zeta_2=-1$
+is rational.
+
+\section{Structural reductions}\label{sec:structural}
+
+The reductions of this section find short formulas from the shape of $p$ alone, without
+computing the splitting field.  Each is a theorem of the form ``if $p$ has this shape,
+then $a$ is obtained from a number of smaller degree by one explicit radical step''.
+The implementations try them in the order given, recursing on the smaller number, and
+fall back to the general descent.
+
+\subsection{Functional decomposition}
+
+\begin{proposition}\label{prop:decompose}
+Let $p=g\circ h$ with $g,h\in\Q[x]$ of degrees $\ge2$, and let $a$ be a root of $p$.
+Then $v=h(a)$ is a root of $g$, and $a$ is a root of $h(x)-v\in\Q(v)[x]$.  If $v$ has a
+radical expression, then so does $a$ whenever $\deg h\le4$ or $h(x)=cx^k+d$ is a
+binomial.
+\end{proposition}
+
+\begin{proof}
+$g(v)=g(h(a))=p(a)=0$.  For $\deg h\le4$ the roots of $h(x)-v$ are given by the
+classical formulas with coefficients in $\Q(v)$; for a binomial they are
+$\zeta_k^{e}\bigl((v-d)/c\bigr)^{1/k}$.  Both are radical expressions in a radical
+expression of $v$.
+\end{proof}
+
+\code{Decompose} returns a complete decomposition $p=g_1\circ g_2\circ\dots\circ g_r$
+(Ritt's theorem guarantees that the multiset of degrees is well defined).  The
+implementation peels from the outside: $v_1$ is a root of $g_1$, then $v_2$ is a root of
+$g_2(x)-v_1$, and so on; at each stage the exact value $v_i=(g_{i+1}\circ\dots\circ g_r)(a)$
+is known (it is an algebraic number computed by \code{RootReduce} or by a resultant), and
+the branch of the radical formula is the candidate that matches this exact value
+numerically.  The chain fails only when some inner piece of degree $>4$ is not a
+binomial; the general descent then takes over.
+
+\subsection{Generalized reciprocal symmetry}\label{sec:reciprocal}
+
+\begin{proposition}\label{prop:reciprocal}
+Let $n=2m$ and suppose $p(x)=x^mP(x+c/x)$ with $c\in\Q^\times$ and $P\in\Q[x]$ of
+degree $m$.  If $a$ is a root of $p$, then $y=a+c/a$ is a root of $P$, and
+$a=\tfrac12\bigl(y\pm\sqrt{y^2-4c}\bigr)$; the other sign gives the conjugate $c/a$.
+\end{proposition}
+
+\begin{proof}
+The constant term of the monic form of $p$ is $c^m\neq0$, so $a\neq0$ and
+$0=p(a)=a^mP(a+c/a)$ gives $P(y)=0$.  The numbers $a$ and $c/a$ are the two roots of
+$x^2-yx+c$.
+\end{proof}
+
+\emph{Detection.}  Write $p$ monic.  Then $c^m$ is the constant term, so $c$ is a
+rational $m$-th root of it (two candidates $\pm c$ when $m$ is even); for each candidate,
+subtract $\operatorname{coef}_{m+k}(p)\,x^m(x+c/x)^k$ for $k=m,m-1,\dots,0$ and check that
+the remainder vanishes.  This is a finite exact test.
+
+\emph{Branch coupling.}  The formula carries $c/a$ as the other root of the same
+quadratic.  Extracting $a$ and $c/a$ by two independent radical formulas and then
+choosing branches for each would not be sound: the two choices are coupled by
+$a\cdot(c/a)=c$.  The same remark applies to Dickson polynomials below, where the
+term $c/u$ must be formed from the \emph{same} $u$.  The first example of the question
+(Section~\ref{sec:examples}) is of this type with $c=-1$.
+
+\subsection{Dickson polynomials}\label{sec:dickson}
+
+The Dickson polynomial $D_k(x,c)$ is defined by $D_0=2$, $D_1=x$,
+$D_k=xD_{k-1}-cD_{k-2}$, and satisfies the functional equation
+\begin{equation}\label{eq:dickson}
+D_k\Bigl(u+\frac{c}{u},\,c\Bigr)=u^k+\frac{c^k}{u^k}.
+\end{equation}
+
+\begin{proposition}\label{prop:dickson}
+Suppose that after the translation $x\mapsto x+t$ that kills the $x^{n-1}$ term, the monic
+form of $p$ becomes $D_n(x,c)-b$ with $c\in\Q^\times$, $b\in\Q$.  Let $s$ be a root of
+$s^2-bs+c^n=0$ and $u=s^{1/n}$.  Then the $n$ numbers
+\[
+t+\zeta_n^{\,j}u+\frac{c}{\zeta_n^{\,j}u},\qquad j=0,\dots,n-1,
+\]
+are roots of $p$; if they are distinct they are all of them.
+\end{proposition}
+
+\begin{proof}
+With $s'=c^n/s$ we have $s+s'=b$.  By \eqref{eq:dickson},
+$D_n(\zeta^ju+c/(\zeta^ju),c)=(\zeta^ju)^n+c^n/(\zeta^ju)^n=s+s'=b$.
+\end{proof}
+
+\emph{Detection.}  $D_n(x,c)=x^n-ncx^{n-2}+\dots$, so $c$ is read off the $x^{n-2}$
+coefficient of the translated polynomial and the identity $p=D_n(x,c)-b$ is checked
+exactly.  The second example of the question is $5\bigl(D_5(x,1)+\tfrac65\bigr)$.
+
+\subsection{The pair-sum resolvent}\label{sec:pairsum}
+
+The following identity is classical.
+
+\begin{lemma}\label{lem:pairsum}
+Let $p$ have leading coefficient $\ell$ and roots $a_1,\dots,a_n$, and let
+$R_2(y)=\prod_{i<j}(y-a_i-a_j)$.  Then
+\[
+\Res_x\bigl(p(x),\,p(y-x)\bigr)=2^n\ell^{2n-1}\,p(y/2)\,R_2(y)^2 .
+\]
+\end{lemma}
+
+\begin{proof}
+$\Res_x(p(x),p(y-x))=\ell^n\prod_i p(y-a_i)=\ell^{2n}\prod_{i,j}(y-a_i-a_j)$.  The
+diagonal terms give $\prod_i(y-2a_i)=2^n\ell^{-1}p(y/2)$; the off-diagonal terms give
+$R_2(y)^2$.
+\end{proof}
+
+So $R_2$ is computed exactly by a resultant, an exact division, and a square root of a
+factorization.  Its roots are the pair sums $a_i+a_j$.
+
+\begin{proposition}\label{prop:pairsum}
+Let $y_0=a+a'$ be a pair sum with $a'$ a conjugate of $a$, and let $K=\Q(y_0)$.  Factor
+$p$ over $K$ and let $f\in K[x]$ be the irreducible factor with $f(a)=0$.  If $y_0$ has a
+radical expression and $\deg f\le4$ (or $f$ is a binomial over $K$), then $a$ has a
+radical expression, obtained by substituting the expression of $y_0$ into the
+coefficients of $f$ and solving.
+\end{proposition}
+
+\begin{proof}
+Immediate from the classical formulas, as in Proposition~\ref{prop:decompose}.
+\end{proof}
+
+In practice one takes the factors of $R_2$ over $\Q$ of degree $2\le m<n$, in increasing
+degree, tests numerically which of their roots are of the form $a+a'$, factors $p$ over
+$\Q(y_0)$ (Wolfram's \code{Factor} with \code{Extension} is fast for the small degrees
+involved) and recurses on $y_0$.  When $a'=c/a$ this reproduces
+Proposition~\ref{prop:reciprocal}, but the pair-sum reduction is more general: the
+product $aa'$ need not be rational, it is a polynomial in $y_0$ read off the factor
+$f$.  Section~\ref{sec:notebook} shows that this is exactly what the notebook's
+\code{findExtension} searches for by elimination.
+
+\section{The two examples of the question}\label{sec:examples}
+
+\subsection{The sextic}
+
+$p(x)=x^6+x^4-x^3-x^2-1$ is monic with constant term $-1$, so in
+Proposition~\ref{prop:reciprocal} $m=3$ and $c^3=-1$, $c=-1$.  Peeling gives
+\[
+p(x)=x^3\Bigl(\bigl(x-\tfrac1x\bigr)^3+4\bigl(x-\tfrac1x\bigr)-1\Bigr),
+\qquad P(y)=y^3+4y-1 .
+\]
+Cardano's formula for the real root of $P$ (discriminant $-4\cdot4^3-27<0$, one real
+root) gives
+\[
+y=u-\frac{4}{3u},\qquad u=\Bigl(\frac{9+\sqrt{849}}{18}\Bigr)^{1/3},
+\]
+and $\alpha=\tfrac12\bigl(y+\sqrt{y^2+4}\bigr)$.  This is the expression the package
+returns (in Wolfram's own arrangement of the cube roots), and it is equal to the closed
+form \eqref{eq:closedforms} of the question: with $\gamma$ as there,
+$\gamma/\sqrt[3]{36}=y$ and $3/(\sqrt[3]{36}\sqrt{\gamma})=\tfrac12\sqrt{y^2+4}-\tfrac y2$,
+as one checks by squaring; \code{RootReduce} confirms the identity.
+
+\emph{Branch.}  $p$ has exactly two real roots, $\alpha_1<0<\alpha_2$, and
+$\Root[p,2]=\alpha_2$ is the positive one.  The map $x\mapsto x-1/x$ is increasing on
+$(0,\infty)$ and on $(-\infty,0)$, and $y$ is the unique real root of $P$; the two real
+solutions of $x-1/x=y$ are $\tfrac12(y\pm\sqrt{y^2+4})$, of which the one with the plus
+sign is positive.  Hence the formula equals $\Root[p,2]$; the minus sign gives
+$\Root[p,1]=-1/\alpha_2$.  The four non-real roots come from the two non-real roots of
+$P$, which are the other two branches of the cube root in $u$.
+
+\subsection{The quintic}
+
+$p(x)=5x^5-25x^3+25x+6=5\bigl(x^5-5x^3+5x+\tfrac65\bigr)$, and
+$D_5(x,1)=x^5-5x^3+5x$, so $p=5\,(D_5(x,1)-b)$ with $b=-6/5$ and $c=1$.  The quadratic
+$s^2+\tfrac65s+1=0$ has roots $s=\tfrac{-3\pm4i}{5}$, of modulus $1$.  By
+Proposition~\ref{prop:dickson} the roots are $\zeta_5^ju+\zeta_5^{-j}u^{-1}$ with
+$u=s^{1/5}$; since $|s|=1$, $u^{-1}=\bar u$ and the roots are $2\operatorname{Re}(\zeta_5^ju)=2\cos\bigl(\tfrac{\theta+2\pi j}{5}\bigr)$, $\theta=\arg s$, all
+real.  The package returns $s^{1/5}+s^{-1/5}$ with $s=\tfrac{-3+4i}{5}$, which is
+\eqref{eq:closedforms} because $s^{-1/5}=\bar s^{\,1/5}$ for $|s|=1$ (both are the
+principal fifth root of $\bar s$: the principal argument of $\bar s$ is $-\theta$ and
+$s^{-1/5}=e^{-i\theta/5}$).
+
+\emph{Branch.}  $\theta=\arg\tfrac{-3+4i}{5}\in(\pi/2,\pi)$, so $\theta/5\in(\pi/10,\pi/5)$
+and $2\cos(\theta/5)$ is the largest of the five values $2\cos((\theta+2\pi j)/5)$; all
+five roots are real, so $\Root[p,5]$ is the largest root, which is the returned
+branch $j=0$.  The other conjugates are $j=1,\dots,4$, and the package returns each of
+them for the corresponding index.
+
+\section{The general Galois--Kummer descent}\label{sec:descent}
+
+\subsection{Setting}
+
+Let $B=\Q(\zeta_m)$ and $M=LB$ as in Lemma~\ref{lem:base}, and $H=\Gal(M/B)$.  Choose a
+composition series
+\[
+H=H_0\rhd H_1\rhd\dots\rhd H_r=1,\qquad |H_{i-1}/H_i|=q_i\text{ prime},
+\]
+which exists exactly when $H$ is solvable (the implementation builds it from the
+commutator subgroup: $H_i$ is a subgroup of prime index in $H_{i-1}$ containing
+$[H_{i-1},H_{i-1}]$, hence normal).  Let $F_i=M^{H_i}$ be the fixed fields, so
+$B=F_0\subset F_1\subset\dots\subset F_r=M$ with $F_i/F_{i-1}$ cyclic of prime degree
+$q_i$, generated by the image of any $\sigma_i\in H_{i-1}\setminus H_i$.
+
+\subsection{One Kummer step}
+
+\begin{proposition}[Lagrange resolvents]\label{prop:lagrange}
+Let $F\subset E$ be fields with $E/F$ cyclic of prime degree $q$, generated by $\sigma$,
+and suppose $\zeta=\zeta_q\in F$.  For $v\in E$ put
+\[
+R_k=\sum_{j=0}^{q-1}\zeta^{-kj}\sigma^j(v),\qquad k=0,\dots,q-1 .
+\]
+Then
+\begin{enumerate}[nosep]
+\item[(i)] $\sigma(R_k)=\zeta^kR_k$; hence $R_k^q\in F$, and $R_0\in F$;
+\item[(ii)] $\sum_{k=0}^{q-1}R_k=q\,v$;
+\item[(iii)] if $R_{k_1}\neq0$ for some $k_1\neq0$, then for every $k$ the element
+$c_k=R_k/R_{k_1}^{\,m}$ with $m\equiv k\,k_1^{-1}\pmod q$ lies in $F$;
+\item[(iv)] if $v\notin F$ then some $R_k$ with $k\neq0$ is nonzero.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i) $\sigma(R_k)=\sum_j\zeta^{-kj}\sigma^{j+1}(v)=\zeta^{k}\sum_{j'}\zeta^{-kj'}\sigma^{j'}(v)$,
+using $\sigma^q=1$ and $\zeta^{q}=1$.  Then $\sigma(R_k^q)=\zeta^{kq}R_k^q=R_k^q$, so
+$R_k^q$ is fixed by $\Gal(E/F)$.  (ii) $\sum_kR_k=\sum_j\bigl(\sum_k\zeta^{-kj}\bigr)\sigma^j(v)$
+and the inner sum is $q$ for $j=0$ and $0$ otherwise.  (iii) $\sigma(c_k)=\zeta^kR_k/(\zeta^{k_1m}R_{k_1}^m)=c_k$
+since $k_1m\equiv k$.  (iv) If all $R_k$ with $k\ne0$ vanish, (ii) gives $qv=R_0\in F$.
+\end{proof}
+
+Applied to $F=F_{i-1}$, $E=F_i$, $\sigma=\sigma_i$ and an element $v\in F_i$, the
+proposition expresses $v$ through elements of $F_{i-1}$ and $q$-th roots of elements of
+$F_{i-1}$ in one of two ways:
+\begin{align}
+\text{(Fourier form)}\qquad v&=\frac1q\Bigl(R_0+\sum_{k\ne0}\zeta^{e_k}\bigl(R_k^q\bigr)^{1/q}\Bigr),\label{eq:fourier}\\
+\text{(eigenvector form)}\qquad v&=\frac1q\Bigl(R_0+u+\sum_{k\ne0,k_1}c_k\,u^{m_k}\Bigr),
+\quad u=\zeta^{e}\bigl(R_{k_1}^q\bigr)^{1/q}.\label{eq:eigen}
+\end{align}
+The exponents $e_k,e$ are the \emph{branches}: $\bigl(R_k^q\bigr)^{1/q}$ is the principal
+root, and exactly one of the $q$ numbers $\zeta^e(R_k^q)^{1/q}$ equals $R_k$.  The Fourier
+form extracts $q-1$ radicals at this level; the eigenvector form extracts one and pushes
+the ratios $c_k$, which are elements of $F_{i-1}$, one level down.  Which form is shorter
+depends on the case (for the cyclic quintic the Fourier form has 140 leaves in Wolfram's
+count, the eigenvector form 173; for cubics both forms coincide with Cardano's).  The
+implementations compute both and keep the shorter, or use the one requested.
+
+\subsection{Branch selection}\label{sec:branch}
+
+The candidates $\zeta^e Q^{1/q}$, $e=0,\dots,q-1$, for $Q=R_k^q\neq0$ are the $q$ distinct
+$q$-th roots of $Q$; they are separated by at least
+$|Q|^{1/q}\cdot2\sin(\pi/q)$.  The value of $R_k$ is known independently from the exact
+coordinates of $R_k$ in the splitting field (Section~\ref{sec:engine}), so a numerical
+comparison at sufficient precision identifies $e$.  In Wolfram the comparison is made at
+60 digits with a separation check, and the final identity is verified exactly by
+\code{RootReduce}; in Python it is made in ball arithmetic and is rigorous by itself: a
+candidate is accepted only if it is the unique one whose ball overlaps the ball of $R_k$
+(the true candidate always overlaps, so uniqueness identifies it), and the precision is
+doubled until this happens.
+
+\emph{The branch cut.}  There is one trap in rigorous evaluation that none of the nine
+reports mentions.  When $Q$ is a real negative number that is \emph{written} as a sum of
+complex-conjugate radicals (which happens as soon as a real number is expressed through
+non-real radicands, for instance every real root of a cubic with three real roots), its
+computed enclosure is a small box straddling the negative real axis.  The principal
+$q$-th root is discontinuous there, so the enclosure of $Q^{1/q}$ covers both limits and
+no precision separates the candidates.  The exact data resolve this: $Q$ is real if and
+only if it is fixed by the automorphism that acts as complex conjugation on the roots (a
+permutation the engine identifies), and its sign is then certified from the real part.
+In that case the implementation writes the principal root as $(-1)^{1/q}(-Q)^{1/q}$,
+an identity of principal branches for real negative $Q$, and the enclosure of $-Q$ lies
+near the positive axis where the root is continuous.  The same rewriting is applied in
+the structural layer to discriminants and to binomial right-hand sides, whose exact
+values are known as algebraic numbers.
+
+\subsection{The algorithm and its completeness}
+
+\begin{algorithm}\label{alg:descent}
+Input: $a=\Root[p,k]$ with $p$ irreducible.
+\begin{enumerate}[nosep]
+\item Compute $G$ as a permutation group on the roots, with the splitting field $L$ in
+coordinates (Section~\ref{sec:engine}).  If $G$ is not solvable, stop: no radical
+expression exists.
+\item Let $m$ be the product of the odd primes dividing $|G|$.  Compute the same data for
+$p\cdot\prod_{q\mid m}\Phi_q$ (omitting a factor equal to $p$); this is $M=L(\zeta_m)$
+with its group.  Locate $\zeta_q$ among the roots and let $H$ be the stabilizer of all of
+them.
+\item Build a composition series of $H$ with prime quotients, a generator $\sigma_i$ of
+each quotient, and the coordinates of $a$.
+\item Define $\rho(v,i)$ for $v\in F_i$ recursively: if $i=0$, solve for the coordinates of
+$v$ in the basis $\{\prod_q\zeta_q^{e_q}:0\le e_q\le q-2\}$ of $B$ and return the
+corresponding expression in $(-1)^{2/q}$; if $v$ is fixed by $H_{i-1}$, return
+$\rho(v,i-1)$; otherwise form the $R_k$ of Proposition~\ref{prop:lagrange}, compute
+$R_k^q$ and the $c_k$ by exact linear algebra in coordinates, select branches as in
+Section~\ref{sec:branch}, and return \eqref{eq:fourier} or \eqref{eq:eigen} with
+$\rho(\cdot,i-1)$ applied to $R_0$, $R_k^q$ and $c_k$.  Memoize on $(v,i)$.
+\item Output $\rho(a,r)$ and verify $\rho(a,r)-a=0$ exactly.
+\end{enumerate}
+\end{algorithm}
+
+\begin{theorem}[Completeness]\label{thm:complete}
+Algorithm~\ref{alg:descent} terminates.  If $G$ is solvable it outputs a radical
+expression equal to $\Root[p,k]$ of depth at most $r+1$, where $r$ is the length of the
+composition series of $H$; otherwise it reports that no radical expression exists.
+\end{theorem}
+
+\begin{proof}
+Nonsolvability is decided exactly by the commutator series.  If $G$ is solvable, $H$ is
+solvable by Lemma~\ref{lem:base}(ii) and the series exists; by Lemma~\ref{lem:base}(iii),
+$\zeta_{q_i}\in B\subseteq F_{i-1}$ for every $i$, so Proposition~\ref{prop:lagrange}
+applies at every level.  The recursion $\rho(v,i)$ calls $\rho$ only with second argument
+$i-1$ and terminates.  Correctness: at level $0$ the element lies in $B$ and its
+expression in the power basis of the $\zeta_q$ is exact; at level $i$, the identity
+\eqref{eq:fourier} or \eqref{eq:eigen} holds exactly in $M$ with the true branches, and
+the true branches are the selected ones because the candidates are separated and the
+comparison is made at a precision exceeding the separation (rigorously so in ball
+arithmetic).  Each level adds at most one nesting of radicals to the expressions coming
+from the level below, and the base expressions have depth one, so the depth is at most
+$r+1$.  Finally, the exact verification in step 5 is an independent check.
+\end{proof}
+
+\begin{remark}[Cost]
+The cost is dominated by step 2: the splitting field of $p\prod\Phi_q$ has degree
+$|H|\cdot\varphi(m)$ over $\Q$, and our engine builds it by adjoining one root at a
+time with \code{RootReduce}; for the two examples of the question the extended groups
+have orders $48$ and $40$, computed in about $33$ and $10$ seconds in Wolfram.  The
+group order limit (\code{"MaxGroupOrder"}, default $400$) turns larger cases into an
+explicit \code{ResourceLimit} status rather than a wrong answer.  The only heuristic
+component is the choice of random weights in the resolvent construction, which is
+checked by exact counting and closure tests.
+\end{remark}
+
+\subsection{Two refinements}\label{sec:refinements}
+
+\emph{The tensor algebra.}  Several reports adjoin $\zeta_q$ by working in
+$L[z]/\Phi_q(z)\cong L\otimes_\Q\Q(\zeta_q)$ instead of in the field $L(\zeta_q)$.  This
+is a ring, not a field, as soon as $\zeta_q\in L$ ($\Phi_q$ splits in $L$), and it has
+zero divisors; report~05 observes this and makes its descent division-free.  Our
+implementations avoid the issue by computing the splitting field of $p\prod\Phi_q$
+directly, which is a field whose degree is the true $[M:\Q]$ (for $x^3-2$, adjoining
+$\Phi_3$ does not enlarge the field, and the engine sees a group of order $6$, not $12$).
+The one division we perform, $c_k=R_k/R_{k_1}^m$, is in a field and is exact.
+
+\emph{Fourier versus eigenvector.}  The Fourier form \eqref{eq:fourier} needs no
+nonzero-generator search (report~03), the eigenvector form \eqref{eq:eigen} usually
+gives shorter formulas (report~04).  The two forms are equally valid and we implement
+both; the eigenvector form needs the extra exactness argument of
+Proposition~\ref{prop:lagrange}(iii), which we have supplied.
+
+\section{Negative results without the group}\label{sec:negative}
+
+Computing $G$ exactly is the expensive step (for $x^5-x-1$, whose group is $S_5$ of
+order $120$, our engine needs $18$ minutes in Wolfram).  Two classical facts give
+nonsolvability proofs in milliseconds.
+
+\begin{theorem}[Dedekind--Frobenius]\label{thm:frobenius}
+Let $\ell$ be a prime not dividing the discriminant or the leading coefficient of $p$.
+If $p\bmod\ell$ factors into irreducible factors of degrees $d_1,\dots,d_s$, then $G$
+contains a permutation of cycle type $(d_1,\dots,d_s)$.
+\end{theorem}
+
+\begin{theorem}[Galois]\label{thm:agl}
+A solvable transitive permutation group of prime degree $n$ is conjugate to a subgroup
+of $\AGL(1,n)=\{x\mapsto ax+b\}$ acting on $\F_n$.  Consequently each of its elements has
+cycle type $1^n$, $n$, or $1\,d^{(n-1)/d}$ for some divisor $d$ of $n-1$.
+\end{theorem}
+
+\begin{proof}
+The first statement is Galois' theorem on solvable transitive groups of prime degree
+\cite[Chapter 4]{Milne}, \cite[\S 14.7]{DummitFoote}.  For the second, $x\mapsto x+b$ with
+$b\ne0$ is an $n$-cycle; $x\mapsto ax+b$ with $a\ne1$ has the unique fixed point
+$x=b/(1-a)$ and, after conjugating by a translation, is $x\mapsto ax$, whose nonzero
+orbits all have length $\operatorname{ord}(a)\mid n-1$.
+\end{proof}
+
+\begin{corollary}\label{cor:frob}
+If $n$ is prime and some Frobenius cycle type is not of the form in
+Theorem~\ref{thm:agl}, then $G$ is not solvable and $\Root[p,k]$ has no radical
+expression.
+\end{corollary}
+
+For example $x^5-x-1\bmod 3$ has factors of degrees $(2,3)$ and $x^7-x-1\bmod 3$ has
+degrees $(1,2,4)$; neither is admissible, so both are settled immediately.
+
+For composite degrees we use a second criterion.
+
+\begin{proposition}\label{prop:longcycle}
+Let $n$ be composite and not a prime power.  If $G$ contains a cycle of prime length
+$\ell>n/2$ (with all other points fixed), then $G$ is not solvable.
+\end{proposition}
+
+\begin{proof}
+A transitive group containing an $\ell$-cycle with $\ell>n/2$ is primitive: if $\Delta$
+were a block system with blocks of size $1<b<n$, the $\ell$-cycle would permute the
+blocks it meets in a cycle of length dividing $\ell$; length $1$ would force its support
+of size $\ell$ into a single block of size $b\le n/2<\ell$, and length $\ell$ would need
+$\ell b\le n$, impossible for $b\ge2$.  A solvable primitive group has a unique minimal
+normal subgroup, which is elementary abelian and regular, so its degree is a prime power
+\cite[Chapter II]{Wielandt}.  Since $n$ is not a prime power, $G$ is not solvable.
+\end{proof}
+
+Both criteria are inconclusive in the other direction (they never prove solvability),
+and neither applies to composite prime-power degrees $4,8,9,16,\dots$; in those cases the
+implementations compute the group exactly, subject to the group order limit.  For
+$x^6-x-1$ (degree $6$, group $S_6$) and $x^6+x^4+3x^2-2x+5$ (group of order $120$) a
+$5$-cycle is found within the first few primes and nonsolvability is proved in about
+$10$ milliseconds.
+
+\section{What the notebook of the question does}\label{sec:notebook}
+
+The notebook \code{FindExtension.nb} attached to the question (an inert transcription
+of its input cells is kept in \code{reports/report-09/original/}) is not about the two
+examples above.  Its target is
+\[
+\beta_0=I^{-1}_{1/9}\bigl(\tfrac13,\tfrac13\bigr),
+\]
+the inverse of the regularized incomplete beta function, which the author evaluates to
+$1000$ digits and recognizes with \code{RootApproximant} as an algebraic number of
+moderate degree; the notebook then tries to express that number through nested
+radicals and $\cos(\pi/9)$.  Its devices, in the order they appear, are:
+
+\begin{description}[nosep]
+\item[\code{radicalDepth}] the nesting depth of rational powers (and of \code{Sin},
+\code{Cos}), the same measure as our \code{RadicalDepth}.
+\item[\code{findExtension}] eliminates $p,q$ from
+$\code{PolynomialRemainder}[mp,\,x^2+px+q]=0$ and returns the simplest $p$ with a
+solution.  A monic quadratic dividing the minimal polynomial has $-p=a_i+a_j$, so
+this is a search over the pair sums, i.e.\ over the roots of the pair-sum resolvent
+$R_2$ of Lemma~\ref{lem:pairsum}, with \code{Simplify`SimplifyCount} as the
+selection criterion.  \code{findExtension3} does the same with cubic factors
+$x^3+px^2+qx+r$, i.e.\ with triple sums.  The systematic replacement is
+Proposition~\ref{prop:pairsum}: compute $R_2$ exactly, factor it over $\Q$, and factor
+$p$ over $\Q(y_0)$ for a low-degree root $y_0$.
+\item[\code{project}] tests whether the real or imaginary part of some conjugate has
+smaller degree than the number itself.  This is a special case of the same idea:
+$2\operatorname{Re}(a)=a+\bar a$ is a pair sum.
+\item[\code{factor}] factors the minimal polynomial over an extension and picks the
+factor vanishing at the number with \code{PossibleZeroQ}; this is the factorization
+step of Proposition~\ref{prop:pairsum}.
+\item[\code{solve}] picks, among the \code{Solve} roots of a low-degree factor, the
+one equal to the number (\code{PossibleZeroQ} again): branch selection
+(Section~\ref{sec:branch}) done numerically.
+\item[\code{fuzz}] draws random subsets of the conjugates, sums them, guesses a
+low-degree algebraic number with \code{RootApproximant} and checks it with
+\code{PossibleZeroQ}.  This is a randomized search for elements of proper subfields of
+the splitting field; the Galois-theoretic replacement is the list of subgroups and
+fixed fields that the engine computes, or, for the specific purpose of radicals, the
+composition series of Section~\ref{sec:descent}, which needs no search at all.
+\item[\code{simplify}] iterates \code{FullSimplify} with a custom complexity function
+that penalizes \code{ArcTan}, hyperbolic functions and every \Root{} object except
+one chosen degree-$9$ number.  This is the only device without a systematic
+replacement: the shortness of a radical expression is not a Galois-theoretic
+invariant, and the reports that discuss it (04, 09) offer heuristics only.
+\end{description}
+
+The notebook's approach is sound as a discovery procedure and it does find the tower
+$\Q\subset\Q(3^{1/6})\subset\Q(3^{1/6},\theta)$ over which the target becomes quadratic;
+what it lacks is a termination guarantee and a criterion for when to stop looking.  The
+descent of Section~\ref{sec:descent} supplies both, at the price of the splitting field.
+
+\section{Comparison of the nine reports}\label{sec:reports}
+
+Nine reports on this question were written independently before this article; they are
+kept verbatim in \code{reports/report-01} to \code{report-09}.  All nine share the
+same core: the criterion on the minimal polynomial, the cyclotomic base with
+$m=\rad|G|$, a prime composition series, Lagrange or Fourier resolvents, exact branch
+selection, the same two closed forms for the examples, and a completeness theorem
+conditional on exact primitives.  Table~\ref{tab:reports} lists what each one adds.
+
+\begin{table}[htbp]
+\centering\small
+\begin{tabularx}{\textwidth}{@{}c>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+\toprule
+report & distinctive contribution & what was executed\\
+\midrule
+01 & Kummer generators as a rational nullspace; ``rational rectangle'' embeddings
+with exact sign certificates. & The only forced general run on the two original
+examples; neither finished within its 480-second limit (the sextic reached the degree-48
+field, the quintic the degree-40 field).  Two prime-5 Kummer steps (cyclic and binomial
+quintic, 22 and 28 s).\\
+02 & The pair-sum resolvent $\Res_x(f(x),f(y-x))=2^nf(y/2)R_2(y)^2$ identified as the
+systematic form of the notebook's \code{findExtension}; a trace--Fourier basis search
+with a termination proof; a native Wolfram \code{kummerSolve}. & Structural paths on the
+examples (0.7--2.6 s per root); forced descent only on $x^3-2$, $x^4-2$.\\
+03 & Fourier inversion $a=\frac1p\sum_jR_j$ needing no generator search; the clearest
+account of SymPy embedding pitfalls; the point that an oversized supplied field proves
+nothing about nonsolvability; a native Wolfram \code{galoisConvert}. & Structural paths
+on the examples (1.8 s, 1.2 s).\\
+04 & Relative-automorphism recovery without a second factorization; trace-projector
+scoring for small radicands; an independent arithmetic-tower checker. & Structural paths
+on the examples (0.7 s, 0.2 s); the cyclic quintic by descent (16.7 s).\\
+05 & Division-free tensor algebra $L\otimes\Q(\zeta_p)$ with zero divisors (with a test
+multiplying two of them); resultant primitive elements with a square-free certificate;
+norm-polynomial justification of branch comparisons. & Structural paths (0.6 s, 0.2 s);
+the cyclic quintic by Fourier descent (1.0 s); a forced $S_4$ run hit its resource limit
+at 57 s.\\
+06 & Exact Frobenius negative test; a principal-sector branch predicate with
+conjugation-based zero tests; straight-line register programs as certificates. &
+Structural paths on all conjugates of both examples (up to 104 s for one sextic root);
+the forced cyclic quintic timed out at 90 s.\\
+07 & A native Wolfram \code{SystematicRadicals.wl} with Kummer eigenprojections; a
+notebook audit with line numbers. & Structural paths (2.3 s, 1.6 s); its forced run on
+$x^5-2$ was inconclusive at 30 s.\\
+08 & The coherent-branch theorem (any consistent branch assignment reproduces the whole
+root set); a purely rational certificate checker that proves the root set rather than an
+index. & Structural paths (milliseconds for the selected roots).\\
+09 & A five-status taxonomy (\code{Success}, \code{NotSolvable}, \code{SearchExhausted},
+\code{ResourceLimit}, \code{VerificationFailure}); replayable certificates with an
+embedding anchor; a line-numbered notebook critique. & Structural paths (4.0 s, 0.3 s);
+forced descents on $x^5-2$ (34 s) and a nonabelian relative group (39 s).\\
+\bottomrule
+\end{tabularx}
+\caption{What each of the nine reports adds to the common core, and what its Python code
+actually executed (its own reported timings).}\label{tab:reports}
+\end{table}
+
+All nine reports state the same two closed forms for the examples (report~08 writes the
+sextic with two positive cube roots, $((9+\sqrt{849})/18)^{1/3}-((\sqrt{849}-9)/18)^{1/3}$,
+which is the same number).  Three reports (02, 03, 07) ship a native Wolfram
+implementation of the general algorithm; none of the three was executed by its author.
+The only report that forced the general descent on the original examples (01) did not
+finish, because it built the splitting field in the power basis of a primitive element
+(Section~\ref{sec:engine}).  Four reports (01, 04, 05, 09) executed a prime-5 Kummer step
+on some input.  The status taxonomy of report~09 is adopted here, with
+\code{SearchExhausted} renamed \code{NotFound}.
+
+Three points needed correction or independent verification.  Report~07 cites Milne
+``Theorem 3.28'' for the solvability criterion; the theorem is in Chapter 5 of
+\cite{Milne}.  Several reports refer to \code{MANIFEST} or \code{SHA256SUMS} files that
+are not present here (checksum ledgers are not kept in this repository).  And no report
+executed any Wolfram Language code: every Wolfram claim in them was static.  We ran the
+Wolfram side natively; the results are in Section~\ref{sec:measurements}.
+
+Every report proposes to build the splitting field with
+\code{ToNumberField[roots, All]} (or its SymPy analogue \code{primitive\_element}).
+The companion project measured that call at $14$ minutes for a degree-$36$ field, and
+the reason is structural: the power basis of a generic primitive element has
+coefficients of enormous height.  Our implementations use the tower basis with
+trace-form coordinates of the companion engine instead (Section~\ref{sec:engine}), which
+is why the forced descent on the examples takes seconds rather than failing to finish, as
+it did in report~01.
+
+\section{Algorithms and implementation}\label{sec:impl}
+
+\subsection{The splitting-field engine}\label{sec:engine}
+
+Both implementations reuse the Galois engine of the companion project
+(\code{RootDecomposition.wl} and \code{rootdecomp.py} in \path{root-decomposition/}).  It
+computes the Galois group by numerical resolvents: roots are adjoined one at a time,
+$\theta_{k}=\theta_{k-1}+w_ka_k$ with small random integer weights, the exact minimal
+polynomial of $\theta_k$ is found with \code{RootReduce} (Wolfram) or by rigorous
+rounding of a product of balls (Python), and the orbit of partial tuples is matched to
+its roots numerically with counting checks; the result is verified by group closure.  The
+splitting field is represented in the tower monomial basis $\prod_j a_{g_j}^{e_j}$, and
+the coordinates of an element are obtained from its numerical conjugates through the
+trace form (the Gram matrix of the basis is an integer matrix), so multiplication
+matrices, automorphism matrices and fixed fields are exact rational data.  Elements of
+$M$ are therefore rational vectors, $R_k$, $R_k^q$ and $c_k$ are computed by exact
+matrix arithmetic, and the numerical value of any element is available at any precision.
+
+\subsection{Interface}
+
+\begin{lstlisting}
+Get["RootToRadicals.wl"];
+RootToRadicals[Root[-1 - #^2 - #^3 + #^4 + #^6 &, 2]]
+RootRadicalReport[Root[6 + 25 # - 25 #^3 + 5 #^5 &, 5]]
+RootRadicalReport[Root[#^5 + #^4 - 4 #^3 - 3 #^2 + 3 # + 1 &, 1], Method -> "Galois"]
+RootSolvableQ[Root[#^5 - # - 1 &, 1]]         (* False, by Frobenius cycle types *)
+\end{lstlisting}
+\begin{sloppypar}
+\code{RootToRadicals[a]} returns a radical expression or a \code{Failure} whose tag is one
+of \code{NotSolvable} (proved), \code{NotFound} (structural search exhausted, only with
+\code{Method -> "Structural"}), \code{ResourceLimit}, \code{VerificationFailed},
+\code{Inexact}, \code{NotAlgebraic}, \code{InvalidOptions}.  \code{RootRadicalReport}
+returns an association with the expression, the method (\code{ToRadicals},
+\code{Decompose}, \code{Reciprocal}, \code{Dickson}, \code{PairSum}, \code{Galois}), the
+verification status (\code{True} by \code{RootReduce}, or \code{Indeterminate} when the
+exact check exceeded its time limit and only a 200-digit numerical check passed), the
+depth, the leaf count, the group orders and the primes of the composition series, and
+the timing.  Options: \code{Method} (\code{Automatic}, \code{"Structural"},
+\code{"Galois"}), \code{"Resolvents"} (\code{Automatic}, \code{"Fourier"},
+\code{"Eigenvector"}), \code{"MaxGroupOrder"}, \code{"WorkingPrecision"},
+\code{"VerificationTimeLimit"}, \code{"MaxDepth"}.  \code{RadicalExpressionQ} and
+\code{RadicalDepth} implement the grammar of Section~\ref{sec:conventions}.
+\end{sloppypar}
+
+\begin{lstlisting}
+import roottoradicals as rt
+r = rt.root_to_radicals("Root[-1 - #^2 - #^3 + #^4 + #^6 &, 2]")
+r.expression, r.method, r.verified, r.wolfram()
+rt.root_to_radicals("Root[1 + 3 # - 3 #^2 - 4 #^3 + #^4 + #^5 &, 1]", method="galois")
+rt.is_solvable("Root[-1 - # + #^5 &, 1]")      # False
+\end{lstlisting}
+The Python function returns a \code{RadicalResult} (a SymPy expression with the same
+metadata) or raises \code{NotSolvable}, \code{NotFound}, \code{ResourceLimit} or
+\code{PrecisionError}.  Its structural layer has the classical formulas for degree
+$\le4$, \code{Decompose}, reciprocal symmetry and Dickson polynomials; the pair-sum
+reduction, which needs factorization over a number field, is Wolfram-only, and the
+general descent covers those cases in Python.  \code{verified} is a rigorous ball check
+that the expression encloses the requested root and no other conjugate;
+\code{python/verify\_wolfram.py} additionally verifies Python's expressions exactly in a
+Wolfram kernel with \code{RootReduce}.
+
+\subsection{Measurements}\label{sec:measurements}
+
+All timings were measured on one Windows machine, in Wolfram 15.0.1 (\code{wolfram -script})
+and in Python 3.14 with python-flint 0.8 and SymPy 1.14, with the default options
+(\code{"MaxGroupOrder"} $400$, 80 digits or 300 bits).  ``Orders'' are $|G|$ and the
+order of the group of $p\prod\Phi_q$.
+
+\begin{center}
+\small
+\begin{tabular}{@{}llrrr@{}}
+\toprule
+input & method & orders & Wolfram & Python\\
+\midrule
+sextic example $\alpha$ & Reciprocal & & 0.12 s & 0.07 s\\
+quintic example $\beta$ & Dickson & & 0.04 s & 0.01 s\\
+sextic example, descent forced & Galois & $24\to48$ & 41 s & 24 s\\
+quintic example, descent forced & Galois & $20\to40$ & 18 s & 12 s\\
+cyclic quintic $x^5+x^4-4x^3-3x^2+3x+1$ & Galois & $5\to20$ & 8.4 s & 0.37 s\\
+\quad the same, Fourier form only & Galois & $5\to20$ & 4.8 s & 0.05 s\\
+$x^4-x-1$, descent forced & Galois & $24\to48$ & 32 s & 12 s\\
+$x^5-2$, descent forced & Galois & $20\to20$ & 4.8 s & 1.6 s\\
+$\Phi_7$, descent forced & Galois & $6\to12$ & 1.5 s & 0.24 s\\
+cyclic quintic composed with $x^2$ (degree 10) & Decompose & $5\to20$ & 9.3 s & 0.19 s\\
+$D_7(x,1)-3$ & Dickson & & 0.10 s & 0.02 s\\
+sextic with pair sums of degree 3 & PairSum / Galois$^*$ & $12\to24$ & 0.19 s & 0.83 s\\
+$x^5-x-1$: not solvable & Frobenius & & 1.2 s & 0.26 s\\
+$x^6-x-1$: not solvable & Frobenius & & 0.01 s & 0.01 s\\
+$x^5-x-1$ by the exact group (order 120) & group & $120$ & 1088 s & ---\\
+\bottomrule
+\end{tabular}
+\end{center}
+\noindent{\small $^*$ The pair-sum reduction is Wolfram-only; Python solves this input by the descent.}
+
+The Wolfram times for the descent are dominated by the construction of the extended
+splitting field (about $33$ s of the $41$ s for the sextic); Python's Arb-based engine is
+faster there.  The Wolfram time for the cyclic quintic with the default
+\code{"Resolvents" -> Automatic} includes computing both forms; the eigenvector form is
+longer for this input (173 versus 140 leaves) and is discarded.  Wolfram's structural
+layer uses the built-in \code{ToRadicals} first (which handles degree $\le4$, binomials
+and decomposable inputs in milliseconds), so its \code{Decompose} path is only reached
+for compositions whose outer piece the built-in function cannot solve, as in the
+degree-10 example.
+
+The regression suites were executed: \code{RunTests.wl} runs $60$ tests in $90$ s of
+wall time (including the forced descents on both examples and all their conjugates);
+\code{test\_roottoradicals.py} runs $46$ cases in $51$ s.  \code{verify\_wolfram.py}
+re-verifies $13$ Python expressions exactly in a Wolfram kernel with \code{RootReduce};
+all pass.
+
+\subsection{Limits and scope of the certificates}
+
+\begin{itemize}[nosep]
+\item A returned expression is exactly equal to the input: in Wolfram by
+\code{RootReduce}; in Python by the exactness of the coordinate identities together with
+rigorous branch selection, and again by the final ball check.  The status
+\code{Verified -> Indeterminate} (Wolfram) is reported honestly when the exact check hits
+its time limit.
+\item \code{NotSolvable} is a proof: either a Frobenius cycle type
+(Corollary~\ref{cor:frob}, Proposition~\ref{prop:longcycle}) or the exact commutator
+series of the computed group.  The group computation relies on numerical matching with
+counting and closure checks; its exactness has the same standing as in the companion
+project.
+\item \code{ResourceLimit} asserts nothing about solvability.  Nonsolvable polynomials of
+composite prime-power degree with a group larger than the limit end here; so do solvable
+ones with $|H|\varphi(m)$ beyond the limit.
+\item The structural layer never asserts nonexistence; \code{NotFound} is returned only
+when the general descent was disabled.
+\item Root indices of non-real roots are exchanged between Wolfram and Python by
+value, not by index: Python orders conjugate pairs by real part and imaginary
+magnitude, and Wolfram's ordering of non-real roots can depend on its isolation method.
+\end{itemize}
+
+\section{Conclusion}
+
+The restriction of \ToRadicals{} is one of scope, not of principle.  A radical expression
+exists exactly when the Galois group of the minimal polynomial is solvable, which is
+decidable in polynomial time; constructing the expression may require the splitting
+field, and this is where a general library function stops.  With the splitting field
+available in exact coordinates, the Galois--Kummer descent is a short, fully proved,
+complete algorithm, and the structural reductions give the short formulas one wants in
+practice, including the two of the question.  Both are implemented, tested and measured
+in two systems.
+
+\begin{thebibliography}{9}
+\bibitem{LandauMiller} S.~Landau and G.~L.~Miller, \emph{Solvability by radicals is in
+polynomial time}, J. Comput. System Sci. 30 (1985), 179--208.
+\bibitem{Milne} J.~S.~Milne, \emph{Fields and Galois Theory}, version 5.10, 2022,
+\url{https://www.jmilne.org/math/CourseNotes/ft.html}.
+\bibitem{DummitFoote} D.~S.~Dummit and R.~M.~Foote, \emph{Abstract Algebra}, 3rd ed.,
+Wiley, 2004.
+\bibitem{Wielandt} H.~Wielandt, \emph{Finite Permutation Groups}, Academic Press, 1964.
+\bibitem{LidlMullenTurnwald} R.~Lidl, G.~L.~Mullen and G.~Turnwald, \emph{Dickson
+Polynomials}, Pitman Monographs 65, Longman, 1993.
+\bibitem{Cohen} H.~Cohen, \emph{A Course in Computational Algebraic Number Theory},
+Springer, 1993.
+\bibitem{Question} Mathematica StackExchange question 34011,
+\emph{Why is ToRadicals not able to handle all cases? Is there a workaround?},
+\url{https://mathematica.stackexchange.com/q/34011}.
+\end{thebibliography}
+
+\end{document}

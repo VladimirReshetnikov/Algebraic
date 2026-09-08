@@ -165,10 +165,34 @@ unvalidated.
 
 ## 6. Order of work
 
-1. Plan and current state committed. ← this commit
-2. Finish and debug `RootToRadicals.wl`; run it on the two examples.
-3. Structural layer hardened; then the general descent on small solvable cases.
-4. Wolfram test suite; iterate until it passes.
-5. Python port and its suite.
-6. Article written against measured results, compiled to PDF, committed.
-7. READMEs, `WOLFRAM-NOTES.md` additions, final timings.
+1. Plan and current state committed.
+2. Finish and debug `RootToRadicals.wl`; run it on the two examples. — done
+3. Structural layer hardened (pair-sum method added; decomposition chains peeled from the
+   outside); general descent with Fourier and eigenvector forms, precision escalation,
+   Frobenius negative tests (prime degree, and long prime cycles in non-prime-power
+   degree). — done
+4. Wolfram test suite: 60 tests, all pass (`wolfram -script RunTests.wl`, 90 s). — done
+5. Python port and its suite: 46 cases in 51 s, all pass; `verify_wolfram.py` re-verifies
+   13 expressions exactly in a kernel. — done
+6. Article written against measured results, compiled to PDF. — done
+7. README, `WOLFRAM-NOTES.md` additions, final timings. — done
+
+## 7. Corrections to section 5 found while writing the article
+
+* Report 07 is not the only native Wolfram implementation of the general algorithm:
+  reports 02 (`kummerSolve`) and 03 (`galoisConvert`) also ship one; none of the three
+  was executed by its author.
+* Report 09 is not the only one that executed a prime-5 Kummer step: 01 (twice), 04
+  and 05 did too.  Report 01 remains the only one that forced the general descent on the
+  original examples (and did not finish).
+* Report 01's own term is "rational rectangles", not "certified rectangle embeddings".
+* Only reports 08 and 09 claim checksum files that are absent.
+
+## 8. The notebook's actual target
+
+`FindExtension.nb` works on $\beta_0 = I^{-1}_{1/9}(1/3, 1/3)$ (inverse regularized
+beta), recognized by `RootApproximant` as an algebraic number of degree 27 (minimal
+polynomial found in 7 s; equality holds to 400 digits).  Over $\mathbb{Q}(3^{1/6})$ its
+minimal polynomial factors into degrees 9 and 18.  Degree 27 is a prime power, so the
+Frobenius tests do not apply; see the article's notebook section for the status of the
+exact group computation.

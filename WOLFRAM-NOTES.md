@@ -247,3 +247,30 @@ for future work on exact algebraic-number code.
   the precision of the starting value (`N[expr, 60]`) first.
 - `Check[expr, $Failed]` around `Quiet[...]` is the wrong order: use
   `Quiet[Check[expr, $Failed]]` so that the messages still trigger `Check`.
+
+## Findings from the root-to-radicals work (Wolfram 15.0.1, September 2026)
+
+- `Join[Failure[...], <|...|>]` does not add keys to a `Failure`; it returns
+  unevaluated, and a downstream `FailureQ` test then fails silently.  Rebuild the
+  object: `Failure[f[[1]], Join[f[[2]], extra]]`.
+- `N[expr, 40]` on an expression that is exactly zero but not syntactically zero
+  (a factor of `Factor[p, Extension -> y0]` evaluated at the root it vanishes at)
+  emits `N::meprec` and returns a tiny number; substitute numerical approximations
+  for the algebraic numbers instead of asking `N` for digits of an exact zero.
+- `VerificationTest` marks a test as `MessagesFailure` when the input emits any
+  message, even the documented one; list the expected messages as the third
+  argument (`VerificationTest[in, out, {RootToRadicals::notsolv}, TestID -> ...]`).
+- `Simplify` on a polynomial in `(-1)^(2/q)` rewrites products of roots of unity
+  into forms such as `(-1)^(8/9)`; harmless but surprising in a radical expression.
+  `Expand` keeps the monomial form.
+- `Decompose[p, x]` lists the outer polynomial first, as does SymPy's `decompose`.
+- The numerical-resolvent Galois engine of `RootDecomposition.wl` needs 18 minutes for
+  the group $S_5$ of `x^5 - x - 1` (splitting field of degree 120); prime-degree
+  nonsolvability should be settled by Frobenius cycle types
+  (`FactorList[p, Modulus -> q]`) before any group computation.
+- Arb/python-flint: the principal branch of `z^(1/q)` is discontinuous on the negative
+  real axis, so the enclosure of a root of a radicand whose ball straddles that axis
+  (an exactly real negative number written as a sum of complex conjugate radicals) is
+  useless at every precision.  Decide reality and sign from exact data (the
+  conjugation automorphism, or the root ordering of an algebraic number) and rewrite
+  the root as `(-1)^(1/q) (-Q)^(1/q)`.
