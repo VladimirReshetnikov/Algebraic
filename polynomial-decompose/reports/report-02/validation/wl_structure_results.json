@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "scope": "Lexical delimiter/comment/string check only",
+  "files": [
+    "AlgebraicDecomposition.wl",
+    "Examples/Examples.wl",
+    "Kernel/AlgebraicDecomposition.wl",
+    "Kernel/init.m",
+    "Tests/AlgebraicDecomposition.wlt",
+    "Tests/RunTests.wls"
+  ]
+}

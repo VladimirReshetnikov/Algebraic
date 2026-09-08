@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "scope": "Only lexical delimiters, strings, comments and forbidden core function calls; not syntax or runtime validation.",
+  "files": [
+    {
+      "file": "Examples/Examples.wl",
+      "balanced": true
+    },
+    {
+      "file": "Kernel/AlgebraicDecomposition.wl",
+      "balanced": true
+    },
+    {
+      "file": "Kernel/init.m",
+      "balanced": true
+    },
+    {
+      "file": "PacletInfo.wl",
+      "balanced": true
+    },
+    {
+      "file": "Tests/AlgebraicDecomposition.wlt",
+      "balanced": true
+    },
+    {
+      "file": "Tests/RunTests.wls",
+      "balanced": true
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "document": "article/algebraic-decomposition.pdf",
+  "page_count": 29,
+  "latex_undefined_references": false,
+  "latex_overfull_boxes": false,
+  "rendering": "All final pages rendered; full draft contact sheets and final revised pages visually inspected.",
+  "wolfram_test_specifications": 53,
+  "wolfram_kernel_execution": "NOT EXECUTED: connected endpoint returned HTTP 404; no local kernel available.",
+  "independent_exact_arithmetic": "PASS; see validation_results.json",
+  "wolfram_lexical_structure": "PASS; not a parser or kernel execution"
+}

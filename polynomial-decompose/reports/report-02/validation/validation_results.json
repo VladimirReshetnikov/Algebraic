@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "validation_scope": "Independent Python/SymPy exact-field implementation; NOT a Wolfram kernel run.",
+  "seed": 206618,
+  "python": "3.13.5",
+  "sympy": "1.14.0",
+  "counts": {
+    "user_examples": 2,
+    "power_and_Chebyshev_enumerations": 6,
+    "quintic_Root_example": 1,
+    "mixed_quintic_Root_and_sqrt3_example": 1,
+    "generated_exact_composites": 144,
+    "independent_triangular_recurrence_comparisons": 72,
+    "all_degree_residual_checks": 348,
+    "absolute_indecomposability_family": 27,
+    "independent_SymPy_decompose_comparisons": 28,
+    "boundary_and_regression_polynomials": 6
+  },
+  "examples": [
+    {
+      "name": "user sextic",
+      "chain": [
+        "16*sqrt(2)*x**3 + x**2*(8 + 24*sqrt(2)) + x*(8 + 14*sqrt(2)) + 3 + 3*sqrt(2)",
+        "x**2 + sqrt(2)*x/2"
+      ]
+    },
+    {
+      "name": "user degree-24 example",
+      "chain": [
+        "16*sqrt(2)*x**3 + x**2*(56 + 72*sqrt(2)) + x*(168 + 142*sqrt(2)) + 141 + 105*sqrt(2)",
+        "x**2 + x*(sqrt(2)/2 + 2)",
+        "x**4 - x"
+      ]
+    }
+  ],
+  "seconds": 2.93
+}

@@ -1,0 +1,1584 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[a4paper,margin=25mm,headheight=15pt]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{microtype,booktabs,longtable,array}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{listings,fancyhdr}
+\usepackage[hyphens]{url}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=MidnightBlue,citecolor=MidnightBlue,
+  urlcolor=MidnightBlue,pdftitle={Exact Functional Decomposition over Algebraic Number Fields},
+  pdfauthor={OpenAI},pdfsubject={Theory, exact certificates, and a Wolfram Language package}}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Exact functional decomposition}
+\fancyhead[R]{\small Algebraic coefficients}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\setlength{\parskip}{4pt}
+\setlength{\parindent}{1.2em}
+\setlength{\emergencystretch}{2em}
+\numberwithin{equation}{section}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Qbar}{\overline{\mathbb{Q}}}
+\newcommand{\lc}{\operatorname{lc}}
+\newcommand{\ord}{\operatorname{ord}}
+\newcommand{\coeff}[2]{[#1]#2}
+\newcommand{\code}[1]{\texttt{#1}}
+\lstdefinestyle{wl}{basicstyle=\ttfamily\footnotesize,
+  columns=fullflexible,keepspaces=true,breaklines=true,breakatwhitespace=false,
+  showstringspaces=false,frame=single,framerule=0.25pt,
+  rulecolor=\color{black!25},xleftmargin=5pt,xrightmargin=5pt,
+  aboveskip=8pt,belowskip=8pt,tabsize=2,
+  morecomment=[s]{(*}{*)},commentstyle=\color{black!60},
+  morestring=[b]",stringstyle=\color{MidnightBlue}}
+\lstset{style=wl}
+\begin{document}
+\begin{titlepage}
+\vspace*{9mm}
+{\large\scshape Mathematical report and software\par}
+\vspace{10mm}
+{\LARGE\bfseries Exact Functional Decomposition\par}
+\vspace{3mm}
+{\LARGE\bfseries over Algebraic Number Fields\par}
+\vspace{6mm}
+{\large A factorization-free theory, exact certificates,\par
+and a Wolfram Language implementation\par}
+\vspace{8mm}
+{Version 1.0.0\quad\textbullet\quad 7 September 2026\par}
+\vspace{10mm}
+\begin{abstract}
+A polynomial whose coefficients contain radicals or algebraic \code{Root}
+objects does not require a special factorization theory in order to be
+functionally decomposed. In characteristic zero, each proposed degree of a
+normalized right component determines that component uniquely from the
+leading coefficients of the input. A finite formal-root recurrence constructs
+it using only arithmetic in the coefficient field. Repeated monic division
+then decides whether the input belongs to the polynomial subalgebra generated
+by the candidate.
+
+We prove necessity, sufficiency, uniqueness, descent through arbitrary field
+extensions, completeness of recursive decomposition, and finite enumeration
+of all complete chains modulo affine changes. We give independently checkable
+positive and negative certificates, analyze arithmetic complexity and
+representation costs, and audit the derivative-factorization code in the
+motivating question. The accompanying Wolfram Language package implements the
+algorithms for explicit exact algebraic numbers, including complex ones.
+Worked examples cover the original radical polynomial, its degree-24 nested
+variant, a quintic \code{Root} coefficient, and nonunique decompositions.
+\end{abstract}
+\vfill
+\noindent\fbox{\begin{minipage}{0.93\textwidth}
+\small\textbf{Validation status.} The mathematics is proved in this report.
+An independent exact number-field implementation completed 974 polynomial
+cases and 2,001 fixed-degree tests. The native Wolfram package and its 60-test
+regression suite were \emph{not executed}: the available Wolfram service
+returned HTTP 404 and no local Wolfram kernel was present. Source review and
+independent mathematical checks are not substitutes for native execution.
+\end{minipage}}
+\vspace{7mm}
+\end{titlepage}
+{\setlength{\parskip}{0pt}\small\tableofcontents}
+\clearpage
+
+\section{Problem, scope, and main conclusion}
+\label{sec:intro}
+The motivating question asks whether \code{Decompose} can be made to work on
+polynomials with radical coefficients, and presents a derivative-factorization
+implementation as an alternative \cite{SE}. The central distinction is between
+\emph{functional decomposition}
+\begin{equation}
+ p(x)=f(h(x)),\qquad \deg f>1,\quad \deg h>1,
+ \label{eq:problem}
+\end{equation}
+and ordinary multiplicative factorization. They are different problems.
+Irreducibility under multiplication neither implies nor is implied by
+indecomposability under composition.
+
+For instance, $x^4+1=(t^2+1)\circ x^2$ is functionally decomposable even though
+it is irreducible over $\Q$. Conversely, $x^4+x$ is multiplicatively reducible
+but functionally indecomposable in characteristic zero, as the algorithm below
+immediately proves. An \code{Extension} option appropriate for multiplicative
+factorization is therefore not the fundamental missing ingredient.
+
+Let
+\begin{equation}
+ p(x)=\sum_{i=0}^{n}a_i x^i,\qquad a_n\ne0,
+ \qquad K=\Q(a_0,\ldots,a_n)\subseteq\Qbar.
+ \label{eq:input}
+\end{equation}
+Because there are finitely many algebraic coefficients, $K/\Q$ is a finite
+extension. The input expressions choose particular algebraic numbers, not
+unspecified conjugacy classes. A radical expression, an algebraic
+\code{Root}, and an \code{AlgebraicNumber} can denote the same element of $K$.
+Their outward forms should not determine the answer.
+
+\paragraph{The central result.}
+For every proper divisor $d$ of $n$, there is at most one pair $(f,h)$ satisfying
+\eqref{eq:problem} with $\deg h=d$, $h$ monic, and $h(0)=0$. Its only possible
+$h$ is computed from the leading $d$ coefficients of $p$ by rational
+operations. A subsequent exact subalgebra-membership test either constructs
+$f$ or certifies its nonexistence. No polynomial factorization, solving of
+coefficient equations, extraction of new algebraic numbers, or search through
+field extensions is needed.
+
+This is a characteristic-zero realization of the classical factorization-free
+approach to polynomial decomposition, particularly the work of Kozen and
+Landau \cite{KL}. Faster and more general algorithmic treatments exist,
+including the tame-case work of von zur Gathen \cite{Gathen}. The elementary
+algorithm here is chosen for transparent proofs, straightforward exact
+implementation, and verifiable failure certificates, not as a claim to a new
+asymptotically optimal decomposition algorithm.
+
+\paragraph{What is and is not claimed about the built-in function.}
+The source discussion is from 2019. The currently retrieved Wolfram
+documentation illustrates symbolic and complex coefficients; it does not
+state an integer-only mathematical domain for \code{Decompose} \cite{Decompose}.
+The historical behavior reported in the question must not be promoted to a
+verified claim about every current Wolfram version. We could not run a current
+kernel in this environment. The package is an independent implementation;
+it does not modify \code{System`Decompose} or depend on its behavior.
+
+\paragraph{Scope of the delivered code.}
+The theory applies to any characteristic-zero field with exact arithmetic.
+The software intentionally accepts the narrower, decidable input class of
+explicit exact algebraic coefficients recognizable by Wolfram's algebraic
+number machinery. It does not accept approximate coefficients, symbolic
+parameters, transcendental coefficients, rational functions in $x$, or
+finite-characteristic arithmetic. These exclusions are input contracts,
+not assertions that broader mathematical variants are impossible.
+
+\section{Normalization and the coefficient field}
+\label{sec:normalization}
+\begin{definition}
+A nonconstant polynomial $h\in K[x]$ is \emph{normalized} if it is monic and
+$h(0)=0$. A decomposition is \emph{nontrivial} if both component degrees exceed
+one. A \emph{complete chain} is a composition of polynomials of degree at
+least two, each of which is functionally indecomposable.
+\end{definition}
+
+Suppose $p=f\circ g$ and write $b=\lc(g)\ne0$, $c=g(0)$. Set
+\begin{equation}
+ h(x)=\frac{g(x)-c}{b},\qquad F(t)=f(bt+c).
+ \label{eq:normalize}
+\end{equation}
+Then $p=F\circ h$, and $h$ is normalized. This replaces the arbitrary affine
+freedom at a composition interface by a canonical representative.
+
+More explicitly, if $\ell(t)=bt+c$, the pairs
+$(f,g)$ and $(f\circ\ell^{-1},\ell\circ g)$ describe the same composition.
+Without removing this freedom there are generally infinitely many pairs even
+for a fixed degree pattern. We enumerate representatives modulo precisely
+these affine interface changes; we do not enumerate arbitrary choices of
+linear factors.
+
+In a normalized complete chain
+\begin{equation}
+ p=f_1\circ f_2\circ\cdots\circ f_r,
+ \label{eq:chain}
+\end{equation}
+every component except $f_1$ is monic with constant term zero. There is no
+normalization requirement on $f_1$: it must carry the input's leading
+coefficient and constant term. This convention also explains why a correct
+answer may look different from the radical expression in the question.
+
+\begin{remark}
+An algebraic number's selected embedding matters. For example, replacing
+$\sqrt2$ by $-\sqrt2$ changes the input polynomial in general. What is
+representation-independent is replacing an expression by another exact
+expression for the \emph{same} algebraic number. No \code{PowerExpand}-style
+branch assumptions are legitimate here.
+\end{remark}
+
+\section{The unique right-component candidate}
+\label{sec:candidate}
+Fix $1<d<n$ with $d\mid n$ and set $m=n/d$. Seek a normalized component
+\begin{equation}
+ h(x)=x^d+b_1x^{d-1}+\cdots+b_{d-1}x.
+ \label{eq:h}
+\end{equation}
+If $p=f(h)$, monicity of $h$ forces $\lc(f)=a_n$. All terms of
+$f(h)-a_nh^m$ have degree at most $(m-1)d=n-d$. Consequently,
+\begin{equation}
+ [x^{n-k}]h(x)^m=\frac{a_{n-k}}{a_n},
+ \qquad 1\le k\le d-1.
+ \label{eq:topcongruence}
+\end{equation}
+These are only $d-1$ equations, exactly as many as the unknown coefficients
+of the normalized $h$.
+
+\begin{lemma}[Triangular recovery]
+\label{lem:triangular}
+Over a characteristic-zero field, equations \eqref{eq:topcongruence} have a
+unique solution $b_1,\ldots,b_{d-1}\in K$. They can be solved successively by
+\begin{equation}
+ b_k=\frac1m\left(\frac{a_{n-k}}{a_n}-
+ [x^{n-k}]\left(x^d+\sum_{j=1}^{k-1}b_jx^{d-j}\right)^m\right).
+ \label{eq:triangular}
+\end{equation}
+\end{lemma}
+\begin{proof}
+View a choice of $b_jx^{d-j}$ from one of the $m$ factors as a degree deficit
+of $j$. A contribution of total deficit $k$ either chooses $b_k$ once and
+leading terms in every other factor, or uses only deficits smaller than $k$.
+The coefficient in the first case is $mb_k$. No $b_j$ with $j>k$ can contribute.
+Thus the coefficient equation is linear in the new $b_k$, with nonzero
+coefficient $m$. Induction proves existence and uniqueness. Every step uses
+arithmetic in $K$ alone.
+\end{proof}
+
+\begin{corollary}[Uniqueness for a fixed degree]
+\label{cor:unique}
+For fixed $d$, at most one normalized right component can occur. Once it
+occurs, its outer component is also unique.
+\end{corollary}
+\begin{proof}
+The first assertion follows from Lemma~\ref{lem:triangular}. Substitution
+$K[t]\to K[x]$, $f\mapsto f(h)$, is injective for nonconstant $h$, since a
+nonzero polynomial of degree $r$ maps to one of degree $rd$.
+\end{proof}
+
+\subsection{A quadratic-cost formal-root recurrence}
+Repeatedly expanding powers in \eqref{eq:triangular} is conceptually simple
+but unnecessary. Put
+\begin{equation}
+ S(t)=1+\sum_{i=1}^{d-1}s_i t^i\pmod{t^d},
+ \qquad s_i=\frac{a_{n-i}}{a_n}.
+ \label{eq:S}
+\end{equation}
+There is a unique $U(t)=1+\sum_{k=1}^{d-1}u_k t^k\pmod{t^d}$ with
+$U(t)^m=S(t)\pmod{t^d}$. It is the finite formal series with constant term
+one, customarily written $S(t)^{1/m}$. It is not a numerical choice of a
+complex $m$th-root branch. Its coefficients are in $K$.
+
+Differentiating $U^m=S$ in formal power series gives
+$mSU'=US'$. Comparing coefficients of $t^{k-1}$ yields
+\begin{equation}
+ \boxed{\quad
+ u_0=1,\qquad
+ u_k=\frac{1}{mk}\sum_{i=1}^{k}
+       \bigl((m+1)i-mk\bigr)s_i u_{k-i},
+ \quad 1\le k<d.\quad}
+ \label{eq:recurrence}
+\end{equation}
+For completeness, the left side before isolating $u_k$ is
+$mku_k+m\sum_{i=1}^{k-1}(k-i)s_i u_{k-i}$; the right side is
+$\sum_{i=1}^k i s_i u_{k-i}$. Their difference is precisely
+\eqref{eq:recurrence}. The candidate is
+\begin{equation}
+ h_d(x)=x^d+u_1x^{d-1}+\cdots+u_{d-1}x.
+ \label{eq:hd}
+\end{equation}
+The first three coefficients illustrate the rational nature of the construction:
+\begin{align}
+ u_1&=\frac{s_1}{m},\notag\\
+ u_2&=\frac{s_2}{m}-\frac{m-1}{2m^2}s_1^2,\notag\\
+ u_3&=\frac{s_3}{m}-\frac{m-1}{m^2}s_1s_2
+       +\frac{(m-1)(2m-1)}{6m^3}s_1^3.
+ \label{eq:firstcoeffs}
+\end{align}
+Only terms with indices $k<d$ are needed. The inner constant term is fixed
+at zero rather than inferred from a formal-root coefficient of order $d$.
+
+\subsection{The Laurent-series interpretation}
+At infinity, write
+\[
+ \left(p(x)/a_n\right)^{1/m}
+ =x^d\left(1+\frac{a_{n-1}}{a_n}x^{-1}+\cdots\right)^{1/m},
+\]
+using the branch whose leading coefficient is one. The positive-degree
+polynomial part is exactly $h_d$. If $p=f(h)$ with
+$f(t)=a_nt^m+c_{m-1}t^{m-1}+\cdots$, then
+\[
+ \left(p/a_n\right)^{1/m}
+ =h+\frac{c_{m-1}}{ma_n}+O(h^{-1}).
+\]
+Thus the full polynomial part may contain a nonzero constant, but subtracting
+that constant gives the normalized $h$. This provides an approximate-root
+interpretation of the same exact finite computation. It does \emph{not}
+justify accepting the candidate without testing the lower coefficients of
+$p$.
+
+\subsection{Why characteristic zero is explicitly required}
+The triangular construction divides by $m$; the efficient recurrence also
+divides by $k$. Characteristic zero makes both safe. In characteristic two,
+\[
+ x^4+x^2=(t^2+t)\circ x^2=t^2\circ(x^2+x),
+\]
+and the two right components are distinct normalized polynomials of the same
+degree. Therefore the fixed-degree uniqueness theorem itself can fail in wild
+characteristic. Even when $m$ is invertible in positive characteristic, the
+particular recurrence \eqref{eq:recurrence} cannot simply be used if some
+$k<d$ is not invertible. The delivered code makes no finite-field claim.
+
+\section{Exact membership in the subalgebra \texorpdfstring{$K[h]$}{K[h]}}
+\label{sec:digits}
+The candidate equations concern only the top of $p$. To test the whole
+polynomial, regard $h$ as a polynomial ``base.'' No unknown outer coefficients
+or general-purpose solver are required.
+
+\begin{theorem}[Polynomial-base expansion]
+\label{thm:digits}
+Let $h\in K[x]$ be monic of degree $d\ge1$. Every $p\in K[x]$ has a unique
+finite expansion
+\begin{equation}
+ p(x)=\sum_{j\ge0}r_j(x)h(x)^j,\qquad \deg r_j<d.
+ \label{eq:digits}
+\end{equation}
+Moreover, $p\in K[h]$ if and only if every $r_j$ is constant.
+\end{theorem}
+\begin{proof}
+Repeated Euclidean division by the monic $h$ gives
+$q_j=hq_{j+1}+r_j$, starting at $q_0=p$. Quotient degree drops by $d$ whenever
+it is at least $d$, so the process terminates. Substitution gives
+\eqref{eq:digits}.
+
+For uniqueness, suppose a nonzero finite combination
+$\sum r_jh^j$ vanishes, and let $J$ be the largest index with $r_J\ne0$.
+Its leading degree lies in the interval $[Jd,(J+1)d-1]$, whereas every smaller
+index contributes a degree below $Jd$. Cancellation of its leading term is
+impossible. Hence all digits in a zero combination are zero.
+
+If the digits are constants, the expansion itself defines an outer polynomial
+in $K[t]$. Conversely, an expression $p=\sum c_jh^j$ with $c_j\in K$ is a
+valid digit expansion. Uniqueness forces $r_j=c_j$.
+\end{proof}
+
+Equivalently, $K[x]$ is a free $K[h]$-module with basis
+$1,x,\ldots,x^{d-1}$. The nonconstant digit coefficients are the coordinates
+that prevent membership in its rank-one submodule $K[h]\cdot1$.
+
+For $\deg p=md$, the digit list is $r_0,\ldots,r_m$ and $r_m=a_n$.
+The outer candidate used by the implementation is
+\begin{equation}
+ F_d(t)=\sum_{j=0}^{m}r_j(0)t^j.
+ \label{eq:outercandidate}
+\end{equation}
+It is an actual outer component precisely when all the digits are constant.
+On rejection the package reports both the nonzero residual $p-F_d(h_d)$ and
+one nonconstant digit coefficient. The latter identifies the exact failure,
+not merely an unsuccessful solver run.
+
+\begin{theorem}[Necessary and sufficient fixed-degree algorithm]
+\label{thm:fixed}
+Let $K$ have characteristic zero and let $d$ be a proper divisor of
+$n=\deg p$. Construct $h_d$ by \eqref{eq:recurrence}--\eqref{eq:hd}, and
+compute the digits of $p$ in base $h_d$. There exists a decomposition with
+right degree $d$ if and only if every digit is constant. On success,
+$(F_d,h_d)$ is the unique normalized pair.
+\end{theorem}
+\begin{proof}
+Any normalized right component of degree $d$ must equal $h_d$ by
+Lemma~\ref{lem:triangular}. Its existence is therefore equivalent to
+$p\in K[h_d]$, which Theorem~\ref{thm:digits} decides exactly. The outer
+component on success is \eqref{eq:outercandidate}; its degree is $m$ because
+$r_m=a_n\ne0$. Corollary~\ref{cor:unique} supplies uniqueness.
+\end{proof}
+
+\paragraph{A small negative example.}
+For $p=x^6+x$, both proper right degrees are $2$ and $3$. In either case the
+leading coefficients force $h_d=x^d$. The digit $r_0=x$ is nonconstant, so
+both degrees are impossible. This proves functional indecomposability even
+though six is composite. The proof works over every characteristic-zero
+extension of the coefficient field.
+
+\section{Descent, functoriality, and decomposition loci}
+\label{sec:descent}
+\begin{theorem}[Descent through field extensions]
+\label{thm:descent}
+Let $L/K$ be any extension of characteristic-zero fields and $p\in K[x]$.
+For any $m,d>1$, a decomposition of degree pattern $(m,d)$ exists over $L$
+if and only if it exists over $K$. Every normalized pair over $L$ already
+has both components in $K[x]$.
+\end{theorem}
+\begin{proof}
+The forward implication is the only one to prove. Normalize a pair over $L$
+by \eqref{eq:normalize}. Its right component is the unique solution of the
+triangular coefficient system. Formula \eqref{eq:triangular} shows inductively
+that all its coefficients lie in $K$. Monic division of $p\in K[x]$ by this
+$h\in K[x]$ then produces digits in $K[x]$. Since they are constant over $L$,
+they are elements of $K$, and these are the coefficients of the outer
+component. The argument neither assumes that $L/K$ is algebraic nor uses a
+Galois closure.
+\end{proof}
+
+The descent mechanism is a standard consequence of the leading-coefficient
+method; related formulations appear explicitly in Wyman and Zieve
+\cite{WZ}. Its relevance here is particularly strong:
+\begin{corollary}
+For the algebraic input field $K$ in \eqref{eq:input}, decomposition over $K$
+and over $\Qbar$ gives the same normalized pairs and chains. Enlarging
+\code{Extension} cannot create a missing normalized decomposition.
+\end{corollary}
+
+This conclusion is special to functional decomposition in characteristic
+zero. It contrasts with ordinary factorization, where $x^2-2$ is irreducible
+over $\Q$ but splits after adjoining $\sqrt2$. It also removes any need to
+decide whether a coefficient's minimal polynomial is solvable by radicals.
+A quintic \code{Root} is an entirely ordinary exact coefficient for this
+algorithm.
+
+\begin{proposition}[Compatibility with embeddings]
+If $\sigma:K\hookrightarrow L$ is a field embedding, then candidate
+construction, digit expansion, and normalized decomposition commute with
+$\sigma$. In particular, conjugate input polynomials have the same accepted
+right degrees and the same complete degree patterns.
+\end{proposition}
+\begin{proof}
+Every construction uses finite additions, multiplications, and divisions by
+nonzero leading coefficients or nonzero integers. These operations commute
+with a field embedding. Nonzero coefficients stay nonzero, so the digit
+obstructions and acceptance decisions agree.
+\end{proof}
+
+\subsection{A coefficient-space interpretation}
+The finite tests also describe exactly where decompositions occur in families.
+Fix $n=md$ and regard $a_0,\ldots,a_n$ as coordinates, with $a_n$ invertible.
+The coefficients of $h_d$ and all its base digits are regular functions in
+\[
+ K[a_0,\ldots,a_n,a_n^{-1}]
+\]
+when the base field has characteristic zero. In other words, their only
+variable denominators are powers of the leading coefficient; integer
+constants in denominators are harmless.
+
+\begin{proposition}[Fixed-degree decomposition locus]
+\label{prop:locus}
+Within the space of degree-$n$ polynomials, the locus admitting right degree
+$d$ is the common zero set of the nonconstant digit coefficients. It is
+isomorphic to the parameter space of arbitrary degree-$m$ outer polynomials
+and normalized degree-$d$ inner polynomials. Its dimension is $m+d$ and its
+codimension in the $(n+1)$-dimensional input coefficient space is
+$(m-1)(d-1)$.
+\end{proposition}
+\begin{proof}
+Theorem~\ref{thm:fixed} gives precisely the stated equations. The composition
+map from parameters $(f,h)$ is polynomial. It is injective by normalized
+uniqueness, and its inverse on the locus is the regular candidate-and-digit
+construction just described. There are $m+1$ outer coefficients, with the
+leading one nonzero, and $d-1$ free inner coefficients. Hence the dimension
+is $(m+1)+(d-1)=m+d$. Subtracting from $n+1=md+1$ gives
+$md+1-m-d=(m-1)(d-1)$.
+\end{proof}
+
+This description is not an extra symbolic-parameter feature in the package;
+it is a mathematical explanation of specialization. As long as degree is
+preserved, the formulas specialize correctly, but exceptional parameter
+values may cause all obstructions to vanish. For example, $x^6+\lambda x$
+is indecomposable for nonzero $\lambda$ and decomposes when $\lambda=0$.
+Therefore no numerical ``generic behavior'' test can replace the exact
+coefficient tests.
+
+\section{One complete chain and all complete chains}
+\label{sec:chains}
+Let
+\[
+ D(p)=\{d:1<d<\deg p,\ d\mid\deg p,\
+                   p\in K[h_d]\}.
+\]
+Testing all proper divisors computes every normalized nontrivial pair. There
+are at most $\tau(n)-2$ such pairs for degree $n\ge2$, where $\tau(n)$ is the
+number of positive divisors of $n$. Testing only prime right degrees is not
+complete: $(x^4+x)^2$ has the atomic degree-four right component $x^4+x$ and
+has no right component of degree two. Likewise, there is no justification for
+restricting the search to $d\le\sqrt n$.
+
+\begin{lemma}[Minimal right degree gives an atom]
+\label{lem:minimal}
+If $D(p)$ is nonempty and $d$ is its smallest member, then $h_d$ is
+indecomposable.
+\end{lemma}
+\begin{proof}
+If $h_d=u\circ v$ with both degrees greater than one, then
+$p=(F_d\circ u)\circ v$. Normalizing $v$ yields a right component of $p$ of
+degree $1<\deg v<d$, contradicting minimality.
+\end{proof}
+
+\subsection{Deterministic single-chain algorithm}
+Test the proper divisors in increasing order. At the first success, record
+$h_d$ as the rightmost component and repeat on $F_d$. Stop when no proper
+degree succeeds. The outer degree decreases by at least a factor of two at
+each step. The resulting list is returned outermost first.
+
+\begin{theorem}[Completeness of the single-chain algorithm]
+The algorithm terminates and returns a complete normalized chain for every
+input of degree at least two. If it returns a singleton, the input is
+indecomposable over every characteristic-zero extension of $K$.
+\end{theorem}
+\begin{proof}
+Termination follows from strictly decreasing positive degree. Each recorded
+right component is indecomposable by Lemma~\ref{lem:minimal}. The final outer
+component is indecomposable because every possible right degree has been
+rejected by Theorem~\ref{thm:fixed}. All recorded identities are exact, so
+substituting them reconstructs $p$. Descent gives the extension-field claim.
+\end{proof}
+
+\subsection{Enumeration without repeated reassociations}
+For all complete chains, it is tempting to split recursively on every pair
+and on both sides. That repeats the same chain through different binary
+parenthesizations. The package instead selects the last atom first:
+\begin{equation}
+ \mathcal C(p)=
+ \begin{cases}
+  \{(p)\}, & D(p)=\varnothing,\\[2pt]
+  \displaystyle\bigcup_{\substack{d\in D(p)\\h_d\text{ indecomposable}}}
+       \{(c_1,\ldots,c_r,h_d):
+                          (c_1,\ldots,c_r)\in\mathcal C(F_d)\},
+       & D(p)\ne\varnothing.
+ \end{cases}
+ \label{eq:enumeration}
+\end{equation}
+The implementation memoizes pair searches and chain lists locally within
+one call; it does not leave an unbounded global cache.
+
+\begin{theorem}[Complete enumeration modulo affine interfaces]
+\label{thm:enumeration}
+Formula \eqref{eq:enumeration} returns exactly all normalized complete chains,
+with no duplicates caused by binary reassociation. In particular, a specified
+ordered list of component degrees admits at most one normalized chain.
+\end{theorem}
+\begin{proof}
+In any normalized complete chain, the final component is indecomposable and
+has some degree $d\in D(p)$. By fixed-degree uniqueness, it must equal $h_d$,
+and the rest of the chain composes to the unique $F_d$. Induct on degree for
+the outer chain. This proves both inclusion directions and uniqueness for a
+fixed ordered degree list. Different selected final degrees cannot produce
+the same chain, and within one final degree the induction hypothesis rules
+out duplicates. Strict degree reduction proves finiteness.
+\end{proof}
+
+A complete chain has at most $\lfloor\log_2 n\rfloor$ components, but the
+number of different chains need not be small. Enumerating all of them is
+necessarily output-sensitive. The interface intentionally separates one
+chain, all pairs, and all chains so that a user need not request the largest
+output to solve the ordinary decomposition problem.
+
+\paragraph{Constants and affine polynomials.}
+For software convenience, degree-zero and degree-one inputs return the
+singleton list containing the input, and the all-chains function returns a
+list containing that singleton. These are conventions, not complete chains
+of nonlinear atoms in the definition above. The certificate metadata marks
+indecomposability as not applicable below degree two. The zero polynomial's
+reported degree is $-\infty$.
+
+\section{Nonuniqueness and the Ritt perspective}
+\label{sec:ritt}
+Fixed-degree uniqueness does not say that all decompositions have the same
+ordered degrees. Ritt's characteristic-zero theory describes how complete
+chains can differ. In particular, their lengths and multisets of component
+degrees agree, while their order can change. The discussion of Zieve and
+M\"uller provides a detailed treatment and modern perspective \cite{ZM}.
+None of the proofs of the algorithms above depends on invoking Ritt's
+classification as a black box.
+
+\subsection{Powers}
+For $x^{12}$, the normalized complete chains are exactly
+\[
+ (x^3,x^2,x^2),\qquad (x^2,x^3,x^2),\qquad (x^2,x^2,x^3).
+\]
+For $x^{30}$ there are six chains, corresponding to permutations of degrees
+$2,3,5$. Composing two powers multiplies their exponents:
+\begin{equation}
+ x^r\circ x^s=x^{rs},\qquad\text{not }x^{r+s}.
+ \label{eq:powerproduct}
+\end{equation}
+Even the correct multiplication should not be used to compress a
+\emph{complete} chain, because it merges two atoms into a decomposable factor.
+
+\subsection{A Chebyshev collision in the package's normalization}
+The identities $T_2\circ T_3=T_3\circ T_2=T_6$ yield two normalized pairs for
+\[
+ T_6(x)=32x^6-48x^4+18x^2-1:
+\]
+\begin{align*}
+ T_6&=(32t^3-48t^2+18t-1)\circ x^2,\\
+ T_6&=(32t^2-1)\circ\left(x^3-\frac34x\right).
+\end{align*}
+Their right degrees are different, so there is no conflict with
+Corollary~\ref{cor:unique}. These are elementary test cases for all-chain
+enumeration; an implementation that always returns one degree pattern has
+not enumerated every chain.
+
+More general collisions are not merely commutations of powers. For example,
+whenever the expressions have the required nontrivial degrees,
+\[
+ x^m\circ\bigl(x^rR(x^m)\bigr)
+ =\bigl(x^rR(x)^m\bigr)\circ x^m.
+\]
+The package need not recognize such templates in advance: both degree tests
+succeed directly.
+
+\subsection{Intermediate fields as a structural interpretation}
+A pair $p=f(h)$ gives a tower
+\[
+ K(p)\subseteq K(h)\subseteq K(x),
+ \qquad [K(x):K(h)]=d,\quad [K(h):K(p)]=m.
+\]
+The degree statements follow from the degree of the corresponding rational
+maps, or equivalently from the generic polynomial equations for $x$ and $h$.
+The normalization chooses a polynomial generator for a relevant intermediate
+field up to affine equivalence. This connects the algorithm to the function
+field viewpoint in the literature \cite{KL,ZM}. The actual implementation
+does not construct intermediate fields, Galois groups, or monodromy groups;
+those structures are unnecessary for this finite characteristic-zero search.
+
+\section{Exact positive and negative certificates}
+\label{sec:certificates}
+A composition identity is a useful positive check, but it does not establish
+that a failed search was exhaustive or that returned factors are atoms. The
+package therefore exposes the evidence behind every proposed right degree.
+
+A fixed-degree record contains $d$, $m$, the forced $h_d$, the digit list
+$r_0,\ldots,r_m$, the constant-digit outer candidate $F_d$, a Boolean outcome,
+a possible obstruction, and the residual $p-F_d(h_d)$. An obstruction is a
+triple $(j,i,c)$ with $i>0$ and
+\[
+ c=[x^i]r_j\ne0.
+\]
+Digit and power indices in the software record are \emph{zero-based}
+mathematical indices, although Wolfram list positions are one-based. The
+implementation selects the first nonzero nonconstant coefficient by increasing
+digit index and then increasing power.
+
+\begin{proposition}[A certificate checker independent of the search]
+\label{prop:checker}
+A fixed-degree record is sufficient to certify the outcome if a checker
+verifies all of the following: $d$ is an admissible divisor; $h_d$ is monic
+of degree $d$ and has constant zero; the leading congruence
+\eqref{eq:topcongruence} holds; every digit has degree less than $d$; the
+reconstruction \eqref{eq:digits} equals $p$; and the recorded status agrees
+with whether all digits are constant. On rejection, the claimed obstruction
+must be an actual nonzero nonconstant digit coefficient.
+\end{proposition}
+\begin{proof}
+The leading congruence and normalization identify the unique possible inner
+component by Lemma~\ref{lem:triangular}. Digit reconstruction and degree bounds
+identify the unique polynomial-base expansion by Theorem~\ref{thm:digits}.
+Its constant or nonconstant nature decides existence. Thus neither the
+recurrence used to find $h_d$ nor the long-division search must be trusted as
+part of this checker.
+\end{proof}
+
+The delivered verifier follows this strategy: it raises $h_d$ to $m$ by
+polynomial multiplication and reconstructs the digit expression by Horner
+composition. It does not call the candidate recurrence, the monic-division
+routine, or the pair search. It additionally checks that the reported outer
+candidate is exactly the list of digit constants and that the residual is
+correct.
+
+An exhaustive record includes a record for \emph{every} proper divisor in
+increasing order. The verifier checks this entire list, including the absence
+of omissions and duplicates, and checks the accepted-degree summary. If all
+tests are negative, it certifies indecomposability. For prime degree the
+empty divisor list already suffices. To certify a complete returned chain,
+verify its composition identity and exhaustively certify every nonlinear
+component as indecomposable. All this can be done through the public API.
+
+\paragraph{Trust boundary.}
+These are mathematical certificates checked by exact computer algebra, not
+formally verified proof objects in a proof assistant. The search and checker
+still share scalar algebraic arithmetic and some basic coefficient-vector
+operations. They therefore do not provide implementation independence against
+every possible shared bug. The separate Python verifier uses a different
+exact number-field representation and an independent finite-binomial
+construction as further evidence. Native Wolfram execution remains a separate,
+explicitly unperformed validation step in this delivery.
+
+\section{Worked examples}
+\label{sec:examples}
+\subsection{The original radical polynomial}
+Put $s=\sqrt2$ and take the polynomial in the question:
+\begin{align}
+ p(x)={}&3+3s+(14+4s)x+(12+26s)x^2\notag\\
+        &+(56+8s)x^3+(8+48s)x^4+48x^5+16s x^6.
+ \label{eq:original}
+\end{align}
+For $d=2$, $m=3$ and $s_1=48/(16s)=3/s$. Hence $u_1=1/s$ and
+\begin{equation}
+ h_2=x^2+\frac{x}{s}.
+ \label{eq:originalh}
+\end{equation}
+All base-$h_2$ digits are constant, giving
+\begin{equation}
+ F_2(t)=3+3s+(8+14s)t+(8+24s)t^2+16s t^3.
+ \label{eq:originalF}
+\end{equation}
+Direct substitution verifies $p=F_2(h_2)$. This differs from the question's
+pair only by the affine normalization $g=s h_2$:
+\[
+ g=x+s x^2,\qquad
+ f(t)=3+3s+(14+4s)t+(4+12s)t^2+8t^3,
+\]
+and indeed $F_2(t)=f(st)$.
+
+The alternative right degree $d=3$ produces
+\[
+ h_3=x^3+\frac{3s}{4}x^2+\left(\frac{15}{16}+\frac{s}{8}\right)x.
+\]
+Its digit expansion is $p=r_0+r_1h_3+r_2h_3^2$ with
+\begin{align*}
+ r_0={}&3+3s+\left(\frac{51}{16}+\frac{3s}{4}\right)x
+                +\left(\frac32+\frac{51s}{16}\right)x^2,\\
+ r_1={}&11+2s,\qquad r_2=16s.
+\end{align*}
+The nonconstant $r_0$ proves that this degree is impossible. Thus the original
+polynomial has exactly one normalized complete chain, of degrees $(3,2)$.
+
+\begin{lstlisting}
+p = 3 + 3 Sqrt[2] + (14 + 4 Sqrt[2]) x +
+    (12 + 26 Sqrt[2]) x^2 + (56 + 8 Sqrt[2]) x^3 +
+    (8 + 48 Sqrt[2]) x^4 + 48 x^5 + 16 Sqrt[2] x^6;
+chain = AlgebraicDecompose[p, x];
+VerifyAlgebraicDecomposition[p, chain, x]
+AlgebraicRightDecompose[p, x, 3]
+(* Mathematical expectations: True; Missing["NotDecomposable",3]. *)
+\end{lstlisting}
+The displayed formulas are exact mathematical results independently checked
+in the bundled verifier; they are not represented as a native Wolfram session
+transcript.
+
+\subsection{The nested degree-24 example}
+Let $p_2(x)=p(x^4-x+1)$ and set $v=x^4-x$. Since
+\[
+ h_2(v+1)=v^2+\left(2+\frac1s\right)v+1+\frac1s,
+\]
+a normalized chain is
+\begin{align*}
+ H_3(x)&=x^4-x,\\
+ H_2(x)&=x^2+\left(2+\frac1s\right)x,\\
+ H_1(x)&=141+105s+(168+142s)x\\
+       &\hspace{12mm}+(56+72s)x^2+16s x^3.
+\end{align*}
+Thus $p_2=H_1\circ H_2\circ H_3$. The quartic $H_3$ is indecomposable: its
+only proposed right degree is two, the leading equations force $x^2$, and
+the term $-x$ obstructs membership. The quadratic and cubic are
+indecomposable by prime degree. The returned degree sequence is $(3,2,4)$.
+In particular, a component of composite degree can be an atom.
+
+\subsection{An algebraic \code{Root} coefficient}
+Let $\alpha$ be the particular real algebraic number selected in Wolfram
+notation by
+\begin{lstlisting}
+a = Root[#^5 - # - 1 &, 1];
+\end{lstlisting}
+and take
+\[
+ q(x)=(x^3+\alpha x)^2+(1+\alpha)(x^3+\alpha x)+2.
+\]
+For right degree three the algorithm recovers exactly
+\[
+ (t^2+(1+\alpha)t+2,\quad x^3+\alpha x).
+\]
+No radical formula for $\alpha$ is requested or constructed. The coefficient
+relation $\alpha^5-\alpha-1=0$ is available to exact algebraic reduction.
+The same construction works for a nonreal root of this polynomial and for
+polynomials with coefficients from several algebraic extensions at once.
+
+A useful validation example adds $(\alpha^5-\alpha-1)x^{40}$ to $x^4$.
+The true polynomial is still $x^4$, so its degree must be recomputed after
+coefficient reduction. The package does this before selecting divisors; it
+does not trust the apparent degree of unreduced input syntax.
+
+\subsection{Complex coefficients and affine normalization}
+Over $\Q(i,\sqrt2)$,
+\[
+ (1+i)(x^3+ix)^2+\sqrt2
+ =\bigl((1+i)t^2+\sqrt2\bigr)\circ(x^3+ix).
+\]
+For a less normalized input, choose
+\[
+ f(t)=(1+\sqrt2)t^2+(2-\sqrt3)t+7,\qquad
+ g(x)=(2+\sqrt3)x^3+\sqrt2 x+\sqrt3.
+\]
+The unique normalized degree-three pair is
+\[
+ \left(f((2+\sqrt3)t+\sqrt3),\quad
+           x^3+\frac{\sqrt2}{2+\sqrt3}x\right).
+\]
+These examples emphasize that the outer leading coefficient, the original
+inner leading coefficient, and the original inner constant term are all
+handled without ad hoc assumptions.
+
+\section{Wolfram Language implementation and API}
+\label{sec:implementation}
+\subsection{Loading and basic operation}
+The archive contains a self-contained application directory. Without
+installing anything into a system directory, load its top-level file:
+\begin{lstlisting}
+Get["/absolute/path/AlgebraicDecomposition/AlgebraicDecomposition.wl"]
+Clear[x];
+AlgebraicDecompose[(x^4 + x)^2, x]
+(* Expected: {x^2, x^4 + x} *)
+\end{lstlisting}
+Alternatively, place the complete directory under
+\code{\$UserBaseDirectory/Applications} and use
+\begin{lstlisting}
+Needs["AlgebraicDecomposition`"]
+\end{lstlisting}
+The algorithm has no optional dependencies and no runtime network access.
+The Python verifier is separate and is not required to load or use the Wolfram
+package. The source targets modern Wolfram Language kernels with associations,
+\code{Failure}, and \code{RootReduce}; no minimum-version compatibility claim
+has been validated by native execution.
+
+\subsection{Coefficient arithmetic and representation}
+The implementation uses ascending dense coefficient vectors. For example,
+$3+2x+x^3$ is represented internally by $\{3,2,0,1\}$. The zero polynomial
+has the unique vector $\{0\}$. Trailing zero entries are removed only after
+exact scalar normalization.
+
+The scalar normalization boundary is the private function \code{red}. Exact
+integers and rationals pass directly. Other coefficients are processed with
+\code{RootReduce}, then checked for exact numeric membership in
+\code{Algebraics}. Wolfram documents \code{RootReduce} as reducing combinations
+of exact algebraic quantities to a single algebraic-number representation,
+and \code{Algebraics} provides the corresponding exact domain membership
+operation \cite{RootReduce,Algebraics}. The algorithm applies these operations
+to coefficients, not to polynomials containing the free variable.
+
+An approximate real anywhere in the evaluated coefficient expression is
+rejected. So are nonnumeric symbolic parameters and quantities not certified
+as algebraic. A failed exact reduction returns a \code{Failure}; it is never
+treated as a nonzero coefficient or as evidence of indecomposability. After
+normalization, equality to the exact integer zero is used for zero tests.
+There is no tolerance, numerical sampling, or \code{PossibleZeroQ} in the
+algorithm.
+
+This contract covers algebraic \code{Root} objects and exact arithmetic with
+them, not arbitrary \code{Root} expressions encoding transcendental equations.
+It also does not promise to recognize every sophisticated expression that
+happens mathematically to evaluate to an algebraic number. An explicit
+algebraic representation can be supplied when the initial expression lies
+outside the recognized domain.
+
+\subsection{Public functions}
+All lists of factors are outermost first. Mathematical equality, rather than
+the printed choice between radicals and \code{Root} objects, is the output
+contract.
+
+\paragraph{\code{AlgebraicDecompose[p,x]}.}
+Returns one complete normalized chain. The smallest successful right degree
+is chosen at each step, giving deterministic degree choices. An input of
+degree at most one returns its singleton list.
+
+\paragraph{\code{AlgebraicDecompositions[p,x]}.}
+Returns all normalized complete chains, modulo affine changes at internal
+interfaces. It implements \eqref{eq:enumeration}, not an enumeration of all
+raw affine variants or all incomplete chains. The output can be large.
+
+\paragraph{\code{AlgebraicDecompositionPairs[p,x]}.}
+Returns all normalized nontrivial pairs, ordered by increasing right degree.
+An empty list means no nontrivial pair exists for a valid input. This interface
+is often a better diagnostic than full chain enumeration.
+
+\paragraph{\code{AlgebraicRightDecompose[p,x,d]}.}
+Returns the unique normalized pair for a specified proper divisor $d$.
+A valid degree with no decomposition returns
+\code{Missing["NotDecomposable",d]}. An invalid degree, such as a nondivisor,
+one, or the whole input degree, returns \code{Failure}. This distinction
+separates a proved negative answer from an invalid request.
+
+\paragraph{\code{AlgebraicDecompositionData[p,x,d]}.}
+Returns the fixed-degree certificate record. Its keys are \code{"Type"},
+\code{"RightDegree"}, \code{"OuterDegree"}, \code{"Inner"},
+\code{"OuterCandidate"}, \code{"Digits"}, \code{"Decomposable"},
+\code{"Obstruction"}, and \code{"Residual"}. The outer candidate is not a
+valid factor when the status is false. The obstruction is \code{None} on
+success, otherwise an association with \code{"DigitIndex"}, \code{"Power"},
+and \code{"Coefficient"}.
+
+\paragraph{\code{AlgebraicDecompositionData[p,x]}.}
+\begingroup\raggedright
+Returns an exhaustive report with \code{"InputDegree"},
+\code{"TestedRightDegrees"}, \code{"AcceptedRightDegrees"},
+\code{"Indecomposable"}, and \code{"Tests"}, in addition to its type marker.
+For degree below two, the indecomposability field is
+\code{Missing["NotApplicable","DegreeBelowTwo"]}.\par\endgroup
+
+\paragraph{\code{VerifyAlgebraicDecompositionData[p,data,x]}.}
+Checks a fixed-degree or exhaustive report using
+Proposition~\ref{prop:checker}. Malformed or inconsistent data returns
+\code{False}; invalid polynomial input returns \code{Failure}. The checker
+is intended for mathematical data, not as a sandbox for evaluating untrusted
+Wolfram expressions.
+
+\paragraph{Composition and identity verification.}
+\code{ComposeDecomposition[parts,x]} composes a list exactly; the empty list
+represents the identity $x$.
+\code{VerifyAlgebraicDecomposition[p,parts,x]} checks only the composition
+identity. It does not assert completeness, normalization, or a particular
+degree pattern. For example, $\{x^4\}$ passes the identity check for $p=x^4$
+but is not a complete nonlinear chain.
+
+\subsection{Checking a complete chain with public operations}
+The following pattern distinguishes the identity check from the atomicity
+checks:
+\begin{lstlisting}
+chain = AlgebraicDecompose[p, x];
+identityOK = VerifyAlgebraicDecomposition[p, chain, x];
+reports = AlgebraicDecompositionData[#, x] & /@ chain;
+certificatesOK = And @@ MapThread[
+  VerifyAlgebraicDecompositionData[#1, #2, x] &, {chain, reports}];
+atomsOK = AllTrue[reports, TrueQ[#["Indecomposable"]] &];
+(* For degree(p)>=2, require identityOK && certificatesOK && atomsOK. *)
+\end{lstlisting}
+In production code, check for \code{Failure} before inspecting returned lists
+or associations. Inputs should use an unassigned symbol as the polynomial
+variable; ordinary Wolfram evaluation happens before the function patterns
+are matched.
+
+\subsection{Algorithmic organization}
+The fixed-degree engine consists of three small components: the formal-root
+recurrence, monic long division, and detection of nonconstant digits. Outer
+coefficients are taken directly from digit constants. Composition and
+certificate checking use explicit polynomial convolution and Horner schemes.
+Loop exits are explicit: the nested obstruction scan uses a locally tagged
+\code{Catch}/\code{Throw}, and pair search records its result before
+\code{Break}. Wolfram's \code{Return} inside a \code{Do} loop exits that loop,
+not necessarily the surrounding function, so it must not be used as an
+implicit multilevel exit \cite{Return}.
+There is no call to \code{Factor}, \code{Decompose}, \code{Solve}, or a radical
+denesting routine in the search. Complete source is included in
+Appendix~\ref{app:source} and in the loadable package file.
+
+There are deliberately no speculative options for extensions, numerical
+tolerances, or heuristic fallback solvers. Unsupported input or a failed
+algebraic normalization does not silently change the mathematical problem.
+The implementation also does not automatically convert every output to
+radicals: such a conversion may be impossible or needlessly expensive, and
+would not improve correctness.
+
+\section{Complexity, coefficient growth, and practical limits}
+\label{sec:complexity}
+\subsection{Field-operation bounds}
+For a fixed proposed right degree $d$, the recurrence performs
+$1+2+\cdots+(d-1)=O(d^2)$ scalar operations. A dense division of a polynomial
+of degree $N$ by a monic degree-$d$ polynomial costs $O((N-d+1)d)$ field
+operations. Applying this repeatedly at degrees $n,n-d,n-2d,\ldots$ costs
+\[
+ O\!\left(d\sum_{j=0}^{m-1}(n-jd)\right)=O(n^2),
+ \qquad m=n/d.
+\]
+Thus the fixed-degree test is $O(n^2)$ in the dense field-operation model,
+with $O(n)$ field elements of working storage for its coefficient vectors and
+digits. This agrees with the classical quadratic fixed-degree approach
+\cite{KL}; it is not a bit-complexity bound.
+
+Testing every proper divisor gives $O(\tau(n)n^2)$ field operations. Along
+one complete chain, subsequent outer degrees are divisors of $n$ and at most
+half the previous degree. Since $\tau(n_j)\le\tau(n)$,
+\[
+ \sum_j O(\tau(n_j)n_j^2)
+ \le O\!\left(\tau(n)n^2\sum_{j\ge0}4^{-j}\right)
+ =O(\tau(n)n^2).
+\]
+Enumeration of all chains adds the cost of its search graph and its output;
+no polynomial bound in input size alone is claimed for that interface.
+Storing all degree certificates simultaneously also costs more than storing
+one fixed-degree test.
+
+\subsection{Why algebraic arithmetic is not constant-cost}
+Let $D=[K:\Q]$. In a common primitive-element representation $K=\Q(\theta)$,
+an element is a rational vector of length $D$, interpreted modulo the minimal
+polynomial of $\theta$. Multiplication, inversion, and rational height growth
+all have costs depending on $D$ and coefficient sizes. A concise expression
+with many independent radicals can generate a field whose degree is the
+product of their individual degrees. Therefore a polynomial field-operation
+count does not imply polynomial running time in the length of an arbitrary
+radical expression.
+
+The delivered Wolfram backend favors a simple normalization boundary using
+\code{RootReduce}. It may repeatedly do expensive algebraic work, especially
+when many unrelated generators occur. A future optimized backend could
+convert all input coefficients once to a common field, operate on rational
+coordinate vectors, and convert only at the output boundary.
+\code{ToNumberField} is relevant to such a design \cite{ToNumberField}.
+That backend is \emph{not} an undocumented option in this release. The
+independent Python verifier does use explicit exact number fields, but it is
+not a replacement runtime dependency for the Wolfram package.
+
+\subsection{Storage and expression growth}
+The implementation is dense. A sparse expression such as $x^{1000000}+x$
+will create a very long vector even though its textual input is short.
+Repeated \code{RootReduce}, dense convolution, large exact coefficients,
+and all-chain enumeration are the principal practical limits. No benchmark
+claim for a particular Wolfram version is possible without native execution.
+The measured Python verification time is merely a reproducibility record,
+not a comparison with \code{Decompose} or a performance promise.
+
+\section{Audit of the derivative-factorization approach}
+\label{sec:audit}
+The identity
+\[
+ p'(x)=f'(g(x))g'(x)
+\]
+is mathematically useful. In characteristic zero, after suitable scalar
+normalization, the derivative of a right component divides $p'$. An exhaustive
+enumeration of derivative divisors, followed by integration, normalization,
+and exact membership testing, can therefore produce a correct algorithm.
+The factorization-free method replaces this potentially large candidate set
+by one forced candidate per right degree.
+
+Several details in the posted code require correction independently of its
+choice of method.
+
+\paragraph{One distinct derivative factor is not an obstruction.}
+The early return when the nonconstant factor list has length below two is
+incorrect. For $p=x^4$, $p'=4x^3$ has a single distinct nonconstant factor
+$x$ with multiplicity three, yet $p=x^2\circ x^2$. Multiplicity cannot be
+ignored when deciding whether candidate derivatives exist.
+
+\paragraph{Repeated-factor subsets create duplicates.}
+Expanding multiplicities into repeated copies and taking all subsets can
+visit $2^{\sum e_i}$ subsets, with many yielding the same product. Divisors
+of $\prod q_i^{e_i}$ are more naturally indexed by multiplicity tuples
+$0\le j_i\le e_i$, of which there are $\prod(e_i+1)$. Even that is an
+avoidable combinatorial search for the present characteristic-zero task.
+
+\paragraph{The candidate degree must divide the input degree.}
+If a proposed derivative has degree $d-1$, then $d$ must be a proper divisor
+of $n$. The posted degree bound on derivative products does not enforce this.
+Using $n/d$ subsequently as the number of outer coefficients can therefore
+produce a noninteger degree and an invalid coefficient system. Divisibility
+must be checked before constructing the outer polynomial.
+
+\paragraph{Recursing only on the outer factor needs a justification.}
+A successfully found inner factor need not be indecomposable. The provided
+candidate-subset order is not a proof that the first successful candidate has
+minimum degree. Therefore repeatedly decomposing only the first list element
+does not by itself certify that every final component is an atom. Our
+single-chain algorithm does recurse only on the outer component, but only
+after Lemma~\ref{lem:minimal} has supplied the missing justification.
+
+\paragraph{The final power rewrite changes the composition.}
+The replacement of adjacent powers by $x^{n+m}$ is algebraically wrong;
+\eqref{eq:powerproduct} requires $x^{nm}$. For example, adjacent cubic powers
+compose to $x^9$, not $x^6$. Correcting addition to multiplication fixes the
+identity but still destroys completeness by merging nonlinear factors.
+
+\paragraph{Exact checking must remain exact.}
+A heuristic possible-zero predicate is not the same interface contract as
+coefficientwise exact algebraic reduction. Likewise, the existence of one
+solver result is not an exhaustive negative certificate when no result is
+returned. For explicit algebraic coefficients, reduction to canonical exact
+numbers and the finite obstruction test make the decision boundary explicit.
+
+The historical comment in the source thread describes an old implementation
+context for \code{Decompose}; it does not establish that the derivative
+approach is the only known algorithm. The factorization-free leading-term
+approach substantially predates that discussion \cite{KL,SE}.
+
+\section{Verification record and reproducibility}
+\label{sec:verification}
+\subsection{What was actually executed}
+The archive includes \code{Verification/verify\_exact.py}, an independent
+Python implementation using SymPy 1.14.0 exact rational and algebraic-number
+fields. Polynomial arithmetic in the test engine is explicit vector
+arithmetic; it does not call SymPy's decomposition routine to decide the
+expected result. Its candidate recurrence is also cross-checked against a
+separate truncated binomial expansion
+\[
+ (1+w)^{1/m}\equiv\sum_{j=0}^{d-1}\binom{1/m}{j}w^j\pmod{t^d},
+ \qquad w\in tK[t].
+\]
+This second construction does not reuse the recurrence.
+
+The successful run recorded in \code{Verification/report.json} has the
+following scope:
+\begin{center}
+\begin{tabular}{lr}
+\toprule
+Executed independent check & Count\\
+\midrule
+Polynomial cases & 974\\
+Fixed-degree candidate and digit tests & 2,001\\
+Complete chains checked & 1,042\\
+Known normalized pairs recovered & 95\\
+Rational differential comparisons with SymPy & 848\\
+Degree-pattern disagreements with that baseline & 14\\
+\bottomrule
+\end{tabular}
+\end{center}
+There are 14 fixed examples, 810 exhaustively enumerated monic rational
+polynomials of degrees four and six with lower coefficients in
+$\{-1,0,1\}$, and 30 generated cases in each of five fields:
+\[
+ \Q,\quad \Q(\sqrt2),\quad \Q(i),\quad
+ \Q(\sqrt2,\sqrt3),\quad \Q(\alpha),
+ \qquad \alpha^5-\alpha-1=0.
+\]
+The generator uses seed 206618. The generated cases include nonmonic outer
+and inner components and nonzero inner constants. Verification checks exact
+recomposition, candidate agreement, leading congruence, digit reconstruction,
+acceptance equivalence, normalization, atomicity, and uniqueness of enumerated
+chains. Ritt's degree-multiset invariant is checked as an additional property.
+No approximate numerical equality is used.
+
+\subsection{The differential baseline was not treated as an oracle}
+SymPy's documented \code{decompose} function provides a useful independent
+comparison \cite{SymPy}, but in this run 14 rational cases had different
+degree patterns. These are explicitly reported, not counted as agreement.
+For example, the installed SymPy 1.14.0 call on
+\begin{align*}
+ p(x)={}&-8x^6+24x^5-34x^4+38x^3\\
+       &-29x^2+14x-7
+\end{align*}
+with domain $\Q$ returned a singleton, whereas exact multiplication verifies
+\[
+ p=(-8t^2+14t-7)\circ\left(x^3-\frac32x^2+x\right).
+\]
+The independent engine recovered the latter pair and checked it exactly.
+The report records the first three discrepancies for reproduction. Its
+\code{PASS} status refers to its own stated exact invariants, \emph{not}
+to universal agreement with the baseline. This observation is version- and
+input-specific; it is not a claim about every SymPy release.
+
+\subsection{What has not been executed}
+The Wolfram connection was discovered and an evaluator call was attempted.
+Both its context and evaluation endpoints returned HTTP 404, and there was
+no local Wolfram kernel. The native package therefore has no recorded
+successful native load or native test run in this delivery. The 60 authored
+\code{VerificationTest} cases include the original example, mixed fields,
+real and nonreal quintic roots, \code{AlgebraicNumber}, algebraic cancellations,
+all-chain examples, malformed input, and deliberately corrupted certificates.
+One of these tests additionally wraps 24 seeded compositional property cases.
+These native tests are supplied for execution, not presented as already passed.
+
+\subsection{Reproducing both validation layers}
+With a Wolfram kernel available, run from the application directory:
+\begin{lstlisting}
+wolframscript -file Tests/RunTests.wl
+\end{lstlisting}
+In a notebook, a report can instead be obtained directly:
+\begin{lstlisting}
+TestReport["/absolute/path/AlgebraicDecomposition/Tests/AlgebraicDecomposition.wlt"]
+\end{lstlisting}
+The runner prints the kernel version and the test report and uses the
+available report success property; the current documented property is
+\code{"ReportSucceeded"} \cite{TestReport}. A fallback recognizes the older
+\code{"AllTestsSucceeded"} property when present. An unknown report interface
+is not silently counted as success.
+
+For the independent check, use Python 3.10 or later and install the pinned
+verification dependency from the supplied requirements file. Then run:
+\begin{lstlisting}
+python Verification/verify_exact.py --output Verification/report.json
+\end{lstlisting}
+The Python script is a mathematical verification companion, not a Wolfram
+syntax checker. The bundle also records a lightweight delimiter/string/comment
+scan of the Wolfram files; that scan is explicitly not a full Wolfram parser.
+
+\section{Conclusions and further implementation work}
+\label{sec:conclusion}
+For explicit exact algebraic coefficients, functional decomposition has a
+clean finite solution: normalize the inner component, force its coefficients
+from the top of the input, and check the lower coefficients through polynomial
+base digits. Each divisor contributes exactly one candidate. Successful
+pairs descend to the original coefficient field, and rejected candidates
+carry exact algebraic obstructions. Complete chains and all normalized
+alternatives follow by elementary recursion.
+
+The package realizes this theory without derivative factorization or
+coefficient solving. Its principal remaining validation task is native Wolfram
+execution, for which the full regression suite is included. Performance work
+would naturally focus on a common-number-field backend, sparse or fast
+polynomial arithmetic, and lazy enumeration of very large chain families.
+Those are improvements to engineering and scale, not missing cases in the
+characteristic-zero mathematical criterion.
+
+\begin{thebibliography}{99}
+\bibitem{SE}
+V. Reshetnikov and contributors,
+\emph{Is it possible to make Decompose work with coefficients containing
+radicals?} Mathematica Stack Exchange, question 206618 and answer 206622,
+2019. Source question, contributed code, and historical discussion.
+\url{https://mathematica.stackexchange.com/questions/206618/}
+
+\bibitem{KL}
+D. Kozen and S. Landau,
+\emph{Polynomial decomposition algorithms},
+Journal of Symbolic Computation \textbf{7} (1989), 445--456.
+Author-hosted paper:
+\url{https://www.cs.cornell.edu/~kozen/Papers/poly.pdf}
+
+\bibitem{Gathen}
+J. von zur Gathen,
+\emph{Functional decomposition of polynomials: the tame case},
+Journal of Symbolic Computation \textbf{9} (1990), 281--299.
+Bibliographic details verified against the author's publication list:
+\url{https://vonzurgathen.online/list-of-publications/}
+
+\bibitem{WZ}
+B. K. Wyman and M. E. Zieve,
+\emph{Two questions on polynomial decomposition}, arXiv:1301.5211, 2013.
+In particular, the coefficient-descent argument in Proposition 2.1.
+\url{https://arxiv.org/html/1301.5211v1}
+
+\bibitem{ZM}
+M. E. Zieve and P. M\"uller,
+\emph{On Ritt's polynomial decomposition theorems}, arXiv:0807.3578, 2008.
+\url{https://arxiv.org/abs/0807.3578}
+
+\bibitem{Decompose}
+Wolfram Research, \emph{Decompose}, Wolfram Language documentation.
+\url{https://reference.wolfram.com/language/ref/Decompose.html}
+
+\bibitem{RootReduce}
+Wolfram Research, \emph{RootReduce}, Wolfram Language documentation.
+\url{https://reference.wolfram.com/language/ref/RootReduce.html}
+
+\bibitem{Algebraics}
+Wolfram Research, \emph{Algebraics}, Wolfram Language documentation.
+\url{https://reference.wolfram.com/language/ref/Algebraics.html}
+
+\bibitem{ToNumberField}
+Wolfram Research, \emph{ToNumberField}, Wolfram Language documentation.
+\url{https://reference.wolfram.com/language/ref/ToNumberField.html}
+
+\bibitem{TestReport}
+Wolfram Research, \emph{TestReportObject}, Wolfram Language documentation.
+\url{https://reference.wolfram.com/language/ref/TestReportObject.html}
+
+\bibitem{Return}
+Wolfram Research, \emph{Return}, Wolfram Language documentation,
+especially the example under ``Possible Issues.''
+\url{https://reference.wolfram.com/language/ref/Return.html}
+
+\bibitem{SymPy}
+SymPy development team, \emph{Polynomial manipulation: reference},
+SymPy documentation; local verification used version 1.14.0.
+\url{https://docs.sympy.org/latest/modules/polys/reference.html}
+
+\end{thebibliography}
+\noindent\small All online references were consulted on 7 September 2026.
+The mathematical arguments in this report are self-contained; bibliography
+entries distinguish algorithmic antecedents, structural background, and
+implementation contracts.\normalsize
+
+\clearpage
+\appendix
+\section{Complete Wolfram Language package source}
+\label{app:source}
+The following source is embedded in this \LaTeX{} file so the article can be
+compiled on its own. The same source is supplied as
+\code{Kernel/AlgebraicDecomposition.wl}, which is the file to load rather than
+copying code out of a PDF. The top-level loader and \code{Kernel/init.m} are
+small path-relative wrappers. The examples, 60 native tests, and independent
+Python verifier are separate files in the archive.
+
+\lstset{basicstyle=\ttfamily\scriptsize,numbers=left,numberstyle=\tiny\color{black!50},
+  numbersep=8pt,xleftmargin=18pt,xrightmargin=3pt}
+\begin{lstlisting}
+(* ::Package:: *)
+(* AlgebraicDecomposition 1.0.0 -- exact characteristic-zero functional
+   decomposition over algebraic numbers. See article/article.pdf.
+   No Factor, Decompose, Solve, approximate zero test, or radical denesting
+   is used by the decomposition algorithm. SPDX-License-Identifier: MIT *)
+
+BeginPackage["AlgebraicDecomposition`"];
+
+AlgebraicDecompose::usage =
+  "AlgebraicDecompose[p,x] returns one complete composition chain, outermost first. It chooses the smallest successful right degree at each step. All components except the first are monic with zero constant term. Exact algebraic coefficients are required.";
+AlgebraicDecompositions::usage =
+  "AlgebraicDecompositions[p,x] returns all complete normalized composition chains, modulo affine changes at internal interfaces. Enumeration may have large output.";
+AlgebraicDecompositionPairs::usage =
+  "AlgebraicDecompositionPairs[p,x] returns all normalized nontrivial pairs {f,g} with p=f(g(x)), ordered by increasing degree of g.";
+AlgebraicRightDecompose::usage =
+  "AlgebraicRightDecompose[p,x,d] returns the unique pair {f,g} with degree(g)=d, g monic and g(0)=0, or Missing[\"NotDecomposable\",d]. An invalid degree or input returns Failure.";
+AlgebraicDecompositionData::usage =
+  "AlgebraicDecompositionData[p,x,d] gives an exact fixed-degree test, including the forced inner candidate, its base-g digits and an obstruction. AlgebraicDecompositionData[p,x] gives tests for every proper divisor of degree(p).";
+VerifyAlgebraicDecompositionData::usage =
+  "VerifyAlgebraicDecompositionData[p,data,x] verifies fixed-degree or exhaustive data by leading-coefficient congruence, digit reconstruction, and exact coefficient arithmetic; it does not rerun the candidate recurrence or the division search. Returns False for malformed data and Failure for invalid polynomial input.";
+ComposeDecomposition::usage =
+  "ComposeDecomposition[parts,x] composes an outermost-first list of exact algebraic polynomials. The empty list represents x.";
+VerifyAlgebraicDecomposition::usage =
+  "VerifyAlgebraicDecomposition[p,parts,x] checks the exact polynomial identity p=ComposeDecomposition[parts,x]. It checks identity, not completeness or normalization.";
+
+Begin["`Private`"];
+
+$failureTag = Unique["AlgebraicDecompositionFailure"];
+fail[tag_String, message_String] :=
+  Throw[Failure[tag, <|"MessageTemplate" -> message|>], $failureTag];
+invalid[] := Failure["InvalidArguments", <|"MessageTemplate" ->
+  "Use a documented argument sequence and an unassigned polynomial variable."|>];
+
+(* This is the only algebraic-number normalization boundary. In particular,
+   RootReduce is applied to scalars, never to a polynomial containing x. *)
+red[z_] := Module[{r},
+  If[MatchQ[z, _Integer | _Rational], Return[z]];
+  r = Quiet[Check[RootReduce[z], $Failed]];
+  If[r === $Failed || !FreeQ[r, _Real] ||
+     !TrueQ[NumericQ[r]] || !TrueQ[Element[r, Algebraics]],
+    fail["AlgebraicArithmetic", "Exact algebraic-number reduction failed."]];
+  r
+];
+
+(* Ascending dense coefficient vectors. Zero is always {0}. *)
+trim[v_List] := Module[{w = v},
+  If[w === {}, Return[{0}]];
+  While[Length[w] > 1 && Last[w] === 0, w = Most[w]];
+  w
+];
+zeroQ[v_List] := v === {0};
+vectorDegree[v_List] := If[zeroQ[v], -Infinity, Length[v] - 1];
+
+prepare[p_, x_Symbol] := Module[{q, c},
+  q = Quiet[Check[Expand[p], $Failed]];
+  If[q === $Failed || !TrueQ[PolynomialQ[q, x]],
+    fail["NotPolynomial", "The input must be a univariate polynomial."]];
+  c = CoefficientList[q, x];
+  If[c === {}, c = {0}];
+  If[!FreeQ[c, _Real],
+    fail["InexactCoefficient", "Approximate coefficients are not accepted."]];
+  If[!(And @@ (TrueQ[NumericQ[#]] & /@ c)),
+    fail["NonAlgebraicCoefficient", "Every coefficient must be an explicit exact algebraic number; symbolic parameters are not accepted."]];
+  trim[red /@ c]
+];
+
+expression[v_List, x_] := Expand[Fold[#1 x + #2 &, 0, Reverse[v]]];
+properDegrees[n_Integer] := If[n < 4, {}, Select[Divisors[n], 1 < # < n &]];
+
+add[a_List, b_List] := trim[red /@
+  (PadRight[a, Max[Length[a], Length[b]]] +
+   PadRight[b, Max[Length[a], Length[b]]])];
+subtract[a_List, b_List] := add[a, -b];
+multiply[a_List, b_List] := Module[{r, i, j},
+  If[zeroQ[a] || zeroQ[b], Return[{0}]];
+  r = ConstantArray[0, Length[a] + Length[b] - 1];
+  Do[If[a[[i]] =!= 0,
+    Do[If[b[[j]] =!= 0,
+      r[[i + j - 1]] = r[[i + j - 1]] + a[[i]] b[[j]]],
+      {j, Length[b]}]], {i, Length[a]}];
+  trim[red /@ r]
+];
+compose[a_List, b_List] := Fold[add[multiply[#1, b], {#2}] &,
+  {0}, Reverse[a]];
+digitCompose[digits_List, h_List] :=
+  Fold[add[multiply[#1, h], #2] &, {0}, Reverse[digits]];
+
+(* Coefficients u_k of (1+s_1 t+...)^(1/m), truncated before t^d.
+   m S U' = U S' gives the O(d^2) recurrence used here. *)
+rightCandidate[c_List, d_Integer] := Module[{n, m, s, u, k, i},
+  n = Length[c] - 1; m = Quotient[n, d];
+  s = Table[red[c[[n - k + 1]]/Last[c]], {k, 0, d - 1}];
+  u = ConstantArray[0, d]; u[[1]] = 1;
+  Do[u[[k + 1]] = red[Total[Table[
+      (((1 + 1/m) i - k) s[[i + 1]] u[[k - i + 1]]),
+      {i, 1, k}]]/k], {k, 1, d - 1}];
+  Prepend[Reverse[u], 0]
+];
+
+(* Exact monic long division. The top coefficient is canceled by assignment;
+   lower positions are reduced immediately, keeping zero recognition exact. *)
+monicDivide[a_List, h_List] := Module[{r = a, q, d, n, k, j, t},
+  d = Length[h] - 1; n = Length[a] - 1;
+  If[n < d, Return[{{0}, a}]];
+  q = ConstantArray[0, n - d + 1];
+  Do[t = r[[k + d + 1]]; q[[k + 1]] = t;
+    If[t =!= 0,
+      Do[r[[k + j + 1]] = red[r[[k + j + 1]] - t h[[j + 1]]],
+        {j, 0, d - 1}]];
+    r[[k + d + 1]] = 0,
+    {k, n - d, 0, -1}];
+  {trim[q], trim[Take[r, d]]}
+];
+
+baseDigits[c_List, h_List] := Module[{q = c, qr, out = {}},
+  While[!zeroQ[q],
+    qr = monicDivide[q, h];
+    AppendTo[out, qr[[2]]]; q = qr[[1]]];
+  If[out === {}, {{0}}, out]
+];
+
+(* Obstruction indices are mathematical, zero-based digit/power indices. *)
+obstruction[digits_List] := Module[{j, k, tag},
+  (* Tagged Throw leaves both loops; Return would leave only the inner Do. *)
+  Catch[
+    Do[Do[If[digits[[j, k]] =!= 0,
+        Throw[<|"DigitIndex" -> j - 1, "Power" -> k - 1,
+          "Coefficient" -> digits[[j, k]]|>, tag]],
+        {k, 2, Length[digits[[j]]]}], {j, Length[digits]}];
+    None, tag]
+];
+
+(* Internal records keep vectors, not expressions in a public variable. *)
+testDegree[c_List, d_Integer] := Module[{h, digits, obs},
+  h = rightCandidate[c, d]; digits = baseDigits[c, h];
+  obs = obstruction[digits];
+  <|"RightDegree" -> d, "OuterDegree" -> Quotient[Length[c] - 1, d],
+    "InnerVector" -> h, "OuterVector" -> (First /@ digits),
+    "DigitVectors" -> digits, "Decomposable" -> (obs === None),
+    "Obstruction" -> obs|>
+];
+
+publicTest[c_List, t_Association, x_] := <|
+  "Type" -> "DegreeTest", "RightDegree" -> t["RightDegree"],
+  "OuterDegree" -> t["OuterDegree"],
+  "Inner" -> expression[t["InnerVector"], x],
+  "OuterCandidate" -> expression[t["OuterVector"], x],
+  "Digits" -> (expression[#, x] & /@ t["DigitVectors"]),
+  "Decomposable" -> t["Decomposable"], "Obstruction" -> t["Obstruction"],
+  "Residual" -> expression[subtract[c,
+    compose[t["OuterVector"], t["InnerVector"]]], x]|>;
+
+checkDegree[c_List, d_] := If[!IntegerQ[d] || d < 2 ||
+    d >= Length[c] - 1 || Mod[Length[c] - 1, d] =!= 0,
+  fail["InvalidRightDegree", "The right degree must be a proper divisor d of the polynomial degree with 1<d<n."]];
+
+firstPair[c_List] := Module[{t, d, result = None},
+  Do[t = testDegree[c, d];
+    If[TrueQ[t["Decomposable"]],
+      result = {t["OuterVector"], t["InnerVector"]}; Break[]],
+    {d, properDegrees[Length[c] - 1]}];
+  result
+];
+allPairs[c_List] := Module[{out = {}, t, d},
+  Do[t = testDegree[c, d];
+    If[TrueQ[t["Decomposable"]],
+      AppendTo[out, {t["OuterVector"], t["InnerVector"]}]],
+    {d, properDegrees[Length[c] - 1]}];
+  out
+];
+
+oneChain[c_List] := Module[{v = c, out = {}, pair},
+  pair = firstPair[v];
+  While[pair =!= None,
+    (* Minimal successful right degree implies an indecomposable inner factor. *)
+    PrependTo[out, pair[[2]]]; v = pair[[1]];
+    pair = firstPair[v]];
+  Prepend[out, v]
+];
+
+allChains[c_List] := Module[{pairs, walk},
+  pairs[v_List] := pairs[v] = allPairs[v];
+  walk[v_List] := walk[v] = Module[{ps, out = {}, pr, tails},
+    ps = pairs[v];
+    If[ps === {}, {{v}},
+      Do[If[pairs[pr[[2]]] === {},
+        tails = walk[pr[[1]]];
+        out = Join[out, (Append[#, pr[[2]]] & /@ tails)]], {pr, ps}];
+      out]];
+  walk[c]
+];
+
+AlgebraicDecompose[p_, x_Symbol] := Catch[
+  expression[#, x] & /@ oneChain[prepare[p, x]], $failureTag];
+AlgebraicDecompositions[p_, x_Symbol] := Catch[
+  Map[expression[#, x] &, allChains[prepare[p, x]], {2}], $failureTag];
+AlgebraicDecompositionPairs[p_, x_Symbol] := Catch[
+  Map[expression[#, x] &, allPairs[prepare[p, x]], {2}], $failureTag];
+AlgebraicRightDecompose[p_, x_Symbol, d_] := Catch[Module[{c, t},
+  c = prepare[p, x]; checkDegree[c, d]; t = testDegree[c, d];
+  If[TrueQ[t["Decomposable"]],
+    {expression[t["OuterVector"], x], expression[t["InnerVector"], x]},
+    Missing["NotDecomposable", d]]], $failureTag];
+
+AlgebraicDecompositionData[p_, x_Symbol, d_] := Catch[Module[{c},
+  c = prepare[p, x]; checkDegree[c, d]; publicTest[c, testDegree[c, d], x]],
+  $failureTag];
+AlgebraicDecompositionData[p_, x_Symbol] := Catch[Module[{c, ds, ts, good},
+  c = prepare[p, x]; ds = properDegrees[Length[c] - 1];
+  ts = publicTest[c, testDegree[c, #], x] & /@ ds;
+  good = (#["RightDegree"] & /@ Select[ts, TrueQ[#["Decomposable"]] &]);
+  <|"Type" -> "AllDegreeTests", "InputDegree" -> vectorDegree[c],
+    "TestedRightDegrees" -> ds, "AcceptedRightDegrees" -> good,
+    "Indecomposable" -> If[Length[c] < 3,
+      Missing["NotApplicable", "DegreeBelowTwo"], good === {}],
+    "Tests" -> ts|>], $failureTag];
+
+ComposeDecomposition[parts_List, x_Symbol] := Catch[Module[{vs},
+  vs = prepare[#, x] & /@ parts;
+  expression[Fold[compose[#2, #1] &, {0, 1}, Reverse[vs]], x]], $failureTag];
+VerifyAlgebraicDecomposition[p_, parts_List, x_Symbol] := Catch[
+  Module[{c, vs, v}, c = prepare[p, x]; vs = prepare[#, x] & /@ parts;
+    v = Fold[compose[#2, #1] &, {0, 1}, Reverse[vs]];
+    zeroQ[subtract[c, v]]], $failureTag];
+
+(* A deliberately different checker: no rightCandidate, monicDivide,
+   baseDigits, firstPair, or allPairs call occurs below. *)
+verifyTest[c_List, t_, x_] := Module[
+  {keys, d, n, m, h, f, digits, obs, hm, k, res},
+  If[!AssociationQ[t], Return[False]];
+  keys = {"Type", "RightDegree", "OuterDegree", "Inner", "OuterCandidate",
+    "Digits", "Decomposable", "Obstruction", "Residual"};
+  If[!(And @@ (KeyExistsQ[t, #] & /@ keys)), Return[False]];
+  If[t["Type"] =!= "DegreeTest", Return[False]];
+  n = Length[c] - 1; d = t["RightDegree"];
+  If[!MemberQ[properDegrees[n], d], Return[False]];
+  m = Quotient[n, d]; If[t["OuterDegree"] =!= m, Return[False]];
+  If[!ListQ[t["Digits"]] || Length[t["Digits"]] =!= m + 1,
+    Return[False]];
+  h = prepare[t["Inner"], x]; f = prepare[t["OuterCandidate"], x];
+  digits = prepare[#, x] & /@ t["Digits"];
+  If[Length[h] =!= d + 1 || First[h] =!= 0 || Last[h] =!= 1,
+    Return[False]];
+  If[!(And @@ (Length[#] <= d & /@ digits)), Return[False]];
+  hm = Nest[multiply[#, h] &, {1}, m];
+  If[!(And @@ Table[
+      red[c[[n - k + 1]]/Last[c] - hm[[n - k + 1]]] === 0,
+      {k, 1, d - 1}]), Return[False]];
+  If[!zeroQ[subtract[c, digitCompose[digits, h]]], Return[False]];
+  If[!zeroQ[subtract[f, trim[First /@ digits]]], Return[False]];
+  obs = obstruction[digits];
+  If[t["Decomposable"] =!= (obs === None), Return[False]];
+  If[obs === None,
+    If[t["Obstruction"] =!= None, Return[False]],
+    If[!AssociationQ[t["Obstruction"]], Return[False]];
+    If[Lookup[t["Obstruction"], "DigitIndex", -1] =!= obs["DigitIndex"] ||
+       Lookup[t["Obstruction"], "Power", -1] =!= obs["Power"], Return[False]];
+    If[red[Lookup[t["Obstruction"], "Coefficient", Indeterminate] -
+        obs["Coefficient"]] =!= 0, Return[False]]];
+  res = prepare[t["Residual"], x];
+  zeroQ[subtract[res, subtract[c, compose[f, h]]]]
+];
+
+verifyData[c_List, data_, x_] := Module[{ds, ts, good, status, keys},
+  If[!AssociationQ[data] || !KeyExistsQ[data, "Type"], Return[False]];
+  If[data["Type"] === "DegreeTest", Return[verifyTest[c, data, x]]];
+  If[data["Type"] =!= "AllDegreeTests", Return[False]];
+  keys = {"InputDegree", "TestedRightDegrees", "AcceptedRightDegrees",
+    "Indecomposable", "Tests"};
+  If[!(And @@ (KeyExistsQ[data, #] & /@ keys)), Return[False]];
+  ds = properDegrees[Length[c] - 1]; ts = data["Tests"];
+  If[data["InputDegree"] =!= vectorDegree[c] ||
+      data["TestedRightDegrees"] =!= ds || !ListQ[ts] ||
+      Length[ts] =!= Length[ds], Return[False]];
+  If[!(And @@ (verifyTest[c, #, x] & /@ ts)), Return[False]];
+  If[(#["RightDegree"] & /@ ts) =!= ds, Return[False]];
+  good = (#["RightDegree"] & /@ Select[ts, TrueQ[#["Decomposable"]] &]);
+  status = If[Length[c] < 3, Missing["NotApplicable", "DegreeBelowTwo"],
+    good === {}];
+  data["AcceptedRightDegrees"] === good && data["Indecomposable"] === status
+];
+
+VerifyAlgebraicDecompositionData[p_, data_, x_Symbol] := Catch[
+  Module[{c, result}, c = prepare[p, x];
+    result = Quiet[Check[Catch[verifyData[c, data, x], $failureTag], False]];
+    TrueQ[result]], $failureTag];
+
+AlgebraicDecompose[___] := invalid[];
+AlgebraicDecompositions[___] := invalid[];
+AlgebraicDecompositionPairs[___] := invalid[];
+AlgebraicRightDecompose[___] := invalid[];
+AlgebraicDecompositionData[___] := invalid[];
+VerifyAlgebraicDecompositionData[___] := invalid[];
+ComposeDecomposition[___] := invalid[];
+VerifyAlgebraicDecomposition[___] := invalid[];
+
+End[];
+EndPackage[];
+
+\end{lstlisting}
+\end{document}
