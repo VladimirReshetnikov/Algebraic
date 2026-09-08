@@ -75,4 +75,72 @@ VerificationTest[FailureQ[RootSumDecomposition[1.5]], True, {RootDecomposition::
 VerificationTest[RootBoundedDecomposition[ap, Times, 3, 1, 2]["MaximumDegree"], 3, TestID -> "bounded product search"];
 VerificationTest[RootBoundedDecomposition[as, Plus, 3, 1, 2]["MaximumDegree"], 3, TestID -> "bounded sum search"];
 
+(* Public bounds and certificate semantics, including paths that return early. *)
+VerificationTest[FailureQ[RootSumDecomposition[Sqrt[2], 1]], True, TestID -> "sum degree bound survives trivial shortcut"];
+VerificationTest[FailureQ[RootProductDecomposition[Sqrt[2], 1]], True, TestID -> "product degree bound survives trivial shortcut"];
+VerificationTest[And @@ (FailureQ /@ {RootSumDecomposition[1, 0], RootProductDecomposition[0, 0],
+  RootSumDecomposition[e3, "MaxTerms" -> 0], RootProductDecomposition[eta, "MaxFactors" -> 0],
+  RootProductDecomposition[eta, "Scope" -> "Typo"], RootGaloisData[Sqrt[2], "WorkingPrecision" -> 0]}),
+  True, TestID -> "invalid options rejected before early returns"];
+VerificationTest[And @@ (FailureQ /@ {RootGaloisData[0, x], RootGaloisData[1, x], RootGaloisData[x^2 + Pi, x],
+  RootGaloisData[x^2 + 1., x], RootGaloisData[(x - 1)^2, x]}), True, TestID -> "invalid Galois polynomials rejected"];
+VerificationTest[And @@ (FailureQ /@ {RootBoundedDecomposition[1, Plus, 1, 1, 0],
+  RootBoundedDecomposition[1, Times, 0, 1, 1], RootDecompositionCatalog[1, 0]}), True, TestID -> "invalid dictionary bounds rejected"];
+VerificationTest[RootSumDecomposition[q, "MaxTerms" -> 1]["MaximumDegree"], 4, TestID -> "single summand means input itself"];
+VerificationTest[RootProductDecomposition[eta, "MaxFactors" -> 1]["MaximumDegree"], 8, TestID -> "single factor means input itself"];
+VerificationTest[FailureQ[RootProductDecomposition[eta, 2, "MaxFactors" -> 1]], True, TestID -> "single factor degree bound enforced"];
+VerificationTest[With[{r = RootSumDecomposition[q, 2, "MaxTerms" -> 2]},
+  {r["Verified"], Length[r["Terms"]], r["MaximumDegree"], r["Optimal"]}],
+  {True, 2, 2, True}, TestID -> "trace centering respects two summands and certifies explicit bound"];
+VerificationTest[With[{r = RootSumDecomposition[e3, "MaxTerms" -> 2]},
+  {r["MaximumDegree"], r["Optimal"], r["ScopeOptimal"]}], {4, False, True},
+  TestID -> "binary optimum does not certify unrestricted sum optimum"];
+VerificationTest[With[{r = RootProductDecomposition[q, "MaxFactors" -> 2]},
+  {r["Optimal"], r["ScopeOptimal"], r["TwoFactorOptimal"]}], {False, True, True},
+  TestID -> "binary product certificate has explicit scope"];
+
+(* These inputs share an integral model but have different scaling metadata. *)
+cacheA = RootGaloisData[x^2 - 2, x];
+cacheB = RootGaloisData[2 x^2 - 1, x];
+VerificationTest[{cacheA["Scale"], cacheB["Scale"]}, {1, 2}, TestID -> "Galois cache preserves input scale"];
+VerificationTest[Quiet[FailureQ[RootGaloisData[Sqrt[2], "MaxGroupOrder" -> 1]]], True,
+  TestID -> "cached Galois data respects a tighter group limit"];
+VerificationTest[With[{xx = RootDecomposition`Private`x},
+  {RootDecomposition`Private`inputFieldData[xx^4 - 10 xx^2 + 8]["Scale"],
+   RootDecomposition`Private`inputFieldData[2 xx^4 - 5 xx^2 + 1]["Scale"]}], {1, 2},
+  TestID -> "input field cache preserves input scale"];
+
+VerificationTest[FailureQ[RootSumDecomposition[g1, "Coefficients" -> "GaussianRationals", "MaxTerms" -> 2]],
+  True, TestID -> "finite Gaussian term count is explicitly unsupported"];
+VerificationTest[RootSumDecomposition[7/3, "Coefficients" -> "GaussianRationals"]["Terms"], {{1, 7/3}},
+  TestID -> "Gaussian trivial result uses coefficient root pairs"];
+VerificationTest[With[{r = RootSumDecomposition[I/2, "Coefficients" -> "GaussianRationals"]},
+  {r["Verified"], r["MaximumDegree"]}], {True, 1}, TestID -> "Gaussian imaginary unit coordinates respect integral scaling"];
+VerificationTest[With[{r = RootSumDecomposition[I Sqrt[2], "Coefficients" -> "GaussianRationals", "Scope" -> "InputField"]},
+  {r["Verified"], r["MaximumDegree"]}], {True, 2}, TestID -> "Gaussian input field scope retains permitted roots"];
+
+VerificationTest[With[{r = RootProductDecomposition[eta, "MaxFactors" -> 3, "BoundedSearch" -> None, "RecursionDepth" -> 0]},
+  {r["Verified"], r["MaximumDegree"], Length[r["Terms"]], r["Method"], r["ScopeOptimal"]}], {True, 2, 3, "TensorRankOne", True},
+  TestID -> "tensor search starts at many factor lower bound and respects factor count"];
+VerificationTest[With[{r = RootProductDecomposition[3 eta/2, 2, "MaxFactors" -> 3, "BoundedSearch" -> None, "RecursionDepth" -> 0]},
+  {r["Verified"], r["MaximumDegree"], Length[r["Terms"]]}], {True, 2, 3},
+  TestID -> "product normalization absorbs rational factor within cap"];
+VerificationTest[FailureQ[RootProductDecomposition[ext, 4, "Scope" -> "InputField", "MaxFactors" -> 2]], True,
+  TestID -> "input field scope excludes external radical factors"];
+VerificationTest[RootDecompositionVerify[0, {}, Plus]["MaximumDegree"], 1, TestID -> "empty sum degree convention"];
+VerificationTest[RootDecompositionVerify[Sqrt[2], {N[Sqrt[2]]}, Plus]["Verified"], False,
+  TestID -> "inexact terms cannot obtain exact verification"];
+VerificationTest[With[{r = RootSumDecomposition[ap, "Engine" -> "InputField"]},
+  {r["Optimal"], r["ScopeOptimal"]}], {False, False}, TestID -> "forced input field sum cannot certify global exhaustion"];
+VerificationTest[With[{r = RootProductDecomposition[ext, "Engine" -> "InputField", "MaxFactors" -> 2]},
+  {r["Optimal"], r["ScopeOptimal"], r["TwoFactorOptimal"]}], {False, False, False},
+  TestID -> "forced input field product cannot certify global exhaustion"];
+VerificationTest[With[{r = RootProductDecomposition[ext, "Scope" -> "InputField", "MaxFactors" -> 2]},
+  {r["Optimal"], r["ScopeOptimal"], r["TwoFactorOptimal"]}], {False, True, True},
+  TestID -> "two factor certificate is relative to requested input field scope"];
+VerificationTest[RootSumDecomposition[10^100 + Sqrt[2]]["Verified"], True,
+  TestID -> "exact branch identification survives indistinguishable numerical roots"];
+VerificationTest[RootBoundedDecomposition[Sqrt[2] + Sqrt[3], Plus, 4, 3, 2]["ScopeOptimal"], False,
+  TestID -> "bounded feasibility shortcut does not certify minimal degree"];
+
 EndTestSection[];

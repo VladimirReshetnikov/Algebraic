@@ -1,14 +1,23 @@
 # Notes on subtle Wolfram Language behaviour
 
-Findings collected while developing `RootDecomposition.wl` (Wolfram 15.0.1,
-Windows).  Kept as a checklist for future work on exact algebraic-number code.
+Findings collected while developing the root-decomposition and
+polynomial-decompose packages (Wolfram 15.0.1, Windows). Kept as a checklist
+for future work on exact algebraic-number code.
 
 ## Control flow
 
-- `Return[expr]` inside `Do`, `While`, `Table`, ... returns from the *loop*, not
-  from the enclosing `Module`.  Either use the documented second argument,
-  `Return[expr, Module]`, or a uniquely tagged `Catch`/`Throw`.  The package uses
-  tagged `Catch`/`Throw` everywhere a loop must abort a function.
+- `Do` and `Table` intercept `Return[expr]`: the tail of an enclosing
+  `Module` can still execute. For example,
+  `f[] := Module[{}, Do[Return[1], {1}]; 2]` returns `2`, as does the
+  corresponding `Table` example. This broke complete-chain search in two
+  original polynomial-decomposition reports.
+- Do not generalize this behavior to every loop. With
+  `f[] := Module[{}, While[True, Return[1]]; 2]`, `f[]` returns `1`:
+  `While` propagates the return to the enclosing function. A bare `Module`
+  in the same probe can leave `Return[1]` unevaluated instead. These exact
+  `Do`, `Table`, and `While` cases were checked in Wolfram 15.0.1.
+  Use a uniquely tagged `Catch`/`Throw` for an explicit function-wide exit,
+  or store the result and use `Break[]` when only the loop must stop.
 - `Break[]` and `Continue[]` in a nested `Do` act on the innermost loop only.
 
 ## Number-field functions (performance)
@@ -39,11 +48,15 @@ Windows).  Kept as a checklist for future work on exact algebraic-number code.
 
 ## Root objects
 
-- Ordering of `Root[f, k]`: real roots first in increasing order, then the
+- Observed ordering of `Root[f, k]` in the examples: real roots first in increasing order, then the
   non-real roots in conjugate pairs ordered by increasing real part and
   then by increasing `|Im|`, with the root of negative imaginary part first
   within a pair.  (Checked on `#^5-#-1`, `#^8-4#^6-16#^4-8#^2+4`,
-  `#^6+#^4+3#^2-2#+5` and `#^4+1`.)
+  `#^6+#^4+3#^2-2#+5` and `#^4+1`.) This complex ordering is not a universal
+  interchange guarantee: the third `Root` argument records the isolation
+  method, which can change the non-real ordering. See the
+  [official Root documentation](https://reference.wolfram.com/language/ref/Root.html).
+  Check the selected branch when exchanging non-real roots with another system.
 - Roots of polynomials of degree at most 4 may auto-simplify to radicals or
   rationals (`Root[#^2-2&,1]` evaluates to `-Sqrt[2]`).  Measure degree with
   `MinimalPolynomial`, never with `Head` or the exponent of the displayed

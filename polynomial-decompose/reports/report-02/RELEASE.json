@@ -1,0 +1,12 @@
+{
+  "name": "AlgebraicDecomposition",
+  "version": "1.0.0",
+  "date": "2026-09-07",
+  "domain": "Exact univariate polynomial functional decomposition in characteristic zero",
+  "main_package": "Kernel/AlgebraicDecomposition.wl",
+  "article": "article/algebraic-decomposition.pdf",
+  "article_pages": 29,
+  "native_wolfram_tests_executed": false,
+  "independent_python_validation_passed": true,
+  "normalization": "All nonfirst components monic with zero constant term; outermost first"
+}

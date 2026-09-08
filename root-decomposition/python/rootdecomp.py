@@ -5,8 +5,8 @@ into components of the smallest possible maximum degree.
 A Python/FLINT counterpart of the Wolfram Language package RootDecomposition.wl.
 
 Given an algebraic number a of degree n (a root of an irreducible integer
-polynomial, selected by an index in the same order Mathematica uses for
-Root objects), the module computes
+polynomial, selected by an index with real roots first and then ordered
+complex conjugate pairs), the module computes
 
     D+(a) = min max deg(b_i)   over all finite sums     a = b_1 + ... + b_r,
     Dx(a) = min max deg(b_i)   over all finite products a = b_1 * ... * b_r,
@@ -33,7 +33,7 @@ traces (rigorously rounded integers) and exact fmpq linear algebra.  All
 returned identities hold exactly in that coordinate algebra and are also
 checked numerically.
 
-Requires python-flint >= 0.7.
+Requires python-flint >= 0.8 and SymPy >= 1.14.
 """
 
 from __future__ import annotations
@@ -43,6 +43,7 @@ import math
 import random
 from dataclasses import dataclass, field
 from fractions import Fraction
+from functools import lru_cache
 from typing import Optional
 
 import flint
@@ -93,21 +94,10 @@ def _unique_integer(z: acb) -> int:
     """Rigorous: return the unique integer in the real part of ball z."""
     if not z.imag.contains(0):
         raise PrecisionError("nonzero imaginary part")
-    re = z.real
-    if float(re.rad()) >= 0.5:
-        raise PrecisionError("radius too large")
-    # candidate from midpoint
-    mid = re.mid()
-    fl = mid.floor()
     try:
-        c = int(fl.unique_fmpz())
+        return int(z.real.unique_fmpz())
     except (ValueError, TypeError):
-        raise PrecisionError("floor not exact")
-    for cand in (c, c + 1, c - 1):
-        if re.contains(cand):
-            # uniqueness: radius < 0.5 guarantees at most one integer
-            return cand
-    raise PrecisionError("no integer in ball")
+        raise PrecisionError("coefficient does not contain a unique integer") from None
 
 
 def mat_round(m: acb_mat) -> fmpz_mat:
@@ -179,36 +169,126 @@ def rowspace_basis(vectors: list[list[fmpq]], ncols: int) -> list[list[fmpq]]:
 # ---------------------------------------------------------------------------
 
 def root_sort_key(z: acb):
-    """Mathematica's Root ordering: real roots ascending, then conjugate pairs by
-    increasing real part and |Im|, the root with negative imaginary part first."""
-    re = float(z.real.mid())
-    im = float(z.imag.mid())
-    is_real = z.imag.contains(0) and abs(im) < 1e-12
+    """An arbitrary-precision key; use _ordered_roots for certified ordering."""
+    re = z.real.mid().fmpq()
+    im = z.imag.mid().fmpq()
+    is_real = z.imag.contains(0)
     if is_real:
-        return (0, re, 0.0, 0)
+        return (0, re, 0, 0)
     return (1, re, abs(im), 0 if im < 0 else 1)
 
 
+def _ordered_roots(p, roots, prec_bits):
+    """Real roots first, then conjugate pairs ordered by (Re, abs(Im)).
+
+    Complex Root numbering can depend on Wolfram's isolation method. This
+    deterministic convention is used throughout the Python implementation.
+    A conjugate is identified by overlap with the isolated conjugate root,
+    never by a floating-point tolerance.
+    """
+    real, pairs = [], []
+    for i, z in enumerate(roots):
+        conjugates = [j for j, w in enumerate(roots) if w.overlaps(z.conjugate())]
+        if len(conjugates) != 1:
+            raise PrecisionError("complex conjugate not uniquely isolated")
+        j = conjugates[0]
+        if j == i:
+            real.append(z)
+        elif z.imag > 0:
+            pairs.append((z, roots[j]))
+        elif not z.imag < 0:
+            raise PrecisionError("imaginary sign not isolated")
+    real.sort(key=lambda z: z.real.mid().fmpq())
+    pairs.sort(key=lambda pair: pair[0].real.mid().fmpq())
+    if any(not real[i].real < real[i + 1].real for i in range(len(real) - 1)):
+        raise PrecisionError("real roots not separated")
+    if any(not pairs[i][0].real < pairs[i + 1][0].real for i in range(len(pairs) - 1)):
+        # Different conjugate pairs can have exactly the same real part. The
+        # pair-sum polynomial identifies 2*c*Re(z) as a real algebraic number;
+        # its isolated real roots distinguish equality from close separation.
+        c = int(p.leading_coefficient())
+        summed = _round_poly(_poly_from_roots([c * (x + y) for x in roots for y in roots]))
+        squarefree = summed // summed.gcd(summed.derivative())
+        sr = acb_poly(squarefree).roots(tol=arb(2) ** (-(prec_bits - 20)), maxprec=8 * prec_bits)
+        real_sums = []
+        for i, z in enumerate(sr):
+            matches = [j for j, w in enumerate(sr) if w.overlaps(z.conjugate())]
+            if len(matches) != 1:
+                raise PrecisionError("pair-sum conjugate not uniquely isolated")
+            if matches[0] == i:
+                real_sums.append(z)
+        sr = real_sums
+        sr.sort(key=lambda z: z.real.mid().fmpq())
+        if any(not sr[i].real < sr[i + 1].real for i in range(len(sr) - 1)):
+            raise PrecisionError("real projections not separated")
+        def projection(pair):
+            matches = [i for i, z in enumerate(sr) if z.real.overlaps(2 * c * pair[0].real)]
+            if len(matches) != 1:
+                raise PrecisionError("real projection not uniquely identified")
+            return matches[0], pair[0].imag.mid().fmpq()
+        pairs.sort(key=projection)
+        for i in range(len(pairs) - 1):
+            if projection(pairs[i])[0] == projection(pairs[i + 1])[0] and not pairs[i][0].imag < pairs[i + 1][0].imag:
+                raise PrecisionError("imaginary parts not separated")
+    return real + [z for upper, lower in pairs for z in (lower, upper)]
+
+
 def poly_roots(p: fmpz_poly, prec_bits: int) -> list[acb]:
-    """All roots of a squarefree integer polynomial in Mathematica order, as balls."""
+    """All roots as balls, with real roots first and ordered conjugate pairs."""
+    p = primitive(p)
+    return list(_cached_poly_roots(tuple(_fmpz_list(p.coeffs())), prec_bits))
+
+
+@lru_cache(maxsize=256)
+def _cached_poly_roots(coeffs, prec_bits):
+    p = fmpz_poly(list(coeffs))
+    if p.degree() < 1 or p.gcd(p.derivative()).degree() > 0:
+        raise ValueError("root isolation requires a nonconstant squarefree polynomial")
     work = prec_bits
     for attempt in range(6):
         try:
             with flint.ctx.workprec(work):
-                rts = acb_poly(p).roots(tol=arb(2) ** (-(prec_bits - 20)), maxprec=8 * work)
-                return sorted(rts, key=root_sort_key)
-        except ValueError:
+                rts = acb_poly(p).roots(tol=arb(2) ** (-(work - 20)), maxprec=8 * work)
+                return tuple(_ordered_roots(p, rts, work))
+        except (ValueError, PrecisionError):
             work *= 2
     raise PrecisionError("root isolation failed")
+
+
+@lru_cache(maxsize=512)
+def _minimal_polynomial_coeffs(coeffs):
+    p = primitive(fmpz_poly(list(coeffs)))
+    if p.degree() < 1:
+        raise ValueError("an algebraic number requires a nonconstant minimal polynomial")
+    factors = p.factor()[1]
+    if len(factors) != 1 or factors[0][1] != 1:
+        raise ValueError("the defining polynomial must be irreducible over Q")
+    return tuple(_fmpz_list(p.coeffs()))
+
+
+def _matching_factor(factors, value):
+    """Identify an annihilating irreducible factor without accepting ambiguity."""
+    matches = [g for g, _ in factors if g.degree() > 0 and acb_poly(g)(value).contains(0)]
+    if len(matches) != 1:
+        raise PrecisionError("annihilating factor is not uniquely identified")
+    return matches[0]
 
 
 @dataclass
 class AlgebraicNumber:
     """An algebraic number given by its primitive irreducible minimal polynomial
-    and the index (1-based) of the root in Mathematica's ordering."""
+    and a 1-based root index. Real roots are increasing; complex pairs are
+    ordered by real part and positive imaginary part, negative member first.
+    Wolfram's ordering of non-real roots can depend on its isolation method.
+    """
     poly: fmpz_poly
     index: int
     _value: Optional[acb] = None
+
+    def __post_init__(self):
+        self.poly = fmpz_poly(list(_minimal_polynomial_coeffs(tuple(_fmpz_list(self.poly.coeffs())))))
+        if not isinstance(self.index, int) or isinstance(self.index, bool) or not 1 <= self.index <= self.degree:
+            raise ValueError("root index must be an integer between 1 and the polynomial degree")
 
     @property
     def degree(self) -> int:
@@ -239,11 +319,18 @@ class AlgebraicNumber:
 
     @staticmethod
     def from_value(p: fmpz_poly, z: acb, prec_bits: int = 200) -> "AlgebraicNumber":
-        """The root of the irreducible polynomial p closest to the ball z."""
+        """Select the unique root of p whose isolating ball overlaps z.
+
+        Callers computing an exact algebraic expression must establish that p
+        annihilates it and that z encloses it. Ambiguous matching requires more
+        precision, and is never resolved by nearest floating-point distance.
+        """
         p = primitive(p)
         rts = poly_roots(p, prec_bits)
-        best = min(range(len(rts)), key=lambda i: float(abs(rts[i] - z).mid()))
-        return AlgebraicNumber(p, best + 1)
+        matches = [i for i, root in enumerate(rts) if root.overlaps(z)]
+        if len(matches) != 1:
+            raise PrecisionError("root is not uniquely identified")
+        return AlgebraicNumber(p, matches[0] + 1)
 
 
 def wolfram_poly(p: fmpz_poly) -> str:
@@ -263,24 +350,29 @@ def wolfram_poly(p: fmpz_poly) -> str:
 
 
 def parse_wolfram_root(s: str) -> AlgebraicNumber:
-    """Parse 'Root[c0 + c1 # + ... &, k]' (Mathematica InputForm with # or #1)."""
+    """Parse expanded integer-polynomial Root syntax with # or #1.
+
+    The polynomial must be irreducible. Non-real indices use this module's
+    convention; certify their correspondence when exchanging Wolfram Roots.
+    """
     import re as _re
     s = s.strip()
     m = _re.match(r"Root\[(.*)&\s*,\s*(\d+)\s*\]$", s, _re.S)
     if not m:
         raise ValueError("not a Root expression")
     body, k = m.group(1), int(m.group(2))
-    body = body.replace("#1", "#").replace(" ", "")
+    body = _re.sub(r"\s+", "", body.replace("#1", "#"))
     body = body.replace("-", "+-")
     coeffs = {}
     for term in body.split("+"):
         if term == "":
             continue
         if "#" in term:
-            c, _, rest = term.partition("#")
-            power = 1
-            if rest.startswith("^"):
-                power = int(rest[1:])
+            match = _re.fullmatch(r"(-?\d*\*?)#(?:\^(\d+))?", term)
+            if match is None:
+                raise ValueError(f"invalid polynomial term: {term!r}")
+            c = match.group(1)
+            power = int(match.group(2)) if match.group(2) is not None else 1
             if c in ("", "*"):
                 cval = 1
             elif c in ("-", "-*"):
@@ -290,6 +382,8 @@ def parse_wolfram_root(s: str) -> AlgebraicNumber:
         else:
             power, cval = 0, int(term)
         coeffs[power] = coeffs.get(power, 0) + cval
+    if not coeffs:
+        raise ValueError("empty polynomial")
     deg = max(coeffs)
     return AlgebraicNumber(primitive(fmpz_poly([coeffs.get(i, 0) for i in range(deg + 1)])), k)
 
@@ -313,6 +407,8 @@ def exponent_bound(e: int) -> int:
 
 def frobenius_exponent_multiple(p: fmpz_poly, max_primes: int = 40) -> int:
     disc = int(fmpz_poly(p).resultant(p.derivative()))
+    if p.degree() < 1 or disc == 0:
+        raise ValueError("Frobenius cycle types require a nonconstant squarefree polynomial")
     lc = int(p.leading_coefficient())
     e = 1
     q = 2
@@ -338,6 +434,13 @@ def frobenius_exponent_multiple(p: fmpz_poly, max_primes: int = 40) -> int:
 
 
 def lower_bound(p: fmpz_poly) -> int:
+    """A global degree lower bound; p must be an irreducible minimal polynomial."""
+    return _lower_bound_cached(_minimal_polynomial_coeffs(tuple(_fmpz_list(p.coeffs()))))
+
+
+@lru_cache(maxsize=512)
+def _lower_bound_cached(coeffs):
+    p = fmpz_poly(list(coeffs))
     n = p.degree()
     if n == 1:
         return 1
@@ -374,10 +477,13 @@ class GaloisData:
 
 
 def _poly_from_roots(vals: list[acb]) -> acb_poly:
-    p = acb_poly([1])
-    for v in vals:
-        p = p * acb_poly([-v, 1])
-    return p
+    # Balanced products use FLINT's fast polynomial multiplication and avoid
+    # successively multiplying a large polynomial by one linear factor.
+    level = [acb_poly([-v, 1]) for v in vals]
+    while len(level) > 1:
+        level = [level[i] * level[i + 1] if i + 1 < len(level) else level[i]
+                 for i in range(0, len(level), 2)]
+    return level[0] if level else acb_poly([1])
 
 
 def _round_poly(p: acb_poly) -> fmpz_poly:
@@ -591,8 +697,10 @@ def galois_data(p: fmpz_poly, prec_bits: int = 300, maxorder: int = 400) -> Galo
     # monic polynomial for c*root
     coeffs = _fmpz_list(p.coeffs())
     mon = fmpz_poly([coeffs[i] * c ** (n - 1 - i) for i in range(n)] + [1])
-    key = (tuple(_fmpz_list(mon.coeffs())), prec_bits)
+    key = (tuple(_fmpz_list(mon.coeffs())), c, prec_bits)
     if key in _cache:
+        if _cache[key].order > maxorder:
+            raise ValueError(f"Galois group order {_cache[key].order} exceeds the limit {maxorder}")
         return _cache[key]
     gd = build_galois_data(mon, prec_bits, maxorder)
     gd.scale = c
@@ -788,10 +896,8 @@ class InputFieldData:
             val = acb(0)
             for j in range(self.n - 1, -1, -1):
                 val = val * th + _fmpq_to_acb(v[j])
-            for g, _ in ip.factor()[1]:
-                if g.degree() > 0 and acb_poly(g)(val).contains(0):
-                    return AlgebraicNumber.from_value(g, val, self.prec)
-        raise PrecisionError("minimal polynomial not identified")
+            g = _matching_factor(ip.factor()[1], val)
+            return AlgebraicNumber.from_value(g, val, self.prec)
 
 
 def power_sums(P: fmpz_poly, n: int):
@@ -826,12 +932,15 @@ _ifcache: dict = {}
 def input_field_data(p: fmpz_poly, a: "AlgebraicNumber", prec_bits: int = 300) -> InputFieldData:
     import sympy as sp
     p = primitive(p)
+    if p != a.poly:
+        raise ValueError("p must be the minimal polynomial of a")
     n = p.degree()
     c = int(p.leading_coefficient())
     coeffs = _fmpz_list(p.coeffs())
     mon = fmpz_poly([coeffs[i] * c ** (n - 1 - i) for i in range(n)] + [1])
     key = tuple(_fmpz_list(mon.coeffs()))
-    theta = AlgebraicNumber.from_value(mon, a.value(prec_bits) * c, prec_bits)
+    # Positive scaling preserves the root order, including complex conjugates.
+    theta = AlgebraicNumber(mon, a.index)
     if key in _ifcache:
         d = _ifcache[key]
         return InputFieldData(d.poly, c, n, theta, d.factor_degrees, d.galois, d.subgroups, d.traces, prec_bits)
@@ -941,10 +1050,10 @@ class Decomposition:
 def locate_target(gd: GaloisData, a: AlgebraicNumber) -> int:
     """index of scale*a among gd.roots (same ordering as Mathematica for the scaled polynomial)"""
     z = a.value(gd.prec) * gd.scale
-    best = min(range(gd.n), key=lambda i: float(abs(gd.roots[i] - z).mid()))
-    if not (gd.roots[best] - z).contains(0):
-        raise PrecisionError("target root not located")
-    return best
+    matches = [i for i, root in enumerate(gd.roots) if root.overlaps(z)]
+    if len(matches) != 1:
+        raise PrecisionError("target root not uniquely located")
+    return matches[0]
 
 
 def stabilizer(gd: GaloisData, target: int):
@@ -963,7 +1072,9 @@ def candidate_fields(gd, d: int, stab=None):
     n = gd.order
     out = []
     for H in subs:
-        if not any(K["index"] > H["index"] and field_contains(K["fixed"], H["fixed"], n) for K in subs):
+        if not any(K["index"] > H["index"] and
+                   (K["elements"] <= H["elements"] if H["elements"] is not None
+                    else field_contains(K["fixed"], H["fixed"], n)) for K in subs):
             out.append(H)
     return out
 
@@ -1025,25 +1136,60 @@ def _sum_search(fd, a, va, stab, n, lb, dmax, scope, max_terms, method, complete
             if any(x != 0 for x in t):
                 terms.append(fd_to_algebraic(fd, t))
         if rational != 0:
-            terms.append(AlgebraicNumber.from_rational(Fraction(int(rational.p), int(rational.q))))
+            if max_terms is not None and len(terms) >= max_terms:
+                # Trace centering may not turn a two-term answer into three
+                # terms. Keep the rational part in its original field.
+                terms = [fd_to_algebraic(fd, e) for _, e in rep]
+            else:
+                terms.append(AlgebraicNumber.from_rational(Fraction(int(rational.p), int(rational.q))))
+        if not terms:
+            terms = [AlgebraicNumber.from_rational(0)]
         degs = [t.degree for t in terms]
+        optimal = max(degs) == lb or (dmax is None and complete and max_terms is None)
         return Decomposition("Plus", terms, degs, max(degs), lb,
-                             dmax is None and (complete or max(degs) == lb), dmax is None, scope, method, extra)
+                             optimal, optimal or (dmax is None and (complete or scope == "InputField")), scope, method, extra)
     if dmax is None:
-        return Decomposition("Plus", [a], [n], n, lb, complete, True, scope, "CompleteSearch", extra)
+        return Decomposition("Plus", [a], [n], n, lb, complete and max_terms is None,
+                             complete or scope == "InputField", scope, "CompleteSearch", extra)
     return None
+
+
+def _positive_integer(value, name):
+    if not isinstance(value, int) or isinstance(value, bool) or value < 1:
+        raise ValueError(f"{name} must be a positive integer")
+
+
+def _search_options(dmax, scope, limit, limit_name, prec_bits, maxorder, engine):
+    if dmax is not None:
+        _positive_integer(dmax, "dmax")
+    if limit is not None:
+        _positive_integer(limit, limit_name)
+    _positive_integer(prec_bits, "prec_bits")
+    _positive_integer(maxorder, "maxorder")
+    if scope not in ("Global", "InputField"):
+        raise ValueError("scope must be 'Global' or 'InputField'")
+    aliases = {"auto": "auto", "Automatic": "auto", "input": "input", "InputField": "input",
+               "splitting": "splitting", "SplittingField": "splitting"}
+    if engine not in aliases:
+        raise ValueError("engine must be 'auto', 'input', or 'splitting'")
+    return aliases[engine]
 
 
 def sum_decomposition(a: AlgebraicNumber, dmax: Optional[int] = None, scope: str = "Global",
                       max_terms: Optional[int] = None, prec_bits: int = 300, maxorder: int = 400,
-                      engine: str = "auto") -> Decomposition:
+                      engine: str = "auto") -> Optional[Decomposition]:
+    engine = _search_options(dmax, scope, max_terms, "max_terms", prec_bits, maxorder, engine)
     n = a.degree
     lb = lower_bound(a.poly) if n > 1 else 1
 
     def trivial(method="Trivial", optimal=None):
         opt = (lb == n) if optimal is None else optimal
-        return Decomposition("Plus", [a], [n], n, lb, opt, opt, scope, method)
+        return Decomposition("Plus", [a], [n], n, lb, opt, opt or max_terms == 1, scope, method)
 
+    if dmax is not None and dmax < lb:
+        return None
+    if max_terms == 1:
+        return trivial() if dmax is None or dmax >= n else None
     if n == 1 or (dmax is not None and dmax >= n) or lb == n:
         return trivial()
     res = None
@@ -1061,7 +1207,7 @@ def sum_decomposition(a: AlgebraicNumber, dmax: Optional[int] = None, scope: str
         stab = stabilizer(gd, target) if scope == "InputField" else None
         lb = max(lb, exponent_bound(gd.exponent))
         if lb >= n:
-            return trivial("CompleteSearch", True)
+            return trivial("CompleteSearch", True) if dmax is None or dmax >= n else None
         method = "SplittingFieldFixedSpaces" if scope == "Global" else "InputFieldSubfields"
         return _sum_search(gd, a, va, stab, n, lb, dmax, scope, max_terms, method, scope == "Global")
 
@@ -1099,9 +1245,7 @@ def integral_scale(p: fmpz_poly) -> Fraction:
         for i in range(d):
             if c[i] != 0:
                 v = _valuation(c[i].numerator, pr) - _valuation(c[i].denominator, pr)
-                es.append(-((v) // (d - i)) if v <= 0 else -(v // (d - i)))
-                # ceil(-v/(d-i))
-                es[-1] = -((v) // (d - i)) if False else math.ceil(Fraction(-v, d - i))
+                es.append(-(v // (d - i)))  # ceil(-v/(d-i)), using exact division
         if es:
             q *= Fraction(pr) ** max(es)
     return q
@@ -1130,14 +1274,19 @@ def nice_scale(p: fmpz_poly) -> Fraction:
 
 
 def scale_algebraic(u: AlgebraicNumber, q: Fraction, prec_bits: int) -> AlgebraicNumber:
+    q = Fraction(q)
+    if q == 0:
+        return AlgebraicNumber.from_rational(0)
     d = u.degree
     coeffs = [Fraction(int(c)) for c in u.poly.coeffs()]
     g = poly_from_fractions([coeffs[i] * q ** (d - i) for i in range(d + 1)])
-    return AlgebraicNumber.from_value(g, u.value(prec_bits) * _fmpq_to_acb(fmpq(q.numerator, q.denominator)), prec_bits)
+    with ctx.workprec(prec_bits):
+        return AlgebraicNumber.from_value(g, u.value(prec_bits) * _fmpq_to_acb(fmpq(q.numerator, q.denominator)), prec_bits)
 
 
 def root_of_algebraic(u: AlgebraicNumber, t: int, prec_bits: int) -> AlgebraicNumber:
-    """principal t-th root of u as an algebraic number (irreducible factor of minpoly_u(x^t))"""
+    """A t-th root of u, selected by certified factor and root matching."""
+    _positive_integer(t, "t")
     if t == 1:
         return u
     coeffs = _fmpz_list(u.poly.coeffs())
@@ -1145,42 +1294,53 @@ def root_of_algebraic(u: AlgebraicNumber, t: int, prec_bits: int) -> AlgebraicNu
     with ctx.workprec(prec_bits):
         uv = u.value(prec_bits)
         val = acb_poly([-uv] + [acb(0)] * (t - 1) + [acb(1)]).roots(tol=arb(2) ** (-(prec_bits - 20)))[0]
-    for g, _ in inflated.factor()[1]:
-        if g.degree() > 0 and acb_poly(g)(val).contains(0):
-            return AlgebraicNumber.from_value(g, val, prec_bits)
-    raise PrecisionError("t-th root not identified")
+        g = _matching_factor(inflated.factor()[1], val)
+        return AlgebraicNumber.from_value(g, val, prec_bits)
 
 
 def quotient_algebraic(a: AlgebraicNumber, b: AlgebraicNumber, bt_over_field_poly: fmpz_poly, t: int, prec_bits: int) -> AlgebraicNumber:
     """c = a/b where c^t is known to have minimal polynomial bt_over_field_poly"""
     coeffs = _fmpz_list(bt_over_field_poly.coeffs())
     inflated = fmpz_poly([coeffs[i // t] if i % t == 0 else 0 for i in range(t * len(coeffs) - t + 1)])
-    val = a.value(prec_bits) / b.value(prec_bits)
-    for g, _ in inflated.factor()[1]:
-        if g.degree() > 0 and acb_poly(g)(val).contains(0):
-            return AlgebraicNumber.from_value(g, val, prec_bits)
-    raise PrecisionError("quotient not identified")
+    with ctx.workprec(prec_bits):
+        val = a.value(prec_bits) / b.value(prec_bits)
+        g = _matching_factor(inflated.factor()[1], val)
+        return AlgebraicNumber.from_value(g, val, prec_bits)
 
 
-def two_factor_search(fd, va, a: AlgebraicNumber, n: int, d: int, stab):
-    tmax = min(d, d * d // n) if (stab is None and fd_is_galois(fd)) else 1
-    Ma = fd_mult_matrix(fd, va)
+def two_factor_search(fd, va, a: AlgebraicNumber, n: int, d: int, stab,
+                      allow_radicals=True, cache=None):
+    tmax = min(d, d * d // n) if (allow_radicals and stab is None and fd_is_galois(fd)) else 1
+    cache = {} if cache is None else cache
+    if "Ma" not in cache:
+        cache["Ma"] = fd_mult_matrix(fd, va)
+        cache["powers"] = {1: cache["Ma"]}
+        cache["failed_pairs"] = set()
+    Ma = cache["Ma"]
     for t in range(1, tmax + 1):
         subs = [H for H in fd.subgroups if t * H["index"] <= d]
         if stab is not None:
             subs = [H for H in subs if stab <= H["elements"]]
         if not subs:
             continue
-        Mt = Ma
-        for _ in range(t - 1):
-            Mt = Mt * Ma
+        if t not in cache["powers"]:
+            cache["powers"][t] = cache["powers"][t - 1] * Ma
+        Mt = cache["powers"][t]
+        def compositum_degree(E, F):
+            if E["elements"] is not None:
+                return fd.order // len(E["elements"] & F["elements"])
+            return E["index"] * F["index"]
         pairs = [(subs[i], subs[j]) for i in range(len(subs)) for j in range(i, len(subs))
-                 if n <= t * subs[i]["index"] * subs[j]["index"]]
+                 if n <= t * compositum_degree(subs[i], subs[j])]
         pairs.sort(key=lambda pr: (max(pr[0]["index"], pr[1]["index"]), pr[0]["index"] + pr[1]["index"]))
         for E, F in pairs:
+            key = (t, id(E), id(F))
+            if key in cache["failed_pairs"]:
+                continue
             res = _try_pair(fd, E, F, Mt, Ma, t, a, d, va)
             if res is not None:
                 return res
+            cache["failed_pairs"].add(key)
     return None
 
 
@@ -1248,19 +1408,27 @@ def families_with_product(subs, target, min_size):
     return out
 
 
-def tensor_search(gd, va, d, stab):
+def tensor_search(gd, va, d, stab, max_factors=None, cache=None):
     subs = [H for H in gd.subgroups if 1 < H["index"] <= d]
     if stab is not None:
         subs = [H for H in subs if stab <= H["elements"]]
     subs.sort(key=lambda H: H["index"])
     fams = families_with_product(subs, gd.order, 3)
-    cache = {}
+    cache = {} if cache is None else cache
+    failed = cache.setdefault("failed_families", set())
+    matrices = cache.setdefault("matrices", {})
     for count, fam in enumerate(fams):
+        if max_factors is not None and len(fam) > max_factors:
+            continue
         if count > 400:
             break
-        res = tensor_test(gd, fam, va, cache)
+        key = tuple(id(H) for H in fam)
+        if key in failed:
+            continue
+        res = tensor_test(gd, fam, va, matrices)
         if res is not None:
             return res
+        failed.add(key)
     return None
 
 
@@ -1315,9 +1483,6 @@ def tensor_test(gd, fam, va, cache):
     # column c corresponds to tuple: the hstack at stage j puts blocks by i_j with inner index from previous stage,
     # hence the LAST field index is the most significant digit.
     def col_of(tup):
-        c = 0
-        for j in range(len(fam)):
-            c = c + tup[j] * (1 if j == 0 else 1)
         # compute explicitly: after stage j, column = i_j * (size before stage) + previous column
         col = 0
         size = 1
@@ -1356,32 +1521,39 @@ def _product_search(fd, a, va, stab, n, lb, dmax, scope, max_factors, depth, ten
     extra = {"ambient_degree": fd.order, "ambient_galois": fd.galois} if isinstance(fd, InputFieldData) else {"group_order": fd.order}
     dlist = list(range(max(lb, math.isqrt(n - 1) + 1), n)) if dmax is None else [dmax]
     two = None
+    pair_cache = {}
     for d in dlist:
-        two = two_factor_search(fd, va, a, n, d, stab)
+        two = two_factor_search(fd, va, a, n, d, stab, scope != "InputField", pair_cache)
         if two is not None:
             break
     best = None
     if two is not None:
         degs = [t.degree for t in two["terms"]]
-        best = Decomposition("Times", two["terms"], degs, max(degs), lb, max(degs) == lb, dmax is None, scope,
-                             "NormIntersection", dict(two_factor_optimal=(dmax is None and complete), t=two["t"], **extra))
+        scoped_pair_optimal = max(degs) == lb or (dmax is None and (complete or scope == "InputField"))
+        best = Decomposition("Times", two["terms"], degs, max(degs), lb, max(degs) == lb,
+                             max(degs) == lb or (max_factors == 2 and scoped_pair_optimal), scope,
+                             "NormIntersection", dict(two_factor_optimal=scoped_pair_optimal, t=two["t"], **extra))
     elif dmax is None:
-        best = Decomposition("Times", [a], [n], n, lb, False, True, scope, "CompleteTwoFactorSearch",
-                             dict(two_factor_optimal=complete, t=1, **extra))
+        best = Decomposition("Times", [a], [n], n, lb, False,
+                             max_factors == 2 and (complete or scope == "InputField"), scope, "CompleteTwoFactorSearch",
+                             dict(two_factor_optimal=complete or scope == "InputField", t=1, **extra))
     if max_factors == 2:
         return best
     if best is not None and best.max_degree == lb:
         return best
     if tensor:
-        for d in dlist:
+        tensor_cache = {}
+        # The binary degree bound n <= d^2 does not constrain three or more
+        # factors. Start the tensor search at the unrestricted lower bound.
+        for d in (range(lb, n) if dmax is None else [dmax]):
             if best is not None and d >= best.max_degree:
                 break
-            tens = tensor_search(fd, va, d, stab)
+            tens = tensor_search(fd, va, d, stab, max_factors, tensor_cache)
             if tens is not None:
                 terms = clean_product_terms([fd_to_algebraic(fd, e) for e in tens], prec_bits)
                 degs = [t.degree for t in terms]
                 if best is None or max(degs) < best.max_degree:
-                    best = Decomposition("Times", terms, degs, max(degs), lb, max(degs) == lb, False, scope,
+                    best = Decomposition("Times", terms, degs, max(degs), lb, max(degs) == lb, max(degs) == lb, scope,
                                          "TensorRankOne", dict(two_factor_optimal=False, t=1, **extra))
                 break
     if best is not None and best.max_degree == lb:
@@ -1390,18 +1562,20 @@ def _product_search(fd, a, va, stab, n, lb, dmax, scope, max_factors, depth, ten
         terms = []
         for f in best.terms:
             if f.degree > lb:
-                sub = product_decomposition(f, depth=depth - 1, tensor=tensor, prec_bits=prec_bits, maxorder=maxorder, engine=engine)
+                sub = product_decomposition(f, scope=scope, max_factors=max_factors, depth=depth - 1,
+                                            tensor=tensor, prec_bits=prec_bits, maxorder=maxorder, engine=engine)
                 terms.extend(sub.terms if sub is not None else [f])
             else:
                 terms.append(f)
         degs = [t.degree for t in terms]
-        if max(degs) < best.max_degree:
-            best = Decomposition("Times", terms, degs, max(degs), lb, max(degs) == lb, False, scope,
+        if max(degs) < best.max_degree and (max_factors is None or len(terms) <= max_factors):
+            best = Decomposition("Times", terms, degs, max(degs), lb, max(degs) == lb, max(degs) == lb, scope,
                                  "RecursiveSplitting", dict(two_factor_optimal=False, t=1, **extra))
-    if best is not None and best.max_degree > lb:
-        for dd in range(lb, min(2, best.max_degree - 1) + 1):
-            res = bounded_decomposition(a, "Times", dd, 2, 3)
-            if res is not None and res.max_degree < best.max_degree:
+    if scope != "InputField" and (best is None or best.max_degree > lb):
+        upper = best.max_degree - 1 if best is not None else dmax
+        for dd in range(lb, min(2, upper) + 1):
+            res = bounded_decomposition(a, "Times", dd, 2, min(3, max_factors or 3), prec_bits)
+            if res is not None and (best is None or res.max_degree < best.max_degree):
                 res.scope = scope
                 best = res
                 break
@@ -1410,14 +1584,21 @@ def _product_search(fd, a, va, stab, n, lb, dmax, scope, max_factors, depth, ten
 
 def product_decomposition(a: AlgebraicNumber, dmax: Optional[int] = None, scope: str = "Global",
                           max_factors: Optional[int] = None, depth: int = 3, tensor: bool = True,
-                          prec_bits: int = 300, maxorder: int = 400, engine: str = "auto") -> Decomposition:
+                          prec_bits: int = 300, maxorder: int = 400, engine: str = "auto") -> Optional[Decomposition]:
+    engine = _search_options(dmax, scope, max_factors, "max_factors", prec_bits, maxorder, engine)
+    if not isinstance(depth, int) or isinstance(depth, bool) or depth < 0:
+        raise ValueError("depth must be a nonnegative integer")
     n = a.degree
     lb = lower_bound(a.poly) if n > 1 else 1
 
     def trivial(method="Trivial", optimal=None):
         opt = (lb == n) if optimal is None else optimal
-        return Decomposition("Times", [a], [n], n, lb, opt, opt, scope, method, {"two_factor_optimal": opt, "t": 1})
+        return Decomposition("Times", [a], [n], n, lb, opt, opt or max_factors == 1, scope, method, {"two_factor_optimal": opt, "t": 1})
 
+    if dmax is not None and dmax < lb:
+        return None
+    if max_factors == 1:
+        return trivial() if dmax is None or dmax >= n else None
     if n == 1 or (dmax is not None and dmax >= n) or lb == n:
         return trivial()
     res = None
@@ -1435,7 +1616,7 @@ def product_decomposition(a: AlgebraicNumber, dmax: Optional[int] = None, scope:
         stab = stabilizer(gd, target) if scope == "InputField" else None
         lb = max(lb, exponent_bound(gd.exponent))
         if lb >= n:
-            return trivial("Trivial", True)
+            return trivial("Trivial", True) if dmax is None or dmax >= n else None
         return _product_search(gd, a, va, stab, n, lb, dmax, scope, max_factors, depth, tensor, prec_bits, maxorder, engine, True)
 
 
@@ -1456,10 +1637,8 @@ def clean_product_terms(terms, prec_bits):
         rest[j] = scale_algebraic(rest[j], q, prec_bits)
         rat /= q
     rest[0] = scale_algebraic(rest[0], rat, prec_bits)
-    q = nice_scale(rest[0].poly)
-    rest[0] = scale_algebraic(rest[0], q, prec_bits)
-    if q != 1:
-        rest.append(AlgebraicNumber.from_rational(1 / q))
+    # Absorb every rational multiplier into a factor so normalization preserves
+    # the number of factors (and any user-supplied max_factors bound).
     return rest
 
 
@@ -1482,15 +1661,37 @@ def _integral_form(a: AlgebraicNumber):
 
 def combine_algebraic(a: AlgebraicNumber, b: AlgebraicNumber, op: str, prec_bits: int = 300) -> AlgebraicNumber:
     """a+b, a-b, a*b or a/b as an algebraic number"""
+    if op not in ("+", "-", "*", "/"):
+        raise ValueError("op must be '+', '-', '*', or '/'")
+    aq, bq = a.as_fraction(), b.as_fraction()
+    if op == "/" and bq == 0:
+        raise ZeroDivisionError("division by the algebraic number zero")
+    if a.poly == b.poly and a.index == b.index:
+        if op in ("-", "/"):
+            return AlgebraicNumber.from_rational(0 if op == "-" else 1)
+    if bq is not None:
+        if op in ("*", "/"):
+            return scale_algebraic(a, bq if op == "*" else 1 / bq, prec_bits)
+        shift = bq if op == "+" else -bq
+        coeffs = _fmpz_list(a.poly.coeffs())
+        shifted = poly_from_fractions([
+            sum(Fraction(coeffs[i]) * math.comb(i, j) * (-shift) ** (i - j)
+                for i in range(j, len(coeffs))) for j in range(len(coeffs))])
+        # Real translation preserves every part of the root ordering.
+        return AlgebraicNumber(shifted, a.index)
+    if aq is not None and op in ("+", "*"):
+        return combine_algebraic(b, a, op, prec_bits)
     if op == "/":
         # b^{-1}: reverse the polynomial
         coeffs = _fmpz_list(b.poly.coeffs())[::-1]
-        binv = AlgebraicNumber.from_value(primitive(fmpz_poly(coeffs)), 1 / b.value(prec_bits), prec_bits)
+        with ctx.workprec(prec_bits):
+            binv = AlgebraicNumber.from_value(primitive(fmpz_poly(coeffs)), 1 / b.value(prec_bits), prec_bits)
         return combine_algebraic(a, binv, "*", prec_bits)
     if op == "-":
         coeffs = _fmpz_list(b.poly.coeffs())
         neg = fmpz_poly([(-1) ** i * coeffs[i] for i in range(len(coeffs))])
-        bneg = AlgebraicNumber.from_value(primitive(neg), -b.value(prec_bits), prec_bits)
+        with ctx.workprec(prec_bits):
+            bneg = AlgebraicNumber.from_value(primitive(neg), -b.value(prec_bits), prec_bits)
         return combine_algebraic(a, bneg, "+", prec_bits)
     ma, ca = _integral_form(a)
     mb, cb = _integral_form(b)
@@ -1509,22 +1710,22 @@ def combine_algebraic(a: AlgebraicNumber, b: AlgebraicNumber, op: str, prec_bits
                 comp = _round_poly(_poly_from_roots(vals))
                 target = (a.value(prec) + b.value(prec)) if op == "+" else a.value(prec) * b.value(prec)
                 tv = target * scale
-                for g, _ in comp.factor()[1]:
-                    if g.degree() > 0 and acb_poly(g)(tv).contains(0):
-                        # descale: g(scale*x)
-                        gc = _fmpz_list(g.coeffs())
-                        q = poly_from_fractions([Fraction(gc[i]) * Fraction(scale) ** i for i in range(len(gc))])
-                        cand = AlgebraicNumber.from_value(q, target, prec)
-                        if (cand.value(prec) - target).contains(0):
-                            return cand
-                raise PrecisionError("factor not identified")
+                g = _matching_factor(comp.factor()[1], tv)
+                # The composed polynomial is proved to annihilate target;
+                # unique factor and root isolation now identify it exactly.
+                gc = _fmpz_list(g.coeffs())
+                q = poly_from_fractions([Fraction(gc[i]) * Fraction(scale) ** i for i in range(len(gc))])
+                return AlgebraicNumber.from_value(q, target, prec)
         except PrecisionError:
             prec *= 2
     raise PrecisionError("combine_algebraic failed")
 
 
-def catalog(d: int, h: int) -> list:
+@lru_cache(maxsize=16, typed=True)
+def catalog(d: int, h: int) -> tuple:
     """roots of all irreducible primitive integer polynomials of degree <= d and height <= h"""
+    _positive_integer(d, "d")
+    _positive_integer(h, "h")
     out = []
     for m in range(1, d + 1):
         for coeffs in itertools.product(range(-h, h + 1), repeat=m + 1):
@@ -1541,49 +1742,55 @@ def catalog(d: int, h: int) -> list:
                 continue
             for k in range(1, m + 1):
                 out.append(AlgebraicNumber(p, k))
-    return out
+    return tuple(out)
 
 
 def bounded_decomposition(a: AlgebraicNumber, op: str, d: int, h: int, r: int, prec_bits: int = 300):
     """Decomposition of a into at most r components of degree <= d, all but the last from the catalog."""
+    if op not in ("Plus", "Times"):
+        raise ValueError("op must be 'Plus' or 'Times'")
+    for name, value in (("d", d), ("h", h), ("r", r), ("prec_bits", prec_bits)):
+        _positive_integer(value, name)
     n = a.degree
     lb = lower_bound(a.poly) if n > 1 else 1
+    if d < lb:
+        return None
     if n <= d:
-        return Decomposition(op, [a], [n], n, lb, lb == n, True, "Bounded", "Trivial")
+        return Decomposition(op, [a], [n], n, lb, lb == n, lb == n or r == 1, "Bounded", "Trivial")
+    # Reject impossible component counts before allocating the height box.
+    if n > d ** r:
+        return None
     cat = [c for c in catalog(d, h) if c.degree > 1]
     if op == "Times":
         cat = [c for c in cat if c.as_fraction() != 0]
 
-    def residual(prefix):
-        res = a
-        for b in prefix:
-            res = combine_algebraic(res, b, "-" if op == "Plus" else "/", prec_bits)
-        return res
-
-    def search(prefix, start, slots):
-        res = residual(prefix)
+    def search(prefix, res, start, slots):
         deg = res.degree
         if deg <= d:
             return prefix + [res]
         if slots <= 1 or deg > d ** slots or largest_prime_factor(deg) > d:
             return None
         for i in range(start, len(cat)):
-            found = search(prefix + [cat[i]], i, slots - 1)
+            residual = combine_algebraic(res, cat[i], "-" if op == "Plus" else "/", prec_bits)
+            found = search(prefix + [cat[i]], residual, i, slots - 1)
             if found is not None:
                 return found
         return None
 
-    found = search([], 0, r)
+    found = search([], a, 0, r)
     if found is None:
         return None
     degs = [t.degree for t in found]
-    return Decomposition(op, found, degs, max(degs), lb, max(degs) == lb, False, "Bounded", "DictionarySearch")
+    return Decomposition(op, found, degs, max(degs), lb, max(degs) == lb, max(degs) == lb, "Bounded", "DictionarySearch")
 
 # ---------------------------------------------------------------------------
 # numeric verification
 # ---------------------------------------------------------------------------
 
 def verify_numeric(a: AlgebraicNumber, dec: Decomposition, prec_bits: int = 300) -> bool:
+    """Check numerical consistency by ball overlap; this alone is not a proof."""
+    if dec.op not in ("Plus", "Times"):
+        raise ValueError("decomposition operation must be 'Plus' or 'Times'")
     with ctx.workprec(prec_bits):
         av = a.value(prec_bits)
         if dec.op == "Plus":
@@ -1595,6 +1802,23 @@ def verify_numeric(a: AlgebraicNumber, dec: Decomposition, prec_bits: int = 300)
             for t in dec.terms:
                 s *= t.value(prec_bits)
         return (s - av).contains(0)
+
+
+def verify_exact(a: AlgebraicNumber, dec: Decomposition, prec_bits: int = 300) -> bool:
+    """Prove a returned identity using exact composed-polynomial arithmetic.
+
+    Every arithmetic step constructs an annihilating integer polynomial,
+    factors it exactly, and isolates the uniquely selected root. Equality is
+    then equality of normalized minimal polynomials and root indices. A
+    PrecisionError is an inconclusive computation, never a successful check.
+    This can cost more than the field-coordinate search itself.
+    """
+    if dec.op not in ("Plus", "Times"):
+        raise ValueError("decomposition operation must be 'Plus' or 'Times'")
+    result = AlgebraicNumber.from_rational(0 if dec.op == "Plus" else 1)
+    for term in dec.terms:
+        result = combine_algebraic(result, term, "+" if dec.op == "Plus" else "*", prec_bits)
+    return result.poly == a.poly and result.index == a.index
 
 
 # ---------------------------------------------------------------------------

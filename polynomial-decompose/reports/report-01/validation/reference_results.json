@@ -1,0 +1,2508 @@
+{
+  "status": "passed",
+  "checks": 574,
+  "failed": 0,
+  "python": "3.13.5",
+  "sympy": "1.14.0",
+  "elapsed_seconds": 5.654,
+  "native_wolfram_execution": false,
+  "external_oracle_disagreements": [
+    {
+      "field": "QQ",
+      "case": 0,
+      "reference_degrees": [
+        5,
+        5
+      ],
+      "sympy_degrees": [
+        25
+      ]
+    },
+    {
+      "field": "QQ",
+      "case": 1,
+      "reference_degrees": [
+        5,
+        3
+      ],
+      "sympy_degrees": [
+        15
+      ]
+    },
+    {
+      "field": "QQ",
+      "case": 2,
+      "reference_degrees": [
+        2,
+        5
+      ],
+      "sympy_degrees": [
+        10
+      ]
+    },
+    {
+      "field": "QQ",
+      "case": 3,
+      "reference_degrees": [
+        5,
+        3
+      ],
+      "sympy_degrees": [
+        15
+      ]
+    },
+    {
+      "field": "QQ",
+      "case": 4,
+      "reference_degrees": [
+        2,
+        5
+      ],
+      "sympy_degrees": [
+        10
+      ]
+    },
+    {
+      "field": "QQ",
+      "case": 6,
+      "reference_degrees": [
+        3,
+        3
+      ],
+      "sympy_degrees": [
+        9
+      ]
+    },
+    {
+      "field": "QQ",
+      "case": 7,
+      "reference_degrees": [
+        4,
+        3
+      ],
+      "sympy_degrees": [
+        12
+      ]
+    },
+    {
+      "field": "QQ",
+      "case": 8,
+      "reference_degrees": [
+        5,
+        4
+      ],
+      "sympy_degrees": [
+        20
+      ]
+    },
+    {
+      "field": "QQ",
+      "case": 9,
+      "reference_degrees": [
+        2,
+        3
+      ],
+      "sympy_degrees": [
+        6
+      ]
+    },
+    {
+      "field": "QQ",
+      "case": 11,
+      "reference_degrees": [
+        5,
+        5
+      ],
+      "sympy_degrees": [
+        25
+      ]
+    },
+    {
+      "field": "QQ(sqrt(2))",
+      "case": 0,
+      "reference_degrees": [
+        5,
+        5
+      ],
+      "sympy_degrees": [
+        25
+      ]
+    },
+    {
+      "field": "QQ(sqrt(2))",
+      "case": 1,
+      "reference_degrees": [
+        3,
+        5
+      ],
+      "sympy_degrees": [
+        15
+      ]
+    },
+    {
+      "field": "QQ(sqrt(2))",
+      "case": 2,
+      "reference_degrees": [
+        4,
+        5
+      ],
+      "sympy_degrees": [
+        20
+      ]
+    },
+    {
+      "field": "QQ(sqrt(2))",
+      "case": 3,
+      "reference_degrees": [
+        4,
+        5
+      ],
+      "sympy_degrees": [
+        20
+      ]
+    },
+    {
+      "field": "QQ(sqrt(2))",
+      "case": 5,
+      "reference_degrees": [
+        2,
+        3
+      ],
+      "sympy_degrees": [
+        6
+      ]
+    },
+    {
+      "field": "QQ(sqrt(2))",
+      "case": 7,
+      "reference_degrees": [
+        4,
+        3
+      ],
+      "sympy_degrees": [
+        12
+      ]
+    },
+    {
+      "field": "QQ(sqrt(2))",
+      "case": 8,
+      "reference_degrees": [
+        3,
+        5
+      ],
+      "sympy_degrees": [
+        15
+      ]
+    },
+    {
+      "field": "QQ(sqrt(2))",
+      "case": 9,
+      "reference_degrees": [
+        3,
+        5
+      ],
+      "sympy_degrees": [
+        15
+      ]
+    }
+  ],
+  "native_wolfram_status": "Not run: connector returned HTTP 404; no local kernel.",
+  "detail": [
+    {
+      "name": "original: normalized exact pair",
+      "passed": true
+    },
+    {
+      "name": "original: degree three rejected",
+      "passed": true
+    },
+    {
+      "name": "original: all chains count",
+      "passed": true
+    },
+    {
+      "name": "nested: complete degree sequence",
+      "passed": true
+    },
+    {
+      "name": "nested: exact composition",
+      "passed": true
+    },
+    {
+      "name": "quartic: composite-degree indecomposable",
+      "passed": true
+    },
+    {
+      "name": "descending split: recurses on both factors",
+      "passed": true
+    },
+    {
+      "name": "x^6: number of distinct complete chains",
+      "passed": true
+    },
+    {
+      "name": "x^6: no duplicate degree sequences",
+      "passed": true
+    },
+    {
+      "name": "x^6: all prime components",
+      "passed": true
+    },
+    {
+      "name": "x^6: cap lookahead",
+      "passed": true
+    },
+    {
+      "name": "x^6: exact cap boundary",
+      "passed": true
+    },
+    {
+      "name": "x^12: number of distinct complete chains",
+      "passed": true
+    },
+    {
+      "name": "x^12: no duplicate degree sequences",
+      "passed": true
+    },
+    {
+      "name": "x^12: all prime components",
+      "passed": true
+    },
+    {
+      "name": "x^12: cap lookahead",
+      "passed": true
+    },
+    {
+      "name": "x^12: exact cap boundary",
+      "passed": true
+    },
+    {
+      "name": "x^16: number of distinct complete chains",
+      "passed": true
+    },
+    {
+      "name": "x^16: no duplicate degree sequences",
+      "passed": true
+    },
+    {
+      "name": "x^16: all prime components",
+      "passed": true
+    },
+    {
+      "name": "x^16: cap lookahead",
+      "passed": true
+    },
+    {
+      "name": "x^16: exact cap boundary",
+      "passed": true
+    },
+    {
+      "name": "x^30: number of distinct complete chains",
+      "passed": true
+    },
+    {
+      "name": "x^30: no duplicate degree sequences",
+      "passed": true
+    },
+    {
+      "name": "x^30: all prime components",
+      "passed": true
+    },
+    {
+      "name": "x^30: cap lookahead",
+      "passed": true
+    },
+    {
+      "name": "x^30: exact cap boundary",
+      "passed": true
+    },
+    {
+      "name": "x^36: number of distinct complete chains",
+      "passed": true
+    },
+    {
+      "name": "x^36: no duplicate degree sequences",
+      "passed": true
+    },
+    {
+      "name": "x^36: all prime components",
+      "passed": true
+    },
+    {
+      "name": "x^36: cap lookahead",
+      "passed": true
+    },
+    {
+      "name": "x^36: exact cap boundary",
+      "passed": true
+    },
+    {
+      "name": "x^72: number of distinct complete chains",
+      "passed": true
+    },
+    {
+      "name": "x^72: no duplicate degree sequences",
+      "passed": true
+    },
+    {
+      "name": "x^72: all prime components",
+      "passed": true
+    },
+    {
+      "name": "x^72: cap lookahead",
+      "passed": true
+    },
+    {
+      "name": "x^72: exact cap boundary",
+      "passed": true
+    },
+    {
+      "name": "Chebyshev six: two chains",
+      "passed": true
+    },
+    {
+      "name": "Chebyshev six: degree sequences",
+      "passed": true
+    },
+    {
+      "name": "x^4+x: indecomposable",
+      "passed": true
+    },
+    {
+      "name": "x^6+x: indecomposable",
+      "passed": true
+    },
+    {
+      "name": "x^8+x: indecomposable",
+      "passed": true
+    },
+    {
+      "name": "x^9+x: indecomposable",
+      "passed": true
+    },
+    {
+      "name": "x^10+x: indecomposable",
+      "passed": true
+    },
+    {
+      "name": "x^12+x: indecomposable",
+      "passed": true
+    },
+    {
+      "name": "x^15+x: indecomposable",
+      "passed": true
+    },
+    {
+      "name": "x^16+x: indecomposable",
+      "passed": true
+    },
+    {
+      "name": "x^18+x: indecomposable",
+      "passed": true
+    },
+    {
+      "name": "x^20+x: indecomposable",
+      "passed": true
+    },
+    {
+      "name": "terminal: 0",
+      "passed": true
+    },
+    {
+      "name": "terminal enumeration: 0",
+      "passed": true
+    },
+    {
+      "name": "terminal: 7",
+      "passed": true
+    },
+    {
+      "name": "terminal enumeration: 7",
+      "passed": true
+    },
+    {
+      "name": "terminal: x",
+      "passed": true
+    },
+    {
+      "name": "terminal enumeration: x",
+      "passed": true
+    },
+    {
+      "name": "terminal: 2*x + 3",
+      "passed": true
+    },
+    {
+      "name": "terminal enumeration: 2*x + 3",
+      "passed": true
+    },
+    {
+      "name": "terminal: x**5 + x + 1",
+      "passed": true
+    },
+    {
+      "name": "terminal enumeration: x**5 + x + 1",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 0",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 1",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 2",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 3",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 4",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 5",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 6",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 7",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 8",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 9",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 10",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 11",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 12",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 13",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 14",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 15",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 16",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 17",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 18",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 19",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 20",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 21",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 22",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 23",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 24",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 25",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 26",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 27",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 28",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 29",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 30",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 31",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 32",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 33",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 34",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 35",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 36",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 37",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 38",
+      "passed": true
+    },
+    {
+      "name": "division cross-check 39",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 0: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 0: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 0: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ SymPy output identity 0",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 1: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 1: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 1: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ SymPy output identity 1",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 2: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 2: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 2: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ SymPy output identity 2",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 3: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 3: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 3: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ SymPy output identity 3",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 4: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 4: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 4: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ SymPy output identity 4",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 5: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 5: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 5: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ SymPy output identity 5",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 6: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 6: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 6: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ SymPy output identity 6",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 7: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 7: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 7: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ SymPy output identity 7",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 8: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 8: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 8: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ SymPy output identity 8",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 9: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 9: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 9: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ SymPy output identity 9",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 10: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 10: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 10: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ SymPy output identity 10",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 11: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 11: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 11: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ SymPy output identity 11",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 12: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 12: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 12: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 13: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 13: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 13: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 14: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 14: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 14: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 15: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 15: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 15: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 16: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 16: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 16: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 17: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 17: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 17: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 18: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 18: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 18: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 19: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 19: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 19: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 20: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 20: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 20: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 21: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 21: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 21: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 22: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 22: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 22: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 23: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 23: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 23: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 24: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 24: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 24: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 25: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 25: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 25: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 26: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 26: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 26: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 27: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 27: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 27: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 28: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 28: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 28: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 29: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 29: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 29: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 30: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 30: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 30: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 31: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 31: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 31: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 32: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 32: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 32: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 33: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 33: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 33: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 34: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 34: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 34: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 35: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 35: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 35: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 36: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 36: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 36: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 37: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 37: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 37: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 38: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 38: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 38: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 39: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 39: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 39: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 40: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 40: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 40: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 41: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 41: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 41: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 42: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 42: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 42: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 43: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 43: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 43: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 44: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 44: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 44: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 45: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 45: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 45: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 46: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 46: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 46: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 47: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 47: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 47: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 48: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 48: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 48: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 49: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 49: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 49: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 50: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 50: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 50: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 51: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 51: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 51: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 52: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 52: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 52: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 53: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 53: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 53: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 54: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 54: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 54: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 55: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 55: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 55: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 56: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 56: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 56: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 57: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 57: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 57: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 58: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 58: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 58: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 59: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 59: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 59: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 60: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 60: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 60: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 61: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 61: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 61: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 62: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 62: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 62: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 63: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 63: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 63: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 64: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 64: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 64: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 65: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 65: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 65: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 66: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 66: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 66: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 67: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 67: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 67: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 68: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 68: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 68: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 69: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 69: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 69: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 70: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 70: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 70: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 71: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 71: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 71: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 72: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 72: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 72: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 73: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 73: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 73: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 74: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 74: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 74: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 75: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 75: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 75: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 76: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 76: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 76: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 77: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 77: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 77: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 78: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 78: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 78: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 79: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 79: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ random pair 79: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 0: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 0: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 0: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) SymPy output identity 0",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 1: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 1: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 1: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) SymPy output identity 1",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 2: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 2: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 2: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) SymPy output identity 2",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 3: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 3: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 3: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) SymPy output identity 3",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 4: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 4: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 4: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) SymPy output identity 4",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 5: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 5: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 5: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) SymPy output identity 5",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 6: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 6: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 6: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) SymPy output identity 6",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 7: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 7: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 7: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) SymPy output identity 7",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 8: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 8: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 8: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) SymPy output identity 8",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 9: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 9: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 9: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) SymPy output identity 9",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 10: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 10: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 10: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) SymPy output identity 10",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 11: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 11: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 11: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) SymPy output identity 11",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 12: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 12: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 12: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 13: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 13: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 13: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 14: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 14: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 14: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 15: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 15: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 15: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 16: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 16: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 16: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 17: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 17: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 17: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 18: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 18: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 18: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 19: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 19: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 19: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 20: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 20: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 20: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 21: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 21: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 21: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 22: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 22: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 22: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 23: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 23: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 23: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 24: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 24: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 24: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 25: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 25: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 25: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 26: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 26: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 26: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 27: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 27: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 27: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 28: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 28: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 28: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 29: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 29: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 29: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 30: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 30: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 30: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 31: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 31: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 31: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 32: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 32: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 32: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 33: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 33: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 33: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 34: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 34: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 34: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 35: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 35: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 35: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 36: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 36: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 36: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 37: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 37: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 37: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 38: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 38: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 38: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 39: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 39: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 39: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 40: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 40: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 40: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 41: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 41: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 41: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 42: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 42: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 42: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 43: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 43: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 43: recomposition",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 44: recover normalized h",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 44: recover f",
+      "passed": true
+    },
+    {
+      "name": "QQ(sqrt(2)) random pair 44: recomposition",
+      "passed": true
+    },
+    {
+      "name": "formal binomial cross-check 0",
+      "passed": true
+    },
+    {
+      "name": "formal binomial cross-check 1",
+      "passed": true
+    },
+    {
+      "name": "formal binomial cross-check 2",
+      "passed": true
+    },
+    {
+      "name": "formal binomial cross-check 3",
+      "passed": true
+    },
+    {
+      "name": "formal binomial cross-check 4",
+      "passed": true
+    },
+    {
+      "name": "formal binomial cross-check 5",
+      "passed": true
+    },
+    {
+      "name": "formal binomial cross-check 6",
+      "passed": true
+    },
+    {
+      "name": "formal binomial cross-check 7",
+      "passed": true
+    },
+    {
+      "name": "formal binomial cross-check 8",
+      "passed": true
+    },
+    {
+      "name": "formal binomial cross-check 9",
+      "passed": true
+    },
+    {
+      "name": "formal binomial cross-check 10",
+      "passed": true
+    },
+    {
+      "name": "formal binomial cross-check 11",
+      "passed": true
+    },
+    {
+      "name": "formal binomial cross-check 12",
+      "passed": true
+    },
+    {
+      "name": "formal binomial cross-check 13",
+      "passed": true
+    },
+    {
+      "name": "formal binomial cross-check 14",
+      "passed": true
+    },
+    {
+      "name": "formal binomial cross-check 15",
+      "passed": true
+    },
+    {
+      "name": "formal binomial cross-check 16",
+      "passed": true
+    },
+    {
+      "name": "formal binomial cross-check 17",
+      "passed": true
+    },
+    {
+      "name": "formal binomial cross-check 18",
+      "passed": true
+    },
+    {
+      "name": "formal binomial cross-check 19",
+      "passed": true
+    },
+    {
+      "name": "quintic Root: exact prescribed factors",
+      "passed": true
+    },
+    {
+      "name": "quintic Root: minimal polynomial identity",
+      "passed": true
+    },
+    {
+      "name": "quintic Root randomized 0",
+      "passed": true
+    },
+    {
+      "name": "quintic Root randomized 1",
+      "passed": true
+    },
+    {
+      "name": "quintic Root randomized 2",
+      "passed": true
+    },
+    {
+      "name": "quintic Root randomized 3",
+      "passed": true
+    },
+    {
+      "name": "quintic Root randomized 4",
+      "passed": true
+    },
+    {
+      "name": "quintic Root randomized 5",
+      "passed": true
+    },
+    {
+      "name": "quintic Root randomized 6",
+      "passed": true
+    },
+    {
+      "name": "quintic Root randomized 7",
+      "passed": true
+    },
+    {
+      "name": "quintic Root randomized 8",
+      "passed": true
+    },
+    {
+      "name": "quintic Root randomized 9",
+      "passed": true
+    },
+    {
+      "name": "quintic Root randomized 10",
+      "passed": true
+    },
+    {
+      "name": "quintic Root randomized 11",
+      "passed": true
+    },
+    {
+      "name": "mixed complex number field degree eight",
+      "passed": true
+    },
+    {
+      "name": "mixed complex number field exact factors",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 0",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 1",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 2",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 3",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 4",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 5",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 6",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 7",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 8",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 9",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 10",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 11",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 12",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 13",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 14",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 15",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 16",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 17",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 18",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 19",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 20",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 21",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 22",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 23",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 24",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 25",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 26",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 27",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 28",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 29",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 30",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 31",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 32",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 33",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 34",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 35",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 36",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 37",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 38",
+      "passed": true
+    },
+    {
+      "name": "generic QQ polynomial cross-check 39",
+      "passed": true
+    }
+  ]
+}

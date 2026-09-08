@@ -1,0 +1,40 @@
+{
+  "status": "BASIC_LEXICAL_AND_PACKAGING_CHECKS_PASS",
+  "not_performed": "Wolfram parsing or native execution",
+  "native_tests_authored": 60,
+  "native_test_ids_unique": true,
+  "article_source_matches_package": true,
+  "no_Return_lexically_inside_Do_For_While_Table": true,
+  "files": [
+    {
+      "file": "AlgebraicDecomposition.wl",
+      "basic_lexical_check": "PASS",
+      "sha256": "c30ce6e2c6bf6ced2663f8cb8b4305ae26a17be7f219add83c5f8abbb301d959"
+    },
+    {
+      "file": "Examples/Examples.wl",
+      "basic_lexical_check": "PASS",
+      "sha256": "0ed1049f9b38c0c2487e3f1d4f87be6af6eac4d7b7c70dca1073578869d8690b"
+    },
+    {
+      "file": "Kernel/AlgebraicDecomposition.wl",
+      "basic_lexical_check": "PASS",
+      "sha256": "f490333d051cea451cadc08e2227dc364d56fd3344611ee7df3ff93de90b5c2e"
+    },
+    {
+      "file": "Kernel/init.m",
+      "basic_lexical_check": "PASS",
+      "sha256": "921cdd2c854c8174d58448af3ff4553c72a3e5b4a711f3a0d8d856ce444117c7"
+    },
+    {
+      "file": "Tests/AlgebraicDecomposition.wlt",
+      "basic_lexical_check": "PASS",
+      "sha256": "87a08f290fe4cea89baace4d78b8290e88f5dc5604ce5cd157ce088c1f2b3198"
+    },
+    {
+      "file": "Tests/RunTests.wl",
+      "basic_lexical_check": "PASS",
+      "sha256": "04b60c9a66eef24bc49fe44ab79d6b3927124beaae68a64970a64f4b8d8dd091"
+    }
+  ]
+}

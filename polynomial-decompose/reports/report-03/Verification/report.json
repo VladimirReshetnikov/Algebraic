@@ -1,0 +1,149 @@
+{
+  "status": "PASS",
+  "scope": "Independent Python exact number-field implementation; NOT Wolfram Language execution",
+  "python_sympy_version": "1.14.0",
+  "seed": 206618,
+  "counts": {
+    "polynomial_cases": 974,
+    "degree_tests": 2001,
+    "complete_chains_checked": 1042,
+    "known_pairs_recovered": 95,
+    "rational_sympy_comparisons": 848,
+    "rational_sympy_degree_disagreements": 14
+  },
+  "groups": [
+    {
+      "name": "fixed examples",
+      "cases": 14
+    },
+    {
+      "name": "exhaustive monic rational degree 4 and 6, lower coefficients -1/0/1",
+      "cases": 810
+    },
+    {
+      "name": "Q",
+      "cases": 30
+    },
+    {
+      "name": "Q(sqrt(2))",
+      "cases": 30
+    },
+    {
+      "name": "Q(i)",
+      "cases": 30
+    },
+    {
+      "name": "Q(sqrt(2),sqrt(3))",
+      "cases": 30
+    },
+    {
+      "name": "Q(alpha), alpha=CRootOf(x^5-x-1,0)",
+      "cases": 30
+    }
+  ],
+  "examples": {
+    "original": [
+      "16*sqrt(2)*x**3 + x**2*(8 + 24*sqrt(2)) + x*(8 + 14*sqrt(2)) + 3 + 3*sqrt(2)",
+      "x**2 + sqrt(2)*x/2"
+    ],
+    "nested": [
+      "16*sqrt(2)*x**3 + x**2*(56 + 72*sqrt(2)) + x*(168 + 142*sqrt(2)) + 141 + 105*sqrt(2)",
+      "x**2 + x*(sqrt(2)/2 + 2)",
+      "x**4 - x"
+    ],
+    "original_degree3_rejection": {
+      "inner": "x**3 + 3*sqrt(2)*x**2/4 + x*(sqrt(2)/8 + 15/16)",
+      "digits": [
+        "x**2*(3/2 + 51*sqrt(2)/16) + x*(3*sqrt(2)/4 + 51/16) + 3 + 3*sqrt(2)",
+        "2*sqrt(2) + 11",
+        "16*sqrt(2)"
+      ]
+    },
+    "0": [
+      "0"
+    ],
+    "7": [
+      "7"
+    ],
+    "x": [
+      "x"
+    ],
+    "3*x + 1": [
+      "3*x + 1"
+    ],
+    "x**4": [
+      "x**2",
+      "x**2"
+    ],
+    "(x - 1)**6": [
+      "x**3 + 3*x**2 + 3*x + 1",
+      "x**2 - 2*x"
+    ],
+    "x**12": [
+      "x**3",
+      "x**2",
+      "x**2"
+    ],
+    "32*x**6 - 48*x**4 + 18*x**2 - 1": [
+      "32*x**3 - 48*x**2 + 18*x - 1",
+      "x**2"
+    ],
+    "x**4 + x": [
+      "x**4 + x"
+    ],
+    "x**6 + x": [
+      "x**6 + x"
+    ],
+    "(x**4 + x)**2": [
+      "x**2",
+      "x**4 + x"
+    ],
+    "x*(x**2 + 1)**2": [
+      "x**5 + 2*x**3 + x"
+    ]
+  },
+  "sympy_baseline_disagreements": [
+    {
+      "polynomial": "-8*x**6 + 24*x**5 - 34*x**4 + 38*x**3 - 29*x**2 + 14*x - 7",
+      "sympy_chain": [
+        "-8*x**6 + 24*x**5 - 34*x**4 + 38*x**3 - 29*x**2 + 14*x - 7"
+      ],
+      "verified_chain": [
+        "-8*x**2 + 14*x - 7",
+        "x**3 - 3*x**2/2 + x"
+      ]
+    },
+    {
+      "polynomial": "-2*x**8 + 4*x**7 - 10*x**6 - 4*x**5 - x**4 - 19*x**3 - 28*x**2 - 15*x - 2",
+      "sympy_chain": [
+        "-2*x**8 + 4*x**7 - 10*x**6 - 4*x**5 - x**4 - 19*x**3 - 28*x**2 - 15*x - 2"
+      ],
+      "verified_chain": [
+        "-2*x**2 - 5*x - 2",
+        "x**4 - x**3 + 2*x**2 + 3*x"
+      ]
+    },
+    {
+      "polynomial": "8*x**9 - 24*x**8 + 24*x**7 + 4*x**6 - 24*x**5 + 12*x**4 + 10*x**3 - 10*x**2 + 5",
+      "sympy_chain": [
+        "8*x**9 - 24*x**8 + 24*x**7 + 4*x**6 - 24*x**5 + 12*x**4 + 10*x**3 - 10*x**2 + 5"
+      ],
+      "verified_chain": [
+        "8*x**3 + 12*x**2 + 10*x + 5",
+        "x**3 - x**2"
+      ]
+    }
+  ],
+  "checks": [
+    "formal-root recurrence equals finite binomial expansion",
+    "leading-coefficient congruence",
+    "exact base-inner digit reconstruction",
+    "zero residual iff every digit is constant",
+    "known pairs recovered with exact affine normalization",
+    "complete chains recompose, have indecomposable factors, and are normalized",
+    "all enumerated chains are distinct and obey Ritt degree-multiset invariant",
+    "rational differential comparisons with SymPy decompose; disagreements are recorded, not used as a correctness oracle"
+  ],
+  "wolfram_kernel_tests": "NOT EXECUTED: Wolfram connector returned HTTP 404; no local Wolfram kernel was present",
+  "elapsed_seconds": 8.07
+}

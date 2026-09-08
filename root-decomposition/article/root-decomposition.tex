@@ -10,6 +10,7 @@
 \usepackage{xcolor}
 \usepackage{listings}
 \usepackage[colorlinks=true,linkcolor=blue!40!black,citecolor=blue!40!black,urlcolor=blue!50!black]{hyperref}
+\hypersetup{pdftitle={Decomposing algebraic numbers into sums and products of minimal degree}}
 
 \lstset{basicstyle=\ttfamily\small,columns=fullflexible,keepspaces=true,breaklines=true,
   frame=single,framerule=0.3pt,rulecolor=\color{black!30},xleftmargin=4pt,xrightmargin=4pt,
@@ -22,7 +23,7 @@
 \theoremstyle{definition}
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{example}[theorem]{Example}
-\newtheorem{problem}[theorem]{Open problem}
+\newtheorem{problem}[theorem]{Further problem}
 \theoremstyle{remark}
 \newtheorem{remark}[theorem]{Remark}
 
@@ -63,17 +64,18 @@ independent technical reports written on the question and adds several results. 
 additive problem has a complete finite algorithm (trace descent to the splitting field, then rational
 linear algebra on fixed fields of subgroups of the Galois group), that the two-factor multiplicative
 problem has a complete finite algorithm (norm descent with an explicit radical exponent), and that the
-arbitrary-length multiplicative problem is genuinely different: optimal factors may lie outside the
-splitting field, two-factor optima are not many-factor optima, and no complete algorithm is known.  We
+arbitrary-length multiplicative problem is different: optimal factors may lie outside the
+splitting field, two-factor optima are not many-factor optima, and the methods developed here do not
+give a complete algorithm for arbitrary products.  We
 prove rigorous lower bounds valid against any finite number of components, including a computable bound
 from Frobenius cycle types, and we settle the two examples of the question: both have globally optimal
 maximum degree three.  We also answer a further question: a \Root{} can be a flat sum of \Root{}s of
 smaller degree, even with Gaussian rational coefficients, while no sequence of binary additive or
 multiplicative splittings into two \Root{}s of smaller degree exists; the number $\sqrt2+\sqrt3+\sqrt6$
-is such an example.  The accompanying Wolfram Language package and its Python counterpart implement all
-algorithms with a new engine (numerical resolvents for the Galois group, a trace-form basis of the
-splitting field) that avoids the impractically slow number-field conversions proposed in the reports;
-every returned identity is verified exactly.
+is such an example.  The accompanying Wolfram Language package and its Python counterpart implement
+the principal algorithms with an engine based on numerical resolvents for the Galois group and a trace-form basis of the
+splitting field.  This avoids the slow number-field conversions proposed in the reports;
+exact identity verification and the certification of exhaustive searches are discussed separately.
 \end{abstract}
 
 \tableofcontents
@@ -131,11 +133,11 @@ the components ranging over all algebraic numbers.  The main results are the fol
   the optimal factors $\sqrt{1+\sqrt2}$ and $\sqrt{1+\sqrt3}$ lie outside $L$, and no elements of $L$
   of degree below $8$ multiply or add up to $a$.
 \item \emph{Many factors} (Section~\ref{sec:many}).  $\Dt$ can be smaller than the two-factor
-  minimum: $(1+\sqrt2)(1+\sqrt3)(1+\sqrt5)$ has $\Dt=2$ but no two factors of degree below $8$.
+  minimum: $(1+\sqrt2)(1+\sqrt3)(1+\sqrt5)$ has $\Dt=2$ but two-factor minimum $4$.
   Products inside a fixed field are a multiplicative, not a linear, problem; arithmetic obstructions
   exist beyond Galois theory ($\Dp(1+\sqrt2+\sqrt3)=2$ but $\Dt(1+\sqrt2+\sqrt3)=4$).  We give the
-  necessary norm condition, a sufficient radical condition, an exact rank-one tensor criterion for
-  linearly disjoint families, and state the open problem.
+  necessary norm condition, a sufficient radical condition, and an exact rank-one tensor criterion for
+  linearly disjoint families; a complete many-factor decision procedure remains outside this work.
 \item \emph{Binary versus flat} (Section~\ref{sec:binary}).  A decomposition into two components of
   smaller degree, iterated, is strictly weaker than a flat decomposition: $\sqrt2+\sqrt3+\sqrt6$ is a sum
   of three quadratic numbers but is neither a sum nor a product of two algebraic numbers of degree below
@@ -147,11 +149,13 @@ the components ranging over all algebraic numbers.  The main results are the fol
   of $\alpha_\times$ inside $\Q(\alpha_\times)$ has maximum degree $9$.
 \item \emph{Implementation} (Section~\ref{sec:impl}).  The Galois group is computed by numerical
   resolvents, the splitting field is represented in a tower basis with coordinates obtained from traces,
-  and all decision problems above become exact rational linear algebra.  A fast path works inside
-  $\Q(a)$ without the Galois group.  The Wolfram package answers the two examples in about a second
-  (fast path) and certifies global optimality; the Python port (python-flint, Arb ball arithmetic)
-  computes the full splitting-field data in three to five seconds, against about twenty seconds in
-  the Wolfram kernel.
+  and the additive and two-factor criteria become rational linear algebra once the field data are certified.
+  The many-factor search also needs multiplicative tests.  A fast path works inside
+  $\Q(a)$ without the Galois group.  The original measurements answered the two examples in about a
+  second in Wolfram (fast path), certifying global optimality; the Python port (python-flint, Arb ball
+  arithmetic) constructed the full splitting-field data in three to five seconds, against about
+  twenty seconds in the Wolfram kernel.  Section~\ref{sec:impl} distinguishes these historical timings
+  from validation of the revised code.
 \end{enumerate}
 
 \subsection{Conventions}
@@ -162,10 +166,13 @@ $L$ correspond to subgroups $H\le G$ via $H\mapsto L^H$, and $[L^H:\Q]=[G:H]$.  
 $b\in L$ is the index of its stabilizer, equivalently the size of its $G$-orbit.  We write $\Res_y(f,g)$
 for the resultant with respect to $y$, and $\Tr_{M/L}$, $\Nm_{M/L}$ for relative trace and norm.
 
-Mathematica's \code{Root[f,k]} denotes the $k$th root of $f$ in the following order: real roots first,
-increasing; then the non-real roots in conjugate pairs, ordered by increasing real part and then by
-increasing $|\mathrm{Im}|$, the root of negative imaginary part first within a pair.  The Python code
-uses the same order so that both implementations index roots identically.
+Mathematica's \code{Root[f,k]} indexes real roots first, in increasing order, and places non-real
+conjugate pairs consecutively for rational polynomials.  Its documentation warns that the order of
+non-real roots can depend on the root-isolation method \cite{WolframRoot}.  The Python code uses its
+own explicit order for those pairs: increasing real part, then increasing absolute imaginary part,
+with the negative imaginary part first.  Thus real-root indices agree, including the two original
+examples, but an arbitrary non-real branch must be matched by an isolating region when moving between
+implementations; a printed index alone is not a universal interchange format.
 
 \section{The problem}\label{sec:problem}
 
@@ -293,8 +300,8 @@ real root, namely $uv$, respectively $u+v$; by the root ordering this is \code{R
 
 The recovery formulas are verified by exact polynomial arithmetic modulo $P_\times$ and $P_+$: the
 denominators are coprime to the respective polynomial, and substituting the right-hand sides into
-$f$ and $g$ gives zero modulo $P_\times$, respectively $P_+$.  (The package runs these checks; all
-identities in this article were verified in Wolfram 15.0.1.)  They show $u,v\in\Q(\alpha_\times)$ and
+$f$ and $g$ gives zero modulo $P_\times$, respectively $P_+$.  The real-branch identification follows
+from the uniqueness of the real roots of the two cubics.  These checks show $u,v\in\Q(\alpha_\times)$ and
 $u,v\in\Q(\alpha_+)$; since $[\Q(u,v):\Q]=9$, all three fields coincide.
 \end{proof}
 
@@ -317,7 +324,7 @@ largest prime power dividing $\exp(G)$.
 Let $M_i$ be the normal closure of $\Q(b_i)$ and $M=M_1\cdots M_r$.  $\Gal(M_i/\Q)$ acts faithfully on
 the $m_i\le d$ conjugates of $b_i$, so it embeds in $S_{m_i}$, and restriction embeds $\Gal(M/\Q)$ into
 $\prod_i\Gal(M_i/\Q)\le\prod_iS_{m_i}$.  Every prime divisor of $|\prod S_{m_i}|=\prod m_i!$ is at most
-$d$, the exponent of $\prod S_{m_i}$ is $\lcm(1,\dots,d)$ (orders of permutations are lcm's of cycle
+$d$, the exponent of $\prod S_{m_i}$ divides $\lcm(1,\dots,d)$ (orders of permutations are lcm's of cycle
 lengths), and $S_{m}$ is solvable for $m\le4$.  These properties pass to subgroups and to quotients.
 Since $M/\Q$ is normal and contains $a$, it contains all conjugates of $a$, hence $L$, and restriction
 maps $\Gal(M/\Q)$ onto $G$.  Finally $n=[\Q(a):\Q]$ divides $|G|=[L:\Q]$.
@@ -359,8 +366,9 @@ $\Q(a)\subseteq\Q(b_1,\dots,b_r)$, whose degree is at most $\prod\dg(b_i)$.
 \end{proof}
 
 The bounds of this section are necessary conditions.  They are not sufficient even for sums:
-$2^{1/4}$ has $\Dp=4$ while its degree has prime bound $2$ and $D_4$ has exponent $4$; and they are not
-sufficient for products even when the Galois group is elementary abelian (Theorem~\ref{thm:sign}).
+$\alpha_\times$ has $\Dp=6$ (Example~\ref{ex:sextic}), while its degree-nine prime bound and its
+$S_3\times S_3$ exponent bound are both $3$.  Nor are the bounds sufficient for products even when the
+Galois group is elementary abelian (Theorem~\ref{thm:sign}).
 
 \section{Sums: a complete finite algorithm}\label{sec:sums}
 
@@ -416,6 +424,11 @@ L^H$ for $H'\le H$.  Writing $B_d$ for the matrix whose columns are the coordina
 these fields, $a\in W_d(L)$ if and only if $B_dc=\operatorname{vec}(a)$ has a rational solution, and the
 solution grouped by field gives the summands.
 
+A failed membership test also has a small exact certificate: a rational row vector $\lambda$ with
+$\lambda B_d=0$ but $\lambda\operatorname{vec}(a)\ne0$.  Such a separating functional exists precisely
+when the system is inconsistent.  Checking it only requires rational matrix multiplication, although
+the claim that it rules out every allowed summand still requires the field list to be complete.
+
 \subsection{The permutation-module reformulation}
 
 The criterion can be pushed down from $L$ to the $\Q$-span of the conjugates of $a$, which has dimension
@@ -469,7 +482,7 @@ which has exactly two real roots; indeed $w_1,w_2$ satisfy $w^2-3uv\,w+3u^2-3v^2
 $u,v$ with the two cubics gives $R(w)^3$.  Hence
 \begin{align*}
  \alpha_\times&=\tfrac13\Root[R,1]+\tfrac13\Root[R,2]\\
- &=\Root[4-243\#+81\#^2-729\#^3+486\#^4+729\#^6\&,1]+\Root[4-243\#+\dots+729\#^6\&,2],
+ &=\Root[S,1]+\Root[S,2],\qquad S(x)=R(3x),
 \end{align*}
 a sum of two sextics, and $\Dp(uv)\le6$.  To see that $6$ is optimal, let $A=C_3\times C_3\le G$ be
 the Sylow $3$-subgroup, $U=\operatorname{span}\{u_1,u_2,u_3\}$ and $V=\operatorname{span}\{v_1,v_2,v_3\}$;
@@ -493,8 +506,11 @@ $7$, so its Galois group contains a $4$-cycle and a $3$-cycle and is $S_4$; the 
 $\{r_1,r_2\}$ is $\langle(12),(34)\rangle$ of index $6$, whose only proper overgroup is the dihedral
 group of order $8$.  So $\Q(s)$ has subfields of degrees $1,3,6$ only and $\Dp^{\Q(s)}(s)=6$; but
 $s=r_1+r_2$ shows $\Dp(s)\le4$, and Theorem~\ref{thm:bound}(ii) with $\exp(S_4)=12\nmid\lcm(1,2,3)$
-gives $\Dp(s)=4$.  The package returns $\Root[-1+\#+\#^4\&,1]+\Root[-1+\#+\#^4\&,3]$ for
-$\Root[-1+4\#^2+\#^6\&,3]$.
+gives $\Dp(s)=4$.  For the stated real branches the identity is
+\[
+ \Root[-1+4\#^2+\#^6\&,2]
+ =\Root[-1-\#+\#^4\&,1]+\Root[-1-\#+\#^4\&,2].
+\]
 \end{example}
 
 \begin{remark}[real summands]\label{rem:real}
@@ -559,9 +575,11 @@ X'\in\Q(\sqrt m)$, and if $m<0$, $X'=p+qi\sqrt{|m|}$ with $p,q\in\Q$ and $c=e+e'
 $\operatorname{Re}(cX')=ep-e'q\sqrt{|m|}\in\Q(\sqrt{|m|})$.  So $\eta$ is a sum of two elements of
 real quadratic subfields of $L$, which was excluded above.  For products, $\eta=cXY$ with $c\notin\Q$
 means that $\eta/c$ is a product of two numbers of degree at most $3$; writing $c^{-1}=e+e'i$ with
-$e'\ne0$, the element $\eta/c=e\eta+e'i\eta$ has nonzero coordinates on $i\sqrt2,i\sqrt3,i\sqrt6$ and,
-if $e\ne0$, on $\sqrt2,\sqrt3,\sqrt6$; in either case it generates $L'$ (from $i\sqrt2$ and $i\sqrt3$
-one obtains $\sqrt6$, $\sqrt3$ and $i$), so it has degree $8$, and Theorem~\ref{thm:two} with $n=8$,
+$e'\ne0$, the element $\eta/c=e\eta+e'i\eta$ has nonzero coordinates on $i\sqrt2,i\sqrt3,i\sqrt6$.
+An automorphism sending $(i,\sqrt2,\sqrt3)$ to $(\epsilon_0i,\epsilon_1\sqrt2,\epsilon_2\sqrt3)$
+can fix it only if $\epsilon_0\epsilon_1=\epsilon_0\epsilon_2=
+\epsilon_0\epsilon_1\epsilon_2=1$, which forces every $\epsilon_j=1$.  Thus its stabilizer in
+$\Gal(L'/\Q)$ is trivial and it has degree $8$.  Theorem~\ref{thm:two} with $n=8$,
 $d=3$ allows only $t=1$ and quadratic $E,F$, whose compositum has degree at most $4<8$.  If $c\in\Q$
 the rational case applies.
 \end{proof}
@@ -588,8 +606,15 @@ $E+iE$ consists of the two-term combinations $1\cdot e+i\cdot e'$.
 
 The Gaussian flat problem is therefore again exact linear algebra (the package option
 \code{"Coefficients" -> "GaussianRationals"} adjoins $i$ to the splitting field).  The lower bounds
-change: the prime $2$ becomes free, so only prime divisors $\ge3$ of $n$ bound $d$, and the exponent
-condition becomes $\exp(G')\mid2\lcm(1,\dots,d)$.  The binary Gaussian problem $a=cX+c'Y$ is, by
+change: adjoining Gaussian coefficients adds a factor $C_2$ to the product of normal-closure groups
+in Theorem~\ref{thm:bound}.  Consequently only prime divisors $\ge3$ of $n$ give the prime bound, while
+the sharper exponent condition is
+\[
+ \exp(G')\mid\lcm\bigl(2,\lcm(1,\dots,d)\bigr),
+\]
+when $L'$ is the splitting field of $a$ with $i$ adjoined.  Indeed this field is contained in the
+compositum of $\Q(i)$ with the normal closures of the components.  For $d\ge2$ the exponent bound
+is unchanged; Gaussian coefficients only waive its obstruction at $d=1$.  The binary Gaussian problem $a=cX+c'Y$ is, by
 contrast, not linear ($cE$ is a subspace for each fixed $c$, but their union over $c$ is not); the
 real-part argument above settles it for real targets in totally real multiquadratic fields, and the
 package answers the rational binary question through the option \code{"MaxTerms" -> 2}.
@@ -641,12 +666,18 @@ Bounds.  If \eqref{eq:two} holds then $a^t\in EF$, so $n\le t\dg(a^t)\le t[EF:\Q
 \le d^2/t$; and $t\le d$ since $t[E:\Q]\le d$.
 \end{proof}
 
+The sharper necessary inequality $n\le t[EF:\Q]$ is useful computationally.  If $E=L^H$ and $F=L^J$,
+then $EF=L^{H\cap J}$ and $[EF:\Q]=[G:H\cap J]$, so intersecting the two finite subgroups can reject
+a pair before any rational null-space calculation.  This improves the product-of-degrees bound when
+the fields overlap, including all nested pairs.
+
 \begin{corollary}\label{cor:two}
 $\Dtt(a)$ is computable: test $d=\max(\lceil\sqrt n\rceil,\text{lower bounds}),\dots,n-1$ in turn, for
 each $d$ the exponents $t$ and all pairs of subfields of $L$; the first success gives $\Dtt(a)$ and a
 decomposition, and if none succeeds then $\Dtt(a)=n$.  With $t=1$ and both fields inside a fixed number
 field $K$ (not necessarily Galois), the same test decides whether $a\in E^\times F^\times$, hence
-computes the two-factor minimum inside $K$; if $K$ is Galois, it computes $\Dtt(a)$.
+computes the two-factor minimum inside $K$.  If $K$ is Galois, testing \emph{all} the permitted
+exponents computes $\Dtt(a)$ globally; restricting to $t=1$ still only decides the problem inside $K$.
 \end{corollary}
 
 The condition $E\cap a^tF\ne\{0\}$ is rational linear algebra: with column bases $B_E,B_F$ and the
@@ -663,8 +694,8 @@ Let $a=\sqrt{(1+\sqrt2)(1+\sqrt3)}>0$, with minimal polynomial $x^8-4x^6-16x^4-8
 (it is \code{Root[\ldots,4]}).  Then $\Dt(a)=\Dtt(a)=4$, attained by
 $a=\sqrt{1+\sqrt2}\cdot\sqrt{1+\sqrt3}$ with quartic factors of minimal polynomials $x^4-2x^2-1$ and
 $x^4-2x^2-2$, and $\Dp(a)=8$.  Moreover no finite sum or product of elements of the splitting field
-$L$ of $a$ of degree less than $8$ equals $a$; the optimal factors lie outside $L$, and the criterion
-\eqref{eq:two} holds only with $t=2$.
+$L$ of $a$ of degree less than $8$ equals $a$; the optimal factors lie outside $L$, and at the optimal
+bound $d=4$ the criterion \eqref{eq:two} holds only with $t=2$.
 \end{theorem}
 
 \begin{proof}
@@ -718,8 +749,9 @@ attained e.g.\ by $(1+\sqrt2)(1+\sqrt3)\cdot(1+\sqrt5)$.
 
 \begin{example}\label{ex:w}
 $w=(1+\sqrt2)(1+\sqrt3)(1+\sqrt6)=7+4\sqrt2+3\sqrt3+2\sqrt6$ has degree $4$ and minimal polynomial
-$x^4-28x^3+128x^2-200x+100$.  $\Dt(w)=2$, but $\Dtt(w)=4$: in $L=\Q(\sqrt2,\sqrt3)$ with $d=3$ the
-exponent is $t=1$ (as in Theorem~\ref{thm:flat}), and for the three pairs of quadratic subfields the
+$x^4-28x^3+128x^2-200x+100$.  $\Dt(w)=2$, but $\Dtt(w)=4$: in $L=\Q(\sqrt2,\sqrt3)$ with $d=3$,
+the only permitted exponents are $t=1,2$.  The case $t=2$ forces $E=F=\Q$ and $w^2\in\Q$, which is
+false.  For $t=1$, the three pairs of quadratic subfields are excluded because the
 product $(x_0+x_1\sqrt m)(y_0+y_1\sqrt{m'})$ has rank-one coefficient matrix, while the matrices of
 $w$ are
 $\begin{psmallmatrix}7&3\\4&2\end{psmallmatrix}$,
@@ -769,13 +801,15 @@ does not arise ($t_1=t_2=T$, and $c$ is defined by division), which is why Theor
 complete.
 
 \begin{problem}
-Is $\Dt(a)$ computable?  Equivalently, given a Galois number field $L$, $a\in L^\times$ and $d$, decide
+Construct a terminating decision procedure for $\Dt(a)$.  Equivalently, given a Galois number field $L$, $a\in L^\times$ and $d$, decide
 whether $a$ lies in the subgroup of $\Qbar^\times$ generated by the multiplicative groups of all number
 fields of degree at most $d$.  Even the restricted question with all factors in $L$ and $t=1$ --- is
 $a\in\prod_{[E:\Q]\le d}E^\times$? --- is a question about multiplicative groups of number fields
-(units, class groups, $S$-units), not about vector spaces, and no finite criterion is known to us.  A
-positive semi-decision procedure exists (Section~\ref{sec:resultants}); what is missing is a
-terminating negative certificate.
+(units, class groups, $S$-units), not about vector spaces.  No complete criterion for either
+many-factor problem is established here, and this formulation is not a claim that their decidability
+is an established open problem in the literature.  A positive semi-decision procedure exists by
+enumerating the number of factors, degrees, coefficient heights and branches and checking the resulting
+identities exactly; the present methods do not supply a terminating negative certificate in general.
 \end{problem}
 
 \subsection{Arithmetic obstructions beyond Galois theory}
@@ -816,20 +850,35 @@ Applying Step 2 to $\theta'=\theta^m$ gives $\Nm(\theta^m)=(-8)^m<0$, a contradi
 product of numbers of degree $\le3$ equals $\theta$, and $\Dt(\theta)=4$.
 \end{proof}
 
+\begin{corollary}\label{cor:negative-norm}
+If $L$ is a totally real biquadratic field and $a\in L$ has $\Nm_{L/\Q}(a)<0$, then $\Dt(a)=4$.
+\end{corollary}
+
+\begin{proof}
+The same odd-power descent and sign argument excludes every product of numbers of degree at most
+$3$.  The one-factor representation gives the opposite bound, since $\dg(a)\le[L:\Q]=4$.
+\end{proof}
+
 Here the Galois group is $C_2\times C_2$: the prime bound and the exponent bound give $2$, yet
 $\Dt=4$.  Any complete multiplicative algorithm must see arithmetic (here the sign of a norm), which is
-what makes the open problem hard.
+why linear algebra alone cannot solve the general many-factor problem.
 
 \subsection{An exact criterion for linearly disjoint families}
 
 \begin{proposition}[rank-one tensor test, \cite{r9}]\label{prop:tensor}
-Let $K$ be a number field and $E_1,\dots,E_r\subseteq K$ subfields with $\prod_i[E_i:\Q]=[K:\Q]$ such
+Let $K$ be a number field, $a\in K^\times$, and $E_1,\dots,E_r\subseteq K$ subfields with $\prod_i[E_i:\Q]=[K:\Q]$ such
 that the products of basis elements span $K$ (equivalently, the multiplication map
 $E_1\otimes_\Q\cdots\otimes_\Q E_r\to K$ is an isomorphism).  Write $a=\sum c_{j_1\cdots j_r}
 e_{1,j_1}\cdots e_{r,j_r}$ in the product basis.  Then $a=u_1\cdots u_r$ with $u_i\in E_i$ if and only
 if the tensor $c$ has rank one, which is decided by the pivot test: for a nonzero entry $c_p$, $c$ has
-rank one iff $c_{j_1\cdots j_r}=c_p\prod_i c_{p(j_i\to i)}/c_p$ for all indices, where $p(j\to i)$ is $p$
-with its $i$th index replaced by $j$; the factors are then read off from the slices through $p$.
+rank one if and only if
+\[
+ c_{j_1\cdots j_r}=c_p\prod_{i=1}^r\frac{c_{p(i\leftarrow j_i)}}{c_p}
+ \qquad\text{for every }(j_1,\dots,j_r),
+\]
+where $p(i\leftarrow j)$ is $p$ with its $i$th index replaced by $j$.  The factors are then read off
+from the slices through $p$, absorbing the leading scalar $c_p$ into one factor.  For $a=0$ the
+decomposition is immediate and no nonzero pivot is needed.
 \end{proposition}
 
 \begin{proof}
@@ -862,12 +911,17 @@ records what each report contributed beyond that.  Every report states that its 
 executed (the evaluator they had access to returned HTTP~404); the Python/SymPy checks they ran verify
 the algebraic identities, not the packages.
 
-\begin{table}[htbp]
-\centering\small
-\begin{tabularx}{\textwidth}{@{}lX@{}}
+\begingroup\small
+\begin{longtable}{@{}p{30pt}p{\dimexpr\textwidth-42pt\relax}@{}}
+\caption{What the nine reports added to the common core.}\label{tab:reports}\\
 \toprule
 Report & Distinctive contributions and remarks\\
 \midrule
+\endfirsthead
+\toprule
+Report & Distinctive contributions and remarks (continued)\\
+\midrule
+\endhead
 \cite{r1} & Conjugate-subset criterion (Theorem~\ref{thm:subsets}) with the equivariant-projection
 proof; a degree-eight counterexample $\sqrt{1+\sqrt2}\sqrt{1+\sqrt7}$ with group of order $32$ (an
 extraspecial central product) and the same conclusions as Theorem~\ref{thm:external}; template
@@ -894,12 +948,11 @@ design (never executed).\\
 \cite{r8} & The nonmembership certificate (a separating functional $w^\top B_d=0$, $w^\top a\ne0$);
 the $\sqrt{2+\sqrt2}$ example; the necessary norm-descent condition (saturation of $B_d(L)$).\\
 \cite{r9} & Rank-one tensor test (Proposition~\ref{prop:tensor}); polynomial recovery certificates
-$A_\times,B_\times,A_+$; the sextic pair-product example $r_1r_2$ with $\Dt^{\Q(u)}=6>4=\Dt$; the
+$A_\times,B_\times,A_+$; the sextic pair-product example $r_1r_2$ with $\Dt^{\Q(r_1r_2)}=6>4=\Dt$; the
 example $\sqrt2+\sqrt3+\sqrt6$ as a three-term sum not reducible to two terms.\\
 \bottomrule
-\end{tabularx}
-\caption{What the nine reports added to the common core.}\label{tab:reports}
-\end{table}
+\end{longtable}
+\endgroup
 
 Points on which the reports are inconsistent with one another, or which the present work corrects:
 \begin{itemize}
@@ -966,36 +1019,58 @@ $0\le a_j<e_j$, form a $\Q$-basis of $L$ consisting of algebraic integers of sma
 $\sigma\in G$ acts on such a monomial by permuting the roots, so the values $\sigma(b)$ are known
 numerically for all $\sigma$ and all basis elements: an $N\times N$ matrix $\mathrm{Val}$.  The trace
 form $\Tr_{L/\Q}(b_jb_l)=\sum_\sigma\sigma(b_j)\sigma(b_l)$ is an integer matrix $\mathrm{Gram}=
-\mathrm{Val}^\top\mathrm{Val}$ (rounded rigorously), nondegenerate since $L/\Q$ is separable, and the
+\mathrm{Val}^\top\mathrm{Val}$ (with a transpose, not a conjugate transpose), nondegenerate since $L/\Q$ is separable, and the
 coordinates of any $y\in L$ given by its conjugate vector $(\sigma(y))_\sigma$ are
-$\mathrm{Gram}^{-1}(\Tr(yb_l))_l$, again from rounded integer traces.  This yields, by exact rational
+$\mathrm{Gram}^{-1}(\Tr(yb_l))_l$.  When $y$ is integral these traces are integers; for a rational
+combination of the integral basis elements, first clear its coordinate denominators, recover integer
+traces, then divide back.  A unique integer in each Arb ball certifies the recovery in Python; ordinary
+high-precision rounding in Wolfram has the qualification described below.  This yields, by rational
 linear algebra with integer inputs: the coordinates of all roots, the matrix $A_\sigma$ of every
 automorphism (conjugate vector of $\sigma(b_j)$ is $\tau\mapsto(\tau\sigma)(b_j)$, read from the
 multiplication table of $G$), multiplication matrices, fixed fields $L^H=\bigcap_{h\in H}
 \ker(A_h-I)$ for all subgroups (enumerated by closure from cyclic subgroups), and the linear systems of
 Theorems~\ref{thm:sum} and~\ref{thm:two}.  An element with coordinate vector $v$ is converted back to
-a \Root{} object by computing its distinct conjugates (the orbit of $v$ under the $A_\sigma$), the
-integer polynomial with those roots, and the index of the root nearest to its value.  A consistency
-check ($A_\sigma$ permutes the root coordinates as $\sigma$ does) guards the numerical steps, and every
-decomposition returned is verified with \code{RootReduce} and \code{MinimalPolynomial}.
+a \Root{} object by computing its distinct conjugates (the orbit of $v$ under the $A_\sigma$), forming
+their polynomial after clearing coordinate denominators, and identifying the intended branch.  In
+Python the branch must be the unique isolated root compatible with the element's enclosure;
+precision is increased when the match is ambiguous.  A consistency check ($A_\sigma$ permutes the
+root coordinates as $\sigma$ does) guards the numerical steps in Wolfram.  Its final identities and
+degrees are checked by \code{RootReduce} and \code{MinimalPolynomial}; Python also supplies an
+independent exact verifier using composed polynomials and certified branch isolation.
 
-\subsection{The fast path inside $\Q(a)$}
+\subsection{The fast path inside \texorpdfstring{$\Q(a)$}{Q(a)}}
 
 Independently of the Galois group, all subfields of $K=\Q(a)$ are obtained from the factorization
 $P=\prod g_i$ of the minimal polynomial over $K$ (\code{Factor[P, Extension -> Root[P,k]]}, $0.3$ s for
 the examples): each factor $g$ gives the principal subfield $V_g=\{h(\theta): g\mid h(x)-h(\theta)\}$,
 computed as a null space, and every subfield is an intersection of principal subfields
-\cite{SvH,r5,r9}.  In $K$ the additive criterion is complete for sums inside $K$, and the two-factor
-criterion with $t=1$ is complete for two factors inside $K$; if $K$ is Galois (all $g_i$ linear) both
-are globally complete.  The implementations try this path first and stop when it reaches a lower bound,
+\cite{SvH,r5,r9}.
+
+For completeness, the field property and the intersection assertion have a short explanation.  A
+polynomial $g\mid P$ imposes $h(\beta)=h(\theta)$ for its roots $\beta$, with $h$ taken modulo $P$;
+these equalities are preserved by addition, multiplication and inversion of a nonzero element, so
+$V_g$ is a subfield of $K$.  If $E\subseteq K$, the roots of the minimal polynomial of $\theta$ over
+$E$ are exactly the images of $\theta$ under embeddings of $K$ fixing $E$.  An element $h(\theta)$
+has the same value under all those embeddings if and only if it belongs to $E$, by separability.
+Factoring that minimal polynomial over $K$ therefore expresses $E$ as the intersection of the
+corresponding $V_{g_i}$.  Closing the principal-field list under intersections therefore gives all
+subfields, with an exact linear-algebra construction.
+
+In $K$ the additive criterion is complete for sums inside $K$, and the two-factor
+criterion with $t=1$ is complete for two factors inside $K$.  If $K$ is Galois (all $g_i$ linear),
+the additive search is globally complete and the product search becomes globally complete for two
+factors by allowing all the exponents of Theorem~\ref{thm:two}.  The option restricting components to
+$K$ must still enforce $t=1$, even for Galois $K$.  The implementations try this path first and stop when it reaches a lower bound,
 which is what happens for both examples in \eqref{eq:examples}: the answers \eqref{eq:answers} are found
 and certified in about a second, without constructing the splitting field.
 
 \subsection{Normalization of the output}
 
 Linear algebra returns arbitrary elements of the solution spaces.  Summands are trace-centred (the
-rational mean of the conjugates, $\Tr(y)/[L:\Q]$, is subtracted and collected into one rational term);
-this recovers the trace-zero cubics of \eqref{eq:answers}.  For products the null vector is taken from
+rational mean of the conjugates, $\Tr(y)/[L:\Q]$, is subtracted and collected into a rational offset);
+this recovers the trace-zero cubics of \eqref{eq:answers}.  If a term-count bound is requested, the
+offset is absorbed into one summand instead of adding a term; a rational translation does not change
+the field generated by that summand.  For products the null vector is taken from
 an LLL-reduced basis of the integer null space, the factor $u$ is rescaled by the $p$-adically minimal
 rational $q$ making $qu$ an algebraic integer (for each prime, the least exponent $e$ with
 $v_p(c_i)+(d-i)e\ge0$ for all coefficients $c_i$ of the monic minimal polynomial), followed by a small
@@ -1012,21 +1087,36 @@ RootGaloisData[a]                RootDecompositionLowerBound[a]
 RootBoundedDecomposition[a, Plus|Times, d, height, factors]
 RootDecompositionVerify[a, terms, Plus|Times]
 \end{lstlisting}
-Results are associations with \code{"Terms"}, \code{"Degrees"}, \code{"MaximumDegree"},
-\code{"LowerBound"}, \code{"Optimal"} (globally optimal, certified), \code{"ScopeOptimal"} (optimal
-within the class searched), \code{"TwoFactorOptimal"}, \code{"NormExponent"}, \code{"Verified"},
-\code{"Method"} and an inactive \code{"Expression"}.  Options: \code{"Scope" -> "InputField"} restricts
-components to $\Q(a)$; \code{"Engine" -> "SplittingField"} forces the Galois route;
-\code{"Coefficients" -> "GaussianRationals"} and \code{"MaxTerms"} implement Section~\ref{sec:binary};
+An association reports the components in \code{"Terms"}, their \code{"Degrees"} and
+\code{"MaximumDegree"}, and a \code{"LowerBound"}.  The certificate fields are \code{"Optimal"}
+(global optimality, with the qualifications below), \code{"ScopeOptimal"} (optimal within the
+requested class) and \code{"TwoFactorOptimal"}.  Further fields record the \code{"NormExponent"},
+\code{"Verified"} status, \code{"Method"} and an inactive \code{"Expression"}.
+
+\begin{sloppypar}
+To keep components inside $\Q(a)$, set \code{"Scope"} to \code{"InputField"}.
+Set \code{"Engine"} to \code{"SplittingField"} to force the Galois route.
+Setting \code{"Coefficients"} to \code{"GaussianRationals"} enables unrestricted Gaussian sums, while
+\code{"MaxTerms"} restricts the number of ordinary summands.  Combining Gaussian coefficients with
+a finite term cap is rejected because the unrestricted linear-space calculation does not solve that
+problem.  Likewise, an explicit degree cap must either be met or produce a failure, including when a
+trivial representation is returned.
 \code{"MaxFactors" -> 2} restricts to the complete two-factor algorithm; \code{"MaxGroupOrder"} and
-\code{"WorkingPrecision"} bound the Galois computation.  The Python module \code{rootdecomp.py} exposes
-\code{sum\_decomposition}, \code{product\_decomposition}, \code{galois\_data}, \code{lower\_bound} and
-\code{parse\_wolfram\_root}, with the same semantics and root numbering.
+\code{"WorkingPrecision"} bound the Galois computation.
+\end{sloppypar}
+
+Python's two search functions are \code{sum\_decomposition} and
+\code{product\_decomposition}, both in \code{rootdecomp.py}.  The module also exposes
+\code{galois\_data} and \code{lower\_bound}, the verifier \code{verify\_exact}, and the input parser
+\code{parse\_wolfram\_root}.  The ordinary decomposition scopes have the same
+meaning; Gaussian coefficients are a Wolfram-only feature, and the root-index portability
+qualification in the conventions applies to non-real branches.
 
 \subsection{Measurements}
 
-Table~\ref{tab:timing} lists wall-clock times on the development machine (Wolfram 15.0.1, Python 3.14
-with python-flint 0.8).  The Galois route of the Python port is faster than the Wolfram kernel because
+Table~\ref{tab:timing} records the original development measurements (Wolfram 15.0.1, Python 3.14
+with python-flint 0.8).  These historical timings are not fresh measurements of the revised code.
+In that run the Galois route of the Python port was faster than the Wolfram kernel because
 exact factorization of the resolvents in FLINT is cheaper than \code{RootReduce} of the partial primitive
 elements, and its rational linear algebra runs in FLINT rather than in the interpreter.  The fast path
 in $\Q(a)$ is the best choice for both examples.
@@ -1047,19 +1137,34 @@ Product search for $\alpha_+$ (two-factor, tensor families, recursion) & 30 s & 
 \code{ToNumberField[roots, All]} for the degree-9 examples & 14 min & --\\
 \bottomrule
 \end{tabular}
-\caption{Wall-clock times (Wolfram 15.0.1; Python 3.14 with python-flint 0.8 and SymPy 1.14).  The regression suites (39 Wolfram tests, 18 Python checks) pass.}\label{tab:timing}
+\caption{Historical wall-clock times (Wolfram 15.0.1; Python 3.14 with python-flint 0.8 and SymPy 1.14).
+Current validation and benchmark results are recorded separately in the project documentation.}\label{tab:timing}
 \end{table}
 
 \subsection{Limits and scope of the certificates}
 
-The complete algorithms need the Galois group; the resolvent method is practical for groups of order
+The implementations of the complete field-based searches need certified field data; the resolvent method is practical for groups of order
 up to a few hundred (the resolvent at level $k$ has degree up to $n\,|G|$).  For larger groups the fast
 path still returns decompositions inside $\Q(a)$ and the bounded search still finds small-height
-factors, but global negative statements are unavailable unless a lower bound is attained.  The Python
-Galois computation is rigorous (ball arithmetic and exact factorization); the Wolfram one relies on
-exact minimal polynomials, numerical root matching with generous margins, and the group-closure and
-automorphism-consistency checks, and every positive answer is verified exactly.  A returned
-\code{"Optimal" -> False} means \emph{not certified}, not \emph{suboptimal}.
+factors, but an unsuccessful bounded search gives no global negative statement.
+
+Three distinct assertions need separate evidence: an identity holds for the selected branches; the
+reported component degrees are correct; and no better representation exists in the stated scope.
+The Python Galois construction uses ball arithmetic and exact factorization, and rational linear
+algebra is then exact.  Its independent \code{verify\_exact} reconstructs the sum or product by exact
+polynomial arithmetic with certified root selection; \code{verify\_numeric} is only an enclosure
+compatibility diagnostic.  Polynomial divisibility without branch selection, or overlapping
+numerical balls alone, would not prove a particular identity.
+
+The Wolfram splitting-field route relies on exact minimal polynomials, numerical root matching with
+generous margins, and group-closure and automorphism-consistency checks.  These are useful checks but
+do not replace a proof of every numerical reconstruction step.  An exactly verified identity attaining
+the independent degree or Frobenius lower bound certifies global optimality without that reconstruction.
+An optimality flag relying on exhaustive Wolfram splitting-field enumeration instead is conditional
+on the reconstructed group and field data.  Exact verification of the returned identity alone does not
+remove this qualification.  A returned \code{"Optimal" -> False} means \emph{not established}, not
+\emph{suboptimal}; \code{"TwoFactorOptimal"} concerns the two-factor problem, and a request limiting
+the number of terms concerns that restricted class rather than the unrestricted minimum.
 
 \section{Conclusion}
 
@@ -1067,7 +1172,7 @@ The additive problem is completely solved by a finite algorithm, and the two-fac
 problem likewise; the key steps are trace descent to the splitting field and norm descent with an
 explicit radical exponent, both of which reduce to rational linear algebra on fixed fields.  The
 arbitrary-length multiplicative problem is different in kind: its answer depends on arithmetic
-invisible to the Galois group, and its decidability is open.  For the two numbers of the question the
+invisible to the Galois group, and the present algorithms do not decide it in general.  For the two numbers of the question the
 answer is unambiguous --- the cubic decompositions \eqref{eq:answers} are globally optimal --- and the
 same machinery shows that the product root needs sextic summands, that optimal factors can live outside
 the splitting field, and that flat sums of three quadratic numbers can be inaccessible to any binary
@@ -1077,6 +1182,9 @@ splitting, even with Gaussian coefficients.
 \bibitem{question} V. Reshetnikov, \emph{Factor a polynomial Root into Roots of smallest possible
   degree}, Mathematica Stack Exchange, question 105933 (2016), with an answer by yarchik (2019).
   \url{https://mathematica.stackexchange.com/q/105933/7288}.
+\bibitem{WolframRoot} Wolfram Research, \emph{Root}, Wolfram Language documentation,
+  details on root indexing and the \code{ExactRootIsolation} option.
+  \url{https://reference.wolfram.com/language/ref/Root.html}.
 \bibitem{r1} Report 1, \emph{Decomposing Algebraic Numbers into Low-Degree Roots} (2026),
   \code{reports/report-01} in the repository.
 \bibitem{r2} Report 2, \emph{Decomposing Algebraic Numbers into Low-Degree Roots: Certified Mathematica

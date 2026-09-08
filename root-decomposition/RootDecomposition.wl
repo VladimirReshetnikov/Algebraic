@@ -83,6 +83,15 @@ rationalQ[q_] := IntegerQ[q] || Head[q] === Rational;
 failure[tag_String, msg_String, extra_: <||>] :=
   Failure[tag, Join[<|"MessageTemplate" -> msg|>, extra]];
 
+positiveIntegerQ[v_] := IntegerQ[v] && v > 0;
+componentLimitQ[v_] := v === Infinity || positiveIntegerQ[v];
+degreeLimitQ[v_] := v === Automatic || positiveIntegerQ[v];
+engineOptionsQ[scope_, engine_, prec_, order_, tries_] :=
+  MemberQ[{"Global", "InputField"}, scope] && MemberQ[{Automatic, "InputField", "SplittingField"}, engine] &&
+  IntegerQ[prec] && prec >= 30 && positiveIntegerQ[order] && positiveIntegerQ[tries];
+degreeFailure[d_, lb_] := failure["DegreeBound", "The requested maximum degree is below a proved lower bound",
+  <|"MaximumDegree" -> d, "LowerBound" -> lb|>];
+
 exactZeroQ[e_] := TrueQ[Quiet[RootReduce[e]] === 0];
 
 rootObject[poly_, k_Integer] := Root[Function @@ {poly /. x -> Slot[1]}, k];
@@ -105,7 +114,10 @@ rootIndexOf[a_, poly_] := Module[{n = Exponent[poly, x], vals, av, k},
   av = N[a, 40];
   vals = Table[N[rootObject[poly, j], 40], {j, n}];
   k = First[Ordering[Abs[vals - av], 1]];
-  If[exactZeroQ[a - rootObject[poly, k]], k, $Failed]];
+  If[exactZeroQ[a - rootObject[poly, k]], Return[k]];
+  (* Fixed-precision nearest-root matching may tie for very close roots.
+     Exact equality remains decisive, so numerical ambiguity is not an input error. *)
+  SelectFirst[DeleteCases[Range[n], k], exactZeroQ[a - rootObject[poly, #]] &, $Failed]];
 
 (* ------------------------------------------------------------------ *)
 (* Input normalization                                                *)
@@ -132,9 +144,10 @@ largestPrimeFactor[n_Integer] := Max[First /@ FactorInteger[n]];
 exponentBound[1] = 1;
 exponentBound[e_Integer] := Max[Power @@@ FactorInteger[e]];
 
-(* variants valid when Gaussian rational coefficients are allowed: the prime 2 is free *)
+(* Gaussian coefficients contribute a C2 factor.  For d >= 2 this does not
+   enlarge lcm(1,...,d); only the d = 1 exponent bound changes. *)
 gaussianPrimeBound[n_Integer] := Max[1, Max[Select[First /@ FactorInteger[n], # > 2 &] /. {} -> {1}]];
-gaussianExponentBound[e_Integer] := Max[1, Max[(If[#[[1]] == 2, 2^(#[[2]] - 1), #[[1]]^#[[2]]] & /@ FactorInteger[e]) /. {} -> {1}]];
+gaussianExponentBound[e_Integer] := If[MemberQ[{1, 2}, e], 1, exponentBound[e]];
 
 frobeniusExponentMultiple[poly_, maxPrimes_: 40] := Module[{disc, lc, ps, orders = {}, q, fl},
   lc = Coefficient[poly, x, Exponent[poly, x]];
@@ -188,7 +201,7 @@ galoisGroupNumerically[roots_List, nums_List, prec_, maxOrder_, maxTries_] :=
     Do[
       ok = False; used = {};
       Do[
-        w = RandomChoice[Complement[Range[1, 60], used]];
+        w = RandomChoice[Complement[Range[1, Max[60, maxTries]], used]];
         AppendTo[used, w];
         newTheta = RootReduce[thetaExact + w roots[[k]]];
         m = minimalPolynomialOf[newTheta];
@@ -298,12 +311,19 @@ RootGaloisData[a_, opts : OptionsPattern[]] := Module[{in},
   RootGaloisData[in["Polynomial"], x, opts]];
 
 RootGaloisData[poly0_, var_Symbol, OptionsPattern[]] := Module[{poly, c, n, res, mon, key},
+  If[! PolynomialQ[poly0, var] || ! FreeQ[poly0, _Real] ||
+      ! And @@ (rationalQ /@ CoefficientList[poly0, var]) || Exponent[poly0, var] < 1,
+    Return[failure["InvalidPolynomial", "Expected a nonconstant polynomial with exact rational coefficients"]]];
+  If[! engineOptionsQ["Global", Automatic, OptionValue["WorkingPrecision"], OptionValue["MaxGroupOrder"], OptionValue["MaxTries"]] ||
+      ! MemberQ[{True, False}, OptionValue["Cache"]], Return[failure["InvalidOptions", "Invalid Galois computation options"]]];
   poly = primitiveIntegerPolynomial[poly0 /. var -> x];
   n = Exponent[poly, x];
   c = Coefficient[poly, x, n];
   mon = Expand[c^(n - 1) (poly /. x -> x/c)];
   If[! SquareFreeQ[mon], Return[failure["NotSquareFree", "The polynomial is not squarefree"]]];
-  key = {mon, OptionValue["WorkingPrecision"]};
+  (* Scale and OriginalPolynomial belong to the input, not just its integral model.
+     Include resource limits so a cached large group cannot bypass a smaller cap. *)
+  key = {poly, OptionValue["WorkingPrecision"], OptionValue["MaxGroupOrder"], OptionValue["MaxTries"]};
   If[OptionValue["Cache"] && KeyExistsQ[$galoisCache, key], Return[$galoisCache[key]]];
   res = buildGaloisData[mon, OptionValue["WorkingPrecision"], OptionValue["MaxGroupOrder"], OptionValue["MaxTries"]];
   If[FailureQ[res], Return[res]];
@@ -354,8 +374,8 @@ elementToAlgebraic[gd_, v_] := Module[{d, den, prec, vals, distinct, poly, cl, k
   poly = Expand[Times @@ (x - distinct)];
   cl = roundInteger /@ CoefficientList[poly, x];
   poly = primitiveIntegerPolynomial[FromDigits[Reverse[cl], x] /. x -> den x];
-  cands = Table[N[rootObject[poly, j], 40], {j, d}];
-  k = First[Ordering[Abs[cands - N[vals[[id]]/den, 40]], 1]];
+  cands = Table[N[rootObject[poly, j], prec], {j, d}];
+  k = First[Ordering[Abs[cands - vals[[id]]/den], 1]];
   RootReduce[rootObject[poly, k]]];
 
 (* ------------------------------------------------------------------ *)
@@ -389,7 +409,7 @@ inputFieldData[poly_] := Module[{n, c, P, Pz, theta, fac, factors, principal, su
   c = Coefficient[poly, x, n];
   P = Expand[c^(n - 1) (poly /. x -> x/c)];
   Pz = P /. x -> z;
-  key = {"InputField", P};
+  key = {"InputField", poly};
   If[KeyExistsQ[$galoisCache, key], Return[$galoisCache[key]]];
   theta = rootObject[P, 1];
   fac = Select[FactorList[P, Extension -> theta], Exponent[#[[1]], x] > 0 &][[All, 1]];
@@ -447,14 +467,15 @@ attachTarget[fd_, a_] := Module[{P = fd["Polynomial"], c = fd["Scale"], n = fd["
 termDegrees[terms_] := algebraicDegree /@ terms;
 
 RootDecompositionVerify[a_, terms_List, op : (Plus | Times)] := Module[{degs, ok},
-  ok = exactZeroQ[a - (op @@ terms)];
   degs = termDegrees[terms];
-  <|"Verified" -> ok, "Degrees" -> degs, "MaximumDegree" -> Max[degs]|>];
+  ok = FreeQ[{a, terms}, _Real] && And @@ (positiveIntegerQ /@ degs) && exactZeroQ[a - (op @@ terms)];
+  <|"Verified" -> ok, "Degrees" -> degs, "MaximumDegree" -> Max[Prepend[degs, 1]]|>];
 
 makeResult[a_, op_, terms_, lb_, scope_, method_, optimal_, scopeOptimal_, extra_: <||>] := Module[{v, degs},
   v = RootDecompositionVerify[a, terms, op];
   degs = v["Degrees"];
-  If[! v["Verified"], Message[RootDecomposition::verify]];
+  If[! TrueQ[v["Verified"]], Message[RootDecomposition::verify];
+    Return[failure["Verification", "A candidate failed exact verification"]]];
   Join[<|"Terms" -> terms, "Degrees" -> degs, "MaximumDegree" -> Max[degs], "LowerBound" -> lb,
     "Optimal" -> optimal, "ScopeOptimal" -> scopeOptimal, "Scope" -> scope, "Verified" -> v["Verified"],
     "Expression" -> Inactive[op] @@ terms, "Method" -> method|>, extra]];
@@ -510,12 +531,27 @@ RootSumDecomposition[a_, opts : OptionsPattern[]] := RootSumDecomposition[a, Aut
 
 RootSumDecomposition[a_, dmax_, OptionsPattern[]] := Module[
   {in, n, lb, scope = OptionValue["Scope"], coeffs = OptionValue["Coefficients"], trivial, prec, res, attempt = 0, gaussian},
+  If[! degreeLimitQ[dmax] || ! componentLimitQ[OptionValue["MaxTerms"]] ||
+      ! MemberQ[{"Rationals", "GaussianRationals"}, coeffs] ||
+      ! engineOptionsQ[scope, OptionValue["Engine"], OptionValue["WorkingPrecision"], OptionValue["MaxGroupOrder"], OptionValue["MaxTries"]],
+    Return[failure["InvalidOptions", "Invalid additive decomposition options"]]];
+  If[coeffs === "GaussianRationals" && OptionValue["MaxTerms"] =!= Infinity,
+    Return[failure["UnsupportedOptions", "Finite MaxTerms with Gaussian coefficients requires a rank-constrained search and is not implemented"]]];
   in = inputData[a];
   If[FailureQ[in], Return[in]];
   n = in["Degree"];
   gaussian = coeffs === "GaussianRationals";
   lb = If[n == 1, 1, If[gaussian, gaussianPrimeBound[n], lowerBoundFromPolynomial[in["Polynomial"]]]];
-  trivial := makeResult[a, Plus, {RootReduce[a]}, lb, scope, "Trivial", lb == n, lb == n];
+  If[dmax =!= Automatic && dmax < lb, Return[degreeFailure[dmax, lb]]];
+  trivial := If[gaussian,
+    <|"Terms" -> {{1, RootReduce[a]}}, "Degrees" -> {n}, "MaximumDegree" -> n, "LowerBound" -> lb,
+      "Optimal" -> (lb == n), "ScopeOptimal" -> (lb == n), "Scope" -> scope, "Verified" -> True,
+      "Expression" -> Inactive[Plus][RootReduce[a]], "Method" -> "Trivial", "Coefficients" -> "GaussianRationals"|>,
+    makeResult[a, Plus, {RootReduce[a]}, lb, scope, "Trivial", lb == n, lb == n]];
+  If[OptionValue["MaxTerms"] === 1,
+    Return[If[dmax === Automatic || n <= dmax,
+      makeResult[a, Plus, {RootReduce[a]}, lb, scope, "SingleTerm", lb == n, True],
+      failure["NotFound", "The input itself exceeds the degree bound for a single term"]]]];
   If[n == 1, Return[trivial]];
   If[dmax =!= Automatic && dmax >= n, Return[trivial]];
   If[lb == n, Return[trivial]];
@@ -552,10 +588,11 @@ sumDecompositionCore[a_, in_, dmax_, lb0_, scope_, gaussian_, maxTerms_, prec_, 
     stab = If[scope === "InputField", stabilizerOf[gd, target], None];
     lb = Max[lb, If[gaussian, gaussianExponentBound[gd["Exponent"]], exponentBound[gd["Exponent"]]]];
     If[gaussian,
-      iCoord = gd["RootCoordinates"][[First[FirstPosition[gd["Roots"], _?(exactZeroQ[# - I] &)]]]];
+      iCoord = gd["RootCoordinates"][[First[FirstPosition[gd["Roots"], _?(exactZeroQ[# - c I] &)]]]]/c;
       iMult = multiplicationMatrix[gd, conjugates[gd, iCoord]];
-      Return[gaussianSumSearch[gd, a, va, iMult, n, lb, dmax, scope, maxTerms]]];
+      Return[gaussianSumSearch[gd, a, va, iMult, n, lb, dmax, scope, maxTerms, stab]]];
     If[lb >= n,
+      If[dmax =!= Automatic && dmax < n, Return[degreeFailure[dmax, lb]]];
       Return[makeResult[a, Plus, {RootReduce[a]}, lb, scope, "CompleteSearch", True, True, <|"GroupOrder" -> gd["Order"]|>]]];
     sumSearch[gd, a, va, stab, n, lb, dmax, scope, maxTerms,
       If[scope === "Global", "SplittingFieldFixedSpaces", "InputFieldSubfields"], scope === "Global"]]];
@@ -575,24 +612,28 @@ sumSearch[fd_, a_, va_, stab_, n_, lb_, dmax_, scope_, maxTerms_, method_, compl
             term = e[[2]] - mean UnitVector[Length[va], 1];
             If[term != 0 term, AppendTo[terms, term]], {e, rep}];
           terms = toExact[fd, #] & /@ terms;
-          If[rational != 0, AppendTo[terms, rational]];
+          (* Centering must not add a component beyond a finite MaxTerms cap. *)
+          If[rational != 0,
+            If[maxTerms =!= Infinity && Length[terms] >= maxTerms,
+              terms[[1]] = RootReduce[terms[[1]] + rational], AppendTo[terms, rational]]];
           If[terms === {}, terms = {0}];
           Throw[makeResult[a, Plus, terms, lb, scope, method,
-            (dmax === Automatic) && (completeQ || Max[termDegrees[terms]] == lb),
-            dmax === Automatic, extra], foundTag]]],
+            Max[termDegrees[terms]] == lb || ((dmax === Automatic) && completeQ && maxTerms === Infinity),
+            (dmax === Automatic && (completeQ || scope === "InputField")) || Max[termDegrees[terms]] == lb, extra], foundTag]]],
       {d, dlist}];
     $Failed, foundTag];
   If[res =!= $Failed, Return[res]];
   If[dmax === Automatic,
-    makeResult[a, Plus, {RootReduce[a]}, lb, scope, "CompleteSearch", completeQ, True, extra],
+    makeResult[a, Plus, {RootReduce[a]}, lb, scope, "CompleteSearch", (completeQ && maxTerms === Infinity) || n == lb,
+      completeQ || scope === "InputField" || n == lb, extra],
     failure["NotFound", "No representation with the requested maximum degree", Join[<|"MaximumDegree" -> dmax, "Scope" -> scope|>, extra]]]];
 
-gaussianSumSearch[gd_, a_, va_, iMult_, n_, lb_, dmax_, scope_, maxTerms_] := Module[{dlist, res},
+gaussianSumSearch[gd_, a_, va_, iMult_, n_, lb_, dmax_, scope_, maxTerms_, stab_] := Module[{dlist, res},
   dlist = If[dmax === Automatic, Range[lb, n - 1], {dmax}];
   res = Catch[
     Do[
       Module[{cf, spaces, rep},
-        cf = candidateFields[gd, d, None];
+        cf = candidateFields[gd, d, stab];
         spaces = Table[<|"Index" -> H["Index"], "Field" -> H["FixedField"],
           "Basis" -> rowSpaceBasis[Join[H["FixedField"], Map[iMult . # &, H["FixedField"]]]]|>, {H, cf}];
         rep = findSumRepresentation[spaces, va, maxTerms];
@@ -601,13 +642,13 @@ gaussianSumSearch[gd_, a_, va_, iMult_, n_, lb_, dmax_, scope_, maxTerms_] := Mo
     $Failed, foundTag];
   If[res =!= $Failed, Return[res]];
   If[dmax === Automatic,
-    <|"Terms" -> {{1, RootReduce[a]}}, "Degrees" -> {n}, "MaximumDegree" -> n, "LowerBound" -> lb, "Optimal" -> True,
+    <|"Terms" -> {{1, RootReduce[a]}}, "Degrees" -> {n}, "MaximumDegree" -> n, "LowerBound" -> lb, "Optimal" -> (scope === "Global" || n == lb),
       "ScopeOptimal" -> True, "Scope" -> scope, "Verified" -> True, "Expression" -> Inactive[Plus][RootReduce[a]],
       "Method" -> "CompleteSearch", "Coefficients" -> "GaussianRationals", "GroupOrder" -> gd["Order"]|>,
     failure["NotFound", "No representation with the requested maximum degree", <|"MaximumDegree" -> dmax, "Scope" -> scope|>]]];
 
 (* Gaussian mode: each contribution e in E + iE is split as u + i w with u, w in E. *)
-gaussianResult[gd_, a_, rep_, iMult_, lb_, scope_, automatic_] := Module[{terms = {}, Bf, sol, u, w, degs},
+gaussianResult[gd_, a_, rep_, iMult_, lb_, scope_, automatic_] := Module[{terms = {}, Bf, sol, u, w, degs, pivot, verified},
   Do[
     Bf = e[[1]]["Field"];
     sol = Quiet[Check[LinearSolve[Transpose[Join[Bf, Map[iMult . # &, Bf]]], e[[2]]], $Failed]];
@@ -616,14 +657,18 @@ gaussianResult[gd_, a_, rep_, iMult_, lb_, scope_, automatic_] := Module[{terms 
     Which[
       w == 0 w, AppendTo[terms, {1, u}],
       u == 0 u, AppendTo[terms, {I, w}],
-      MatrixRank[{u, w}] == 1, AppendTo[terms, {1 + I First[Select[w/u, NumericQ]], u}],
+      MatrixRank[{u, w}] == 1, pivot = First[FirstPosition[u, _?(# != 0 &)]];
+        AppendTo[terms, {1 + I w[[pivot]]/u[[pivot]], u}],
       True, AppendTo[terms, {1, u}]; AppendTo[terms, {I, w}]],
     {e, rep}];
   terms = Map[{#[[1]], elementToAlgebraic[gd, #[[2]]]} &, terms];
+  If[terms === {}, terms = {{1, 0}}];
   degs = algebraicDegree[#[[2]]] & /@ terms;
+  verified = exactZeroQ[a - Total[Times @@@ terms]];
+  If[! verified, Return[failure["Verification", "A Gaussian candidate failed exact verification"]]];
   <|"Terms" -> terms, "Degrees" -> degs, "MaximumDegree" -> Max[degs], "LowerBound" -> lb,
-    "Optimal" -> automatic, "ScopeOptimal" -> automatic, "Scope" -> scope,
-    "Verified" -> exactZeroQ[a - Total[Times @@@ terms]],
+    "Optimal" -> (Max[degs] == lb || (automatic && scope === "Global")), "ScopeOptimal" -> (automatic || Max[degs] == lb), "Scope" -> scope,
+    "Verified" -> verified,
     "Expression" -> Inactive[Plus] @@ (Times @@@ terms), "Method" -> "GaussianFixedSpaces",
     "Coefficients" -> "GaussianRationals", "GroupOrder" -> gd["Order"]|>];
 
@@ -669,8 +714,8 @@ niceScale[u_] := Module[{f, d, best = 1, h, hb = {Infinity, 0, 0}, g, q0},
 
 principalRoot[u_, t_Integer] := If[t == 1, u, RootReduce[Power[u, 1/t]]];
 
-twoFactorSearch[fd_, va_, a_, n_, d_, stab_] := Module[{tmax, subs, pairs, mt, ma},
-  tmax = If[stab === None && (fd["Type"] === "Galois" || fd["Galois"]), Min[d, Floor[d^2/n]], 1];
+twoFactorSearch[fd_, va_, a_, n_, d_, stab_, scope_] := Module[{tmax, subs, pairs, mt, ma},
+  tmax = If[scope === "Global" && stab === None && (fd["Type"] === "Galois" || fd["Galois"]), Min[d, Floor[d^2/n]], 1];
   ma = multMatrix[fd, va];
   Catch[
     Do[
@@ -679,7 +724,9 @@ twoFactorSearch[fd_, va_, a_, n_, d_, stab_] := Module[{tmax, subs, pairs, mt, m
       If[subs === {}, Continue[]];
       mt = MatrixPower[ma, t];
       pairs = Select[Join @@ Table[{subs[[i]], subs[[j]]}, {i, Length[subs]}, {j, i, Length[subs]}],
-        n <= t #[[1]]["Index"] #[[2]]["Index"] &];
+        n <= t If[fd["Type"] === "Galois",
+          fd["Order"]/Length[Intersection[#[[1]]["Elements"], #[[2]]["Elements"]]],
+          #[[1]]["Index"] #[[2]]["Index"]] &];
       pairs = SortBy[pairs, {Max[#[[1]]["Index"], #[[2]]["Index"]], #[[1]]["Index"] + #[[2]]["Index"]} &];
       Do[
         With[{res = tryPair[fd, pr, mt, t, a, d]}, If[res =!= $Failed, Throw[res, foundTag]]],
@@ -718,11 +765,11 @@ familiesWithProduct[subs_, target_, minSize_] := Module[{rec},
 
 $multCache = <||>;
 
-tensorSearch[gd_, va_, d_, stab_] := Module[{subs, ord = gd["Order"], fams, count = 0},
+tensorSearch[gd_, va_, d_, stab_, maxFactors_] := Module[{subs, ord = gd["Order"], fams, count = 0},
   subs = Select[gd["Subgroups"], 1 < #["Index"] <= d &];
   If[stab =!= None, subs = Select[subs, SubsetQ[#["Elements"], stab] &]];
   subs = SortBy[subs, #["Index"] &];
-  fams = familiesWithProduct[subs, ord, 3];
+  fams = Select[familiesWithProduct[subs, ord, 3], Length[#] <= maxFactors &];
   $multCache = <||>;
   Catch[
     Do[count++; If[count > 5000, Throw[$Failed, foundTag]];
@@ -748,7 +795,7 @@ tensorTest[gd_, fam_, va_] := Module[{bases, prodBasis, mats, coords, dims, tens
   elems];
 
 (* merge rational factors and rescale each factor to a small representative *)
-cleanProductTerms[terms_] := Module[{rat, rest, q},
+cleanProductTerms[terms_, maxFactors_: Infinity] := Module[{rat, rest, q},
   rat = Times @@ Select[terms, rationalQ];
   rest = Select[terms, ! rationalQ[#] &];
   If[rest === {}, Return[{rat}]];
@@ -756,20 +803,33 @@ cleanProductTerms[terms_] := Module[{rat, rest, q},
   rest[[1]] = RootReduce[rat rest[[1]]];
   q = niceScale[rest[[1]]];
   rest[[1]] = RootReduce[q rest[[1]]];
-  If[q != 1, AppendTo[rest, 1/q]];
+  If[q != 1,
+    If[Length[rest] >= maxFactors, rest[[-1]] = RootReduce[rest[[-1]]/q], AppendTo[rest, 1/q]]];
   rest];
 
 RootProductDecomposition[a_, opts : OptionsPattern[]] := RootProductDecomposition[a, Automatic, opts];
 
 RootProductDecomposition[a_, dmax_, OptionsPattern[]] := Module[
-  {in, n, lb, scope = OptionValue["Scope"], trivial, prec, res, attempt = 0},
+  {in, n, lb, scope = OptionValue["Scope"], trivial, prec, res, attempt = 0, bd = OptionValue["BoundedSearch"]},
+  If[! degreeLimitQ[dmax] || ! componentLimitQ[OptionValue["MaxFactors"]] ||
+      ! IntegerQ[OptionValue["RecursionDepth"]] || OptionValue["RecursionDepth"] < 0 ||
+      ! MemberQ[{True, False}, OptionValue["TensorTest"]] ||
+      ! (bd === None || (MatchQ[bd, {_Integer, _Integer}] && And @@ (positiveIntegerQ /@ bd))) ||
+      ! engineOptionsQ[scope, OptionValue["Engine"], OptionValue["WorkingPrecision"], OptionValue["MaxGroupOrder"], OptionValue["MaxTries"]],
+    Return[failure["InvalidOptions", "Invalid multiplicative decomposition options"]]];
   in = inputData[a];
   If[FailureQ[in], Return[in]];
   n = in["Degree"];
   If[n == 1 && in["Value"] === 0,
     Return[makeResult[0, Times, {0}, 1, scope, "Trivial", True, True, <|"TwoFactorOptimal" -> True, "NormExponent" -> 1|>]]];
   lb = If[n == 1, 1, lowerBoundFromPolynomial[in["Polynomial"]]];
+  If[dmax =!= Automatic && dmax < lb, Return[degreeFailure[dmax, lb]]];
   trivial := makeResult[a, Times, {RootReduce[a]}, lb, scope, "Trivial", lb == n, lb == n, <|"TwoFactorOptimal" -> (lb == n), "NormExponent" -> 1|>];
+  If[OptionValue["MaxFactors"] === 1,
+    Return[If[dmax === Automatic || n <= dmax,
+      makeResult[a, Times, {RootReduce[a]}, lb, scope, "SingleFactor", lb == n, True,
+        <|"TwoFactorOptimal" -> (lb == n), "NormExponent" -> 1|>],
+      failure["NotFound", "The input itself exceeds the degree bound for a single factor"]]]];
   If[n == 1, Return[trivial]];
   If[dmax =!= Automatic && dmax >= n, Return[trivial]];
   If[lb == n, Return[trivial]];
@@ -777,13 +837,13 @@ RootProductDecomposition[a_, dmax_, OptionsPattern[]] := Module[
   While[True,
     attempt++;
     res = Catch[productDecompositionCore[a, in, dmax, lb, scope, OptionValue["MaxFactors"], OptionValue["RecursionDepth"],
-        OptionValue["TensorTest"], prec, OptionValue["MaxGroupOrder"], OptionValue["MaxTries"], OptionValue["Engine"]], precTag];
+        OptionValue["TensorTest"], prec, OptionValue["MaxGroupOrder"], OptionValue["MaxTries"], OptionValue["Engine"], bd], precTag];
     If[res === "precision",
       If[attempt >= 4, Return[failure["Precision", "Precision escalation failed"]]];
       Message[RootDecomposition::prec, prec]; prec = 2 prec; Continue[]];
     Return[res]]];
 
-productDecompositionCore[a_, in_, dmax_, lb0_, scope_, maxFactors_, depth_, tensorQ_, prec_, maxOrder_, maxTries_, engine_] := Module[
+productDecompositionCore[a_, in_, dmax_, lb0_, scope_, maxFactors_, depth_, tensorQ_, prec_, maxOrder_, maxTries_, engine_, bounded_] := Module[
   {n = in["Degree"], lb = lb0, gd, fd, res = $Failed},
   (* fast path inside K = Q(a) *)
   If[engine =!= "SplittingField",
@@ -791,7 +851,8 @@ productDecompositionCore[a_, in_, dmax_, lb0_, scope_, maxFactors_, depth_, tens
     If[! FailureQ[fd],
       fd = attachTarget[fd, a];
       If[fd =!= $Failed,
-        res = productSearch[fd, a, fd["TargetCoordinates"], None, n, lb, dmax, scope, maxFactors, depth, tensorQ, prec, maxOrder, engine, fd["Galois"]];
+        res = productSearch[fd, a, fd["TargetCoordinates"], None, n, lb, dmax, scope, maxFactors, depth, tensorQ, prec, maxOrder, maxTries, engine,
+          fd["Galois"] || scope === "InputField", bounded];
         If[fd["Galois"] || scope === "InputField" || engine === "InputField" || (! FailureQ[res] && res["MaximumDegree"] == lb),
           Return[res]]]]];
   gd = RootGaloisData[in["Polynomial"], x, "WorkingPrecision" -> prec, "MaxGroupOrder" -> maxOrder, "MaxTries" -> maxTries];
@@ -803,22 +864,26 @@ productDecompositionCore[a_, in_, dmax_, lb0_, scope_, maxFactors_, depth_, tens
     stab = If[scope === "InputField", stabilizerOf[gd, target], None];
     lb = Max[lb, exponentBound[gd["Exponent"]]];
     If[lb >= n,
+      If[dmax =!= Automatic && dmax < n, Return[degreeFailure[dmax, lb]]];
       Return[makeResult[a, Times, {RootReduce[a]}, lb, scope, "Trivial", True, True, <|"TwoFactorOptimal" -> True, "NormExponent" -> 1, "GroupOrder" -> gd["Order"]|>]]];
-    productSearch[gd, a, va, stab, n, lb, dmax, scope, maxFactors, depth, tensorQ, prec, maxOrder, engine, True]]];
+    productSearch[gd, a, va, stab, n, lb, dmax, scope, maxFactors, depth, tensorQ, prec, maxOrder, maxTries, engine, True, bounded]]];
 
-productSearch[fd_, a_, va_, stab_, n_, lb_, dmax_, scope_, maxFactors_, depth_, tensorQ_, prec_, maxOrder_, engine_, completeQ_] := Module[
-  {dlist, d, two, best, terms, degs, res, tens, sub, extra},
+productSearch[fd_, a_, va_, stab_, n_, lb_, dmax_, scope_, maxFactors_, depth_, tensorQ_, prec_, maxOrder_, maxTries_, engine_, completeQ_, bounded_] := Module[
+  {dlist, twoDegrees, d, two, best, terms, degs, res, tens, sub, extra, remaining, f, parts},
   extra = If[fd["Type"] === "InputField", <|"AmbientDegree" -> fd["Degree"], "AmbientGalois" -> fd["Galois"]|>, <|"GroupOrder" -> fd["Order"]|>];
-  dlist = If[dmax === Automatic, Range[Max[lb, Ceiling[Sqrt[n]]], n - 1], {dmax}];
+  dlist = If[dmax === Automatic, Range[lb, n - 1], {dmax}];
+  twoDegrees = Select[dlist, #^2 >= n &];
   (* 1. two-factor algorithm (norm-intersection criterion; complete when the ambient field is Galois) *)
   two = $Failed;
-  Do[two = twoFactorSearch[fd, va, a, n, d, stab]; If[two =!= $Failed, Break[]], {d, dlist}];
+  Do[two = twoFactorSearch[fd, va, a, n, d, stab, scope]; If[two =!= $Failed, Break[]], {d, twoDegrees}];
   If[two === $Failed && dmax === Automatic, two = <|"Terms" -> {RootReduce[a]}, "Exponent" -> 1, "FieldDegrees" -> {n}|>];
   best = If[two === $Failed, $Failed,
     makeResult[a, Times, two["Terms"], lb, scope,
       If[Length[two["Terms"]] == 1, "CompleteTwoFactorSearch", "NormIntersection"],
-      Max[termDegrees[two["Terms"]]] == lb, dmax === Automatic,
-      Join[<|"TwoFactorOptimal" -> (dmax === Automatic) && completeQ, "NormExponent" -> two["Exponent"]|>, extra]]];
+      Max[termDegrees[two["Terms"]]] == lb,
+      Max[termDegrees[two["Terms"]]] == lb || (maxFactors === 2 && dmax === Automatic && completeQ),
+      Join[<|"TwoFactorOptimal" -> (Max[termDegrees[two["Terms"]]] == lb || ((dmax === Automatic) && completeQ)),
+        "NormExponent" -> two["Exponent"]|>, extra]]];
   If[maxFactors === 2,
     Return[If[best === $Failed, failure["NotFound", "No two-factor representation with the requested maximum degree", <|"MaximumDegree" -> dmax|>], best]]];
   If[best =!= $Failed && best["MaximumDegree"] == lb, Return[best]];
@@ -826,35 +891,38 @@ productSearch[fd_, a_, va_, stab_, n_, lb_, dmax_, scope_, maxFactors_, depth_, 
   If[tensorQ,
     Do[
       If[best =!= $Failed && d >= best["MaximumDegree"], Break[]];
-      tens = tensorSearch[fd, va, d, stab];
+      tens = tensorSearch[fd, va, d, stab, maxFactors];
       If[tens =!= $Failed,
-        terms = cleanProductTerms[toExact[fd, #] & /@ tens];
-        res = makeResult[a, Times, terms, lb, scope, "TensorRankOne", Max[termDegrees[terms]] == lb, False,
+        terms = cleanProductTerms[toExact[fd, #] & /@ tens, maxFactors];
+        res = makeResult[a, Times, terms, lb, scope, "TensorRankOne", Max[termDegrees[terms]] == lb, Max[termDegrees[terms]] == lb,
           Join[<|"TwoFactorOptimal" -> False, "NormExponent" -> 1|>, extra]];
         If[res["Verified"] && (best === $Failed || res["MaximumDegree"] < best["MaximumDegree"]), best = res; Break[]]],
       {d, dlist}]];
   If[best =!= $Failed && best["MaximumDegree"] == lb, Return[best]];
   (* 3. recursive splitting of the factors *)
   If[best =!= $Failed && depth > 0 && Length[best["Terms"]] >= 2,
-    terms = Join @@ Table[
+    remaining = maxFactors; terms = {};
+    Do[
+      f = best["Terms"][[j]]; parts = {f};
       If[algebraicDegree[f] > lb,
         sub = RootProductDecomposition[f, "RecursionDepth" -> depth - 1, "WorkingPrecision" -> prec,
-                "MaxGroupOrder" -> maxOrder, "TensorTest" -> tensorQ, "Engine" -> engine];
-        If[! FailureQ[sub] && sub["Verified"], sub["Terms"], {f}],
-        {f}],
-      {f, best["Terms"]}];
+                "MaxGroupOrder" -> maxOrder, "MaxTries" -> maxTries, "TensorTest" -> tensorQ, "Engine" -> engine,
+                "Scope" -> scope, "BoundedSearch" -> bounded, "MaxFactors" -> remaining - Length[best["Terms"]] + j];
+        If[! FailureQ[sub] && sub["Verified"], parts = sub["Terms"]]];
+      remaining -= Length[parts]; terms = Join[terms, parts],
+      {j, Length[best["Terms"]]}];
     degs = termDegrees[terms];
     If[Max[degs] < best["MaximumDegree"],
-      best = makeResult[a, Times, terms, lb, scope, "RecursiveSplitting", Max[degs] == lb, False,
+      best = makeResult[a, Times, terms, lb, scope, "RecursiveSplitting", Max[degs] == lb, Max[degs] == lb,
         Join[<|"TwoFactorOptimal" -> False, "NormExponent" -> 1|>, extra]]]];
   (* 4. small bounded dictionary search (quadratic dictionary only; larger catalogs are enormous) *)
-  If[best =!= $Failed && best["MaximumDegree"] > lb && OptionValue[RootProductDecomposition, "BoundedSearch"] =!= None,
-    Module[{bd = OptionValue[RootProductDecomposition, "BoundedSearch"], dd},
+  If[scope === "Global" && bounded =!= None && (best === $Failed || best["MaximumDegree"] > lb),
+    Module[{bd = bounded, dd, upper = If[best === $Failed, dmax, best["MaximumDegree"] - 1]},
       Do[
-        res = RootBoundedDecomposition[a, Times, dd, bd[[1]], bd[[2]]];
-        If[! FailureQ[res] && res["Verified"] && res["MaximumDegree"] < best["MaximumDegree"],
+        res = RootBoundedDecomposition[a, Times, dd, bd[[1]], Min[bd[[2]], maxFactors]];
+        If[! FailureQ[res] && res["Verified"] && (best === $Failed || res["MaximumDegree"] < best["MaximumDegree"]),
           best = Join[res, <|"Scope" -> scope, "TwoFactorOptimal" -> False, "NormExponent" -> 1|>, extra]; Break[]],
-        {dd, lb, Min[2, best["MaximumDegree"] - 1]}]]];
+        {dd, lb, Min[2, upper]}]]];
   If[best === $Failed, failure["NotFound", "No representation with the requested maximum degree", <|"MaximumDegree" -> dmax|>], best]];
 
 (* ------------------------------------------------------------------ *)
@@ -869,12 +937,20 @@ RootDecompositionCatalog[d_Integer?Positive, h_Integer?Positive] := Module[{poly
   polys = FromDigits[Reverse[#], x] & /@ polys;
   DeleteDuplicates[Join @@ Table[RootReduce[rootObject[p, j]], {p, polys}, {j, Exponent[p, x]}]]];
 
+RootDecompositionCatalog[_, _] := failure["InvalidBounds", "Degree and height must be positive integers"];
+
 RootBoundedDecomposition[a_, op : (Plus | Times), d_Integer, h_Integer, r_Integer] := Module[
   {cat, n, lb, search, residual, in, res},
+  If[! And @@ (positiveIntegerQ /@ {d, h, r}), Return[failure["InvalidBounds", "Degree, height and component count must be positive integers"]]];
   in = inputData[a];
   If[FailureQ[in], Return[in]];
   n = in["Degree"]; lb = lowerBoundFromPolynomial[in["Polynomial"]];
-  If[n <= d, Return[makeResult[a, op, {RootReduce[a]}, lb, "Bounded", "Trivial", lb == n, True]]];
+  If[d < lb, Return[degreeFailure[d, lb]]];
+  If[n <= d, Return[makeResult[a, op, {RootReduce[a]}, lb, "Bounded", "Trivial", lb == n, lb == n || r == 1]]];
+  (* Degree of a compositum is at most the product of the factor degrees.
+     Reject impossible boxes before constructing an exponential-size catalog. *)
+  If[n > d^r, Return[failure["NotFoundWithinBounds", "The degree exceeds the product of the component degree bounds",
+    <|"Degree" -> d, "Height" -> h, "Components" -> r|>]]];
   cat = RootDecompositionCatalog[d, h];
   If[op === Times, cat = Select[cat, # =!= 0 &]];
   cat = Select[cat, algebraicDegree[#] > 1 &];
@@ -888,7 +964,9 @@ RootBoundedDecomposition[a_, op : (Plus | Times), d_Integer, h_Integer, r_Intege
   res = Catch[search[{}, 1, r]; $Failed, foundTag];
   If[res === $Failed,
     failure["NotFoundWithinBounds", "No decomposition found within the bounds", <|"Degree" -> d, "Height" -> h, "Components" -> r|>],
-    makeResult[a, op, res, lb, "Bounded", "DictionarySearch", Max[termDegrees[res]] == lb, False]]];
+    makeResult[a, op, res, lb, "Bounded", "DictionarySearch", Max[termDegrees[res]] == lb, Max[termDegrees[res]] == lb]]];
+
+RootBoundedDecomposition[_, _, _, _, _] := failure["InvalidBounds", "Expected Plus or Times and positive integer bounds"];
 
 End[];
 EndPackage[];

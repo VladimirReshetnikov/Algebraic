@@ -1,0 +1,2 @@
+# Pinned to the version used for the included verification report.
+sympy==1.14.0
