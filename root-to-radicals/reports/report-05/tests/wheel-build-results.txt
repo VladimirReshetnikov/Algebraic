@@ -1,0 +1,10 @@
+WARNING: The directory '/home/oai/.cache/pip' or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.
+Processing /mnt/data/RadicalSolve
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: radicalsolve-reference
+  Building wheel for radicalsolve-reference (pyproject.toml): started
+  Building wheel for radicalsolve-reference (pyproject.toml): finished with status 'done'
+  Created wheel for radicalsolve-reference: filename=radicalsolve_reference-0.1.0-py3-none-any.whl size=12559 sha256=2e392b2113c0cf7086b29a68de2f1fa47478fc48e1af4507c6d3b5c072db24e5
+  Stored in directory: /tmp/pip-ephem-wheel-cache-0deov5y9/wheels/e9/49/b5/52d99408fe128761b84ff33b9d4ffedaa6c1dcc78c6d210b4d
+Successfully built radicalsolve-reference

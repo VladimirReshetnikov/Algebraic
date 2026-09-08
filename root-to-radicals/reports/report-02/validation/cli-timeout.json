@@ -1,0 +1,4 @@
+{
+  "status": "resource_limit",
+  "message": "Whole-worker time limit exceeded; solvability is unknown"
+}

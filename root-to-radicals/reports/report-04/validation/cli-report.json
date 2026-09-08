@@ -1,0 +1,49 @@
+{
+  "tests": 8,
+  "passed": 8,
+  "source_sha256": "bc94b920eebba950fac0d68b0896ac0d372c9cc94250b9ad3f1ff35b0e724cea",
+  "results": [
+    {
+      "name": "CLI/quadratic-galois",
+      "passed": true,
+      "status": "Success",
+      "seconds": 5.016839
+    },
+    {
+      "name": "CLI/complex-rectangle",
+      "passed": true,
+      "status": "Success",
+      "seconds": 2.93498
+    },
+    {
+      "name": "CLI/nonsolvable",
+      "passed": true,
+      "status": "NotSolvableByRadicals",
+      "seconds": 2.322513
+    },
+    {
+      "name": "CLI/watchdog",
+      "passed": true,
+      "status": "ResourceLimit",
+      "seconds": 1.594826
+    },
+    {
+      "name": "CLI/invalid-index",
+      "passed": true,
+      "status": "InvalidInput",
+      "seconds": 2.32095
+    },
+    {
+      "name": "certificate/reject-wrong-final",
+      "passed": true
+    },
+    {
+      "name": "certificate/reject-wrong-phase",
+      "passed": true
+    },
+    {
+      "name": "separation/nearby-exact-roots",
+      "passed": true
+    }
+  ]
+}

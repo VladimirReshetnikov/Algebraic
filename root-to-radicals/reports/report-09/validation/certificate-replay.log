@@ -1,0 +1,6 @@
+binomial-quintic.json : verified in 0.183 seconds
+biquadratic.json : verified in 0.025 seconds
+cyclic-cubic.json : verified in 0.054 seconds
+nonabelian-cubic.json : verified in 0.155 seconds
+pure-cubic.json : verified in 0.032 seconds
+quadratic.json : verified in 0.005 seconds

@@ -1,0 +1,58 @@
+START sextic 0
+sextic 0 success replay True independent True seconds 0.4256734848022461
+START sextic 1
+sextic 1 success replay True independent True seconds 1.182117223739624
+START sextic 2
+sextic 2 success replay True independent True seconds 74.88765907287598
+START sextic 3
+sextic 3 success replay True independent True seconds 73.71295666694641
+START sextic 4
+sextic 4 success replay True independent True seconds 104.0156364440918
+START sextic 5
+sextic 5 success replay True independent True seconds 85.13782620429993
+START quintic 0
+quintic 0 success replay True independent True seconds 0.4062340259552002
+START quintic 1
+quintic 1 success replay True independent True seconds 0.43144679069519043
+START quintic 2
+quintic 2 success replay True independent True seconds 0.359605073928833
+START quintic 3
+quintic 3 success replay True independent True seconds 0.8151190280914307
+START quintic 4
+quintic 4 success replay True independent True seconds 0.23619818687438965
+START binomial 0
+binomial 0 success replay True independent True seconds 0.03633928298950195
+START binomial 1
+binomial 1 success replay True independent True seconds 4.315399408340454
+START binomial 2
+binomial 2 success replay True independent True seconds 4.461278438568115
+START binomial 3
+binomial 3 success replay True independent True seconds 4.7937092781066895
+START binomial 4
+binomial 4 success replay True independent True seconds 4.839548587799072
+START binomial 5
+binomial 5 success replay True independent True seconds 3.6039459705352783
+START binomial 6
+binomial 6 success replay True independent True seconds 5.598881483078003
+START cyclotomic11 0
+cyclotomic11 0 success replay True independent True seconds 11.620200157165527
+START cyclotomic11 9
+cyclotomic11 9 success replay True independent True seconds 12.009863376617432
+START D4 0
+D4 0 success replay True independent True seconds 54.981229066848755
+START D4 2
+D4 2 success replay True independent True seconds 53.790595293045044
+START D4 3
+D4 3 success replay True independent True seconds 55.0897376537323
+START cyclic3 0
+cyclic3 0 success replay True independent True seconds 1.7767093181610107
+START cyclic3 2
+cyclic3 2 success replay True independent True seconds 1.2671873569488525
+START cube 1
+cube 1 success replay True independent True seconds 3.1800177097320557
+START cube 2
+cube 2 success replay True independent True seconds 1.9109821319580078
+OBSTRUCTIONS
+x**5 - x - 1 {'modular_prime': 2, 'cycle_type': [2, 3], 'factor_coefficients_mod_prime': [[1, 1, 1], [1, 1, 0, 1]], 'reason': 'cycle type is impossible in an affine group of prime degree'}
+x**7 - x - 1 {'modular_prime': 3, 'cycle_type': [2, 5], 'factor_coefficients_mod_prime': [[1, 1, 2], [1, 2, 2, 0, 2, 1]], 'reason': 'cycle type is impossible in an affine group of prime degree'}
+x**7 - x**6 - 12*x**5 + 7*x**4 + 28*x**3 - 14*x**2 - 9*x - 1 None

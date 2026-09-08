@@ -1,0 +1,2 @@
+-sqrt(3) + sqrt(2)
+{'field_degree': 4, 'conductor': 2, 'relative_group_order': 4, 'quotient_primes': [2, 2], 'nodes': 6, 'phases': [{'level': 1, 'frequency': 1, 'prime': 2, 'phase': 0}, {'level': 2, 'frequency': 1, 'prime': 2, 'phase': 1}], 'verification': 'exact field arithmetic plus separation-bound embedding checks'}

@@ -1,0 +1,5 @@
+START original_sextic x**6 + x**4 - x**3 - x**2 - 1
+0.011 Constructing splitting field
+0.192 Adjoining a degree-4 factor to degree-6 field
+118.406 Adjoining a primitive 6-th root of unity
+130.864 Computing automorphisms in absolute degree 48

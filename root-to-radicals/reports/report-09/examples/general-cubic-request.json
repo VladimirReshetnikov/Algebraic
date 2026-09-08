@@ -1,0 +1,7 @@
+{
+  "coefficients": ["-1", "-1", "0", "1"],
+  "method": "galois",
+  "seconds": 300,
+  "max_field_degree": 96,
+  "verify": true
+}

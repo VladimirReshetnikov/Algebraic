@@ -1,0 +1,51 @@
+test_bad_options_and_float (test_rootradicals.ConversionTests.test_bad_options_and_float) ... ok
+test_cyclotomic_order_11 (test_rootradicals.ConversionTests.test_cyclotomic_order_11) ... ok
+test_degree_limit_is_not_nonsolvable (test_rootradicals.ConversionTests.test_degree_limit_is_not_nonsolvable) ... ok
+test_extension_hint_membership (test_rootradicals.ConversionTests.test_extension_hint_membership) ... ok
+test_incorrect_conjugate (test_rootradicals.ConversionTests.test_incorrect_conjugate) ... ok
+test_nearby_is_not_equal (test_rootradicals.ConversionTests.test_nearby_is_not_equal) ... ok
+test_nonsolvable_quintic (test_rootradicals.ConversionTests.test_nonsolvable_quintic) ... ok
+test_nonsolvable_septic (test_rootradicals.ConversionTests.test_nonsolvable_septic) ... ok
+test_original_quintic (test_rootradicals.ConversionTests.test_original_quintic) ... ok
+test_original_sextic (test_rootradicals.ConversionTests.test_original_sextic) ... ok
+test_power_composition (test_rootradicals.ConversionTests.test_power_composition) ... ok
+test_rational (test_rootradicals.ConversionTests.test_rational) ... ok
+test_real_cyclotomic_quintic (test_rootradicals.ConversionTests.test_real_cyclotomic_quintic) ... ok
+test_recognizer_failure_is_unknown (test_rootradicals.ConversionTests.test_recognizer_failure_is_unknown) ... ok
+test_reducible_input (test_rootradicals.ConversionTests.test_reducible_input) ... ok
+test_repeated_input (test_rootradicals.ConversionTests.test_repeated_input) ... ok
+test_sextic_other_real (test_rootradicals.ConversionTests.test_sextic_other_real) ... ok
+test_translated_septic_complex (test_rootradicals.ConversionTests.test_translated_septic_complex) ... ok
+test_translated_septic_real (test_rootradicals.ConversionTests.test_translated_septic_real) ... ok
+test_corrupt_certificate_rejected (test_rootradicals.GaloisTests.test_corrupt_certificate_rejected) ... ok
+test_corrupt_output_rejected (test_rootradicals.GaloisTests.test_corrupt_output_rejected) ... ok
+test_galois_biquadratic (test_rootradicals.GaloisTests.test_galois_biquadratic) ... ok
+test_galois_cyclic_cubic (test_rootradicals.GaloisTests.test_galois_cyclic_cubic) ... ok
+test_galois_d4 (test_rootradicals.GaloisTests.test_galois_d4) ... ok
+test_galois_degree_eight (test_rootradicals.GaloisTests.test_galois_degree_eight) ... ok
+test_galois_quadratic (test_rootradicals.GaloisTests.test_galois_quadratic) ... ok
+test_galois_s3_complex (test_rootradicals.GaloisTests.test_galois_s3_complex) ... ok
+test_galois_s3_real (test_rootradicals.GaloisTests.test_galois_s3_real) ... ok
+test_a5_is_not_solvable (test_rootradicals.GroupAndBranchTests.test_a5_is_not_solvable) ... ok
+test_cube_root_branch_boundary (test_rootradicals.GroupAndBranchTests.test_cube_root_branch_boundary) ... ok
+test_exact_zero_before_refinement (test_rootradicals.GroupAndBranchTests.test_exact_zero_before_refinement) ... ok
+test_fifth_root_branch_boundary (test_rootradicals.GroupAndBranchTests.test_fifth_root_branch_boundary) ... ok
+test_frobenius_no_false_rejection (test_rootradicals.GroupAndBranchTests.test_frobenius_no_false_rejection) ... ok
+test_rectangle_arithmetic (test_rootradicals.GroupAndBranchTests.test_rectangle_arithmetic) ... ok
+test_solvable_group_chains (test_rootradicals.GroupAndBranchTests.test_solvable_group_chains) ... ok
+test_square_root_branch_boundary (test_rootradicals.GroupAndBranchTests.test_square_root_branch_boundary) ... ok
+test_bad_root_index (test_rootradicals.ProtocolTests.test_bad_root_index) ... ok
+test_cli_success (test_rootradicals.ProtocolTests.test_cli_success) ... ok
+test_cli_timeout (test_rootradicals.ProtocolTests.test_cli_timeout) ... ok
+test_dag_reject_forward_reference (test_rootradicals.ProtocolTests.test_dag_reject_forward_reference) ... ok
+test_dag_reject_nonfinite (test_rootradicals.ProtocolTests.test_dag_reject_nonfinite) ... ok
+test_dag_reject_unknown_operation (test_rootradicals.ProtocolTests.test_dag_reject_unknown_operation) ... ok
+test_dag_roundtrip (test_rootradicals.ProtocolTests.test_dag_roundtrip) ... ok
+test_embedding_hint (test_rootradicals.ProtocolTests.test_embedding_hint) ... ok
+test_nonradical_grammar (test_rootradicals.ProtocolTests.test_nonradical_grammar) ... ok
+test_rational_validation (test_rootradicals.ProtocolTests.test_rational_validation) ... ok
+
+----------------------------------------------------------------------
+Ran 46 tests in 135.790s
+
+OK

@@ -1,0 +1,10 @@
+{
+  "date": "2026-09-08",
+  "original_archive": "FindExtension.zip",
+  "archive_sha256": "381e80382e8736aa00e18d8fd48c6f391b9ba0b15e80ff7621e7589147174930",
+  "notebook_sha256": "d70951fdb88128556ee7ea762652413b6f8b5e970c4437c2f3293d9b07eac007",
+  "input_cells_transcribed": 220,
+  "notebook_executed": false,
+  "source_question": "https://mathematica.stackexchange.com/questions/34011/why-is-toradicals-not-able-to-handle-all-cases-is-there-a-workaround",
+  "implementation_version": "0.1.0"
+}

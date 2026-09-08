@@ -1,0 +1,16 @@
+Original sextic, positive real root
+  method: reciprocal-composition
+  expression: -2/(3*(1/2 + sqrt(849)/18)**(1/3)) + (1/2 + sqrt(849)/18)**(1/3)/2 + sqrt((-4/(3*(1/2 + sqrt(849)/18)**(1/3)) + (1/2 + sqrt(849)/18)**(1/3))**2 + 4)/2
+  value: 1.130685445462040587231814
+  independently verified: True
+Original quintic, largest real root
+  method: dickson
+  expression: (-3/5 + 4*I/5)**(-1/5) + (-3/5 + 4*I/5)**(1/5)
+  value: 1.807059995085424502094955 + 0.e-30*I
+  independently verified: True
+Forced general cyclic-quintic method
+  number of radical expressions: 5
+  maximum high-precision residual: 2.9833362980369796e-154
+  group construction: [{'stage': 'galois-classification', 'order': 5, 'solvable': True}, {'stage': 'splitting-field', 'degree': 5, 'factor_degrees': [1, 1, 1, 1, 1]}, {'stage': 'automorphisms', 'order': 5, 'primitive_weights': [1], 'candidates_tested': 5}, {'stage': 'composition-series', 'orders': [5, 1], 'prime_indices': [5]}]
+  independent final minimal-polynomial reconstruction: not run
+Wrote: /mnt/data/RadicalSolve/examples/results.json

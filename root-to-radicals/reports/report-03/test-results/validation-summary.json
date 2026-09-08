@@ -1,0 +1,23 @@
+{
+  "python_regression_summary": {
+    "PASS": 36,
+    "FAIL": 0,
+    "TIMEOUT": 0
+  },
+  "native_wolfram_execution": "NOT_EXECUTED",
+  "article_pages": 18,
+  "python_syntax_compilation": "PASS",
+  "artifacts_and_code_sha256": {
+    "python/radicalroots.py": "995a7ea2a1f5c4ca919b689fdaa76b53e097a5af9bac1b1c9bd915ac5e634168",
+    "python/galois_core.py": "2c51465ba6bf7964e92766ed6982e95949fa91641aca7bd26009a482862763dc",
+    "tests/test_python.py": "543981814e7b84413503e510768f5874d4244929a71ef83e711bc155aaed5403",
+    "test-results/python-tests.json": "a90d615b4ab3e92ecb29fac51660ba65dadd4b0bd39cb72b4fe68f083c77adc5",
+    "Kernel/RadicalRoots.wl": "2b24d24741192605996cd5cf5015982a154528473e0161d25759ad2839191b1b",
+    "docs/article.pdf": "beee0f244ca11ba9d659737d4ac5d8538ca411aee99f1e7d10e75acd4f97b063"
+  },
+  "pdf_visual_review": {
+    "renderer": "pdftoppm",
+    "pages_inspected": 18,
+    "result": "PASS"
+  }
+}

@@ -1,0 +1,151 @@
+{
+  "status": "Success",
+  "method": "Galois-Kummer",
+  "verified": true,
+  "group_order": 6,
+  "augmented_field_degree": 6,
+  "cyclotomic_order": 6,
+  "relative_group_order": 3,
+  "derived_orders": [
+    6,
+    3,
+    1
+  ],
+  "chain_orders": [
+    3,
+    1
+  ],
+  "steps": [
+    {
+      "prime": 3,
+      "phase": 1,
+      "previous_order": 3,
+      "next_order": 1,
+      "radicand_coordinates": [
+        "-108",
+        "0"
+      ],
+      "radicand_ast": [
+        "Q",
+        "-108",
+        "1"
+      ],
+      "generator_coordinates": [
+        "0",
+        "0",
+        "1",
+        "0",
+        "0",
+        "0"
+      ]
+    }
+  ],
+  "target_coordinates": [
+    "0",
+    "0",
+    "0",
+    "0",
+    "1/18",
+    "0"
+  ],
+  "field_modulus_coefficients": [
+    "1",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "108"
+  ],
+  "primitive_element": "-2**(1/3) + 2**(1/3) + 2**(1/3)*sqrt(3)*I",
+  "trace_kind": "arithmetic tower certificate plus Galois audit trace; not a formal proof object",
+  "trust": "SymPy exact number fields, rational linear algebra, and separation-bound root matching",
+  "seconds": 0.61115,
+  "minimal_polynomial": "x**3 - 2",
+  "wolfram": "HoldComplete[With[{rrz=(-1)^(1/3)},With[{rru1=3*(-1)^(1/3)*2^(2/3)*rrz^2},(1/18)*rru1^2]]]",
+  "radical_dag": {
+    "assignments": [
+      [
+        "rrz",
+        [
+          "Pow",
+          [
+            "Q",
+            "-1",
+            "1"
+          ],
+          "1",
+          "3"
+        ]
+      ],
+      [
+        "rru1",
+        [
+          "Mul",
+          [
+            "Q",
+            "3",
+            "1"
+          ],
+          [
+            "Pow",
+            [
+              "Q",
+              "-1",
+              "1"
+            ],
+            "1",
+            "3"
+          ],
+          [
+            "Pow",
+            [
+              "Q",
+              "2",
+              "1"
+            ],
+            "2",
+            "3"
+          ],
+          [
+            "Pow",
+            [
+              "Var",
+              "rrz"
+            ],
+            "2",
+            "1"
+          ]
+        ]
+      ]
+    ],
+    "result": [
+      "Mul",
+      [
+        "Q",
+        "1",
+        "18"
+      ],
+      [
+        "Pow",
+        [
+          "Var",
+          "rru1"
+        ],
+        "2",
+        "1"
+      ]
+    ]
+  },
+  "assignments": [
+    [
+      "rrz",
+      "(-1)**(1/3)"
+    ],
+    [
+      "rru1",
+      "3*(-1)**(1/3)*2**(2/3)*rrz**2"
+    ]
+  ],
+  "final": "rru1**2/18"
+}

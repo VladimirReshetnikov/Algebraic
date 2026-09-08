@@ -1,0 +1,6 @@
+{
+  "status": "NOT_EXECUTED",
+  "reason": "No local Wolfram kernel was available. Both attempts through the connected Wolfram MCP service returned HTTP 404 before code execution.",
+  "checks_provided": "tests/RadicalRoots.wlt",
+  "static_check_is_not_runtime_validation": true
+}

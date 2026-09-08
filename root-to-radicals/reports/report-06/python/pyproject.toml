@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rootradicals"
+version = "0.1.0"
+description = "Exact branch-aware radicalization with structural and explicit Galois algorithms"
+requires-python = ">=3.10"
+dependencies = ["sympy>=1.14,<1.15"]
+license = {text = "MIT-0"}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["rootradicals*"]

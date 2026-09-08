@@ -1,0 +1,20 @@
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{.35\textwidth}>{\raggedright\arraybackslash}p{.25\textwidth}>{\raggedright\arraybackslash}p{.34\textwidth}@{}}
+\toprule
+Input / check & Executed path & Observed result\\\midrule
+\endhead
+Original sextic $X^6+X^4-X^3-X^2-1$ & Pair-sum field & Six certified radical roots; independent minimal-polynomial check of the requested root.\\[3pt]
+Original quintic $5X^5-25X^3+25X+6$ & Dickson identity & Five certified real roots; the largest agrees with the requested fifth-root expression.\\[3pt]
+$X^7-2$ & Dickson/binomial & All seven conjugates, without a degree-six Galois precheck.\\[3pt]
+Degree-ten polynomial of $\sqrt[5]{2}+\sqrt3$ & Pair-sum field & All ten radical conjugates; auxiliary polynomial $S^5-64$.\\[3pt]
+$X^2-2$ & General constructor & Splitting degree 2; relative chain orders $2,1$; certificate replay.\\[3pt]
+$X^3-2$ & General constructor & Splitting degree 6; relative chain orders $3,1$; certificate replay.\\[3pt]
+$X^3-3X+1$ & General constructor & Splitting degree 3; compositum degree 6; relative chain $3,1$.\\[3pt]
+$X^3-X-1$ & General constructor & Splitting degree 6; compositum degree 12; nonabelian relative chain $6,3,1$.\\[3pt]
+$X^4-10X^2+1$ & General constructor & Two successive quadratic steps; chain $4,2,1$; roots $\pm\sqrt3\pm\sqrt2$.\\[3pt]
+$X^5-2$ & General constructor & Splitting/compositum degree 20; relative chain $5,1$; full replay.\\[3pt]
+$X^5-X-1$ & Exact Galois precheck & \code{NotSolvable}; group order 120, derived orders $120,60$.\\[3pt]
+Tampered certificates / hard timeout & Verifier / CLI & Altered mathematical data rejected; worker deadline reported as \code{ResourceLimit}.\\
+\bottomrule
+\end{longtable}
+}

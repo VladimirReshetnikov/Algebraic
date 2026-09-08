@@ -1,0 +1,560 @@
+{
+  "python": "3.13.5",
+  "sympy": "1.14.0",
+  "source_sha256": "bc94b920eebba950fac0d68b0896ac0d372c9cc94250b9ad3f1ff35b0e724cea",
+  "tests": 46,
+  "passed": 46,
+  "results": [
+    {
+      "name": "galois/rational",
+      "passed": true,
+      "seconds": 0.006109,
+      "detail": {
+        "method": "rational",
+        "degree": 1,
+        "independent_minpoly_check": true,
+        "group_order": null,
+        "steps": 0,
+        "wolfram": "7/3"
+      }
+    },
+    {
+      "name": "galois/quadratic-negative",
+      "passed": true,
+      "seconds": 0.036815,
+      "detail": {
+        "method": "Galois-Kummer",
+        "degree": 2,
+        "independent_minpoly_check": true,
+        "group_order": 2,
+        "steps": 2,
+        "wolfram": "With[{rrz=-1},With[{rru1=2^(1/2)},-rru1]]"
+      }
+    },
+    {
+      "name": "galois/quadratic-positive",
+      "passed": true,
+      "seconds": 0.026594,
+      "detail": {
+        "method": "Galois-Kummer",
+        "degree": 2,
+        "independent_minpoly_check": true,
+        "group_order": 2,
+        "steps": 2,
+        "wolfram": "With[{rrz=-1},With[{rru1=2^(1/2)},rru1]]"
+      }
+    },
+    {
+      "name": "galois/pure-cubic-real",
+      "passed": true,
+      "seconds": 0.453217,
+      "detail": {
+        "method": "Galois-Kummer",
+        "degree": 3,
+        "independent_minpoly_check": true,
+        "group_order": 6,
+        "steps": 2,
+        "wolfram": "With[{rrz=(-1)^(1/3)},With[{rru1=3*(-1)^(1/3)*2^(2/3)*rrz^2},(1/18)*rru1^2]]"
+      }
+    },
+    {
+      "name": "galois/pure-cubic-complex-minus",
+      "passed": true,
+      "seconds": 0.410272,
+      "detail": {
+        "method": "Galois-Kummer",
+        "degree": 3,
+        "independent_minpoly_check": true,
+        "group_order": 6,
+        "steps": 2,
+        "wolfram": "With[{rrz=(-1)^(1/3)},With[{rru1=3*(-1)^(1/3)*2^(2/3)*rrz^2},-1/18*rru1^2*rrz]]"
+      }
+    },
+    {
+      "name": "galois/pure-cubic-complex-plus",
+      "passed": true,
+      "seconds": 0.38635,
+      "detail": {
+        "method": "Galois-Kummer",
+        "degree": 3,
+        "independent_minpoly_check": true,
+        "group_order": 6,
+        "steps": 2,
+        "wolfram": "With[{rrz=(-1)^(1/3)},With[{rru1=3*(-1)^(1/3)*2^(2/3)*rrz^2},(1/18)*rru1^2*rrz - 1/18*rru1^2]]"
+      }
+    },
+    {
+      "name": "galois/biquadratic",
+      "passed": true,
+      "seconds": 0.115765,
+      "detail": {
+        "method": "Galois-Kummer",
+        "degree": 4,
+        "independent_minpoly_check": true,
+        "group_order": 4,
+        "steps": 3,
+        "wolfram": "With[{rrz=-1},With[{rru1=2*2^(1/2)*rrz},With[{rru2=2*3^(1/2)*rrz},-1/2*rru1 - 1/2*rru2]]]"
+      }
+    },
+    {
+      "name": "galois/D4-quartic",
+      "passed": true,
+      "seconds": 14.705286,
+      "detail": {
+        "method": "Galois-Kummer",
+        "degree": 4,
+        "independent_minpoly_check": true,
+        "group_order": 8,
+        "steps": 4,
+        "wolfram": "With[{rrz=-1},With[{rru1=48*I*rrz},With[{rru2=rrz*(rru1 - 14)^(1/2)},With[{rru3=rru2^(1/2)},(1/240)*rru1*rru3 - 2/5*rru3]]]]"
+      }
+    },
+    {
+      "name": "question-sextic/root-0",
+      "passed": true,
+      "seconds": 0.299328,
+      "detail": {
+        "method": "reciprocal-lift",
+        "degree": 6,
+        "independent_minpoly_check": true,
+        "group_order": null,
+        "steps": 0,
+        "wolfram": "-1/2*((-(4/3)/(1/2 + (1/18)*849^(1/2))^(1/3) + (1/2 + (1/18)*849^(1/2))^(1/3))^2 + 4)^(1/2) - (2/3)/(1/2 + (1/18)*849^(1/2))^(1/3) + (1/2)*(1/2 + (1/18)*849^(1/2))^(1/3)"
+      }
+    },
+    {
+      "name": "question-sextic/root-1",
+      "passed": true,
+      "seconds": 0.676806,
+      "detail": {
+        "method": "reciprocal-lift",
+        "degree": 6,
+        "independent_minpoly_check": true,
+        "group_order": null,
+        "steps": 0,
+        "wolfram": "-(2/3)/(1/2 + (1/18)*849^(1/2))^(1/3) + (1/2)*(1/2 + (1/18)*849^(1/2))^(1/3) + (1/2)*((-(4/3)/(1/2 + (1/18)*849^(1/2))^(1/3) + (1/2 + (1/18)*849^(1/2))^(1/3))^2 + 4)^(1/2)"
+      }
+    },
+    {
+      "name": "question-sextic/root-2",
+      "passed": true,
+      "seconds": 27.207577,
+      "detail": {
+        "method": "reciprocal-lift",
+        "degree": 6,
+        "independent_minpoly_check": false,
+        "group_order": null,
+        "steps": 0,
+        "wolfram": "(1/2)*(-1/2 - 1/2*3^(1/2)*I)*(1/2 + (1/18)*849^(1/2))^(1/3) - (2/3)/((-1/2 - 1/2*3^(1/2)*I)*(1/2 + (1/18)*849^(1/2))^(1/3)) - 1/2*(4 + ((-1/2 - 1/2*3^(1/2)*I)*(1/2 + (1/18)*849^(1/2))^(1/3) - (4/3)/((-1/2 - 1/2*3^(1/2)*I)*(1/2 + (1/18)*849^(1/2))^(1/3)))^2)^(1/2)"
+      }
+    },
+    {
+      "name": "question-sextic/root-3",
+      "passed": true,
+      "seconds": 25.928978,
+      "detail": {
+        "method": "reciprocal-lift",
+        "degree": 6,
+        "independent_minpoly_check": false,
+        "group_order": null,
+        "steps": 0,
+        "wolfram": "-1/2*(4 + (-(4/3)/((-1/2 + (1/2)*3^(1/2)*I)*(1/2 + (1/18)*849^(1/2))^(1/3)) + (-1/2 + (1/2)*3^(1/2)*I)*(1/2 + (1/18)*849^(1/2))^(1/3))^2)^(1/2) - (2/3)/((-1/2 + (1/2)*3^(1/2)*I)*(1/2 + (1/18)*849^(1/2))^(1/3)) + (1/2)*(-1/2 + (1/2)*3^(1/2)*I)*(1/2 + (1/18)*849^(1/2))^(1/3)"
+      }
+    },
+    {
+      "name": "question-sextic/root-4",
+      "passed": true,
+      "seconds": 27.942988,
+      "detail": {
+        "method": "reciprocal-lift",
+        "degree": 6,
+        "independent_minpoly_check": false,
+        "group_order": null,
+        "steps": 0,
+        "wolfram": "(1/2)*(-1/2 - 1/2*3^(1/2)*I)*(1/2 + (1/18)*849^(1/2))^(1/3) - (2/3)/((-1/2 - 1/2*3^(1/2)*I)*(1/2 + (1/18)*849^(1/2))^(1/3)) + (1/2)*(4 + ((-1/2 - 1/2*3^(1/2)*I)*(1/2 + (1/18)*849^(1/2))^(1/3) - (4/3)/((-1/2 - 1/2*3^(1/2)*I)*(1/2 + (1/18)*849^(1/2))^(1/3)))^2)^(1/2)"
+      }
+    },
+    {
+      "name": "question-sextic/root-5",
+      "passed": true,
+      "seconds": 28.628723,
+      "detail": {
+        "method": "reciprocal-lift",
+        "degree": 6,
+        "independent_minpoly_check": false,
+        "group_order": null,
+        "steps": 0,
+        "wolfram": "(1/2)*(4 + (-(4/3)/((-1/2 + (1/2)*3^(1/2)*I)*(1/2 + (1/18)*849^(1/2))^(1/3)) + (-1/2 + (1/2)*3^(1/2)*I)*(1/2 + (1/18)*849^(1/2))^(1/3))^2)^(1/2) - (2/3)/((-1/2 + (1/2)*3^(1/2)*I)*(1/2 + (1/18)*849^(1/2))^(1/3)) + (1/2)*(-1/2 + (1/2)*3^(1/2)*I)*(1/2 + (1/18)*849^(1/2))^(1/3)"
+      }
+    },
+    {
+      "name": "question-quintic/root-0",
+      "passed": true,
+      "seconds": 0.050727,
+      "detail": {
+        "method": "Dickson",
+        "degree": 5,
+        "independent_minpoly_check": false,
+        "group_order": null,
+        "steps": 0,
+        "wolfram": "-(-1)^(1/5)/(-3/5 + (4/5)*I)^(1/5) + (-1)^(4/5)*(-3/5 + (4/5)*I)^(1/5)"
+      }
+    },
+    {
+      "name": "question-quintic/root-1",
+      "passed": true,
+      "seconds": 0.03331,
+      "detail": {
+        "method": "Dickson",
+        "degree": 5,
+        "independent_minpoly_check": false,
+        "group_order": null,
+        "steps": 0,
+        "wolfram": "-(-1)^(1/5)*(-3/5 + (4/5)*I)^(1/5) + (-1)^(4/5)/(-3/5 + (4/5)*I)^(1/5)"
+      }
+    },
+    {
+      "name": "question-quintic/root-2",
+      "passed": true,
+      "seconds": 0.031767,
+      "detail": {
+        "method": "Dickson",
+        "degree": 5,
+        "independent_minpoly_check": false,
+        "group_order": null,
+        "steps": 0,
+        "wolfram": "-(-1)^(3/5)/(-3/5 + (4/5)*I)^(1/5) + (-1)^(2/5)*(-3/5 + (4/5)*I)^(1/5)"
+      }
+    },
+    {
+      "name": "question-quintic/root-3",
+      "passed": true,
+      "seconds": 0.028182,
+      "detail": {
+        "method": "Dickson",
+        "degree": 5,
+        "independent_minpoly_check": false,
+        "group_order": null,
+        "steps": 0,
+        "wolfram": "-(-1)^(3/5)*(-3/5 + (4/5)*I)^(1/5) + (-1)^(2/5)/(-3/5 + (4/5)*I)^(1/5)"
+      }
+    },
+    {
+      "name": "question-quintic/root-4",
+      "passed": true,
+      "seconds": 0.191079,
+      "detail": {
+        "method": "Dickson",
+        "degree": 5,
+        "independent_minpoly_check": true,
+        "group_order": null,
+        "steps": 0,
+        "wolfram": "(-3/5 + (4/5)*I)^(-1/5) + (-3/5 + (4/5)*I)^(1/5)"
+      }
+    },
+    {
+      "name": "fast/shifted-seventh",
+      "passed": true,
+      "seconds": 0.153946,
+      "detail": {
+        "method": "centered-power-composition",
+        "degree": 7,
+        "independent_minpoly_check": false,
+        "group_order": null,
+        "steps": 0,
+        "wolfram": "-2^(1/7) - 1"
+      }
+    },
+    {
+      "name": "fast/sextic-binomial",
+      "passed": true,
+      "seconds": 18.023221,
+      "detail": {
+        "method": "centered-power-composition",
+        "degree": 6,
+        "independent_minpoly_check": false,
+        "group_order": null,
+        "steps": 0,
+        "wolfram": "(-1)^(1/3)*2^(1/6)"
+      }
+    },
+    {
+      "name": "fast/composition",
+      "passed": true,
+      "seconds": 0.093115,
+      "detail": {
+        "method": "centered-power-composition",
+        "degree": 6,
+        "independent_minpoly_check": false,
+        "group_order": null,
+        "steps": 0,
+        "wolfram": "-1/2 + (1/4 + 2^(1/3))^(1/2)"
+      }
+    },
+    {
+      "name": "fast/even-octic",
+      "passed": true,
+      "seconds": 24.372311,
+      "detail": {
+        "method": "centered-power-composition",
+        "degree": 8,
+        "independent_minpoly_check": false,
+        "group_order": null,
+        "steps": 0,
+        "wolfram": "-I*(2*6^(1/2) + 5)^(1/4)"
+      }
+    },
+    {
+      "name": "fast/repeated-root",
+      "passed": true,
+      "seconds": 0.009173,
+      "detail": {
+        "method": "degree-at-most-four",
+        "degree": 2,
+        "independent_minpoly_check": false,
+        "group_order": null,
+        "steps": 0,
+        "wolfram": "2^(1/2)"
+      }
+    },
+    {
+      "name": "fast/selected-solvable-factor",
+      "passed": true,
+      "seconds": 0.031221,
+      "detail": {
+        "method": "degree-at-most-four",
+        "degree": 2,
+        "independent_minpoly_check": false,
+        "group_order": null,
+        "steps": 0,
+        "wolfram": "2^(1/2)"
+      }
+    },
+    {
+      "name": "galois/cyclic-quintic",
+      "passed": true,
+      "seconds": 16.679602,
+      "detail": {
+        "method": "Galois-Kummer",
+        "degree": 5,
+        "independent_minpoly_check": false,
+        "group_order": 5,
+        "steps": 2,
+        "wolfram": "With[{rrz=(-1)^(2/5)},With[{rru1=rrz^3*(385*rrz^3 + 110*rrz^2 + 220*rrz - 66)^(1/5)},(26/6655)*rru1^4*rrz^3 + (16/6655)*rru1^4*rrz^2 + (41/6655)*rru1^4*rrz + (6/6655)*rru1^4 - 2/121*rru1^3*rrz^3 - 7/605*rru1^3*rrz^2 + (2/605)*rru1^3*rrz - 4/605*rru1^3 + (4/55)*rru1^2*rrz^3 + (2/55)*rru1^2*rrz^2 + (2/55)*rru1^2*rrz + (1/55)*rru1^2 + (1/5)*rru1*rrz - 1/5]]"
+      }
+    },
+    {
+      "name": "fast/cyclotomic-degree-six",
+      "passed": true,
+      "seconds": 23.381153,
+      "detail": {
+        "method": "cyclotomic",
+        "degree": 6,
+        "independent_minpoly_check": false,
+        "group_order": null,
+        "steps": 0,
+        "wolfram": "-(-1)^(1/7)"
+      }
+    },
+    {
+      "name": "fast/real-cyclotomic-quintic",
+      "passed": true,
+      "seconds": 0.030156,
+      "detail": {
+        "method": "real-cyclotomic-trace",
+        "degree": 5,
+        "independent_minpoly_check": false,
+        "group_order": null,
+        "steps": 0,
+        "wolfram": "-(-1)^(9/11) + (-1)^(2/11)"
+      }
+    },
+    {
+      "name": "nonsolvable-S5",
+      "passed": true,
+      "seconds": 0.019869,
+      "detail": {
+        "status": "NotSolvableByRadicals",
+        "method": "Galois-decision",
+        "group_order": 120,
+        "message": "The selected irreducible factor has a nonsolvable Galois group.",
+        "seconds": 0.019556,
+        "minimal_polynomial": "x**5 - x - 1"
+      }
+    },
+    {
+      "name": "nonsolvable-selected-factor",
+      "passed": true,
+      "seconds": 0.01439,
+      "detail": {
+        "status": "NotSolvableByRadicals",
+        "method": "Galois-decision",
+        "group_order": 120,
+        "message": "The selected irreducible factor has a nonsolvable Galois group.",
+        "seconds": 0.014094,
+        "minimal_polynomial": "x**5 - x - 1"
+      }
+    },
+    {
+      "name": "field-degree-limit",
+      "passed": true,
+      "seconds": 0.01078,
+      "detail": {
+        "status": "ResourceLimit",
+        "method": "galois",
+        "message": "Field degree 3 exceeds 2",
+        "seconds": 0.010605,
+        "minimal_polynomial": "x**3 - 2"
+      }
+    },
+    {
+      "name": "fast-not-found-is-not-nonsolvable",
+      "passed": true,
+      "seconds": 0.004125,
+      "detail": {
+        "status": "NotFound",
+        "method": "fast",
+        "message": "Finite shortcuts found no certified expression; solvability is unknown.",
+        "seconds": 0.003941,
+        "minimal_polynomial": "x**5 - x - 1"
+      }
+    },
+    {
+      "name": "pair-resolvent-identity",
+      "passed": true,
+      "seconds": 0.02967,
+      "detail": {
+        "pair_resolvent_degree": 15,
+        "identity": "exact"
+      }
+    },
+    {
+      "name": "reject/float",
+      "passed": true,
+      "seconds": 0.002227,
+      "detail": {
+        "exception": "ValueError"
+      }
+    },
+    {
+      "name": "reject/parameter",
+      "passed": true,
+      "seconds": 0.00072,
+      "detail": {
+        "exception": "ValueError"
+      }
+    },
+    {
+      "name": "reject/zero",
+      "passed": true,
+      "seconds": 0.000253,
+      "detail": {
+        "exception": "ValueError"
+      }
+    },
+    {
+      "name": "reject/index",
+      "passed": true,
+      "seconds": 0.000379,
+      "detail": {
+        "exception": "ValueError"
+      }
+    },
+    {
+      "name": "reject/bool-index",
+      "passed": true,
+      "seconds": 9e-06,
+      "detail": {
+        "exception": "ValueError"
+      }
+    },
+    {
+      "name": "reject/method",
+      "passed": true,
+      "seconds": 6e-06,
+      "detail": {
+        "exception": "ValueError"
+      }
+    },
+    {
+      "name": "rectangle/x**2 + 4",
+      "passed": true,
+      "seconds": 0.047751,
+      "detail": {
+        "index": 1,
+        "rectangle": [
+          "-1/10",
+          "1/10",
+          "19/10",
+          "21/10"
+        ]
+      }
+    },
+    {
+      "name": "rectangle/x**2 - 2",
+      "passed": true,
+      "seconds": 0.006994,
+      "detail": {
+        "index": 1,
+        "rectangle": [
+          "7/5",
+          "3/2",
+          "-1/10",
+          "1/10"
+        ]
+      }
+    },
+    {
+      "name": "rectangle/x**3 - 2",
+      "passed": true,
+      "seconds": 0.013954,
+      "detail": {
+        "index": 1,
+        "rectangle": [
+          "-1",
+          "-1/2",
+          "-3/2",
+          "-1"
+        ]
+      }
+    },
+    {
+      "name": "rectangle/x - 1",
+      "passed": true,
+      "seconds": 0.002674,
+      "detail": {
+        "index": 0,
+        "rectangle": [
+          "1/2",
+          "3/2",
+          "-1",
+          "1"
+        ]
+      }
+    },
+    {
+      "name": "reject/rectangle-boundary",
+      "passed": true,
+      "seconds": 0.001409,
+      "detail": {
+        "exception": "ValueError"
+      }
+    },
+    {
+      "name": "reject/rectangle-two-roots",
+      "passed": true,
+      "seconds": 0.004872,
+      "detail": {
+        "exception": "ValueError"
+      }
+    },
+    {
+      "name": "reject/trigonometric-output",
+      "passed": true,
+      "seconds": 0.000572,
+      "detail": {
+        "rejected": true
+      }
+    }
+  ]
+}

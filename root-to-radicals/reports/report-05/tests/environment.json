@@ -1,0 +1,19 @@
+{
+  "python": "3.13.5",
+  "sympy": "1.14.0",
+  "setuptools": "82.0.1",
+  "platform": "Linux-6.18.35-x86_64-with-glibc2.41",
+  "default_suite": {
+    "tests_run": 35,
+    "passed": 34,
+    "skipped": 1,
+    "failures": 0,
+    "errors": 0,
+    "elapsed_seconds": 18.624
+  },
+  "wolfram_runtime_tests_executed": false,
+  "wolfram_runtime_note": "Both connector attempts failed with HTTP 404 before evaluation.",
+  "s4_stress_result": "ResourceLimit, not a completed full general-descent test.",
+  "pdf_pages": 23,
+  "pdf_rendering": "All pages rendered with the PDF skill renderer; layout visually inspected."
+}

@@ -1,0 +1,9 @@
+START cyclic_quintic x**5 + x**4 - 4*x**3 - 3*x**2 + 3*x + 1
+0.076 Constructing splitting field
+0.154 Adjoining a primitive 5-th root of unity
+0.21 Computing automorphisms in absolute degree 20
+2.037 Certifying the complex embedding and root-of-unity branch
+16.588 Radical stage 1: prime 5; fixed-field degree 20
+RESULT Success {'input_degree': 5, 'splitting_field_degree': 5, 'absolute_field_degree': 20, 'cyclotomic_order': 5, 'relative_group_order': 5, 'composition_series_orders': [5, 1], 'extension_history': [{'old_degree': 5, 'relative_degree': 4, 'new_degree': 20, 'primitive_coefficient': 1, 'kind': 'cyclotomic'}], 'elapsed_seconds': 16.846145441999965, 'preliminary_galois': {'order': 5, 'solvable': True, 'generators': [[1, 2, 3, 4, 0]]}}
+VERIFY True
+ELAPSED 22.053722858428955

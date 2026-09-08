@@ -1,0 +1,6 @@
+{
+  "coefficients": ["6", "25", "0", "-25", "0", "5"],
+  "method": "auto",
+  "seconds": 300,
+  "max_field_degree": 96
+}

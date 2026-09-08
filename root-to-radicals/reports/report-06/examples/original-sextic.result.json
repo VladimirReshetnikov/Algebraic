@@ -1,0 +1,156 @@
+{
+  "status": "success",
+  "method": "structural",
+  "message": "Minimal polynomial and selected embedding verified.",
+  "details": {
+    "transformations": [
+      "reciprocal reduction with a=-1",
+      "degree-at-most-four"
+    ]
+  },
+  "polynomial": [
+    "1",
+    "0",
+    "1",
+    "-1",
+    "-1",
+    "0",
+    "-1"
+  ],
+  "program": {
+    "format": "rootradicals-dag-v1",
+    "nodes": [
+      {
+        "op": "Q",
+        "n": "1",
+        "d": "2"
+      },
+      {
+        "op": "Q",
+        "n": "1",
+        "d": "18"
+      },
+      {
+        "op": "Q",
+        "n": "849",
+        "d": "1"
+      },
+      {
+        "op": "Pow",
+        "base": 2,
+        "n": "1",
+        "d": "2"
+      },
+      {
+        "op": "Mul",
+        "args": [
+          1,
+          3
+        ]
+      },
+      {
+        "op": "Add",
+        "args": [
+          0,
+          4
+        ]
+      },
+      {
+        "op": "Pow",
+        "base": 5,
+        "n": "1",
+        "d": "3"
+      },
+      {
+        "op": "Mul",
+        "args": [
+          0,
+          6
+        ]
+      },
+      {
+        "op": "Q",
+        "n": "4",
+        "d": "1"
+      },
+      {
+        "op": "Q",
+        "n": "-4",
+        "d": "3"
+      },
+      {
+        "op": "Pow",
+        "base": 5,
+        "n": "-1",
+        "d": "3"
+      },
+      {
+        "op": "Mul",
+        "args": [
+          9,
+          10
+        ]
+      },
+      {
+        "op": "Add",
+        "args": [
+          6,
+          11
+        ]
+      },
+      {
+        "op": "Pow",
+        "base": 12,
+        "n": "2",
+        "d": "1"
+      },
+      {
+        "op": "Add",
+        "args": [
+          8,
+          13
+        ]
+      },
+      {
+        "op": "Pow",
+        "base": 14,
+        "n": "1",
+        "d": "2"
+      },
+      {
+        "op": "Mul",
+        "args": [
+          0,
+          15
+        ]
+      },
+      {
+        "op": "Q",
+        "n": "-2",
+        "d": "3"
+      },
+      {
+        "op": "Mul",
+        "args": [
+          17,
+          10
+        ]
+      },
+      {
+        "op": "Add",
+        "args": [
+          7,
+          16,
+          18
+        ]
+      }
+    ],
+    "registers": [],
+    "output": 19
+  },
+  "wolfram_program": "-(2/3)/(1/2 + (1/18)*849^(1/2))^(1/3) + (1/2)*(1/2 + (1/18)*849^(1/2))^(1/3) + (1/2)*((-(4/3)/(1/2 + (1/18)*849^(1/2))^(1/3) + (1/2 + (1/18)*849^(1/2))^(1/3))^2 + 4)^(1/2)",
+  "certificate": {
+    "kind": "minimal-polynomial-and-root-separation"
+  },
+  "selected_sympy_root_index": 1
+}

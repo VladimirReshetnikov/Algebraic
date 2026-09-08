@@ -1,0 +1,10 @@
+{
+  "status": "success",
+  "method": "dickson",
+  "message": "",
+  "target": "CRootOf(5*x**5 - 25*x**3 + 25*x + 6, 4)",
+  "expression": "(-3/5 + 4*I/5)**(-1/5) + (-3/5 + 4*I/5)**(1/5)",
+  "certificate": {
+    "exact_verification": "embedded algebraic-number equality"
+  }
+}

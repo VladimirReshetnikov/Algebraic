@@ -1,0 +1,1024 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype}
+\usepackage[margin=1in,headheight=15pt]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,longtable,array}
+\usepackage{xcolor,listings,xurl}
+\usepackage{enumitem,fancyhdr,needspace,etoolbox}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{pdftitle={RadicalRoots: Exact radicals from algebraic roots},pdfauthor={OpenAI, prepared for Vladimir Reshetnikov}}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small RadicalRoots 0.1.0}
+\fancyhead[R]{\small Exact radicals from algebraic roots}
+\fancyfoot[C]{\thepage}
+\emergencystretch=2em
+\setlength{\parskip}{0.4em}\setlength{\parindent}{0pt}
+\setlist{nosep,leftmargin=1.6em}
+\lstset{basicstyle=\ttfamily\small,breaklines=true,columns=fullflexible,
+ keepspaces=true,showstringspaces=false,frame=single,framerule=0.3pt,
+ aboveskip=0.8em,belowskip=0.8em}
+\BeforeBeginEnvironment{lstlisting}{\Needspace{9\baselineskip}}
+\newcommand{\Q}{\mathbb Q}\newcommand{\C}{\mathbb C}
+\newcommand{\Gal}{\operatorname{Gal}}\newcommand{\rad}{\operatorname{rad}}
+\newcommand{\Fix}{\operatorname{Fix}}\newcommand{\id}{\operatorname{id}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
+\begin{document}
+\begin{titlepage}
+\vspace*{1.0cm}
+{\Large Computational algebra\par}
+\vspace{0.8cm}
+{\Huge\bfseries RadicalRoots\par}
+\vspace{0.45cm}
+{\LARGE Exact radicals from algebraic roots\par}
+\vspace{0.75cm}
+{\large Structural reductions, constructive Galois theory,\par
+and branch-aware reference implementations\par}
+\vspace{1cm}
+Prepared for Vladimir Reshetnikov\par
+8 September 2026\par
+Reference implementation 0.1.0
+\vspace{1.0cm}
+\begin{abstract}
+An algebraic \code{Root} object specifies both a polynomial equation and a
+particular complex root. Producing radicals therefore requires more than
+finding a solvable equation: every radical branch must be made consistent
+with that embedding. This article develops a two-layer solution. A fast layer
+recognizes polynomial composition, powers, generalized reciprocal symmetry
+and Dickson polynomials. A general layer constructs an embedded splitting
+field, adjoins a carefully chosen cyclotomic field, computes actual
+field automorphisms and applies finite Fourier resolvents along a
+prime-index normal series. It produces explicit principal-power expressions
+with exactly selected root-of-unity corrections.
+
+The unbounded mathematical construction covers every algebraic number over
+\(\Q\) that is expressible by radicals. The accompanying software implements
+that construction using computer-algebra primitives; it is a reference
+implementation, not an unconditional performance or backend-completeness
+claim. The Python implementation has executable regression results. The
+Wolfram Language implementation and its native tests are supplied but were
+not executed because the connected Wolfram service returned HTTP 404.
+\end{abstract}
+\vfill
+\small
+Deliverables: Wolfram Language package; Python/SymPy implementation;
+regression tests and recorded results; source-notebook inspection notes;
+this article in editable \LaTeX\ and compiled PDF.
+\end{titlepage}
+\begingroup
+\small
+\setlength{\parskip}{0pt}
+\tableofcontents
+\endgroup
+\newpage
+
+\section{Problem, contract, and scope}
+
+The motivating question asks why \code{ToRadicals} does not convert certain
+explicit algebraic numbers despite known radical formulas \cite{question}.
+Wolfram's documentation explicitly notes that some higher-degree solvable
+polynomials are not converted by that function \cite{toradicals}.
+Consequently, an unchanged \code{Root} is not a proof of nonsolvability.
+
+The input considered here is an exact algebraic number \(\alpha\in\overline\Q\)
+with its specified embedding in \(\C\). The ordinary Wolfram example is
+\code{Root[f\&,k]} for a rational-coefficient polynomial. The Python front end
+accepts a rational polynomial and a zero-based SymPy root index. It first
+selects the actual root and then works with its \emph{minimal polynomial}.
+This distinction is important for a reducible input: a rational root of a
+polynomial having an additional nonsolvable factor is still rational.
+
+\begin{definition}[Output language]
+A radical expression is built from rational constants and \(i\), by addition,
+multiplication and rational powers, with nonzero denominators. Powers use
+principal complex values. Equivalently, division is a negative integer power.
+No \code{Root}, \code{CRootOf}, \code{AlgebraicNumber}, symbolic parameter,
+inexact floating-point constant, trigonometric function or exponential
+function is permitted in a successful output.
+\end{definition}
+
+The syntax is deliberately stricter than ``a short expression involving
+algebraic special-function values.'' For instance, \(\cos(\pi/7)\) is algebraic
+and solvable, but is not an output of the specified grammar. Conversely,
+\[
+             \zeta_m=(-1)^{2/m}
+\]
+\emph{is} a permitted radical expression: with the principal logarithm of
+\(-1\), its value is \(e^{2\pi i/m}\). The exponential is explanatory notation,
+not an output head. The cases \(m=1,2\) give \(1,-1\).
+
+A successful public result must satisfy both the grammar test and the
+selected-root equality test. Wolfram uses \code{RootReduce[e-alpha]===0}; the
+Python implementation compares exact minimal polynomials and then performs
+a separation-bound root-identity test. These are CAS-level checks, not
+proof-assistant certificates. Internal \code{Root} and number-field objects
+are allowed while constructing and verifying the answer; they must not
+remain in the returned expression.
+
+The package does not solve parameter-dependent equations, decide whether an
+arbitrary special-function expression is algebraic, minimize radical depth,
+or guarantee the shortest printed expression. These are different problems.
+The default finite resource limits also mean that a solvable input can yield
+a resource-limit report rather than radicals.
+
+\section{What the notebook contributes}
+
+The supplied \code{FindExtension.nb} is an extensive exploratory session.
+Inspection of the archive, without evaluating it, located 220 Input cells.
+The accompanying diagnostic transcription records those cells and the
+original notebook line numbers. It is not presented as an executable export:
+some special boxes and quantifier notation remain.
+
+The essential strategy of \code{findExtension} is to divide the minimal
+polynomial by a prospective quadratic
+\(X^2+pX+q\), eliminate the condition that the remainder vanish, and select
+a comparatively simple algebraic value of a coefficient. The cubic variant
+\code{findExtension3} applies the same idea to
+\(X^3+pX^2+qX+r\). This is a useful way of looking for an extension over which
+the original polynomial has a small factor. The subsequent steps factor
+over that extension and select the factor containing the desired root.
+
+Additional experiments project roots onto real or imaginary parts, search
+subset sums of conjugates, recognize candidate minimal polynomials from
+high-precision values, and use manually selected radical or cyclotomic
+extensions. Those ideas motivate the fast layer and the extension-hint
+interface. They do not, by themselves, constitute an exhaustive algorithm.
+A solvable group need not expose the desired tower through quadratic or
+cubic factors alone.
+
+Several engineering changes are required to turn this exploration into a
+reusable solver. The notebook includes \code{While[True]} searches, selection
+of the first candidate without a general empty-result contract, references
+to private simplification symbols and stateful constructs such as previous
+outputs. Its initial complexity function counts \code{Sin} and \code{Cos}
+in a depth measure; a small cost therefore does not imply a radical-only
+answer. In two early cells the literal private name
+\code{Simplify`SimpifyCount} differs from the later
+\code{Simplify`SimplifyCount}. The replacement relies on neither spelling.
+
+Numerical recognition is useful for proposing an algebraic identity, but a
+400-digit match is not the same as establishing that identity. Similarly,
+\code{PossibleZeroQ} is not the explicit branch certificate chosen here.
+The replacement separates proposal generation, exact root selection,
+radical-only syntax, resource limits and mathematical nonsolvability.
+The source-review directory contains the detailed mapping and archive hashes.
+
+\section{The mathematical existence criterion}
+
+Let \(f\in\Q[X]\) be the monic irreducible minimal polynomial of \(\alpha\),
+let \(L\subset\C\) be its splitting field, and put \(G=\Gal(L/\Q)\).
+Galois's solvability theorem states that a characteristic-zero polynomial
+is solvable by radicals precisely when its Galois group is solvable
+\cite[Theorem 5.34]{milne}.
+
+\begin{proposition}[One specified root is enough]
+The algebraic number \(\alpha\) is expressible by radicals over \(\Q\) if and
+only if \(G\) is solvable.
+\end{proposition}
+\begin{proof}
+If the whole polynomial is solvable by radicals, so is its selected root.
+Conversely, suppose \(\alpha\) belongs to a radical tower. Each embedding of
+\(\Q(\alpha)\) into an algebraic closure extends to the algebraic fields
+containing that tower. The images of its radical generators remain roots of
+the corresponding power equations. Thus every conjugate of \(\alpha\) also
+belongs to a radical extension. Taking the compositum of the finitely many
+such towers still gives a radical extension containing every root of \(f\).
+Apply the polynomial solvability theorem.
+\end{proof}
+
+This statement requires the \emph{minimal} polynomial. It does not say that
+\(\Q(\alpha)/\Q\) is normal, nor that the necessary radical tower must be
+contained in \(\Q(\alpha)\). For example, a cubic may require auxiliary
+complex radicals even when the selected root is real. Searching only inside
+the degree-\(\deg f\) root field is therefore not a complete approach.
+
+For a finite group, solvability can be decided by repeatedly taking
+commutator subgroups. The sequence either reaches the identity or stabilizes
+at a nontrivial perfect subgroup. The constructive algorithm below refines
+this into a normal series with prime cyclic quotients; it needs the actual
+field action, not merely the abstract isomorphism type of the group.
+
+\section{Fast structural reductions}
+\label{sec:fast}
+
+The fast layer operates on equations, generates candidates, and then checks
+which candidate equals the selected input. It does not infer a branch from
+a numerical ordering alone. Affine depression is performed first when
+needed: for a monic degree-\(n\) polynomial with next coefficient \(a_{n-1}\),
+substitute \(X=Y-a_{n-1}/n\).
+
+\subsection{Low degree, powers, and composition}
+
+Degrees one and two use the standard formulas. For a depressed cubic
+\(Y^3+PY+Q=0\), set
+\[
+ \Delta=\frac{Q^2}{4}+\frac{P^3}{27},\qquad
+ t=-\frac Q2+\sqrt\Delta,\qquad u=t^{1/3}.
+\]
+Choose the other sign of \(\sqrt\Delta\) when the first \(t\) is zero, unless
+\(P=Q=0\), which is handled separately. The complete coherent candidate list
+is
+\[
+        Y_k=\zeta_3^k u-\frac{P}{3\zeta_3^k u},
+        \qquad k=0,1,2.
+\]
+Indeed, the two summands have product \(-P/3\), and their cubes sum to \(-Q\).
+This product constraint is what independently chosen cube roots can violate.
+Quartic candidates come from the CAS's explicit quartic solver and are
+subsequently checked.
+
+If every nonconstant exponent is divisible by \(r>1\), then
+\(f(X)=g(X^r)\). Solve \(g(Y)=0\) recursively and generate
+\(X=\zeta_r^kY^{1/r}\), for all \(0\leq k<r\).
+The zero case is harmless. Likewise, a rational polynomial decomposition
+\[
+                 f=f_1\circ f_2\circ\cdots\circ f_s
+\]
+can be solved from the outside inward. Intermediate coefficients may then
+be radicals. The package does not claim to discover every decomposition
+over every algebraic coefficient field: rational decomposition is a fast
+path, not the completeness mechanism.
+
+\subsection{Dickson polynomials and coherent inverse pairs}
+
+Define
+\[
+ D_0(X,a)=2,\qquad D_1(X,a)=X,\qquad
+ D_n(X,a)=X D_{n-1}(X,a)-aD_{n-2}(X,a).
+\]
+Direct induction gives the key identity
+\begin{equation}
+       D_n(u+a/u,a)=u^n+(a/u)^n.                 \label{eq:dickson}
+\end{equation}
+For \(a\ne0\), an equation \(D_n(X,a)+c=0\) is therefore solved by
+\begin{equation}
+ \begin{split}
+ t&=\frac{-c+\sqrt{c^2-4a^n}}2,\qquad u=t^{1/n},\\
+ X_k&=\zeta_n^k u+\frac{a}{\zeta_n^k u},\qquad 0\leq k<n.
+ \end{split}                                                 \label{eq:dicksonroots}
+\end{equation}
+Here \(t\) satisfies \(t^2+ct+a^n=0\), so the two \(n\)-th powers in
+\eqref{eq:dickson} sum to \(-c\). Because \(a\ne0\), neither quadratic root
+is zero. The code nevertheless includes a zero guard. The case \(a=0\)
+reduces to a binomial.
+
+The identity is not a heuristic recognition rule. After depression, the
+coefficient of \(X^{n-2}\) suggests
+\(a=-[X^{n-2}]f/n\); the implementation then checks the \emph{entire}
+polynomial identity \(f-D_n=c\). The same pair \(u,a/u\) is used throughout.
+Taking two unrelated principal \(n\)-th roots need not preserve their
+required product \(a\).
+
+\subsection{Generalized reciprocal symmetry}
+
+Let \(f(X)=\sum_{k=0}^{2m}c_kX^k\) be monic. Suppose \(a\in\Q^\times\)
+satisfies
+\begin{equation}
+ c_{m-j}=a^j c_{m+j}\quad(1\leq j\leq m).       \label{eq:recipcondition}
+\end{equation}
+Necessarily \(c_0=a^m\). Grouping the positive and negative powers yields
+\[
+ \frac{f(X)}{X^m}=c_m+\sum_{j=1}^m c_{m+j}
+                     \left(X^j+(a/X)^j\right).
+\]
+By \eqref{eq:dickson}, this equals \(g(X+a/X)\), where
+\[
+              g(Y)=c_m+\sum_{j=1}^m c_{m+j}D_j(Y,a).
+\]
+Thus a degree-\(2m\) problem reduces to a degree-\(m\) equation and quadratics:
+\begin{equation}
+              X=\frac{Y\pm\sqrt{Y^2-4a}}2.                   \label{eq:inverse-recip}
+\end{equation}
+The implementation enumerates the rational solutions of \(a^m=c_0\), then
+checks every condition in \eqref{eq:recipcondition}. This includes ordinary
+reciprocity \(a=1\) and anti-reciprocal substitutions \(a=-1\).
+
+\subsection{Explicit extension hints}
+
+The Wolfram interface also accepts a list of already explicit radical
+constants as \code{"ExtensionHints"}. It factors over their compositum,
+selects smaller-degree factors by exact vanishing at the original root, and
+passes them to the fast solver. This retains the useful part of the notebook
+workflow without confusing a guessed extension with a proof of success.
+The Python front end does not currently implement this hint interface;
+its supplied-field interface serves a different, lower-level purpose.
+
+\section{The two motivating examples}
+\label{sec:examples}
+
+\subsection{The sextic: a cubic hidden by \texorpdfstring{\(X-1/X\)}{X-1/X}}
+
+Consider
+\[
+             f(X)=X^6+X^4-X^3-X^2-1.
+\]
+The exact identity
+\begin{equation}
+ f(X)=X^3\left((X-X^{-1})^3+4(X-X^{-1})-1\right)             \label{eq:sextic}
+\end{equation}
+exhibits generalized reciprocity with \(a=-1\). Put
+\begin{equation}
+ t=\left(\frac12+\frac{\sqrt{849}}{18}\right)^{1/3},\qquad
+ y=t-\frac4{3t},\qquad
+ \alpha=\frac{y+\sqrt{y^2+4}}2.                              \label{eq:sexticrad}
+\end{equation}
+All roots in this displayed formula are positive real principal roots.
+The cubic is \(y^3+4y-1=0\): its Cardano discriminant is
+\(1/4+64/27=283/108\), whose square root is \(\sqrt{849}/18\).
+
+The cubic derivative \(3y^2+4\) is positive on \(\mathbb R\), so it has exactly
+one real root. For that root, \(X^2-yX-1=0\) has one negative and one positive
+solution. Nonreal \(y\) cannot come from a real nonzero \(X\). Hence \(f\) has
+exactly two real roots, and \(\alpha\) is the positive one: the requested
+Wolfram \code{Root[-1-\#\^{}2-\#\^{}3+\#\^{}4+\#\^{}6\&,2]}.
+This is a structural explanation of the conversion, not a lucky extension
+search. The three cubic candidates, each lifted by both signs in
+\eqref{eq:inverse-recip}, yield all six conjugates.
+
+\subsection{The quintic: an inverse Dickson value}
+
+The second polynomial is
+\[
+           5X^5-25X^3+25X+6=5\left(D_5(X,1)+\frac65\right).
+\]
+Set
+\begin{equation}
+              u=\left(\frac{-3+4i}{5}\right)^{1/5},\qquad
+              \beta=u+\frac1u.                              \label{eq:quinticrad}
+\end{equation}
+Here \(u\) is the principal fifth root. Its fifth power has modulus one, so
+\(u\) also has modulus one. The inverse-pair identity immediately gives
+\(D_5(\beta,1)=-6/5\).
+
+To identify the selected branch analytically, write
+\((-3+4i)/5=e^{i\theta}\) with \(\pi/2<\theta<\pi\). Then the five candidates
+are \(2\cos((\theta+2\pi k)/5)\), \(0\leq k<5\), and are distinct and real.
+The angle \(\theta/5\) is closest to a multiple of \(2\pi\), so \(k=0\)
+gives the largest root. Thus \eqref{eq:quinticrad} equals the requested
+Wolfram root with index 5. The trigonometric notation is used only in this
+proof of ordering; it is absent from the returned radicals.
+
+The Python suite tests every conjugate of both polynomials, not just these
+two branches. The sextic's positive real root is Python index 1, and the
+quintic's largest real root is index 4. These particular correspondences
+must not be generalized to arbitrary complex-root indices across systems.
+
+\section{A complete constructive route through a splitting field}
+\label{sec:general}
+
+The remaining construction uses only exact algebraic-number operations and
+finite group computations. Its purpose is completeness in principle, not
+competition with specialized radical formulas on their natural inputs.
+
+\subsection{Build the normal closure with its embedding}
+
+Obtain every exact root of the irreducible polynomial \(f\), and construct
+\[
+                 L=\Q(\alpha_1,\ldots,\alpha_n)\subset\C.
+\]
+A primitive element \(\theta_L\) represents this field as a rational
+polynomial quotient. Because all roots of \(f\) are included, the field is
+normal; characteristic zero gives separability. Its degree
+\(d=[L:\Q]\) is the order of its Galois group.
+
+The Wolfram implementation uses \code{ToNumberField[values,All]}: the
+\code{All} is essential because that form is documented to use the smallest
+common field extension, whereas the automatic form need not
+\cite{tonumberfield}. The Python implementation performs successive exact
+primitive-element adjunctions. For degrees at most four, it may use explicit
+radical roots \emph{internally} as field generators to avoid a costly
+\code{CRootOf} adjunction. That optimization does not replace Fourier descent
+when the general method is requested.
+
+\subsection{Adjoin roots of unity before taking resolvents}
+
+Define the squarefree integer
+\begin{equation}
+        m=\rad(d)=\prod_{p\mid d}p,
+        \qquad C=\Q(\zeta_m),\qquad M=LC.                    \label{eq:compositum}
+\end{equation}
+Use \(m=1\) if \(d=1\). Let
+\[
+                  H=\Gal(M/C).
+\]
+Every prime divisor of \(|H|\) divides \(d\), hence divides \(m\). Consequently
+\(C\) contains every primitive prime-order root of unity needed for a
+prime-quotient normal series of \(H\).
+
+\begin{lemma}[The cyclotomic base does not hide nonsolvability]
+The group \(H\) is solvable if and only if \(G=\Gal(L/\Q)\) is solvable.
+\end{lemma}
+\begin{proof}
+Restriction identifies \(H\) with
+\(\Gal(L/(L\cap C))\). The intersection \(L\cap C\) is Galois over \(\Q\),
+and its Galois group is abelian because it is a subquotient of the
+cyclotomic Galois group. Thus \(H\) identifies with a normal subgroup of
+\(G\) with abelian quotient. Subgroups of solvable groups are solvable;
+conversely, an extension of a solvable group by an abelian group is solvable.
+\end{proof}
+
+A common error is to compute automorphisms of \(L/\Q\), adjoin a formal
+\(\zeta_p\), and then assume the old automorphisms fix it. Intersections with
+the cyclotomic field make that assumption invalid. We construct the actual
+compositum and explicitly retain only automorphisms fixing its chosen
+\(\zeta_m\). No linear-disjointness assumption is made.
+
+\subsection{Recover actual automorphisms from a primitive element}
+
+Let \(M=\Q(\theta)\), with degree \(D\) and minimal polynomial \(F\).
+Every element has a unique coordinate representation
+\[
+            a=A(\theta),\qquad A\in\Q[T],\quad \deg A<D.
+\]
+Since \(M/\Q\) is Galois, \(F\) has \(D\) distinct roots \(\theta_j\) in
+\(M\). Each gives an automorphism
+\begin{equation}
+             \sigma_j(A(\theta))=A(\theta_j).                \label{eq:actualaction}
+\end{equation}
+Composition is determined by the image of \(\theta\): find the unique index
+\(k\) for which \(\sigma_i(\theta_j)=\theta_k\). This yields a multiplication
+table on actual embedded field maps. Select
+\[
+              H=\{\sigma_j:\sigma_j(\zeta_m)=\zeta_m\}.
+\]
+The dimension check
+\begin{equation}
+                      |H|\varphi(m)=D                       \label{eq:dimension}
+\end{equation}
+is an inexpensive but important invariant.
+
+Wolfram enumerates the conjugates of \(\theta\) as exact roots and obtains
+coordinates using \code{ToNumberField}. Python factors \(F\) over \(M\);
+exactly \(D\) distinct linear factors certify normality and provide all
+images. Its field elements are rational coefficient arrays reduced modulo
+\(F\), and \eqref{eq:actualaction} is evaluated by Horner's rule.
+
+An abstract permutation group returned by a Galois-group routine is not
+silently assigned to a numerically ordered root list. The optional SymPy
+small-degree group computation is used only to decide solvability, never
+to attach an unverified action to root labels.
+
+\section{Constructing a prime cyclic normal series}
+
+We need
+\begin{equation}
+ H=H_0\triangleright H_1\triangleright\cdots
+     \triangleright H_r=1,
+ \qquad H_i\triangleleft H_{i-1},\quad
+ H_{i-1}/H_i\simeq C_{p_i},                                  \label{eq:chain}
+\end{equation}
+where each \(p_i\) is prime. This can be found without enumerating the entire
+subgroup lattice.
+
+For a current nontrivial subgroup \(K\), generate its derived subgroup
+\(N=[K,K]\). If \(N=K\), this nontrivial perfect subgroup proves that the
+original group is not solvable. Otherwise enlarge \(N\) greedily by adjoining
+an element of \(K\) whenever the generated subgroup remains proper.
+Every subgroup encountered contains \([K,K]\), so its quotient image in
+\(K/[K,K]\) is a subgroup of an abelian group; it is therefore normal in
+\(K\). When no further proper enlargement is possible, \(N\) is maximal
+proper and normal. The quotient \(K/N\) is a simple finite abelian group,
+hence cyclic of prime order. Repeat within \(N\).
+
+A single pass over the elements of \(K\) suffices for the greedy enlargement.
+Once adjoining an element would generate all of \(K\), making \(N\) larger
+cannot make that same adjunction proper later. The implementation independently
+checks normality, primality of the index, and that the chosen coset generator
+\(\sigma\) satisfies \(\sigma^{p}\in N\).
+
+Under Galois correspondence, \eqref{eq:chain} gives
+\[
+       C=M^{H_0}\subset M^{H_1}\subset\cdots\subset M^{H_r}=M,
+\]
+with cyclic prime-degree steps. The next section translates these steps
+into explicit radicals without choosing a potentially vanishing special
+resolvent as a generator.
+
+\section{Fourier descent, zero resolvents, and exact phases}
+\label{sec:fourier}
+
+\subsection{The local identity}
+
+Fix one step \(N\triangleleft K\) with \(K/N\) cyclic of prime order \(p\).
+Choose a representative \(\sigma\) generating the quotient. Let
+\(a\in M^N\), and let \(\zeta=\zeta_p\in C\). Define
+\begin{equation}
+       R_j=\sum_{k=0}^{p-1}\zeta^{-jk}\sigma^k(a),
+       \qquad 0\leq j<p.                                    \label{eq:resolvent}
+\end{equation}
+
+\begin{lemma}[Fourier descent]
+Each \(R_j\) lies in \(M^N\), \(R_0\in M^K\), and \(R_j^p\in M^K\).
+Moreover,
+\begin{equation}
+       \sigma(R_j)=\zeta^jR_j,
+       \qquad a=\frac1p\sum_{j=0}^{p-1}R_j.                  \label{eq:Fourierinverse}
+\end{equation}
+\end{lemma}
+\begin{proof}
+Normality of \(N\) shows that every \(\sigma^k(a)\) is fixed by \(N\),
+and \(N\) fixes \(\zeta\). Thus the resolvents are fixed by \(N\).
+The relation \(\sigma^p\in N\) gives \(\sigma^p(a)=a\).
+Shifting the summation index in \eqref{eq:resolvent} now gives the displayed
+eigenvalue equation. It makes \(R_0\) and \(R_j^p\) fixed by \(\sigma\),
+hence by \(K=\langle N,\sigma\rangle\). Finally,
+\(\sum_{j=0}^{p-1}\zeta^{-jk}\) is \(p\) for \(k=0\) and zero otherwise.
+Summing \eqref{eq:resolvent} over \(j\) proves the inverse identity.
+\end{proof}
+
+The identity uses \emph{all} Fourier components. Some may be zero; they are
+simply omitted. There is no search for a nonzero eigenvector and no division
+by a resolvent. If \(\sigma(a)=a\), then \(a\) already belongs to the parent
+fixed field and the entire step can be skipped.
+
+\subsection{Principal-root selection}
+
+Suppose \(R_j\ne0\), and let \(b=R_j^p\in M^K\). Recursively express \(b\)
+by radicals as \(B\). The principal \(p\)-th root \(v=b^{1/p}\) belongs to
+\(M\): all roots of \(T^p-b\) are \(\zeta^kR_j\), and all lie in that field.
+Therefore there is a unique \(\ell\in\{0,\ldots,p-1\}\) such that
+\begin{equation}
+                  R_j=\zeta^\ell v.                         \label{eq:phase}
+\end{equation}
+Test this finite list using exact embedded algebraic equality, and return
+\(\zeta_p^\ell B^{1/p}\). Because \(B\) and \(b\) are the same complex number,
+their principal powers agree. This is why the selected embedding must be
+preserved during recursion.
+
+The phase is computed from the compact internal field value \(b\), not from
+a repeatedly expanded radical output. The selected phase is recorded in the
+report. Neither a small imaginary part nor a nearest approximate root is
+accepted as a certificate. In particular, a negative real cube root generally
+requires a nonzero phase relative to the principal complex cube root.
+
+\subsection{The bottom field}
+
+At recursion level zero, \(a\in C\). Write uniquely
+\begin{equation}
+              a=\sum_{k=0}^{\varphi(m)-1}q_k\zeta_m^k,
+              \qquad q_k\in\Q.                              \label{eq:bottom}
+\end{equation}
+Replace \(\zeta_m\) by \((-1)^{2/m}\). This is already a radical expression,
+so recursion ends. The Python implementation solves the coordinate system
+for this cyclotomic basis inside \(M\) and checks the full reconstructed
+vector, not only a square subsystem. Wolfram uses \code{ToNumberField} with
+the actual cyclotomic generator; a rational bottom value is returned directly.
+
+\subsection{Pseudocode}
+
+\begin{lstlisting}
+Encode(a, level):
+    enforce the node budget; use memoization
+    if a = 0: return 0
+    if level = 0: return cyclotomic-coordinate expression for a
+    (K, N, sigma, p) = chain[level]
+    assert a is fixed by N
+    if sigma(a) = a: return Encode(a, level - 1)
+    compute all R[j] from the p-term orbit of a
+    assert R[0] is fixed by K
+    terms = [Encode(R[0], level - 1)]
+    for j = 1, ..., p-1:
+        if R[j] = 0: append 0; continue
+        b = R[j]^p
+        assert b is fixed by K
+        B = Encode(b, level - 1)
+        v = principal_pth_root(b), embedded exactly in M
+        find ell with zeta_p^ell * v = R[j], exactly
+        append zeta_p^ell * principal_pth_root(B)
+    return sum(terms)/p
+\end{lstlisting}
+
+\section{Correctness and completeness of the construction}
+
+\begin{theorem}[Constructive sufficiency]
+Assume the exact field operations, primitive-element computations,
+factorizations and embedded algebraic comparisons described above are
+available. If \(\alpha\) is solvable by radicals, the unbounded construction
+returns a radical expression equal to the specified \(\alpha\).
+\end{theorem}
+\begin{proof}
+The splitting field and cyclotomic compositum are finite, so their exact
+construction terminates under the stated primitives. The relative group
+\(H\) is solvable by the lemma in Section~\ref{sec:general}. Thus the finite
+group procedure reaches the identity and produces \eqref{eq:chain}.
+
+Prove by induction on the recursion level that \code{Encode(a,level)} is a
+permitted radical expression equal to \(a\), whenever \(a\) lies in the
+corresponding fixed field. At level zero this is \eqref{eq:bottom}.
+At a positive level, the Fourier lemma puts every recursively needed value
+in the parent field. The induction hypothesis supplies its radical expression;
+\eqref{eq:phase} reconstructs each nonzero resolvent with the correct complex
+value. The inverse Fourier identity reconstructs \(a\). Zero resolvents and
+skipped fixed-field steps preserve the same conclusion. Every recursive call
+reduces the level, so the process is finite. At the top level the fixed
+subgroup is trivial and the input \(\alpha\in M\) is allowed.
+\end{proof}
+
+\begin{theorem}[Decision in the unbounded mathematical model]
+For every exact algebraic \(\alpha\) over \(\Q\), the construction either
+returns correct radicals or proves that no such radicals exist, provided
+the stated exact primitives terminate.
+\end{theorem}
+\begin{proof}
+The solvable case is the previous theorem. Otherwise the relative group is
+nonsolvable. The normal-series procedure encounters a nontrivial perfect
+subgroup in finitely many strict subgroup reductions. The cyclotomic-base
+lemma then implies that the minimal polynomial's Galois group is nonsolvable.
+The existence criterion rules out radicals for its specified root.
+\end{proof}
+
+\begin{remark}[A theorem is not a blanket software warranty]
+The reference implementations invoke large CAS primitives, do not implement
+a formally verified algebraic-number kernel, and impose finite default
+budgets. A backend exception remains a backend exception even with the
+budgets removed. The completeness theorem describes the algorithm with
+terminating exact primitives; it is not a claim that SymPy or a particular
+Wolfram release successfully executes every such primitive for every input.
+\end{remark}
+
+\subsection{The supplied-model caveat}
+
+Python also accepts a separately constructed, validated Galois field model.
+It checks normality, cyclotomic containment, actual automorphism actions and
+\eqref{eq:dimension}. However, that field can be larger than the target's
+normal closure. A nonsolvable supplied model \emph{does not} prove the target
+nonsolvable: even a rational number belongs to nonsolvable extensions.
+The low-level supplied-model routine therefore raises a backend/model error
+in this situation, not a target-level \code{NotSolvable} conclusion. The
+automatic construction has the stronger minimal-splitting-field provenance
+needed for that conclusion.
+
+\section{Certification details and software architecture}
+
+\subsection{Keep field values and radical syntax separate}
+
+Internal values are canonical algebraic numbers or rational vectors modulo
+a primitive polynomial. Output values are ordinary radical expressions.
+Each recursion node maintains both views. Expanding the radical expression
+is unnecessary for applying automorphisms; operations on the internal value
+are smaller and make fixed-field checks direct. Memoization keys use exact
+field coordinates and recursion level.
+
+Wolfram obtains the coordinates of \(A(\theta)\) from \code{AlgebraicNumber},
+in ascending power order. The SymPy field representation uses
+descending coefficient lists for Horner evaluation. Mixing these conventions
+would silently corrupt automorphism actions. The accompanying implementations
+make the order explicit.
+
+\subsection{Exactness of the chosen embedding in Python}
+
+The final Python equality check first computes monic minimal polynomials.
+Different polynomials imply different values. Equal degree-one polynomials
+identify the same rational value. For higher degree, equality of minimal
+polynomials alone only proves conjugacy. The implementation additionally
+calls \code{Poly.same\_root}, which uses a polynomial root-separation bound
+and bounded-error evaluation to identify the selected root
+\cite{sympyreference,sympysource}.
+
+This is materially different from a fixed working-precision test. If a
+separation bound is \(\delta>0\), approximations with certified errors small
+relative to \(\delta\) can distinguish conjugates even when their first many
+decimal digits agree. The regression suite includes
+\[
+        1+\sqrt2\,10^{-30}\quad\hbox{and}\quad1-\sqrt2\,10^{-30}.
+\]
+Their minimal polynomials are equal; their selected values are not.
+
+The default real PSLQ path of SymPy's \code{to\_number\_field} checks an
+exact defining-polynomial relation but uses a high-precision match to select
+which conjugate that relation represents. For the package's phase and target
+embeddings, \code{embed\_exact} instead calls
+\code{field\_isomorphism} with \code{fast=False}. That factorization path selects
+linear factors with the same-root test. The final public check is independent
+of this coordinate construction. This distinction was found by inspecting
+the installed SymPy source, not by assuming that every high-level call with
+exact inputs automatically provides an independent branch certificate.
+
+The package still trusts the CAS's minimal-polynomial and bounded-evaluation
+implementations. Its \code{Verified} flag means a checked CAS computation,
+not an exported proof object that a tiny standalone verifier or Lean kernel
+can validate. Exporting full isolating-region and field-arithmetic
+certificates would be a useful further project.
+
+\Needspace{19\baselineskip}
+\subsection{Failure taxonomy}
+
+\begin{longtable}{@{}p{0.21\textwidth}p{0.73\textwidth}@{}}
+\toprule Status & Meaning \\ \midrule\endhead
+\code{Success} & The expression passed the radical grammar and selected-root check. \\
+\code{NotSolvable} & An exact group computation proves the minimal polynomial's group nonsolvable. \\
+\code{Unknown} & Fast mode found no certified structural conversion. No impossibility conclusion follows. \\
+\code{ResourceLimit} & A time, degree, recursion or node budget was reached. No impossibility conclusion follows. \\
+\code{BackendError} & A CAS operation failed, a required representation was unavailable, or an invariant did not verify. \\
+\code{InvalidInput} & The Wolfram front end rejected the contract; the Python front end instead raises input-validation exceptions. \\
+\bottomrule
+\end{longtable}
+
+In particular, \code{Unknown}, \code{ResourceLimit}, and \code{BackendError}
+are never converted into \code{NotSolvable}. A finite unsuccessful search
+cannot certify a negative mathematical statement.
+
+\section{Complexity: finite does not mean small}
+
+Let \(n=\deg f\), \(d=[L:\Q]\), \(D=[M:\Q]\), and \(h=|H|\).
+Then
+\[
+ d\leq n!,\qquad D\leq d\varphi(\rad(d)),\qquad
+ D=h\varphi(m).
+\]
+Even moderate root degree can therefore lead to a large primitive polynomial.
+The degree cap is a guard on a mathematical quantity, not a complete memory
+or bit-complexity bound. Rational coefficient heights can grow drastically
+while the degree remains unchanged.
+
+There is a useful bound on the \emph{Fourier expression recursion}, considered
+separately. Ignoring memoization, a level with quotient prime \(p_i\) makes
+at most \(p_i\) recursive calls. Hence the tree for one value has at most
+\[
+ 1+p_r+p_rp_{r-1}+\cdots+\prod_{i=1}^r p_i
+                   \leq 2h-1
+\]
+nodes, because every prime is at least two. At most \(h-1\) nontrivial
+resolvent-root extractions occur in the full tree. This does not bound the
+printed formula by \(O(h)\) characters: bottom coefficients and repeated
+cyclotomic expressions can be large, and coefficient bit lengths are not
+bounded by this count.
+
+The reference implementation builds a full \(D\)-by-\(D\) automorphism
+multiplication table, performs polynomial substitutions for field actions,
+and checks fixed-field invariants repeatedly. With naive dense arithmetic,
+these steps are expensive even before accounting for exact factorization,
+primitive-element construction and embedding selection. No polynomial-time
+claim in \(n\), input length, or output length is made.
+
+The Python degree cap is checked after each successive field adjunction;
+a single oversized adjunction can consume substantial resources before its
+resulting degree is known. The Wolfram primitive-element call constructs
+several generators together, so its wall-clock limit is particularly useful.
+Python has no solver-internal wall-clock option. The supplied test runner
+uses subprocess timeouts, and a production service should similarly isolate
+expensive computations in a worker process.
+
+The implemented fast paths are therefore substantive, not decorative. A
+Dickson polynomial of degree seven or a reciprocal sextic can be solved
+without constructing their full splitting fields. The general construction
+is a fallback and an executable specification for more efficient future
+backends.
+
+\section{Using the supplied implementations}
+
+\subsection{Wolfram Language}
+
+Load the package directly from its extracted folder; a paclet descriptor is
+also included. Direct loading avoids depending on paclet installation.
+\begin{lstlisting}
+Get["/path/to/RadicalRoots/Kernel/RadicalRoots.wl"];
+r = Root[-1 - #^2 - #^3 + #^4 + #^6 &, 2];
+report = RadicalRootReport[r, "Method" -> "Fast"];
+report["Status"]
+report["Expression"]
+RadicalEqualQ[report["Expression"], r]
+\end{lstlisting}
+\code{RadicalRoot[r]} returns the expression on success and a \code{Failure}
+object otherwise.
+
+\code{RadicalRootReport[r]} returns an
+association with status, method, verification flag and details. The default
+method is \code{Automatic}; alternatives are \code{"Fast"} and
+\code{"Galois"}. The public syntax and equality predicates are
+\code{RadicalExpressionQ} and \code{RadicalEqualQ}.
+
+The default budgets are 120 seconds, field degree 64, 10,000 Fourier nodes
+and fast-recursion depth 30. Explicit extension hints are supported:
+\begin{lstlisting}
+RadicalRootReport[r,
+  "ExtensionHints" -> {Sqrt[2], 3^(1/3)}]
+\end{lstlisting}
+The list identifies a compositum, not a list of separately attempted fields.
+The hint-based factorization must still produce a certified smaller factor
+that the fast layer can solve. To request the general algorithm without the
+implemented budgets:
+\begin{lstlisting}
+RadicalRootReport[r, "Method" -> "Galois",
+  "TimeConstraint" -> Infinity,
+  "MaxFieldDegree" -> Infinity,
+  "MaxNodes" -> Infinity,
+  "MaxDepth" -> Infinity]
+\end{lstlisting}
+This can be extremely expensive. It does not disable backend limitations,
+system memory limits or every possible internal CAS recursion limit.
+Numbers already returned as radicals by initial normalization may bypass
+the general construction even when that method is requested.
+
+\subsection{Python and SymPy}
+
+Install the pinned dependency and run the examples from the package root:
+\begin{lstlisting}
+python -m pip install -r python/requirements.txt
+python examples/original_examples.py
+python examples/embedded_model.py
+python tests/run_tests.py --timeout 40
+\end{lstlisting}
+For direct use, put the package's \code{python} directory on \code{sys.path}
+or \code{PYTHONPATH}:
+\begin{lstlisting}
+import sympy as s
+from radicalroots import to_radicals
+x = s.Symbol("x")
+r = to_radicals(x**6+x**4-x**3-x**2-1, 1,
+                method="fast")
+assert r.status == "Success" and r.verified
+print(r.expression)
+\end{lstlisting}
+The methods are \code{"auto"}, \code{"fast"}, and \code{"galois"}.
+\code{None} disables each of \code{max\_field\_degree},
+\code{max\_nodes}, and \code{max\_depth}. There is no internal time option.
+The result is a \code{RadicalResult} dataclass with \code{status},
+\code{expression}, \code{method}, \code{verified}, and \code{details}.
+
+The standalone automatic model does not require a special Galois-group
+function for arbitrary degree. It computes its own embedded automorphisms
+from the splitting field. SymPy's group routine, documented for irreducible
+rational polynomials through degree six, is only an optional early negative
+decision accelerator \cite{sympynumberfields}. Thus this limit is not an
+artificial degree-six restriction of the mathematical backend.
+
+\subsection{Supplying a known embedded field}
+
+A field prepared elsewhere can avoid expensive automatic discovery:
+\begin{lstlisting}
+from galois_core import (GaloisModel, radicals_from_model,
+                        embed_exact)
+K = s.QQ.algebraic_field(s.sqrt(2), s.sqrt(3))
+model = GaloisModel.from_field(K, conductor=2)
+a = embed_exact(K, s.sqrt(2)-s.sqrt(3))
+e, details = radicals_from_model(model, a)
+\end{lstlisting}
+This interface requires an actual embedded Galois field containing the
+specified principal root of unity. The conductor must include every prime
+dividing the relative group order. An abstract group or a list of approximate
+roots does not satisfy the contract.
+
+\section{Validation record and limitations}
+\label{sec:validation}
+
+The final isolated regression run completed \textbf{36 tests: 36 passed, zero failed, and zero timed out}, with a 40-second limit per test.
+The machine-readable \path{test-results/python-tests.json} records the actual
+Python version, SymPy version, platform, subprocess timeout, elapsed time and
+output for each regression. The tests cover the following distinct issues:
+\begin{itemize}
+\item Every conjugate of the motivating sextic and quintic, plus low-degree,
+shifted-binomial, degree-seven Dickson and composition identities.
+\item Full automatic Fourier conversion for quadratic, cubic and a
+nonabelian degree-eight splitting-field example; supplied real and complex
+biquadratic models; cyclotomic-base-only descent.
+\item Nonzero phase corrections, zero resolvents, near-coincident conjugates,
+strict output syntax, invalid input, invalid field models, resource limits,
+and exact nonsolvability of an \(S_5\) example.
+\end{itemize}
+The finite-group component is independently exercised on \(C_5,S_3,S_4\),
+the dihedral group of order eight, and the perfect group \(A_5\).
+The \(S_5\) negative test uses \(X^5-X-1\) and checks the exact reported
+order 120. The reducible-input test additionally selects a rational root
+from a polynomial containing that nonsolvable factor.
+
+The final test-result file is authoritative for pass counts and timings;
+\code{README.md} summarizes it. Tests are not a proof of universal program
+correctness. In particular, the suite does not establish practical automatic
+splitting-field performance on arbitrary solvable quintics, septics or the
+large polynomials in the notebook. Early exploratory adjunctions of multiple
+\code{CRootOf} generators were slow enough to motivate the low-degree
+internal-radical optimization. No claim is made to have run the complete
+notebook or to have benchmarked a competitive high-degree Galois solver.
+
+The native Wolfram kernel was unavailable in the authoring environment.
+The connected Wolfram service returned HTTP 404 before evaluation on both
+attempts. Therefore the supplied \code{.wlt} tests are \emph{not} reported as
+passed. A static delimiter/comment/string check is useful for packaging,
+but is not a substitute for executing the package. The Python results do
+not certify the Wolfram translation.
+
+There are also intentional scope limitations. The solver does not denest
+or optimize a returned tower globally. Real inputs may produce complex
+intermediate radicals. It does not provide an all-real-radical guarantee,
+which is a stronger condition. Input recognition from numerical constants,
+parameter stratification and proofs about inverse special functions remain
+outside its contract. Failure reports preserve these distinctions rather
+than silently returning an unchecked expression.
+
+\section{Related work and practical next steps}
+
+The theoretical ingredients are classical: solvability of finite groups,
+Galois correspondence, cyclotomic base change and cyclic-extension
+resolvents. A recent explicit algorithmic treatment by Song Li also uses
+Lagrange/Fourier-resolvent ideas \cite{li}. The present package is an
+independently written reference implementation organized around actual
+embedded-field actions, a concrete compositum that fixes the needed roots
+of unity, and explicit principal-branch selection. It does not adopt
+unverified runtime claims for a different representation or implementation.
+
+Several optimizations can preserve the exact contract. A stronger backend
+could construct relative fields rather than a large absolute primitive
+field, use group stabilizers and subfield algorithms to find smaller towers,
+or compute only the field actions needed for one target. Recognized
+cyclotomic periods and solvable quintic normal forms could be additional
+fast paths. Such accelerators should propose exact structures, then pass the
+same invariant and branch checks; none should replace a failed search with
+a nonsolvability claim.
+
+A further useful separation is an independently checkable certificate:
+primitive polynomials and isolating regions, rational matrices for
+automorphisms, subgroup inclusions, resolvent powers, and branch-isolating
+certificates. Those data could allow an external verifier to check an answer
+without repeating field discovery. This release records decisions and
+verifies them in the CAS, but it does not yet export that full proof format.
+
+The central conclusion is practical as well as theoretical. The original
+examples do not require blind searches over complicated extension guesses;
+their structures give short radicals directly. For the remaining solvable
+cases, a complete constructive route is available. Its main obstacle in a
+general-purpose implementation is the cost and robustness of exact field
+computation, not the absence of a mathematical algorithm.
+
+\appendix
+\section{Package map and reproducibility}
+
+\begin{longtable}{@{}p{0.42\textwidth}p{0.52\textwidth}@{}}
+\toprule Path & Purpose \\ \midrule\endhead
+\code{Kernel/RadicalRoots.wl} & Wolfram package and both conversion layers. \\
+\code{Kernel/init.m}, \code{PacletInfo.wl} & Loader and optional paclet metadata. \\
+\code{python/radicalroots.py} & Public Python interface, structural proposals and selected-root checks. \\
+\code{python/galois\_core.py} & Exact field models, automorphisms, prime series and Fourier descent. \\
+\code{python/requirements.txt} & Pinned SymPy dependency. \\
+\code{tests/test\_python.py} & Executable regressions. \\
+\code{tests/run\_tests.py} & Isolated runner with actual JSON results. \\
+\code{tests/RadicalRoots.wlt} & Native Wolfram regression specification. \\
+\code{tests/run\_wolfram.wls} & Native test runner. \\
+\code{examples/} & Original examples and supplied-model demonstration. \\
+\code{test-results/} & Actual Python results and explicit Wolfram execution status. \\
+\code{source-review/} & Notebook inspection, transcription, provenance and hashes. \\
+\code{docs/article.tex}, \code{docs/article.pdf} & This article. \\
+\bottomrule
+\end{longtable}
+
+Compile the article from its directory with two runs of
+\code{pdflatex -interaction=nonstopmode -halt-on-error article.tex}.
+The bibliography is embedded; no BibTeX invocation is required. Runtime
+measurements include test-process startup and should not be read as isolated
+solver benchmarks. The new implementation is MIT-licensed; the original
+notebook-derived material retains its separate attribution.
+
+\begingroup\raggedright
+\begin{thebibliography}{9}
+\bibitem{question}
+Vladimir Reshetnikov, \emph{Why is ToRadicals not able to handle all cases?
+Is there a workaround?}, Mathematica Stack Exchange, question 34011.
+\url{https://mathematica.stackexchange.com/questions/34011/why-is-toradicals-not-able-to-handle-all-cases-is-there-a-workaround}.
+
+\bibitem{toradicals}
+Wolfram Research, \emph{ToRadicals}, Wolfram Language documentation.
+\url{https://reference.wolfram.com/language/ref/ToRadicals.html}.
+
+\bibitem{tonumberfield}
+Wolfram Research, \emph{ToNumberField} and \emph{RootReduce}, Wolfram Language documentation.
+\url{https://reference.wolfram.com/language/ref/ToNumberField.html};
+\url{https://reference.wolfram.com/language/ref/RootReduce.html}.
+
+\bibitem{milne}
+J. S. Milne, \emph{Fields and Galois Theory}, version 5.10, 2022,
+especially Chapter 5 and Theorem 5.34.
+\url{https://www.jmilne.org/math/CourseNotes/FT.pdf}.
+
+\bibitem{sympynumberfields}
+The SymPy development team, \emph{Number Fields}, SymPy 1.14.0 documentation.
+\url{https://docs.sympy.org/latest/modules/polys/numberfields.html}.
+
+\bibitem{sympyreference}
+The SymPy development team, \emph{Polynomials Manipulation Module Reference},
+entry \code{Poly.same\_root}, SymPy 1.14.0 documentation.
+\url{https://docs.sympy.org/latest/modules/polys/reference.html}.
+
+\bibitem{sympysource}
+The SymPy development team, SymPy 1.14.0 source code,
+\code{sympy/polys/numberfields/subfield.py} and
+\code{sympy/polys/polytools.py}. The installed source was inspected for
+\code{field\_isomorphism\_pslq}, \code{field\_isomorphism\_factor},
+and \code{Poly.same\_root}.
+\url{https://github.com/sympy/sympy/tree/1.14.0/sympy/polys}.
+
+\bibitem{li}
+Song Li, \emph{An Algorithm for Solving Solvable Polynomial Equations of Arbitrary Degree by Radicals}, arXiv:2203.11602v2, 2022.
+\url{https://arxiv.org/abs/2203.11602}.
+
+\end{thebibliography}
+\endgroup
+\small Online references consulted 8 September 2026. The supplied notebook is
+identified separately by its archive and notebook SHA-256 hashes in
+\code{source-review/README.md}.
+\end{document}

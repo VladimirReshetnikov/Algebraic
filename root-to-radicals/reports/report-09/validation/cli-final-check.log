@@ -1,0 +1,11 @@
+test_ast_rejects_unrecognized_operations (test_radical_roots.InterfaceTests.test_ast_rejects_unrecognized_operations) ... ok
+test_cli_hard_timeout (test_radical_roots.InterfaceTests.test_cli_hard_timeout) ... ok
+test_cli_input_rejected (test_radical_roots.InterfaceTests.test_cli_input_rejected) ... ok
+test_cli_nonsolvable (test_radical_roots.InterfaceTests.test_cli_nonsolvable) ... ok
+test_cli_success (test_radical_roots.InterfaceTests.test_cli_success) ... ok
+test_linear_space (test_radical_roots.InterfaceTests.test_linear_space) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 5.501s
+
+OK

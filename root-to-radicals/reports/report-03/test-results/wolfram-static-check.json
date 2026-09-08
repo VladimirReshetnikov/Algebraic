@@ -1,0 +1,36 @@
+{
+  "kind": "STATIC_LEXICAL_CHECK_ONLY",
+  "runtime_validation": false,
+  "files": [
+    {
+      "path": "Kernel/RadicalRoots.wl",
+      "status": "PASS",
+      "error": ""
+    },
+    {
+      "path": "PacletInfo.wl",
+      "status": "PASS",
+      "error": ""
+    },
+    {
+      "path": "tests/RadicalRoots.wlt",
+      "status": "PASS",
+      "error": ""
+    },
+    {
+      "path": "examples/original_examples.wls",
+      "status": "PASS",
+      "error": ""
+    },
+    {
+      "path": "tests/run_wolfram.wls",
+      "status": "PASS",
+      "error": ""
+    },
+    {
+      "path": "Kernel/init.m",
+      "status": "PASS",
+      "error": ""
+    }
+  ]
+}

@@ -1,0 +1,223 @@
+{
+  "description": "Development extended smoke run; final-code unittest results are recorded separately.",
+  "conversions": 27,
+  "all_logged_conversions_verified": true,
+  "records": [
+    {
+      "case": "sextic",
+      "index": 0,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 0.4256734848022461
+    },
+    {
+      "case": "sextic",
+      "index": 1,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 1.182117223739624
+    },
+    {
+      "case": "sextic",
+      "index": 2,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 74.88765907287598
+    },
+    {
+      "case": "sextic",
+      "index": 3,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 73.71295666694641
+    },
+    {
+      "case": "sextic",
+      "index": 4,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 104.0156364440918
+    },
+    {
+      "case": "sextic",
+      "index": 5,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 85.13782620429993
+    },
+    {
+      "case": "quintic",
+      "index": 0,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 0.4062340259552002
+    },
+    {
+      "case": "quintic",
+      "index": 1,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 0.43144679069519043
+    },
+    {
+      "case": "quintic",
+      "index": 2,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 0.359605073928833
+    },
+    {
+      "case": "quintic",
+      "index": 3,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 0.8151190280914307
+    },
+    {
+      "case": "quintic",
+      "index": 4,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 0.23619818687438965
+    },
+    {
+      "case": "binomial",
+      "index": 0,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 0.03633928298950195
+    },
+    {
+      "case": "binomial",
+      "index": 1,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 4.315399408340454
+    },
+    {
+      "case": "binomial",
+      "index": 2,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 4.461278438568115
+    },
+    {
+      "case": "binomial",
+      "index": 3,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 4.7937092781066895
+    },
+    {
+      "case": "binomial",
+      "index": 4,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 4.839548587799072
+    },
+    {
+      "case": "binomial",
+      "index": 5,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 3.6039459705352783
+    },
+    {
+      "case": "binomial",
+      "index": 6,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 5.598881483078003
+    },
+    {
+      "case": "cyclotomic11",
+      "index": 0,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 11.620200157165527
+    },
+    {
+      "case": "cyclotomic11",
+      "index": 9,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 12.009863376617432
+    },
+    {
+      "case": "D4",
+      "index": 0,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 54.981229066848755
+    },
+    {
+      "case": "D4",
+      "index": 2,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 53.790595293045044
+    },
+    {
+      "case": "D4",
+      "index": 3,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 55.0897376537323
+    },
+    {
+      "case": "cyclic3",
+      "index": 0,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 1.7767093181610107
+    },
+    {
+      "case": "cyclic3",
+      "index": 2,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 1.2671873569488525
+    },
+    {
+      "case": "cube",
+      "index": 1,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 3.1800177097320557
+    },
+    {
+      "case": "cube",
+      "index": 2,
+      "status": "success",
+      "exact_replay": true,
+      "independent_minpoly_check": true,
+      "seconds": 1.9109821319580078
+    }
+  ]
+}

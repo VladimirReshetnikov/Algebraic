@@ -1,0 +1,7 @@
+Wolfram Language validation status: NOT KERNEL-EXECUTED.
+The available Wolfram service returned HTTP 404; no local kernel was available.
+A lexical delimiter/comment/string scan was performed. This is not a Wolfram parser or execution test.
+
+SystematicRadicals.wl: balanced delimiters, comments, and strings.
+tests/SystematicRadicals.wlt: balanced delimiters, comments, and strings.
+examples/quickstart.wl: balanced delimiters, comments, and strings.

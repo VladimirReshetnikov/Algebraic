@@ -1,0 +1,13 @@
+{
+  "version": "0.1.0",
+  "article_pages": 25,
+  "python_tests": 32,
+  "python_tests_passed": 32,
+  "saved_certificates_replayed": 6,
+  "cli_final_tests_passed": 6,
+  "wolfram_validation": "static only; no kernel execution",
+  "pdf_validation": "compiled with pdflatex; page renders and selected full-size pages inspected; no out-of-page text blocks",
+  "installation": "editable installation succeeded with --no-deps --no-build-isolation",
+  "python": "3.13.5",
+  "sympy": "1.14.0"
+}

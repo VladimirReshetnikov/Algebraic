@@ -1,0 +1,257 @@
+{
+  "python": "3.13.5",
+  "sympy": "1.14.0",
+  "platform": "Linux-6.18.35-x86_64-with-glibc2.41",
+  "index_convention": "zero-based SymPy",
+  "notes": [
+    "Each solve is a spawned process; elapsed time includes startup.",
+    "Success means exact internal verification, not a tolerance test.",
+    "Additional full branch verifier run only for small complete cases."
+  ],
+  "cases": [
+    {
+      "name": "question-sextic",
+      "polynomial": "x**6 + x**4 - x**3 - x**2 - 1",
+      "index": 1,
+      "requested_method": "practical",
+      "timeout_seconds": 30,
+      "status": "Success",
+      "method": "reciprocal",
+      "elapsed_seconds": 2.3118,
+      "diagnostics": [],
+      "expression": "-2/(3*(1/2 + sqrt(849)/18)**(1/3)) + (1/2 + sqrt(849)/18)**(1/3)/2 + sqrt((-4/(3*(1/2 + sqrt(849)/18)**(1/3)) + (1/2 + sqrt(849)/18)**(1/3))**2 + 4)/2",
+      "approximation": "1.1306854454620405872",
+      "operation_count": 41
+    },
+    {
+      "name": "question-quintic",
+      "polynomial": "5*x**5 - 25*x**3 + 25*x + 6",
+      "index": 4,
+      "requested_method": "practical",
+      "timeout_seconds": 30,
+      "status": "Success",
+      "method": "Dickson",
+      "elapsed_seconds": 1.6371,
+      "diagnostics": [],
+      "expression": "(-3/5 + 4*I/5)**(-1/5) + (-3/5 + 4*I/5)**(1/5)",
+      "approximation": "1.8070599950854245021 + 0.e-25*I",
+      "operation_count": 14
+    },
+    {
+      "name": "nonsolvable-quintic",
+      "polynomial": "x**5 - x - 1",
+      "index": 0,
+      "requested_method": "automatic",
+      "timeout_seconds": 30,
+      "status": "NotSolvable",
+      "method": "SymPy-Galois",
+      "elapsed_seconds": 1.2221,
+      "diagnostics": [],
+      "group_order": 120
+    },
+    {
+      "name": "general-quadratic",
+      "polynomial": "x**2 - 2",
+      "index": 1,
+      "requested_method": "complete",
+      "timeout_seconds": 30,
+      "status": "Success",
+      "method": "Galois-Kummer",
+      "elapsed_seconds": 1.0525,
+      "diagnostics": [],
+      "expression": "sqrt(2)",
+      "approximation": "1.4142135623730950488",
+      "operation_count": 2,
+      "splitting_degree": 2,
+      "field_degree": 2,
+      "cyclotomic_order": 2,
+      "derived_orders": [
+        2,
+        1
+      ],
+      "tower_primes": [
+        2
+      ],
+      "independent_full_verifier": true,
+      "verifier_seconds": 0.0201
+    },
+    {
+      "name": "general-cubic",
+      "polynomial": "x**3 - 2",
+      "index": 0,
+      "requested_method": "complete",
+      "timeout_seconds": 30,
+      "status": "Success",
+      "method": "Galois-Kummer",
+      "elapsed_seconds": 1.6145,
+      "diagnostics": [],
+      "expression": "-2*(-1)**(2/3)*(-162 + 324*(-1)**(1/3))**(1/3)/9 + (-1)**(1/3)*(-162 + 324*(-1)**(1/3))**(1/3)/9",
+      "approximation": "1.2599210498948731648 + 0.e-28*I",
+      "operation_count": 26,
+      "splitting_degree": 6,
+      "field_degree": 6,
+      "cyclotomic_order": 6,
+      "derived_orders": [
+        3,
+        1
+      ],
+      "tower_primes": [
+        3
+      ],
+      "independent_full_verifier": true,
+      "verifier_seconds": 0.1983
+    },
+    {
+      "name": "general-binomial-quartic",
+      "polynomial": "x**4 - 2",
+      "index": 1,
+      "requested_method": "complete",
+      "timeout_seconds": 60,
+      "status": "Success",
+      "method": "Galois-Kummer",
+      "elapsed_seconds": 26.0565,
+      "diagnostics": [],
+      "expression": "-4*2**(1/4)*I*(1/2 + I)/5 + 2*2**(1/4)*(1/2 + I)/5",
+      "approximation": "1.1892071150027210667 - 0.e-28*I",
+      "operation_count": 16,
+      "splitting_degree": 8,
+      "field_degree": 8,
+      "cyclotomic_order": 2,
+      "derived_orders": [
+        8,
+        2,
+        1
+      ],
+      "tower_primes": [
+        2,
+        2,
+        2
+      ],
+      "independent_full_verifier": true,
+      "verifier_seconds": 11.5628
+    },
+    {
+      "name": "general-cyclotomic-8",
+      "polynomial": "x**4 + 1",
+      "index": 0,
+      "requested_method": "complete",
+      "timeout_seconds": 30,
+      "status": "Success",
+      "method": "Galois-Kummer",
+      "elapsed_seconds": 1.2382,
+      "diagnostics": [],
+      "expression": "-sqrt(2)/2 - sqrt(2)*I/2",
+      "approximation": "-0.7071067811865475244 - 0.7071067811865475244*I",
+      "operation_count": 9,
+      "splitting_degree": 4,
+      "field_degree": 4,
+      "cyclotomic_order": 2,
+      "derived_orders": [
+        4,
+        1
+      ],
+      "tower_primes": [
+        2,
+        2
+      ],
+      "independent_full_verifier": true,
+      "verifier_seconds": 0.0944
+    },
+    {
+      "name": "general-cyclotomic-5",
+      "polynomial": "x**4 + x**3 + x**2 + x + 1",
+      "index": 0,
+      "requested_method": "complete",
+      "timeout_seconds": 30,
+      "status": "Success",
+      "method": "Galois-Kummer",
+      "elapsed_seconds": 1.4341,
+      "diagnostics": [],
+      "expression": "-sqrt(5)/4 - 1/4 - sqrt(-5/2 + sqrt(5)/2)/2",
+      "approximation": "-0.8090169943749474241 - 0.58778525229247312917*I",
+      "operation_count": 15,
+      "splitting_degree": 4,
+      "field_degree": 4,
+      "cyclotomic_order": 2,
+      "derived_orders": [
+        4,
+        1
+      ],
+      "tower_primes": [
+        2,
+        2
+      ],
+      "independent_full_verifier": true,
+      "verifier_seconds": 0.1662
+    },
+    {
+      "name": "notebook-octic-A",
+      "polynomial": "x**8 + 8*x**7 + 20*x**6 + 8*x**5 - 36*x**4 - 48*x**3 - 15*x**2 + 2*x + 1",
+      "index": 0,
+      "requested_method": "practical",
+      "timeout_seconds": 30,
+      "status": "Success",
+      "method": "shifted-power",
+      "elapsed_seconds": 1.3776,
+      "diagnostics": [],
+      "expression": "-sqrt(sqrt(5)/2 + 2 + sqrt(3*sqrt(5)/2 + 15/4)) - 1",
+      "approximation": "-3.4048671723720653480",
+      "operation_count": 17
+    },
+    {
+      "name": "notebook-octic-B",
+      "polynomial": "x**8 + 8*x**7 + 10*x**6 - 52*x**5 - 131*x**4 - 28*x**3 + 100*x**2 + 32*x + 16",
+      "index": 0,
+      "requested_method": "practical",
+      "timeout_seconds": 30,
+      "status": "Success",
+      "method": "shifted-power",
+      "elapsed_seconds": 1.1847,
+      "diagnostics": [],
+      "expression": "-sqrt(sqrt(15) + 9/2 + sqrt(45/4 + 3*sqrt(15))) - 1",
+      "approximation": "-4.6270004754226120734",
+      "operation_count": 16
+    },
+    {
+      "name": "notebook-octic-C",
+      "polynomial": "x**8 + 8*x**7 + 16*x**6 - 4*x**5 - 68*x**4 - 28*x**3 + 49*x**2 + 14*x + 1",
+      "index": 0,
+      "requested_method": "practical",
+      "timeout_seconds": 30,
+      "status": "Success",
+      "method": "pair-resolvent",
+      "elapsed_seconds": 1.7935,
+      "diagnostics": [],
+      "expression": "-sqrt(sqrt(3) + 9/4 + sqrt(15)*sqrt(4*sqrt(3) + 7)/2) - 1 - sqrt(3)/2",
+      "approximation": "-5.2140302006785498371",
+      "operation_count": 23
+    },
+    {
+      "name": "automatic-binomial-quintic",
+      "polynomial": "x**5 - 2",
+      "index": 0,
+      "requested_method": "automatic",
+      "timeout_seconds": 30,
+      "status": "Success",
+      "method": "shifted-power",
+      "elapsed_seconds": 1.2276,
+      "diagnostics": [],
+      "expression": "2**(1/5)",
+      "approximation": "1.1486983549970350068",
+      "operation_count": 2
+    },
+    {
+      "name": "general-binomial-quintic",
+      "polynomial": "x**5 - 2",
+      "index": 0,
+      "requested_method": "complete",
+      "timeout_seconds": 30,
+      "status": "Inconclusive",
+      "method": "",
+      "elapsed_seconds": 30.0248,
+      "diagnostics": [
+        "Wall-clock limit exceeded; no mathematical conclusion."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+START binomial_quintic x**5 - 2
+0.003 Constructing splitting field
+0.06 Adjoining a degree-4 factor to degree-5 field
+17.616 Computing automorphisms in absolute degree 20
+17.894 Certifying the complex embedding and root-of-unity branch
+26.216 Radical stage 1: prime 5; fixed-field degree 20
+RESULT Success {'input_degree': 5, 'splitting_field_degree': 20, 'absolute_field_degree': 20, 'cyclotomic_order': 10, 'relative_group_order': 5, 'composition_series_orders': [5, 1], 'extension_history': [{'old_degree': 5, 'relative_degree': 4, 'new_degree': 20, 'primitive_coefficient': 2}], 'elapsed_seconds': 26.21919049799999, 'preliminary_galois': {'order': 20, 'solvable': True, 'generators': [[1, 2, 3, 4, 0], [0, 2, 4, 1, 3]]}}
+VERIFY True
+ELAPSED 28.159790754318237

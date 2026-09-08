@@ -1,0 +1,1 @@
+Quintic, sextic, and degree-eight polynomial identities: exact checks passed.

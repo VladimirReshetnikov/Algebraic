@@ -1,0 +1,21 @@
+{
+  "method": "Lexical scan of strings, nested comments, and delimiters; not a Wolfram parser or execution test.",
+  "files": [
+    {
+      "file": "examples/demo.wl",
+      "balanced": true
+    },
+    {
+      "file": "tests/RootRadicals.wlt",
+      "balanced": true
+    },
+    {
+      "file": "tests/RunWolframTests.wls",
+      "balanced": true
+    },
+    {
+      "file": "wolfram/RootRadicals.wl",
+      "balanced": true
+    }
+  ]
+}

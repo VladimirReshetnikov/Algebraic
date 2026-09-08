@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "systematic-root-radicals"
+version = "0.1.0"
+description = "Exact algebraic shortcuts and a splitting-field Kummer reference constructor"
+requires-python = ">=3.10"
+dependencies = ["sympy==1.14.0"]
+license = "MIT-0"
+
+[project.scripts]
+root-radicals = "radical_roots.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "python"}
+
+[tool.setuptools.packages.find]
+where = ["python"]

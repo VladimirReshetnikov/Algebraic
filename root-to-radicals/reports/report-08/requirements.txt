@@ -1,0 +1,3 @@
+# Reproducibility pin. The backend uses exact algebraic-field representations
+# and should be revalidated before changing the SymPy version.
+sympy==1.14.0

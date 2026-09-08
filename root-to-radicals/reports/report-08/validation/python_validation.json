@@ -1,0 +1,192 @@
+{
+  "date": "2026-09-08T18:19:14.259685+00:00",
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "sympy": "1.14.0",
+  "platform": "Linux-6.18.35-x86_64-with-glibc2.41",
+  "tests_run": 36,
+  "success": true,
+  "elapsed_seconds": 81.38434219099986,
+  "tests": [
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_01_rational",
+      "status": "passed",
+      "seconds": 0.003390672000023187
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_02_inexact_rejected",
+      "status": "passed",
+      "seconds": 0.0014917420000983839
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_03_algebraic_coefficient_rejected",
+      "status": "passed",
+      "seconds": 0.002240557000050103
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_04_reducible_rejected",
+      "status": "passed",
+      "seconds": 0.002686150000045018
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_05_constant_rejected",
+      "status": "passed",
+      "seconds": 0.0001938559998961864
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_06_invalid_limits",
+      "status": "passed",
+      "seconds": 0.00012551400004667812
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_07_invalid_method",
+      "status": "passed",
+      "seconds": 2.4957000050562783e-05
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_08_strict_grammar",
+      "status": "passed",
+      "seconds": 0.002235079999991285
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_09_sextic_reduction_identity",
+      "status": "passed",
+      "seconds": 0.011979729000131556
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_10_sextic_all_roots",
+      "status": "passed",
+      "seconds": 0.5082771609997963
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_11_sextic_positive_formula",
+      "status": "passed",
+      "seconds": 0.009637646999863136
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_12_quintic_all_roots",
+      "status": "passed",
+      "seconds": 0.03298428299990519
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_13_quintic_selected_root",
+      "status": "passed",
+      "seconds": 0.008740043999978298
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_14_shifted_binomial",
+      "status": "passed",
+      "seconds": 5.926576474000058
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_15_power_composition",
+      "status": "passed",
+      "seconds": 0.004565471999967485
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_16_translated_dickson",
+      "status": "passed",
+      "seconds": 0.0688796970000567
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_17_weighted_reciprocal",
+      "status": "passed",
+      "seconds": 1.1436934389998896
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_18_fast_miss_is_not_nonsolvability",
+      "status": "passed",
+      "seconds": 0.002296487999956298
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_19_nonsolvable",
+      "status": "passed",
+      "seconds": 0.008674254999959885
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_20_reducible_input_easy_factor",
+      "status": "passed",
+      "seconds": 0.004333084000109011
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_21_reducible_input_hard_factor",
+      "status": "passed",
+      "seconds": 0.007482141000082265
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_22_index_validation",
+      "status": "passed",
+      "seconds": 0.000762397999778841
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_23_field_degree_budget",
+      "status": "passed",
+      "seconds": 0.012029750000010608
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_24_tower_quadratic",
+      "status": "passed",
+      "seconds": 0.029194481000104133
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_25_tower_pure_cubic",
+      "status": "passed",
+      "seconds": 0.4260667599999124
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_26_tower_cyclic_cubic",
+      "status": "passed",
+      "seconds": 0.2946724119999544
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_27_tower_biquadratic",
+      "status": "passed",
+      "seconds": 0.11622466599988002
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_28_tower_nonabelian_quartic",
+      "status": "passed",
+      "seconds": 22.172586752999905
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_29_tower_nonabelian_cubic",
+      "status": "passed",
+      "seconds": 37.62115573799997
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_30_tampered_power_rejected",
+      "status": "passed",
+      "seconds": 0.003897934999940844
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_31_wrong_polynomial_rejected",
+      "status": "passed",
+      "seconds": 0.0036563959999966755
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_32_duplicate_roots_rejected",
+      "status": "passed",
+      "seconds": 0.002810963999991145
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_33_json_protocol",
+      "status": "passed",
+      "seconds": 0.004562480999993568
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_34_cli_success",
+      "status": "passed",
+      "seconds": 4.869480815000088
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_35_cli_hard_timeout",
+      "status": "passed",
+      "seconds": 2.4206747050000104
+    },
+    {
+      "test": "test_systematic_radicals.RadicalTests.test_36_cli_invalid_input",
+      "status": "passed",
+      "seconds": 5.650569906000101
+    }
+  ],
+  "wolfram_tests": "Provided, but not executed: no usable Wolfram kernel was available."
+}

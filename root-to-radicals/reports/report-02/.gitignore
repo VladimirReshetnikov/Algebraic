@@ -1,0 +1,8 @@
+__pycache__/
+.pytest_cache/
+*.pyc
+*.egg-info/
+article/*.aux
+article/*.log
+article/*.out
+article/*.toc

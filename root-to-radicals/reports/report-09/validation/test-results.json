@@ -1,0 +1,171 @@
+{
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "sympy": "1.14.0",
+  "platform": "Linux-6.18.35-x86_64-with-glibc2.41",
+  "date": "2026-09-08",
+  "tests_run": 32,
+  "successful": true,
+  "tests": [
+    {
+      "test": "test_radical_roots.FastPathTests.test_degree_seven",
+      "status": "PASS",
+      "seconds": 0.107736
+    },
+    {
+      "test": "test_radical_roots.FastPathTests.test_degree_ten",
+      "status": "PASS",
+      "seconds": 22.593299
+    },
+    {
+      "test": "test_radical_roots.FastPathTests.test_original_quintic",
+      "status": "PASS",
+      "seconds": 0.292698
+    },
+    {
+      "test": "test_radical_roots.FastPathTests.test_original_sextic",
+      "status": "PASS",
+      "seconds": 3.989229
+    },
+    {
+      "test": "test_radical_roots.FastPathTests.test_pair_sum_collision",
+      "status": "PASS",
+      "seconds": 0.008922
+    },
+    {
+      "test": "test_radical_roots.FastPathTests.test_reducible_selected_factor",
+      "status": "PASS",
+      "seconds": 0.006132
+    },
+    {
+      "test": "test_radical_roots.FastPathTests.test_repeated_and_rational",
+      "status": "PASS",
+      "seconds": 0.004411
+    },
+    {
+      "test": "test_radical_roots.FastPathTests.test_search_exhaustion_is_not_nonsolvability",
+      "status": "PASS",
+      "seconds": 0.000969
+    },
+    {
+      "test": "test_radical_roots.FastPathTests.test_sextic_identity",
+      "status": "PASS",
+      "seconds": 0.021943
+    },
+    {
+      "test": "test_radical_roots.FastPathTests.test_shifted_scaled_dickson",
+      "status": "PASS",
+      "seconds": 0.027917
+    },
+    {
+      "test": "test_radical_roots.GeneralConstructorTests.test_automorphism_factorization_fallback",
+      "status": "PASS",
+      "seconds": 0.107944
+    },
+    {
+      "test": "test_radical_roots.GeneralConstructorTests.test_certificate_bound_to_expected_polynomial",
+      "status": "PASS",
+      "seconds": 0.000287
+    },
+    {
+      "test": "test_radical_roots.GeneralConstructorTests.test_cyclic_cubic",
+      "status": "PASS",
+      "seconds": 0.371485
+    },
+    {
+      "test": "test_radical_roots.GeneralConstructorTests.test_empty_certificate_rejected",
+      "status": "PASS",
+      "seconds": 0.00027
+    },
+    {
+      "test": "test_radical_roots.GeneralConstructorTests.test_general_quintic",
+      "status": "PASS",
+      "seconds": 34.251098
+    },
+    {
+      "test": "test_radical_roots.GeneralConstructorTests.test_nonabelian_relative_group",
+      "status": "PASS",
+      "seconds": 38.661227
+    },
+    {
+      "test": "test_radical_roots.GeneralConstructorTests.test_nonsolvable",
+      "status": "PASS",
+      "seconds": 0.003274
+    },
+    {
+      "test": "test_radical_roots.GeneralConstructorTests.test_pure_cubic",
+      "status": "PASS",
+      "seconds": 0.240188
+    },
+    {
+      "test": "test_radical_roots.GeneralConstructorTests.test_quadratic",
+      "status": "PASS",
+      "seconds": 0.004019
+    },
+    {
+      "test": "test_radical_roots.GeneralConstructorTests.test_resource_status",
+      "status": "PASS",
+      "seconds": 0.001958
+    },
+    {
+      "test": "test_radical_roots.GeneralConstructorTests.test_tampered_anchor",
+      "status": "PASS",
+      "seconds": 0.001236
+    },
+    {
+      "test": "test_radical_roots.GeneralConstructorTests.test_tampered_branch",
+      "status": "PASS",
+      "seconds": 0.005846
+    },
+    {
+      "test": "test_radical_roots.GeneralConstructorTests.test_tampered_radicand",
+      "status": "PASS",
+      "seconds": 0.004133
+    },
+    {
+      "test": "test_radical_roots.GeneralConstructorTests.test_tampered_target",
+      "status": "PASS",
+      "seconds": 0.008493
+    },
+    {
+      "test": "test_radical_roots.GeneralConstructorTests.test_tower_object_bound_to_certificate",
+      "status": "PASS",
+      "seconds": 0.000658
+    },
+    {
+      "test": "test_radical_roots.GeneralConstructorTests.test_two_step_tower",
+      "status": "PASS",
+      "seconds": 0.013526
+    },
+    {
+      "test": "test_radical_roots.InterfaceTests.test_ast_rejects_unrecognized_operations",
+      "status": "PASS",
+      "seconds": 0.00068
+    },
+    {
+      "test": "test_radical_roots.InterfaceTests.test_cli_hard_timeout",
+      "status": "PASS",
+      "seconds": 0.636435
+    },
+    {
+      "test": "test_radical_roots.InterfaceTests.test_cli_input_rejected",
+      "status": "PASS",
+      "seconds": 1.712811
+    },
+    {
+      "test": "test_radical_roots.InterfaceTests.test_cli_nonsolvable",
+      "status": "PASS",
+      "seconds": 1.607751
+    },
+    {
+      "test": "test_radical_roots.InterfaceTests.test_cli_success",
+      "status": "PASS",
+      "seconds": 1.774195
+    },
+    {
+      "test": "test_radical_roots.InterfaceTests.test_linear_space",
+      "status": "PASS",
+      "seconds": 0.00012
+    }
+  ],
+  "wolfram_kernel_tests": "NOT RUN: evaluator connector returned HTTP 404; no local kernel"
+}

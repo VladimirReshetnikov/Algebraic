@@ -1,0 +1,1251 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+\usepackage[margin=1in,headheight=15pt]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,tabularx,array,longtable}
+\usepackage{enumitem,xcolor,listings,fancyhdr}
+\usepackage{hyperref}
+\definecolor{accent}{HTML}{455846}
+\definecolor{codebg}{HTML}{F5F5F1}
+\hypersetup{colorlinks=true,linkcolor=accent,citecolor=accent,urlcolor=accent,
+ pdftitle={From algebraic roots to radicals},pdfauthor={Technical report prepared for Vladimir Reshetnikov}}
+\lstset{basicstyle=\ttfamily\small,backgroundcolor=\color{codebg},
+ columns=fullflexible,keepspaces=true,breaklines=true,showstringspaces=false,
+ frame=single,rulecolor=\color{black!15},framerule=.3pt,
+ xleftmargin=5pt,xrightmargin=5pt,aboveskip=10pt,belowskip=10pt}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small\sffamily RadicalSolve: theory and implementation}
+\fancyhead[R]{\small\sffamily Version 0.1.0}
+\fancyfoot[C]{\thepage}
+\setlength{\parindent}{0pt}\setlength{\parskip}{5pt}
+\setlist{nosep,leftmargin=1.6em}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Q}{\mathbb Q}\newcommand{\C}{\mathbb C}\newcommand{\Z}{\mathbb Z}
+\DeclareMathOperator{\Gal}{Gal}\DeclareMathOperator{\Res}{Res}
+\DeclareMathOperator{\Tr}{Tr}\DeclareMathOperator{\Norm}{Norm}
+\DeclareMathOperator{\Aut}{Aut}\DeclareMathOperator{\Span}{span}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\zetaP}{\zeta_p}
+\newcommand{\fixed}[1]{L^{#1}}
+\title{\vspace{-1cm}\textbf{From algebraic roots to radicals}\\[8pt]
+\large A branch-aware solver based on structural reductions\\
+and constructive Galois theory}
+\author{Technical report prepared for Vladimir Reshetnikov}
+\date{8 September 2026 \quad\textbullet\quad Reference implementation 0.1.0}
+\begin{document}
+\maketitle
+\begin{abstract}
+We construct a radical-conversion system for exact algebraic numbers represented
+by polynomial roots. The starting point is the supplied \code{FindExtension.nb}
+notebook and its searches for coefficient fields of quadratic and cubic factors.
+The replacement has two layers. Exact structural reductions produce short formulas
+for power compositions, Dickson polynomials, and generalized reciprocal
+polynomials; in particular, they solve both examples in the original question.
+A general reference engine constructs a splitting field, recovers its actual
+automorphisms, and performs Fourier resolvent descent along a prime-index
+subnormal series. Roots of unity are handled in a formal cyclotomic tensor
+algebra, so no linear-disjointness assumption is needed. A norm polynomial
+supplies the hypothesis needed for branch comparisons based on root separation.
+We prove finite completeness of the mathematical algorithm, explain the boundary
+between that theorem and practical resource limits, and document executable
+Python code and a Wolfram Language frontend with native structural methods.
+The Python implementation is tested; the supplied Wolfram code has not been
+executed in a Wolfram kernel in this environment.
+\end{abstract}
+\vspace{4pt}
+\noindent\textbf{Scope.} Parameter-free algebraic numbers over $\Q$, with complex
+radicals allowed. No claim of minimal radical depth, shortest formula, or
+practical completion for every large solvable input is made.
+\newpage
+\tableofcontents
+\newpage
+
+\section{The problem and the contract}
+
+A \code{Root} expression is an excellent exact representation of an algebraic
+number, but it deliberately hides how that number was obtained. The conversion
+problem is to recover a finite expression involving rational arithmetic and
+rational powers, with the \emph{same complex embedding} as the input. The official
+\code{ToRadicals} documentation explicitly covers all degrees through four and
+notes that some higher-degree radical-solvable cases are missed
+\cite{wolfram-toradicals}. Failure of that transformation is therefore not a
+Galois-theoretic impossibility result.
+
+The motivating question supplies, among other examples,
+\begin{align}
+ r_6&=\code{Root}[-1-\#^2-\#^3+\#^4+\#^6\mathbin{\&},2],\label{eq:r6}\\
+ r_5&=\code{Root}[6+25\#-25\#^3+5\#^5\mathbin{\&},5].\label{eq:r5}
+\end{align}
+The examples and notebook originate with Reshetnikov \cite{question,notebook}.
+The package treats this as an algorithm-construction task, not as a request to
+find a convenient expression for just one root.
+
+\subsection{Three different questions}
+
+For an input $\alpha$, three tasks must remain separate:
+\emph{decide} whether radicals exist, \emph{construct} such radicals, and
+\emph{identify} the requested conjugate. A correct abstract Galois group can
+settle the first question while providing no formulas for the second. An
+annihilating polynomial can settle neither the second nor the third by itself:
+$\sqrt2$ and $-\sqrt2$ have the same minimal polynomial.
+
+Let $f$ be the irreducible minimal polynomial of $\alpha$ over $\Q$, and let $L$
+be its splitting field. The classical criterion is
+\begin{equation}\label{eq:criterion}
+ \alpha\text{ is expressible by radicals over }\Q
+ \quad\Longleftrightarrow\quad \Gal(L/\Q)\text{ is solvable}.
+\end{equation}
+This is a statement about the \emph{minimal polynomial of the selected number},
+not an arbitrary reducible polynomial that happens to vanish there. The
+classical cyclic-extension and solvability theorems are described in
+Milne's account \cite{milne}; the explicit finite construction below gives the
+sufficiency direction in the form needed by this implementation.
+
+\subsection{Allowed output and input}
+
+The accepted output grammar is generated by rational constants, $i$, addition,
+multiplication, and $b^q$ for $q\in\Q$, interpreted using principal complex
+powers. Integer negative powers include division by nonzero expressions.
+Explicit undefined values are rejected. In particular,
+\begin{equation}
+ \zeta_n=(-1)^{2/n}
+\end{equation}
+is an allowed radical, whereas an unevaluated trigonometric function or
+\code{Root} is not. Intermediate \code{Root}/\code{CRootOf} objects are allowed
+inside the algorithm; none may escape into its radical result.
+
+The Python interface takes a rational polynomial and a zero-based SymPy root
+index. The Wolfram interface takes an exact algebraic expression, obtains its
+minimal polynomial, and preserves the original embedding by a final exact
+comparison. Approximate coefficients and free parameters are rejected. A
+symbolic parameter introduces specialization and branch-region questions that
+are outside this version's contract. An algebraic number whose defining
+expression happens to use algebraic coefficients is still in scope when its
+rational minimal polynomial can be obtained.
+
+\subsection{What ``complete'' means here}
+
+The general algorithm is not a bounded search over guessed radicals. It is a
+finite construction using polynomial factorization, resultants, finite groups,
+and exact algebraic embedding comparisons. Removing degree and time limits
+removes the implementation's deliberate cutoffs. The completeness theorem
+assumes these standard exact primitives return correctly; it is not a machine-
+checked proof of the Python program or a guarantee about the running time of a
+particular CAS backend. This distinction matters particularly for splitting
+fields and reconstruction of minimal polynomials from large radical formulas.
+
+The delivered Wolfram file contains the structural algorithms natively and
+calls the Python general engine when required. Thus the \emph{general theorem}
+applies to an implemented engine, not to a placeholder for a future Galois
+routine. The Wolfram kernel execution status is stated separately in
+Section~\ref{sec:tests}.
+
+\section{What the supplied notebook contributes}
+
+The notebook was inspected as data, without evaluating its cells. A readable,
+best-effort box extraction is included beside the unchanged notebook. That
+extraction is not a runnable Wolfram program and is not a replacement for the
+original source.
+
+\subsection{Factor coefficients are resolvents in disguise}
+
+The notebook's \code{findExtension} imposes divisibility by
+\begin{equation}\label{eq:quadraticfactor}
+ x^2+p x+q.
+\end{equation}
+Equating the two coefficients of the remainder to zero and eliminating $q$
+produces candidate values of $p$. If the quadratic's roots are $\alpha_i$ and
+$\alpha_j$, then
+\begin{equation}
+ p=-(\alpha_i+\alpha_j),\qquad q=\alpha_i\alpha_j.
+\end{equation}
+Thus its coefficient search is already an implicit search among symmetric
+functions of subsets of conjugates. The analogous cubic search uses elementary
+symmetric functions of triples. This is a natural practical way to discover a
+smaller field in which the original polynomial factors.
+
+What it does not provide is a completeness argument. A useful fixed field need
+not be generated by the particular coefficient selected for elimination.
+Restricting factor degrees to two and three does not cover a cyclic quotient of
+prime order five or seven. Even a suitable factorization does not by itself
+make all coefficient-field elements radical expressions over $\Q$.
+
+The filter involving \code{ExactNumberQ} discards explicitly rational or
+rational-complex numeric coefficients; that predicate is not a general test
+for algebraicity \cite{wolfram-exact}. Discarding a rational trace can also
+conceal a useful extension generated by a different factor coefficient.
+The new system uses exact field coordinates rather than the printed form of a
+candidate coefficient as its structural invariant.
+
+\subsection{Projections and experimental recognition}
+
+The notebook's \code{project} looks at real and imaginary parts of conjugates.
+Those can indeed reveal smaller fields. The \code{fuzz} routine takes random
+subsets of roots, approximates their sums, applies \code{RootApproximant}, and
+then tries \code{PossibleZeroQ}. This is useful discovery machinery, but an
+integer-relation or algebraic-recognition guess is not a proof that it equals
+the original sum. It must be followed by a separate exact check.
+
+The notebook also contains repeated interactive factor/solve experiments,
+large polynomials associated with inverse-beta examples, references to global
+state and earlier outputs, and iterative simplification. Such a research
+notebook should not be repackaged by simply exporting all definitions and
+calling the result a complete solver.
+
+\subsection{Engineering changes}
+
+The replacement makes the trusted conditions explicit. Polynomial identities
+are checked before structural reconstruction; the normal closure supplies the
+actual automorphisms used in general descent; and a radical candidate is never
+selected merely because its decimal approximation is close. Empty searches,
+invalid input, backend failures, resource cutoffs, and proved nonsolvability
+have different results. Public code does not depend on the private
+\code{Simplify`} context or on notebook output history.
+
+The notebook's \code{radicalDepth} also counts trigonometric forms for its
+complexity heuristic. That is a useful aesthetic measure, but it should not be
+confused with the literal radical grammar required here. The package supplies
+an explicit \code{RadicalExpressionQ} predicate instead.
+
+\section{Structural reductions before Galois closure}\label{sec:structural}
+
+The general construction can be costly even when a short answer exists.
+Consequently the automatic route first searches for exact identities of a few
+cheap forms. These searches are not themselves complete; the general engine is
+the fallback.
+
+\subsection{Translation and power composition}
+
+Normalize $f$ to be monic of degree $n$ and remove its next-to-leading term:
+\begin{equation}
+ c=-\frac{[x^{n-1}]f}{n},\qquad q(y)=f(y+c).
+\end{equation}
+Let $g$ be the gcd of the positive exponents having nonzero coefficients in
+$q$. If $g>1$, write
+\begin{equation}
+ q(y)=P(y^g).
+\end{equation}
+After recursively expressing the roots $v$ of $P$, every root of $f$ has the
+form
+\begin{equation}\label{eq:powercomp}
+ x=c+\zeta_g^j v^{1/g},\qquad 0\le j<g.
+\end{equation}
+The recursion lowers polynomial degree. The identity proves annihilation of
+all reconstructed candidates; their requested embedding is a separate choice.
+This covers, for example, shifted binomials such as $(x+1)^5+2$.
+
+\subsection{Dickson polynomials and correlated branches}
+
+Define
+\begin{equation}
+ D_0(y,a)=2,\quad D_1(y,a)=y,\quad
+ D_n(y,a)=yD_{n-1}(y,a)-aD_{n-2}(y,a).
+\end{equation}
+Direct induction gives
+\begin{equation}\label{eq:dickson}
+ D_n(u+a/u,a)=u^n+(a/u)^n.
+\end{equation}
+For a centered polynomial, the coefficient of $y^{n-2}$ suggests
+$a=-[y^{n-2}]q/n$ when $n>2$. The implementation constructs $D_n$ and checks
+whether $D_n-q$ is constant; it does not accept the coefficient test alone.
+
+If $q(y)=D_n(y,a)-b$ and $a\ne0$, put
+\begin{equation}\label{eq:dicksont}
+ t=\left(\frac{b+\sqrt{b^2-4a^n}}2\right)^{1/n}.
+\end{equation}
+Then all roots are
+\begin{equation}\label{eq:dicksonroots}
+ y_j=\zeta_n^j t+\frac{a}{\zeta_n^j t}.
+\end{equation}
+The selected radicand is nonzero: the two roots of
+$T^2-bT+a^n$ have nonzero product. Formula~\eqref{eq:dicksonroots} therefore has
+no hidden division by zero. When $a=0$, the code uses the binomial formula
+instead.
+
+The reciprocal term is essential. Taking independent principal $n$th roots of
+the two roots of $T^2-bT+a^n$ can destroy the condition that their product is
+$a$. Keeping the second term as $a/u$ carries this relation through the entire
+calculation. This is the simplest example of why branch correlation belongs to
+the algebraic representation, not to a final numerical cleanup step.
+
+\subsection{Generalized reciprocal composition}
+
+For a centered monic polynomial $q$ of degree $2m$, search for
+\begin{equation}\label{eq:reciprocal}
+ q(x)=x^m P(x+a/x),\qquad a\in\Q\setminus\{0\},\quad\deg P=m.
+\end{equation}
+The constant coefficient forces $a^m=q(0)$. Rational $m$th roots of a rational
+number can be found exactly by testing numerator and denominator for perfect
+powers. There are at most two candidates for $a$.
+
+For each candidate, the coefficient of $x^{2m}$ determines the leading
+coefficient of $P$, the coefficient of $x^{2m-1}$ determines the next one, and
+so on. More explicitly, subtract the appropriate multiples of
+$x^m(x+a/x)^j$ for $j=m,m-1,\ldots,0$. The expression is a polynomial because
+$j\le m$. A zero final remainder proves~\eqref{eq:reciprocal}.
+
+Once $y$ is a root of $P$, recover
+\begin{equation}\label{eq:reciproots}
+ x=\frac{y\pm\sqrt{y^2-4a}}2.
+\end{equation}
+This is a rational-function decomposition rather than an ordinary polynomial
+composition. Searching only for $f=g\circ h$ with polynomial $h$ would miss it.
+The current recognizer searches rational $a$ after the standard centering
+translation; it does not claim to find every possible algebraic or M\"obius
+change of variable.
+
+\section{The two original examples, explicitly}
+
+\subsection{The sextic: a cubic followed by a quadratic}
+
+The decisive identity is
+\begin{equation}\label{eq:sexticidentity}
+ x^6+x^4-x^3-x^2-1
+ =x^3\left[(x-1/x)^3+4(x-1/x)-1\right].
+\end{equation}
+It is the reciprocal case with $a=-1$ and
+\begin{equation}
+ P(y)=y^3+4y-1.
+\end{equation}
+Put
+\begin{equation}\label{eq:sexticu}
+ u=\left(\frac{9+\sqrt{849}}{18}\right)^{1/3},
+ \qquad y=u-\frac4{3u}.
+\end{equation}
+Here $u>0$ is the ordinary positive cube root. Its cube satisfies
+$t^2-t-64/27=0$, and hence direct expansion gives $y^3+4y=1$.
+The answer for~\eqref{eq:r6} is
+\begin{equation}\boxed{\displaystyle
+ r_6=\frac12\left(u-\frac4{3u}
+       +\sqrt{\left(u-\frac4{3u}\right)^2+4}\right).}\label{eq:sexticanswer}
+\end{equation}
+Numerically this is approximately $1.1306854454620405872$.
+
+There is no ambiguous real-root choice in this derivation. The cubic is
+strictly increasing and has a unique real root. The function $x-1/x$ is
+strictly increasing on each real half-line and maps each half-line onto all
+of $\mathbb R$. Thus the sextic has exactly two real roots; the plus sign in
+\eqref{eq:sexticanswer} gives the positive one requested in the question.
+The two real roots have product $-1$.
+
+A transparent Wolfram form is
+\begin{lstlisting}
+With[{u = ((9 + Sqrt[849])/18)^(1/3)},
+  (u - 4/(3 u) + Sqrt[(u - 4/(3 u))^2 + 4])/2
+]
+\end{lstlisting}
+The formula was independently checked in the Python environment by minimal-
+polynomial reconstruction and embedding comparison. The same Wolfram expression
+is supplied as an example, without claiming a Wolfram-kernel execution test.
+
+\subsection{The quintic: a Dickson equation}
+
+The normalized quintic is
+\begin{equation}
+ x^5-5x^3+5x+\frac65=D_5(x,1)+\frac65.
+\end{equation}
+Take
+\begin{equation}
+ v=\left(\frac{-3+4i}{5}\right)^{1/5}
+\end{equation}
+with its principal power. The selected root is
+\begin{equation}\boxed{\displaystyle r_5=v+v^{-1}.}\label{eq:quinticanswer}
+\end{equation}
+Indeed, $v^5+v^{-5}=-6/5$ and~\eqref{eq:dickson} proves the equation.
+Since $|(-3+4i)/5|=1$, the inverse term is the conjugate of $v$; this is also
+the two-conjugate-radical expression in the original question. The result is
+approximately $1.8070599950854245021$.
+
+If $\theta=\arg(-3+4i)\in(\pi/2,\pi)$, the five reconstructed roots are
+$2\cos((\theta+2\pi j)/5)$. This observation identifies the principal choice
+as the largest real root. It is only an explanation of the embedding: the
+returned expression~\eqref{eq:quinticanswer} contains no trigonometric function.
+The implementation enumerates all five correlated branches and checks the
+selected embedding.
+
+\section{Constructing the exact normal closure}\label{sec:closure}
+
+The remaining sections describe the general engine. Let $f\in\Q[x]$ be monic,
+irreducible, and of degree $n>1$. We work with fields
+\begin{equation}
+ K=\Q[t]/(h(t)),\qquad h\text{ monic and irreducible}.
+\end{equation}
+Elements are rational coefficient vectors of length at most $d=\deg h$;
+addition and multiplication are reduced modulo $h$. The initial field is a
+root field of $f$.
+
+\subsection{Adjoin a root of a remaining factor}
+
+Factor $f$ over $K$. If every factor is linear, $K$ is a splitting field of
+$f$, because it was built using roots of $f$ and contains all of them. Otherwise
+choose an irreducible factor
+\begin{equation}
+ g(Y)=Y^e+g_{e-1}(t)Y^{e-1}+\cdots+g_0(t),\qquad e>1.
+\end{equation}
+Adjoining a root $\beta$ gives a field of degree $de$ over $\Q$.
+To keep using a single-generator representation, try
+\begin{equation}
+ T=t+c\beta,\qquad c=1,2,3,\ldots,
+\end{equation}
+and compute
+\begin{equation}\label{eq:primitive-resultant}
+ H_c(T)=\Res_u\left(h(u),\ c^e g((T-u)/c,u)\right).
+\end{equation}
+The notation $g(Y,u)$ means that its coefficient vectors are read as
+polynomials in $u$.
+
+\begin{lemma}\label{lem:primitive}
+If $H_c$ is square-free of degree $de$, then $T=t+c\beta$ is primitive for
+$K(\beta)/\Q$, and the monic polynomial $H_c$ is its minimal polynomial.
+A suitable positive integer $c$ exists.
+\end{lemma}
+\begin{proof}
+There are $de$ embeddings of the separable field $K(\beta)$ into $\C$.
+The resultant is the product of $T-\tau(t)-c\tau(\beta)$ over those embeddings.
+It is monic of degree $de$. Square-freeness says that these $de$ values are
+distinct, so $t+c\beta$ has $de$ conjugates and generates the whole field.
+
+For two distinct embeddings $\tau,\rho$, the equality
+$\tau(t)+c\tau(\beta)=\rho(t)+c\rho(\beta)$ either has no solution in $c$ or
+has exactly one. It cannot hold identically, because $t$ and $\beta$ generate
+the field. There are finitely many pairs. Avoiding their exceptional values
+leaves a positive integer $c$.
+\end{proof}
+
+This test prevents a common primitive-element mistake: accepting a resultant
+of the expected degree without checking that repeated conjugates have not
+collapsed the actual generated field. The number of exceptional values is at
+most $\binom{de}{2}$, giving a finite bound for the search in principle.
+
+\subsection{Why embedding changes are harmless at this stage}
+
+After computing $H_c$, the implementation constructs the next field with a
+chosen exact root of $H_c$, then factors the original $f$ again. It need not
+preserve the numerical embedding of every previous generator. Any root of the
+proved irreducible $H_c$ defines an isomorphic field, and the polynomial $f$
+still has rational coefficients. Splitting $f$ is an embedding-independent
+property.
+
+This is deliberately different from repeatedly calling a generic primitive-
+element routine on a large list of already embedded \code{CRootOf} expressions.
+Here the minimal polynomial has already been proved and is passed explicitly
+to the field constructor. It avoids asking the backend to rediscover it.
+Only after the full field is available is a concrete embedding used for radical
+branch selection and for matching the original requested root.
+
+\subsection{Termination of the closure construction}
+
+Every adjunction is generated by a root of $f$, so the resulting abstract field
+embeds into a splitting field of $f$. Each nonlinear factor adjunction increases
+the degree by at least a factor of two. The degree is bounded by $n!$, and after
+at most $n-1$ distinct roots have been adjoined, the remaining root is determined
+by the trace coefficient. Consequently the construction reaches a splitting
+field in finitely many steps.
+
+This gives a degree bound, not a useful worst-case speed guarantee. The
+coefficient heights of $H_c$ can grow substantially. Exact factorization over a
+number field may dominate even when the ultimate Galois group has modest order.
+The implementation checks its field-degree budget before making each extension.
+
+\subsection{A worked closure: \texorpdfstring{$x^3-2$}{x cubed minus two}}
+
+Start with $t^3=2$. Over $\Q(t)$,
+\begin{equation}
+ x^3-2=(x-t)(x^2+tx+t^2).
+\end{equation}
+For the quadratic factor, the first candidate gives
+\begin{equation}
+ H_1(T)=(T^3+2)^2,
+\end{equation}
+which correctly fails the square-free test. The second gives
+\begin{equation}
+ H_2(T)=T^6+108.
+\end{equation}
+The degree-six field splits $x^3-2$. The repeated polynomial at $c=1$ has a
+simple interpretation: the sum of two roots is the negative of the third,
+so it generates only a cubic field. The weighted sum with coefficients $1,2$
+separates all six embeddings.
+
+\section{Recovering the actual automorphisms}\label{sec:autos}
+
+Knowing that the Galois group is isomorphic to, for example, $S_3$ is not enough
+for the next stage. We need to apply each automorphism to an element represented
+in the chosen field basis.
+
+\subsection{Weighted conjugate sums instead of a second hard factorization}
+
+One option is to factor the primitive polynomial $h$ over $L$. That is correct,
+but factoring a degree-$d$ polynomial over a degree-$d$ field can be unnecessarily
+expensive. The implementation uses information already accumulated during
+closure construction.
+
+The final primitive element has the form
+\begin{equation}\label{eq:weighted}
+ t=w_1\alpha_{i_1}+\cdots+w_r\alpha_{i_r},
+ \qquad w_1=1,\quad w_j\in\Z_{>0},
+\end{equation}
+for distinct roots of the original $f$. The weights are the primitive-search
+coefficients chosen at successive steps. Although its concrete embedding may
+have changed, the existence of such a representation is preserved.
+
+Enumerate ordered tuples of $r$ distinct original roots, form the corresponding
+weighted sums $b\in L$, and retain precisely those satisfying $h(b)=0$ in
+$\Q[t]/(h)$. Deduplicate by exact coefficient vectors. Stop when $d$ distinct
+values have been found.
+
+\begin{proposition}\label{prop:autos}
+The procedure recovers exactly the $d$ images of $t$ under $\Gal(L/\Q)$.
+Each retained $b$ defines an automorphism by $A(t)\mapsto A(b)$ modulo $h$.
+\end{proposition}
+\begin{proof}
+Every embedding of $L$ permutes the roots of $f$ and sends~\eqref{eq:weighted}
+to one of the enumerated sums. Thus all conjugates of $t$ occur. Conversely,
+$h(b)=0$ gives an injective $\Q$-homomorphism $\Q[t]/(h)\to L$. Its image has
+degree $d$, so it is all of $L$. There are exactly $d$ distinct conjugates,
+which is both a completeness check and a stopping criterion.
+\end{proof}
+
+This turns a feature of the notebook's conjugate-sum experiments into a finite,
+exact construction: the weights are known, the search space is explicit, and
+the acceptance test is a zero coefficient vector, not algebraic recognition
+from a decimal approximation.
+
+\subsection{The multiplication table}
+
+If $b_a,b_b$ are the primitive images for $\sigma_a,\sigma_b$, then
+\begin{equation}
+ (\sigma_a\circ\sigma_b)(t)=b_b(b_a(t))\pmod {h(t)}.
+\end{equation}
+The apparent reversed order is important: the outer automorphism acts on the
+coefficient representation of the inner image. Horner substitution constructs
+the product table and inverse table. The identity is the element whose image
+is the residue class $t$ itself.
+
+For a field element $A(t)$ and a subgroup $H$, membership in its fixed field is
+checked directly:
+\begin{equation}\label{eq:fixedtest}
+ A\in L^H\quad\Longleftrightarrow\quad
+ A(b_\sigma(t))\equiv A(t)\pmod h\quad(\sigma\in H).
+\end{equation}
+No smaller fixed-field primitive polynomial is required to carry out this test.
+The representation may be redundant, but it is uniform and exact.
+
+\section{From a solvable group to prime cyclic steps}\label{sec:chain}
+
+The descent needs a subnormal chain
+\begin{equation}\label{eq:chain}
+ G=H_0\triangleright H_1\triangleright\cdots\triangleright H_s=1,
+ \qquad H_{i-1}/H_i\cong C_{p_i},
+\end{equation}
+where $p_i$ is prime. These subgroups need only be normal in their immediate
+predecessor, not in the whole group.
+
+For a current subgroup $H$, compute its commutator subgroup $D=[H,H]$ by finite
+group closure. If $D=H\ne1$, a nontrivial perfect subgroup has been found and
+$G$ is not solvable. Otherwise begin with $N=D$, scan the elements $g\in H$,
+and replace $N$ by $\langle N,g\rangle$ whenever that generated subgroup is
+still proper in $H$.
+
+\begin{lemma}
+At the end of this scan, $N$ is normal in $H$ and $H/N$ has prime order.
+\end{lemma}
+\begin{proof}
+The quotient $H/D$ is abelian, so every subgroup containing $D$ is normal in
+$H$. If a tested $g$ generated all of $H$ together with an earlier $N$, it still
+does so after $N$ grows. Thus at the end every $g\notin N$ generates the whole
+quotient $H/N$. That finite quotient has no nontrivial proper subgroup, and
+is therefore cyclic of prime order.
+\end{proof}
+
+Repeat with $H=N$. The code explicitly checks normality and prime index before
+using a step. Any $\sigma\in H_{i-1}\setminus H_i$ generates the quotient,
+and $\sigma^{p_i}$ fixes every element of $L^{H_i}$.
+
+For degrees through six, the implementation optionally asks SymPy's exact
+Galois classifier for an early negative result. Its documented degree limit
+is six \cite{sympy-fields}. That classifier is \emph{not} the source of the
+actual automorphism action used for positive construction. Above degree six,
+the explicit closure and multiplication-table algorithm still supplies that
+action. Exhaustion of the classifier's transformation attempts falls back to
+the general route instead of implying nonsolvability.
+
+\section{Fourier descent without a disjointness assumption}\label{sec:fourier}
+
+Fix one step $N\triangleleft H$ with $H/N\cong C_p$, and let
+$\beta\in L^N$. Choose $\sigma\in H$ generating the quotient. Classical
+Lagrange resolvents diagonalize the cyclic action after a primitive $p$th root
+of unity is available. This is the computational content behind the cyclic
+Kummer construction \cite{milne}. Related general radical-solution algorithms
+are discussed by Li \cite{li}; the presentation here focuses on exact field
+coordinates, a division-free tensor formulation, and explicit branch bookkeeping.
+
+\subsection{The tensor algebra}
+
+Work formally in
+\begin{equation}\label{eq:tensor}
+ A=L[z]/(\Phi_p(z))
+   \cong L\otimes_{\Q}\Q(\zeta_p),\qquad
+ \Phi_p(z)=1+z+\cdots+z^{p-1}.
+\end{equation}
+This is a free $L$-module with basis $1,z,\ldots,z^{p-2}$. It is \emph{not
+necessarily a field}. For example, when $L$ already contains $\zeta_3$,
+\begin{equation}
+ (z-\zeta_3)(z-\zeta_3^2)=0
+\end{equation}
+in $A$, although neither factor is zero. Treating such a quotient as a field
+and inverting arbitrary nonzero elements would be a real correctness bug.
+
+The implementation uses only addition, multiplication, and positive integer
+powers in $A$. Its coefficients remain elements of the exact field $L$.
+Reduction uses
+\begin{equation}
+ z^{p-1}=-(1+z+\cdots+z^{p-2}),\qquad z^p=1.
+\end{equation}
+No tensor-field inversion or linear-disjointness test is needed.
+
+\subsection{The resolvent identities}
+
+For $0\le k<p$, define
+\begin{equation}\label{eq:resolvent}
+ R_k(z)=\sum_{j=0}^{p-1}z^{-kj}\sigma^j(\beta).
+\end{equation}
+Negative powers can be reduced modulo $p$ because $z^p=1$. The action of $H$
+on $A$ fixes the formal symbol $z$ and acts on coefficients.
+
+\begin{proposition}\label{prop:descent}
+The following identities hold in the tensor algebra:
+\begin{align}
+ R_0&\in L^H,\label{eq:trace}\\
+ \sigma R_k&=z^kR_k,\label{eq:eigen}\\
+ R_k^p&\in L^H[z]/(\Phi_p(z))\quad(1\le k<p),\label{eq:powerfixed}\\
+ p\beta&=\sum_{k=0}^{p-1}R_k.\label{eq:inverseDFT}
+\end{align}
+\end{proposition}
+\begin{proof}
+Normality of $N$ implies that every conjugate $\sigma^j(\beta)$ is fixed by
+$N$. The relation $\sigma^p(\beta)=\beta$ makes a cyclic index shift in
+\eqref{eq:resolvent} valid and gives~\eqref{eq:eigen}. Its $p$th power is
+fixed by $\sigma$ and also by $N$, hence by $H$. Since the displayed basis of
+$A$ is free over $L$, invariance of an element is equivalent to invariance of
+each coefficient; this proves~\eqref{eq:powerfixed} even if $A$ has zero divisors.
+The same argument for $k=0$ proves~\eqref{eq:trace}.
+
+Finally, summing~\eqref{eq:resolvent} over $k$ gives $p\beta$ because
+$\sum_{k=0}^{p-1}z^{-kj}=0$ for $1\le j<p$, and equals $p$ for $j=0$.
+For nonzero $j$, primality of $p$ permutes the nontrivial exponents modulo $p$,
+so this vanishing is exactly the relation $\Phi_p(z)=0$.
+\end{proof}
+
+\subsection{Recursive conversion}
+
+Write
+\begin{equation}\label{eq:qcoeffs}
+ R_k(z)^p=\sum_{\ell=0}^{p-2}q_{k\ell}z^\ell,
+ \qquad q_{k\ell}\in L^H.
+\end{equation}
+The trace and these coefficients belong to the preceding fixed-field level
+and can be recursively converted. Once their radical expressions are known,
+evaluate $z=\zeta_p$ and form
+\begin{equation}
+ Q_k=\sum_{\ell=0}^{p-2}\operatorname{Rad}(q_{k\ell})\zeta_p^\ell.
+\end{equation}
+There is an integer $e_k\in\{0,\ldots,p-1\}$ for which
+\begin{equation}\label{eq:branchresolvent}
+ R_k(\zeta_p)=\zeta_p^{e_k}Q_k^{1/p}.
+\end{equation}
+The next section explains how that integer is selected without numerical
+guessing. The reconstructed expression is
+\begin{equation}\label{eq:radicalrecursion}
+ \operatorname{Rad}(\beta)
+ =\frac1p\left[\operatorname{Rad}(R_0)+
+      \sum_{k=1}^{p-1}\zeta_p^{e_k}Q_k^{1/p}\right].
+\end{equation}
+At the bottom of the subgroup chain, the fixed elements are rational coefficient
+vectors. The recursion therefore terminates. Values already fixed by the
+preceding, larger subgroup skip a level, and equal coefficient vectors at the
+same level share a memoized result.
+
+\subsection{Zero resolvents are not exceptions to the theory}
+
+A resolvent may be the zero tensor, or a nonzero tensor may evaluate to zero
+at the chosen pair of embeddings. Neither case invalidates Fourier inversion.
+A zero summand contributes zero; it is never used as a denominator. The
+implementation distinguishes formal zero from zero in the chosen embedding
+when choosing branches. This is another advantage of using all the Fourier
+components to reconstruct the requested element rather than insisting that one
+particular component be a nonzero field generator.
+
+\section{Branch selection using an exact annihilator}\label{sec:branches}
+
+A root-of-unity multiplier is not optional decoration. Independent principal
+$p$th roots of the $Q_k$ generally do not reconstruct $\beta$. The branch
+choice must be tied to the concrete element whose field coordinates are known.
+
+\subsection{The norm polynomial}
+
+Represent $R_k(z)$ by $R(u,z)$ with rational coefficients reduced in $u$ modulo
+$h$ and in $z$ modulo $\Phi_p$. Compute
+\begin{equation}\label{eq:norm}
+ P_R(V)=\Res_u\!\left(h(u),
+       \Res_z\bigl(\Phi_p(z),V-R(u,z)\bigr)\right).
+\end{equation}
+It is a monic rational polynomial of degree $d(p-1)$ before repeated factors
+are removed. It is the characteristic/norm polynomial of the multiplication
+operator by $R$ in the finite algebra~\eqref{eq:tensor}. It annihilates every
+evaluation of $R$ at a conjugate of $t$ and a primitive $p$th root of unity.
+The code uses its monic square-free part.
+
+\begin{lemma}\label{lem:allbranches}
+For $1\le k<p$, every candidate
+$\zeta_p^e Q_k^{1/p}$ in~\eqref{eq:branchresolvent} is a root of $P_R$.
+\end{lemma}
+\begin{proof}
+If $R_k(\zeta_p)=0$, all candidates are zero. Otherwise the $p$ candidates
+are precisely the $p$ values obtained by multiplying $R_k(\zeta_p)$ by a
+$p$th root of unity. Equation~\eqref{eq:eigen} rotates that value by
+$\zeta_p^k$ when $\sigma$ acts on the $L$ coordinates and fixes $z$.
+Because $k$ is coprime to the prime $p$, its powers generate all these
+multipliers. All those evaluations occur among the roots of the norm
+polynomial. The equality $Q_k=R_k(\zeta_p)^p$ is already established by the
+exact tensor power and the induction hypothesis for its coefficients.
+\end{proof}
+
+The proof is important: it justifies a common-annihilator root comparison for
+\emph{both} expressions being compared. Passing an arbitrary numerical guess
+to such a comparison would not be justified.
+
+\subsection{Equality is easier when a polynomial is already known}
+
+For a square-free rational polynomial $P$, distinct complex roots have an
+effectively computable positive separation bound $\delta$. If two known roots
+are evaluated with absolute error less than $\delta/8$, their approximate
+distance is less than $\delta/4$ when they are equal and greater than
+$3\delta/4$ when they are different. A threshold between these cases decides
+equality. The evaluation tolerance comes from a theorem about $P$, not from a
+user's expectation that 50 or 100 decimal places ought to be enough.
+
+SymPy's \code{Poly.same\_root} is specifically an equality test for two known
+roots \cite{sympy-poly}. In the pinned implementation it uses a Mignotte
+separation bound and bounded-absolute-error evaluation. The package invokes it
+only after a structural identity, a factor relation, or
+Lemma~\ref{lem:allbranches} supplies the known-root premise. The degree-one
+case is handled separately, because under that premise there is only one root.
+
+This remains a trusted-CAS calculation, not a formally verified interval kernel
+supplied with the package. In particular, the report does not claim that a
+small independent proof assistant has checked SymPy's numerical evaluator.
+The distinction from heuristic recognition is that the polynomial and required
+separation are established algebraically before the comparison is made.
+
+\subsection{Two levels of verification}
+
+The general engine maintains construction invariants: exact field operations,
+fixed-field membership, the resolvent-power identity, and a valid common
+annihilator for each branch comparison. The resulting expression therefore
+inherits its algebraic identity from the construction.
+
+An independent verifier can instead forget this history, compute the minimal
+polynomial $m_E$ of the final radical expression $E$, check $m_E\mid f$, and
+then compare embeddings. The Python \code{verify} function does exactly that.
+It is useful for regression tests, but can be dramatically slower: treating
+correlated radicals independently may create a much larger temporary field.
+The C5 experiment in Section~\ref{sec:tests} illustrates this distinction.
+
+The Wolfram frontend performs an additional check
+\begin{lstlisting}
+RootReduce[answer - input] === 0
+\end{lstlisting}
+and returns no candidate unless it passes. A timed-out or unresolved check is
+not silently replaced by numerical proximity.
+
+\section{Correctness and finite completeness}\label{sec:complete}
+
+\begin{theorem}\label{thm:complete}
+Let $f\in\Q[x]$ be irreducible and let an embedding of one of its roots be
+specified. With resource bounds removed and correct terminating exact
+factorization, resultant, and algebraic-embedding primitives, the general
+algorithm terminates. It produces a radical expression for the specified root
+when that root is expressible by radicals, and otherwise proves
+nonsolvability through its Galois group.
+\end{theorem}
+\begin{proof}
+Section~\ref{sec:closure} constructs the splitting field in finitely many
+adjunctions, with every primitive-element search terminating by
+Lemma~\ref{lem:primitive}. Proposition~\ref{prop:autos} gives all automorphisms
+by a finite search and exact polynomial tests. The finite multiplication table
+then either detects a nontrivial perfect subgroup during the derived-subgroup
+construction or gives the prime-index chain~\eqref{eq:chain}.
+
+In the former case $G$ is not solvable, and the necessity direction of the
+Galois solvability theorem excludes a radical expression for any root of this
+irreducible polynomial. In the latter case use induction on fixed-field level.
+The base field is $L^G=\Q$. For the inductive step,
+Proposition~\ref{prop:descent} puts the trace and all coefficients of each
+resolvent power in the preceding level. The induction hypothesis converts
+them to radicals. There are finitely many possible branches, and
+Lemma~\ref{lem:allbranches} supplies a correct annihilator for a terminating
+algebraic equality test that selects the actual one. Fourier inversion then
+proves the result equals the original field element. The induction constructs
+all roots, and an exact comparison selects the requested embedding.
+\end{proof}
+
+\begin{corollary}
+A resource cutoff during this calculation proves nothing about radical
+solvability. In particular, \code{ResourceLimit} and \code{NotSolvable} are
+logically different outcomes.
+\end{corollary}
+
+The theorem does not require all extensions in the raw root-adjunction tower
+to be radical extensions. They usually are not presented that way. That tower
+is a device for computing the normal field and its action. The radical tower
+is built only afterward from its solvable group.
+
+Nor does the theorem assert that every intermediate field has a primitive
+generator of lower absolute degree than the original input. Normal closures
+and cyclotomic coordinates can be larger than the original root field. Trying
+to force monotone decrease of the \emph{absolute minimal-polynomial degree} at
+every discovery step is not a valid general completeness principle. What
+strictly decreases during radical synthesis is the subgroup-chain level.
+
+\section{Implementation details that affect correctness}\label{sec:implementation}
+
+\subsection{Rational vectors and orientation}
+
+The reference implementation uses SymPy's exact algebraic-number polynomial
+representation. Its low-level \code{ANP.to\_list()} coefficients are in
+descending order, while tensor tuples are in ascending powers of $z$. The
+conversion helpers isolate that difference. The defining minimal polynomial
+is explicitly supplied to \code{QQ.algebraic\_field}; it is not recomputed from
+an already complex nested expression.
+
+Automorphism composition uses polynomial substitution, not arithmetic on
+approximate roots. Group elements are integers indexing the multiplication
+table. Subgroups are sets of these indices. Memoization keys for field elements
+are their exact coefficient tuples and their descent level; different
+conjugates are not conflated merely because their minimal polynomials agree.
+
+The code accesses some SymPy representation-level interfaces, including
+\code{Poly.rep} and algebraic-number polynomial lists. The dependency is pinned
+to SymPy 1.14.0, the version used for testing. Porting to another representation
+or library should preserve these orientation and normalization invariants.
+
+\subsection{No arbitrary tensor division}
+
+Tensor multiplication forms the coefficient convolution and reduces terms
+from highest degree downward with $z^{p-1}=-\sum_{j=0}^{p-2}z^j$.
+Exponentiation uses repeated squaring. At no point does the code ask for the
+inverse of a nonzero tensor element. Field-element inverses, such as those
+needed for exact linear factors, occur only in the genuine field $L$.
+A regression test explicitly multiplies two nonzero zero divisors in the
+$p=3$ tensor algebra and checks that the product is zero.
+
+\subsection{Expression DAGs, not executable source strings}
+
+The Python backend serializes output as a directed acyclic graph. Its node
+tags are \code{Q}, \code{I}, \code{Add}, \code{Mul}, and \code{Pow}. Rationals
+carry signed decimal numerator and denominator strings; references are
+zero-based indices of earlier nodes. The root index points to the final value.
+Every power exponent must decode to a rational number.
+
+The Wolfram decoder validates tags, arities, rational denominators, backward
+references, and the final radical grammar. It uses integer parsing and
+arithmetic constructors, not \code{ToExpression}. The Python CLI similarly
+accepts rational coefficient data rather than expressions for \code{eval}.
+This also avoids copying repeated subexpressions into the interchange format.
+It does not guarantee that every later CAS pretty-printer will preserve
+sharing when displaying the full formula.
+
+\subsection{Root indices are not portable}
+
+The Python API defines \code{index} by SymPy's \code{CRootOf(p,index)} ordering,
+including multiplicities when a selected root is requested. Its
+\code{all\_roots} API returns distinct roots with no promised ordering.
+
+The Wolfram frontend never translates a Mathematica root index into a Python
+root index. It sends the minimal polynomial, requests all its roots, and selects
+a candidate by exact equality to the original Wolfram expression. The extra
+work buys a simple and reliable cross-system embedding contract. A more
+optimized future protocol could transmit an exact isolating rectangle instead,
+but approximate coordinates alone would not justify a change in this contract.
+
+\subsection{Failure and time-limit semantics}
+
+The important statuses are shown in Table~\ref{tab:status}. Python exposes
+status-bearing exception classes; the CLI serializes analogous strings; the
+Wolfram frontend uses \code{Failure} expressions.
+
+\begin{table}[ht]
+\centering\small
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\toprule
+Status & Meaning \\
+\midrule
+\code{Success} & A radical expression was constructed with the method's checks. \\
+\code{NotSolvable} & A nonsolvable Galois group was established for the relevant irreducible factor. \\
+\code{ResourceLimit} & A field-degree budget or computation deadline was exceeded. \\
+\code{InvalidInput} & Input was not in the exact rational-polynomial contract, or options/data were malformed. \\
+\code{Unresolved} & The explicitly requested native-only structural search did not yield a verified result. \\
+\code{BackendError} & An underlying computation failed; no mathematical impossibility follows. \\
+\code{VerificationFailed} & The frontend did not establish equality to the requested embedding. \\
+\bottomrule
+\end{tabularx}
+\caption{Operational outcomes must not be collapsed into nonsolvability.}\label{tab:status}
+\end{table}
+
+The in-process Python \code{max\_seconds} budget is cooperative: it is checked
+between operations, so a single factorization or root-isolation call can run
+past the deadline. The bundled \code{python/cli.py} additionally supports
+\code{hard\_timeout\_seconds}; it starts an isolated worker and terminates that
+worker when the deadline expires. The Wolfram frontend uses that supervisor
+when its \code{TimeConstraint} is finite.
+
+There is still no single global Wolfram deadline: native candidate generation,
+the Python worker, and final per-candidate exact verification have separate
+stages. The last stage is controlled by
+\code{"VerificationTimeConstraint"}; its default is \code{Infinity}. These semantics are intentional and documented rather than
+hidden behind a misleading total-time promise.
+
+\section{Using the package}\label{sec:usage}
+
+\subsection{Wolfram Language}
+
+Keep the unpacked directory layout intact and load the file:
+\begin{lstlisting}
+Get["C:\\path\\to\\RadicalSolve\\wolfram\\RadicalSolve.wl"];
+r = Root[-1-#^2-#^3+#^4+#^6&, 2];
+a = Radicalize[r, Method -> "Native"];
+VerifyRadical[r, a]
+RadicalReport[r, Method -> "Native"]
+\end{lstlisting}
+The native route includes the structural methods and low-degree
+\code{ToRadicals} formulas. Both original examples have native structural
+routes, so this use does not require Python.
+
+For the general route, install the pinned Python dependency using the chosen
+interpreter, then supply its executable name or absolute path:
+\begin{lstlisting}
+RadicalReport[Root[#^3 - 3# + 1&, 1],
+  Method -> "Galois",
+  "PythonExecutable" -> "python",
+  "MaxFieldDegree" -> 96,
+  TimeConstraint -> 120,
+  "VerificationTimeConstraint" -> 120]
+\end{lstlisting}
+\code{Method -> Automatic} tries native methods first and then the Python
+backend. \code{Method -> "Native"} never launches it.
+\code{Method -> "Galois"} bypasses structural reduction for non-radical input.
+An expression already in the radical grammar is simply returned.
+
+\code{RadicalReport} returns an association containing the expression, method,
+and verification result. Backend construction metadata is included when
+applicable. The default field-degree cap is 96; use \code{Infinity} to remove it.
+
+\subsection{Python}
+
+From the archive root, install or use the unpacked module:
+\begin{lstlisting}
+python -m pip install -e .
+python -m unittest discover -s tests -v
+\end{lstlisting}
+Alternatively add the \code{python/} directory to \code{PYTHONPATH}; no package
+installation is required for the bundled CLI.
+
+\begin{lstlisting}
+from sympy import symbols, Poly
+from radicalsolve import Solver, radicalize, verify
+x = symbols("x")
+p = Poly(x**6+x**4-x**3-x**2-1, x)
+r = radicalize(p, index=1)
+assert verify(p, r.expression, index=1)
+print(r.expression)
+print(r.method)
+
+session = Solver(method="galois", max_field_degree=96)
+q = Poly(x**5+x**4-4*x**3-3*x**2+3*x+1, x)
+roots = session.all_roots(q)
+print(session.events)
+\end{lstlisting}
+\code{max\_field\_degree=None} removes the Python degree cap.
+\code{Solver.root} first selects the irreducible factor containing the requested
+root. This is why it can return a solvable root of
+$(x^2-2)(x^5-x-1)$ without being blocked by the nonsolvable quintic factor.
+In contrast, \code{all\_roots} requires all irreducible factors to be solvable.
+
+\code{Result.expression} is the result, \code{Result.method} is the route,
+and \code{Result.record} is an audit record. The record is \emph{not} a
+standalone, independently replayable proof certificate. This version performs
+its construction checks during execution and offers independent minimal-
+polynomial verification separately. A compact portable certificate checker is
+an explicit future engineering improvement, not an already supplied feature.
+
+\section{Executed tests and observed limitations}\label{sec:tests}
+
+\subsection{Environment and reproducibility}
+
+The reference code was executed with Python 3.13 and SymPy 1.14.0. The archive
+contains the actual \code{unittest} transcript and a separate general-$S_4$
+stress transcript. The declared Python requirement is 3.10 or later; only the
+stated environment was exercised here.
+
+No usable Wolfram kernel was available. Both attempted Wolfram connector calls
+failed before evaluation. Consequently the supplied \code{.wl} and
+\code{.wlt} files have source-level review but \emph{no claimed Wolfram runtime
+test}. The Python engine is the executed reference, and the native formulas
+are also justified mathematically in this report.
+
+\subsection{Coverage}
+
+The default suite exercises the two original selected roots with independent
+minimal-polynomial and embedding checks; it also matches every conjugate from
+the two structural constructions. Additional tests cover translated inputs,
+power compositions, rational roots, multiplicities, a mixed reducible
+solvability example, wrong conjugates, invalid coefficients, invalid indices,
+tensor zero divisors, data encoding, and process deadlines.
+
+The forced-general-method families are listed in Table~\ref{tab:tests}.
+These tests bypass the fast structural layer; otherwise, examples such as
+$x^4-2$ would say nothing about the general engine.
+
+\begin{table}[ht]
+\centering\small
+\begin{tabularx}{\linewidth}{@{}lXcl@{}}
+\toprule
+Group & Polynomial & $[L:\Q]$ & Independent final check \\
+\midrule
+$C_2$ & $x^2+1$ & 2 & minimal polynomial \\
+$C_3$ & $x^3-3x+1$ & 3 & minimal polynomial \\
+$S_3$ & $x^3-2$ & 6 & minimal polynomial \\
+$V_4$ & $x^4-10x^2+1$ & 4 & minimal polynomial \\
+$C_4$ & $x^4+x^3+x^2+x+1$ & 4 & minimal polynomial \\
+$D_4$ & $x^4-2$ & 8 & minimal polynomial \\
+$C_5$ & $x^5+x^4-4x^3-3x^2+3x+1$ & 5 & numerical residual only \\
+\bottomrule
+\end{tabularx}
+\caption{Executed general-descent families. All rows also execute the internal
+exact algebraic invariants and separation-based branch checks. ``Numerical
+residual only'' describes the additional, independent final check, not the
+construction algorithm. $D_4$ denotes the group of order eight.}\label{tab:tests}
+\end{table}
+
+The $C_5$ example is the real cyclotomic degree-five polynomial associated with
+order eleven. It can be derived by dividing $1+z+\cdots+z^{10}$ by $z^5$ and
+expressing the symmetric terms in $x=z+z^{-1}$. This gives a useful independent
+mathematical description of its solvability, although the test forces the
+implemented Fourier route rather than using that description as a shortcut.
+
+The default test run reports the actual pass/skip count in the included
+transcript. The optional forced-$S_4$ integration test is skipped by default.
+The ordinary automatic/classical route for a generic quartic is nevertheless
+included and passes its tests.
+
+\subsection{What the stress run did and did not establish}
+
+For $x^4-x-1$, a forced-general-method exploratory run constructed the degree-24
+splitting field, recovered its automorphisms from weights $(1,2,3)$, and obtained
+the chain of subgroup orders
+\begin{equation}
+ 24,12,4,2,1.
+\end{equation}
+The corresponding prime indices were $2,3,2,2$. That run did not complete
+radical output within its cooperative time budget. A sampled stack was inside
+complex root isolation used by a branch comparison. It is recorded as a
+resource-limited run, not as a passing full integration test.
+
+For the cyclic quintic, constructing all five radical expressions in an
+exploratory run took about a second in this environment. A separate attempt
+to reconstruct the minimal polynomial of the expanded result ran much longer
+and was stopped. The completed regression test therefore uses the construction
+checks and an additional high-precision residual rather than claiming that the
+independent reconstruction finished. This is an observed verification-cost
+issue, not a claim of a mathematical ambiguity in the formula.
+
+The large inverse-beta-related notebook examples, including degrees beyond
+those in Table~\ref{tab:tests}, are retained as source material. They were not
+silently promoted into a ``passed'' benchmark set. A useful next benchmark
+campaign would compare normal-closure degree, coefficient growth, descent size,
+and verification time on those exact inputs.
+
+\section{Complexity and further improvements}\label{sec:improvements}
+
+\subsection{The main costs}
+
+Write $d=[L:\Q]=|G|$. The input degree $n$ alone is a poor predictor of cost:
+$d$ can approach $n!$. A full multiplication table requires $O(d^2)$ entries,
+and constructing it involves polynomial substitutions in a degree-$d$ field.
+The primitive-image search examines at most $n!/(n-r)!$ ordered tuples when
+$r$ roots occur in the primitive sum.
+
+At a cyclic step of prime index $p$, tensor coordinates have dimension $p-1$
+over $L$. Their rational norm polynomial has degree $d(p-1)$ before square-free
+reduction. In a naive recursion, a level can create up to $(p-1)^2$ coefficient
+subproblems plus a trace subproblem. Memoization helps substantially but does
+not turn this into a general polynomial-time output algorithm. Rational
+coefficient heights and algebraic-number isolation costs are equally important.
+
+The resulting formula need not be close to minimal. A short radical can acquire
+a large expression because the construction used a complicated primitive
+coordinate system. The structural layer exists precisely to avoid that
+unnecessary detour whenever an exact cheap identity is available.
+
+\subsection{Improvements that preserve the proof structure}
+
+The most useful extensions are computational, not changes to the solvability
+criterion. Better number-field factorization and root-isolation backends would
+address the observed bottlenecks. Smaller primitive elements and reduced bases
+could limit coefficient growth. Acting with subgroup generators rather than
+checking all subgroup elements could reduce repeated fixed-field tests after
+an exact generating set has been certified.
+
+A more compact descent can choose a suitable nonzero eigenvector and a relative
+power basis, then express several requested elements in that basis. That may
+share radicals more effectively than reconstructing each element from all
+Fourier components. It introduces extra nonvanishing and basis-independence
+obligations, especially when a cyclotomic tensor splits. The current version
+accepts the larger formulas in exchange for a simple division-free argument.
+
+The native structural recognizers could also be broadened to rational-function
+decompositions, additional resolvent families, or systematically certified
+subfield searches inspired by the notebook. Those methods should remain
+optimizations: a failed structural search must not overwrite the general
+solvability status.
+
+Finally, a portable proof record should include the field polynomial,
+automorphism images, subgroup chain, resolvent-power identities, and selected
+branch witnesses. An independent checker could then replay exact identities
+without rediscovering a large minimal polynomial from a flat formula. The
+present audit metadata is not yet that full object.
+
+\section{Conclusion}
+
+A systematic converter needs more than a longer list of radical formulas. It
+needs the normal field and its actual action, a descent invariant that truly
+decreases, and an embedding contract that survives every radical extraction.
+The supplied implementation gives those pieces concrete representations.
+
+The two motivating examples receive short structural answers. The general
+engine implements a finite solvable-Galois construction, including prime cyclic
+steps beyond cubic and quartic formulas. The tensor formulation avoids assuming
+that roots of unity are disjoint from the splitting field, and the norm argument
+makes branch comparisons legitimate before any numerical evaluation is used.
+The delivered code is a tested reference implementation with explicit resource
+and validation boundaries, rather than a claim that every large solvable input
+will already have an economical answer.
+
+\clearpage
+\appendix
+\section{Compact algorithm descriptions}
+
+\subsection{Normal closure and automorphisms}
+\begin{lstlisting}
+h := irreducible input polynomial f
+weights := [1]
+repeat:
+    K := Q[t]/h
+    factor f over K
+    if all factors are linear: break
+    choose a nonlinear irreducible factor g of degree e
+    for c = 1,2,...:
+        H := Res_u(h(u), c^e g((T-u)/c,u))
+        if degree(H) = e degree(h) and H is square-free:
+            h := monic(H)
+            append c to weights
+            break
+
+roots := linear roots of f in K
+images := distinct weighted sums of distinct roots satisfying h(image)=0
+require number(images) = degree(h)
+construct automorphism multiplication by exact substitution
+\end{lstlisting}
+
+\subsection{One radical-conversion call}
+\begin{lstlisting}
+Rad(beta, level):
+    require beta fixed by H[level]
+    if beta is rational: return beta
+    if beta fixed by H[level-1]: return Rad(beta, level-1)
+    p, sigma := current prime quotient and generator
+    pieces := [Rad(trace(beta), level-1)]
+    for k = 1,...,p-1:
+        R := sum_j z^(-k j) sigma^j(beta) modulo Phi_p(z)
+        if R is formally zero: append 0; continue
+        P := square-free rational norm polynomial of R
+        handle a linear P or zero in the selected embedding directly
+        q := R^p, computed without division in the tensor algebra
+        require every coefficient of q fixed by H[level-1]
+        Q := evaluate recursively converted q at z = zeta_p
+        select e with R(zeta_p) = zeta_p^e Q^(1/p)
+            using the common polynomial P and root separation
+        append zeta_p^e Q^(1/p)
+    return sum(pieces)/p
+\end{lstlisting}
+
+\section{Files and rebuilding}
+
+The archive's top-level \code{README.md} gives installation and command examples.
+The implementation files are under \code{python/radicalsolve/}; the direct
+supervised entry point is \code{python/cli.py}. The native Wolfram frontend is
+\code{wolfram/RadicalSolve.wl}. Tests and actual transcripts are under
+\code{tests/}. The unchanged original notebook and its source hashes are under
+\code{provenance/}.
+
+The article can be rebuilt in its directory with
+\begin{lstlisting}
+latexmk -pdf radicalsolve.tex
+\end{lstlisting}
+It uses ordinary LaTeX packages and Latin Modern fonts. No external images,
+commercial fonts, or downloaded font files are required. New implementation
+and report material are provided under MIT-0; the original notebook and
+third-party dependencies retain their existing rights.
+
+\begin{thebibliography}{9}
+\bibitem{question}
+Vladimir Reshetnikov.
+\emph{Why is ToRadicals not able to handle all cases? Is there a workaround?}
+Mathematica Stack Exchange, question 34011 and associated discussion.
+\url{https://mathematica.stackexchange.com/questions/34011/}.
+Accessed 8 September 2026.
+
+\bibitem{notebook}
+Vladimir Reshetnikov.
+\emph{FindExtension.nb}, supplied in \code{FindExtension.zip}, received
+8 September 2026. Unchanged source and SHA-256 hashes included in the archive.
+
+\bibitem{milne}
+J. S. Milne. \emph{Fields and Galois Theory}, version 5.10, 2022.
+Especially the cyclic-extension and solvability material in Chapter 5.
+\url{https://www.jmilne.org/math/CourseNotes/FT.pdf}.
+
+\bibitem{li}
+Song Li. \emph{An Algorithm for Solving Solvable Polynomial Equations of
+Arbitrary Degree by Radicals}. 2022. arXiv:2203.11602.
+\url{https://arxiv.org/abs/2203.11602}.
+
+\bibitem{wolfram-toradicals}
+Wolfram Research. \emph{ToRadicals}, Wolfram Language documentation.
+\url{https://reference.wolfram.com/language/ref/ToRadicals.html}.
+Accessed 8 September 2026.
+
+\bibitem{wolfram-exact}
+Wolfram Research. \emph{ExactNumberQ}, Wolfram Language documentation.
+\url{https://reference.wolfram.com/language/ref/ExactNumberQ.html}.
+Accessed 8 September 2026.
+
+\bibitem{sympy-fields}
+SymPy Development Team. \emph{Number Fields}, SymPy 1.14.0 documentation.
+\url{https://docs.sympy.org/latest/modules/polys/numberfields.html}.
+Accessed 8 September 2026.
+
+\bibitem{sympy-poly}
+SymPy Development Team. \emph{Polynomials Manipulation Module Reference},
+including \code{Poly.same\_root}, SymPy 1.14.0 documentation and implementation.
+\url{https://docs.sympy.org/latest/modules/polys/reference.html}.
+Accessed 8 September 2026.
+\end{thebibliography}
+\end{document}

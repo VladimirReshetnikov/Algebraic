@@ -1,0 +1,230 @@
+{
+  "recorded_utc": "2026-09-08T18:14:43.251504+00:00",
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "sympy": "1.14.0",
+  "platform": "Linux-6.18.35-x86_64-with-glibc2.41",
+  "per_test_timeout": 40.0,
+  "tests": [
+    {
+      "test": "test_01_sextic_positive",
+      "status": "PASS",
+      "seconds": 1.8033,
+      "output": "test_01_sextic_positive (__main__.RadicalTests.test_01_sextic_positive) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.624s\n\nOK\n"
+    },
+    {
+      "test": "test_02_sextic_negative",
+      "status": "PASS",
+      "seconds": 1.2618,
+      "output": "test_02_sextic_negative (__main__.RadicalTests.test_02_sextic_negative) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.207s\n\nOK\n"
+    },
+    {
+      "test": "test_03_sextic_complex",
+      "status": "PASS",
+      "seconds": 3.5158,
+      "output": "test_03_sextic_complex (__main__.RadicalTests.test_03_sextic_complex) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 2.435s\n\nOK\n"
+    },
+    {
+      "test": "test_04_quintic_largest",
+      "status": "PASS",
+      "seconds": 1.2355,
+      "output": "test_04_quintic_largest (__main__.RadicalTests.test_04_quintic_largest) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.187s\n\nOK\n"
+    },
+    {
+      "test": "test_05_quintic_other_branch",
+      "status": "PASS",
+      "seconds": 1.2073,
+      "output": "test_05_quintic_other_branch (__main__.RadicalTests.test_05_quintic_other_branch) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.241s\n\nOK\n"
+    },
+    {
+      "test": "test_06_quadratic_complex",
+      "status": "PASS",
+      "seconds": 1.0651,
+      "output": "test_06_quadratic_complex (__main__.RadicalTests.test_06_quadratic_complex) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.074s\n\nOK\n"
+    },
+    {
+      "test": "test_07_cubic_three_real",
+      "status": "PASS",
+      "seconds": 1.0943,
+      "output": "test_07_cubic_three_real (__main__.RadicalTests.test_07_cubic_three_real) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.087s\n\nOK\n"
+    },
+    {
+      "test": "test_08_cubic_negative_real",
+      "status": "PASS",
+      "seconds": 1.0456,
+      "output": "test_08_cubic_negative_real (__main__.RadicalTests.test_08_cubic_negative_real) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.017s\n\nOK\n"
+    },
+    {
+      "test": "test_09_quartic",
+      "status": "PASS",
+      "seconds": 1.0467,
+      "output": "test_09_quartic (__main__.RadicalTests.test_09_quartic) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.015s\n\nOK\n"
+    },
+    {
+      "test": "test_10_binomial_septic",
+      "status": "PASS",
+      "seconds": 0.9517,
+      "output": "test_10_binomial_septic (__main__.RadicalTests.test_10_binomial_septic) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.018s\n\nOK\n"
+    },
+    {
+      "test": "test_11_shifted_septic",
+      "status": "PASS",
+      "seconds": 0.9061,
+      "output": "test_11_shifted_septic (__main__.RadicalTests.test_11_shifted_septic) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.028s\n\nOK\n"
+    },
+    {
+      "test": "test_12_dickson_septic",
+      "status": "PASS",
+      "seconds": 1.2256,
+      "output": "test_12_dickson_septic (__main__.RadicalTests.test_12_dickson_septic) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.289s\n\nOK\n"
+    },
+    {
+      "test": "test_13_composition",
+      "status": "PASS",
+      "seconds": 0.9725,
+      "output": "test_13_composition (__main__.RadicalTests.test_13_composition) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.040s\n\nOK\n"
+    },
+    {
+      "test": "test_14_reducible_rational_selected",
+      "status": "PASS",
+      "seconds": 0.8885,
+      "output": "test_14_reducible_rational_selected (__main__.RadicalTests.test_14_reducible_rational_selected) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.003s\n\nOK\n"
+    },
+    {
+      "test": "test_15_nonsolvable_S5",
+      "status": "PASS",
+      "seconds": 0.9285,
+      "output": "test_15_nonsolvable_S5 (__main__.RadicalTests.test_15_nonsolvable_S5) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.006s\n\nOK\n"
+    },
+    {
+      "test": "test_16_fast_unknown_is_not_nonsolvable",
+      "status": "PASS",
+      "seconds": 0.9805,
+      "output": "test_16_fast_unknown_is_not_nonsolvable (__main__.RadicalTests.test_16_fast_unknown_is_not_nonsolvable) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.004s\n\nOK\n"
+    },
+    {
+      "test": "test_17_general_quadratic_phase",
+      "status": "PASS",
+      "seconds": 1.0219,
+      "output": "test_17_general_quadratic_phase (__main__.RadicalTests.test_17_general_quadratic_phase) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.029s\n\nOK\n"
+    },
+    {
+      "test": "test_18_general_cubic_zero_resolvents",
+      "status": "PASS",
+      "seconds": 1.5027,
+      "output": "test_18_general_cubic_zero_resolvents (__main__.RadicalTests.test_18_general_cubic_zero_resolvents) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.430s\n\nOK\n"
+    },
+    {
+      "test": "test_19_general_cubic_complex",
+      "status": "PASS",
+      "seconds": 1.4135,
+      "output": "test_19_general_cubic_complex (__main__.RadicalTests.test_19_general_cubic_complex) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.420s\n\nOK\n"
+    },
+    {
+      "test": "test_20_supplied_biquadratic",
+      "status": "PASS",
+      "seconds": 1.1457,
+      "output": "test_20_supplied_biquadratic (__main__.RadicalTests.test_20_supplied_biquadratic) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.103s\n\nOK\n"
+    },
+    {
+      "test": "test_21_supplied_complex_V4",
+      "status": "PASS",
+      "seconds": 1.0202,
+      "output": "test_21_supplied_complex_V4 (__main__.RadicalTests.test_21_supplied_complex_V4) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.062s\n\nOK\n"
+    },
+    {
+      "test": "test_22_reject_non_galois_model",
+      "status": "PASS",
+      "seconds": 0.9723,
+      "output": "test_22_reject_non_galois_model (__main__.RadicalTests.test_22_reject_non_galois_model) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.010s\n\nOK\n"
+    },
+    {
+      "test": "test_23_field_budget",
+      "status": "PASS",
+      "seconds": 0.9065,
+      "output": "test_23_field_budget (__main__.RadicalTests.test_23_field_budget) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.004s\n\nOK\n"
+    },
+    {
+      "test": "test_24_node_budget",
+      "status": "PASS",
+      "seconds": 0.9317,
+      "output": "test_24_node_budget (__main__.RadicalTests.test_24_node_budget) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.019s\n\nOK\n"
+    },
+    {
+      "test": "test_25_wrong_conjugate_rejected",
+      "status": "PASS",
+      "seconds": 0.9661,
+      "output": "test_25_wrong_conjugate_rejected (__main__.RadicalTests.test_25_wrong_conjugate_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.005s\n\nOK\n"
+    },
+    {
+      "test": "test_26_strict_grammar",
+      "status": "PASS",
+      "seconds": 0.9987,
+      "output": "test_26_strict_grammar (__main__.RadicalTests.test_26_strict_grammar) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.003s\n\nOK\n"
+    },
+    {
+      "test": "test_27_input_validation",
+      "status": "PASS",
+      "seconds": 0.9282,
+      "output": "test_27_input_validation (__main__.RadicalTests.test_27_input_validation) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.002s\n\nOK\n"
+    },
+    {
+      "test": "test_28_finite_group_chains",
+      "status": "PASS",
+      "seconds": 0.9926,
+      "output": "test_28_finite_group_chains (__main__.RadicalTests.test_28_finite_group_chains) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.003s\n\nOK\n"
+    },
+    {
+      "test": "test_29_perfect_group_rejected",
+      "status": "PASS",
+      "seconds": 0.9994,
+      "output": "test_29_perfect_group_rejected (__main__.RadicalTests.test_29_perfect_group_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.010s\n\nOK\n"
+    },
+    {
+      "test": "test_30_dickson_and_reciprocal_identities",
+      "status": "PASS",
+      "seconds": 0.9758,
+      "output": "test_30_dickson_and_reciprocal_identities (__main__.RadicalTests.test_30_dickson_and_reciprocal_identities) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.049s\n\nOK\n"
+    },
+    {
+      "test": "test_31_sextic_remaining_conjugates",
+      "status": "PASS",
+      "seconds": 8.6138,
+      "output": "test_31_sextic_remaining_conjugates (__main__.RadicalTests.test_31_sextic_remaining_conjugates) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 7.494s\n\nOK\n"
+    },
+    {
+      "test": "test_32_quintic_remaining_conjugates",
+      "status": "PASS",
+      "seconds": 1.8208,
+      "output": "test_32_quintic_remaining_conjugates (__main__.RadicalTests.test_32_quintic_remaining_conjugates) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.686s\n\nOK\n"
+    },
+    {
+      "test": "test_33_general_nonabelian_D4",
+      "status": "PASS",
+      "seconds": 15.8823,
+      "output": "test_33_general_nonabelian_D4 (__main__.RadicalTests.test_33_general_nonabelian_D4) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 14.834s\n\nOK\n"
+    },
+    {
+      "test": "test_34_cyclotomic_base_only",
+      "status": "PASS",
+      "seconds": 0.953,
+      "output": "test_34_cyclotomic_base_only (__main__.RadicalTests.test_34_cyclotomic_base_only) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.020s\n\nOK\n"
+    },
+    {
+      "test": "test_35_conductor_validation",
+      "status": "PASS",
+      "seconds": 0.9877,
+      "output": "test_35_conductor_validation (__main__.RadicalTests.test_35_conductor_validation) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.006s\n\nOK\n"
+    },
+    {
+      "test": "test_36_nearby_conjugates",
+      "status": "PASS",
+      "seconds": 0.9677,
+      "output": "test_36_nearby_conjugates (__main__.RadicalTests.test_36_nearby_conjugates) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.007s\n\nOK\n"
+    }
+  ],
+  "summary": {
+    "PASS": 36,
+    "FAIL": 0,
+    "TIMEOUT": 0
+  }
+}

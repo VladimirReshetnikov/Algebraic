@@ -1,0 +1,5 @@
+PDF validation: 19 A4 pages.
+Built with pdfLaTeX; cross-references resolved.
+No overfull-box or undefined-reference warnings in the final LaTeX log.
+Rendered page images were inspected, including contents, formulas, and test table.
+No unresolved ?? markers in extracted final text.

@@ -1,0 +1,11 @@
+{
+  "pdf_pages": 17,
+  "text_spans_outside_page": [],
+  "latex_overfull_boxes": 0,
+  "latex_warnings": 0,
+  "visual_review": "All 17 pages rendered with PDFium/Poppler helper and inspected in contact sheets; principal proof and appendix pages inspected at full size. Final appendix listing kept together.",
+  "python_syntax": "All supplied .py files parsed successfully.",
+  "python_test_count": 46,
+  "python_test_success": true,
+  "wolfram_execution": "Not executed; supplied service returned HTTP 404. See wolfram-static-check.json."
+}

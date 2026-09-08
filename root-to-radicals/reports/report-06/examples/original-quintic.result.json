@@ -1,0 +1,76 @@
+{
+  "status": "success",
+  "method": "structural",
+  "message": "Minimal polynomial and selected embedding verified.",
+  "details": {
+    "transformations": [
+      "Dickson substitution x=u+a/u"
+    ]
+  },
+  "polynomial": [
+    "1",
+    "0",
+    "-5",
+    "0",
+    "5",
+    "6/5"
+  ],
+  "program": {
+    "format": "rootradicals-dag-v1",
+    "nodes": [
+      {
+        "op": "Q",
+        "n": "-3",
+        "d": "5"
+      },
+      {
+        "op": "Q",
+        "n": "4",
+        "d": "5"
+      },
+      {
+        "op": "I"
+      },
+      {
+        "op": "Mul",
+        "args": [
+          1,
+          2
+        ]
+      },
+      {
+        "op": "Add",
+        "args": [
+          0,
+          3
+        ]
+      },
+      {
+        "op": "Pow",
+        "base": 4,
+        "n": "-1",
+        "d": "5"
+      },
+      {
+        "op": "Pow",
+        "base": 4,
+        "n": "1",
+        "d": "5"
+      },
+      {
+        "op": "Add",
+        "args": [
+          5,
+          6
+        ]
+      }
+    ],
+    "registers": [],
+    "output": 7
+  },
+  "wolfram_program": "(-3/5 + (4/5)*I)^(-1/5) + (-3/5 + (4/5)*I)^(1/5)",
+  "certificate": {
+    "kind": "minimal-polynomial-and-root-separation"
+  },
+  "selected_sympy_root_index": 4
+}

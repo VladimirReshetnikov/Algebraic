@@ -1,0 +1,9 @@
+{
+  "source_archive": "FindExtension.zip",
+  "archive_sha256": "381e80382e8736aa00e18d8fd48c6f391b9ba0b15e80ff7621e7589147174930",
+  "source_notebook": "FindExtension.nb",
+  "notebook_sha256": "d70951fdb88128556ee7ea762652413b6f8b5e970c4437c2f3293d9b07eac007",
+  "input_cells_inspected": 220,
+  "original_notebook_redistributed": false,
+  "note": "The inspected box text was extracted without evaluation. Complex display boxes were not treated as authoritative executable source. Core function definitions and selected polynomial literals were inspected separately."
+}

@@ -1,0 +1,37 @@
+test_degree_seven (test_radical_roots.FastPathTests.test_degree_seven) ... ok
+test_degree_ten (test_radical_roots.FastPathTests.test_degree_ten) ... ok
+test_original_quintic (test_radical_roots.FastPathTests.test_original_quintic) ... ok
+test_original_sextic (test_radical_roots.FastPathTests.test_original_sextic) ... ok
+test_pair_sum_collision (test_radical_roots.FastPathTests.test_pair_sum_collision) ... ok
+test_reducible_selected_factor (test_radical_roots.FastPathTests.test_reducible_selected_factor) ... ok
+test_repeated_and_rational (test_radical_roots.FastPathTests.test_repeated_and_rational) ... ok
+test_search_exhaustion_is_not_nonsolvability (test_radical_roots.FastPathTests.test_search_exhaustion_is_not_nonsolvability) ... ok
+test_sextic_identity (test_radical_roots.FastPathTests.test_sextic_identity) ... ok
+test_shifted_scaled_dickson (test_radical_roots.FastPathTests.test_shifted_scaled_dickson) ... ok
+test_automorphism_factorization_fallback (test_radical_roots.GeneralConstructorTests.test_automorphism_factorization_fallback) ... ok
+test_certificate_bound_to_expected_polynomial (test_radical_roots.GeneralConstructorTests.test_certificate_bound_to_expected_polynomial) ... ok
+test_cyclic_cubic (test_radical_roots.GeneralConstructorTests.test_cyclic_cubic) ... ok
+test_empty_certificate_rejected (test_radical_roots.GeneralConstructorTests.test_empty_certificate_rejected) ... ok
+test_general_quintic (test_radical_roots.GeneralConstructorTests.test_general_quintic) ... ok
+test_nonabelian_relative_group (test_radical_roots.GeneralConstructorTests.test_nonabelian_relative_group) ... ok
+test_nonsolvable (test_radical_roots.GeneralConstructorTests.test_nonsolvable) ... ok
+test_pure_cubic (test_radical_roots.GeneralConstructorTests.test_pure_cubic) ... ok
+test_quadratic (test_radical_roots.GeneralConstructorTests.test_quadratic) ... ok
+test_resource_status (test_radical_roots.GeneralConstructorTests.test_resource_status) ... ok
+test_tampered_anchor (test_radical_roots.GeneralConstructorTests.test_tampered_anchor) ... ok
+test_tampered_branch (test_radical_roots.GeneralConstructorTests.test_tampered_branch) ... ok
+test_tampered_radicand (test_radical_roots.GeneralConstructorTests.test_tampered_radicand) ... ok
+test_tampered_target (test_radical_roots.GeneralConstructorTests.test_tampered_target) ... ok
+test_tower_object_bound_to_certificate (test_radical_roots.GeneralConstructorTests.test_tower_object_bound_to_certificate) ... ok
+test_two_step_tower (test_radical_roots.GeneralConstructorTests.test_two_step_tower) ... ok
+test_ast_rejects_unrecognized_operations (test_radical_roots.InterfaceTests.test_ast_rejects_unrecognized_operations) ... ok
+test_cli_hard_timeout (test_radical_roots.InterfaceTests.test_cli_hard_timeout) ... ok
+test_cli_input_rejected (test_radical_roots.InterfaceTests.test_cli_input_rejected) ... ok
+test_cli_nonsolvable (test_radical_roots.InterfaceTests.test_cli_nonsolvable) ... ok
+test_cli_success (test_radical_roots.InterfaceTests.test_cli_success) ... ok
+test_linear_space (test_radical_roots.InterfaceTests.test_linear_space) ... ok
+
+----------------------------------------------------------------------
+Ran 32 tests in 106.598s
+
+OK

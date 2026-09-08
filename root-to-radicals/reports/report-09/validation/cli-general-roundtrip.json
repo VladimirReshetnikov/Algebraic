@@ -1,0 +1,165 @@
+{
+  "status": "Success",
+  "expressions": [
+    [
+      "M",
+      [
+        "Q",
+        "-1",
+        "1"
+      ],
+      [
+        "P",
+        [
+          "Q",
+          "2",
+          "1"
+        ],
+        [
+          "Q",
+          "1",
+          "2"
+        ]
+      ]
+    ],
+    [
+      "P",
+      [
+        "Q",
+        "2",
+        "1"
+      ],
+      [
+        "Q",
+        "1",
+        "2"
+      ]
+    ]
+  ],
+  "metadata": {
+    "method": "Galois-Kummer",
+    "automorphism_enumeration": "anchor conjugates, checked complete",
+    "splitting_degree": 2,
+    "field_degree": 2,
+    "cyclotomic_order": 2,
+    "relative_group_order": 2,
+    "chain_orders": [
+      2,
+      1
+    ],
+    "branch_indices": [
+      0
+    ]
+  },
+  "verification": "radical tower certificate replayed",
+  "ordering": "SymPy real-first canonical order (zero based; not WL complex-root order)",
+  "sympy_version": "1.14.0",
+  "tower": {
+    "cyclotomic_order": 2,
+    "steps": [
+      {
+        "symbol": "r1",
+        "prime": 2,
+        "branch": 0,
+        "radicand": [
+          "Q",
+          "2",
+          "1"
+        ]
+      }
+    ],
+    "outputs": [
+      [
+        "M",
+        [
+          "Q",
+          "-1",
+          "1"
+        ],
+        [
+          "S",
+          "r1"
+        ]
+      ],
+      [
+        "S",
+        "r1"
+      ]
+    ]
+  },
+  "certificate": {
+    "version": 2,
+    "polynomial": [
+      "-2",
+      "0",
+      "1"
+    ],
+    "primitive_polynomial": [
+      "-2",
+      "0",
+      "1"
+    ],
+    "primitive_anchor": [
+      "P",
+      [
+        "Q",
+        "2",
+        "1"
+      ],
+      [
+        "Q",
+        "1",
+        "2"
+      ]
+    ],
+    "m": 2,
+    "zeta_value": [
+      "-1",
+      "0"
+    ],
+    "steps": [
+      {
+        "symbol": "r1",
+        "prime": 2,
+        "branch": 0,
+        "radicand": [
+          "Q",
+          "2",
+          "1"
+        ],
+        "value": [
+          "0",
+          "1"
+        ]
+      }
+    ],
+    "outputs": [
+      [
+        "M",
+        [
+          "Q",
+          "-1",
+          "1"
+        ],
+        [
+          "S",
+          "r1"
+        ]
+      ],
+      [
+        "S",
+        "r1"
+      ]
+    ],
+    "target_values": [
+      [
+        "0",
+        "-1"
+      ],
+      [
+        "0",
+        "1"
+      ]
+    ]
+  }
+}

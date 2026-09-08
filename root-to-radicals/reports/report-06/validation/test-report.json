@@ -1,0 +1,243 @@
+{
+  "python": "3.13.5",
+  "sympy": "1.14.0",
+  "platform": "Linux-6.18.35-x86_64-with-glibc2.41",
+  "date": "2026-09-08",
+  "tests_run": 46,
+  "failures": 0,
+  "errors": 0,
+  "success": true,
+  "records": [
+    {
+      "test": "test_rootradicals.ConversionTests.test_bad_options_and_float",
+      "seconds": 0.000692,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ConversionTests.test_cyclotomic_order_11",
+      "seconds": 14.362684,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ConversionTests.test_degree_limit_is_not_nonsolvable",
+      "seconds": 0.06233,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ConversionTests.test_extension_hint_membership",
+      "seconds": 0.493175,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ConversionTests.test_incorrect_conjugate",
+      "seconds": 0.006311,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ConversionTests.test_nearby_is_not_equal",
+      "seconds": 0.006124,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ConversionTests.test_nonsolvable_quintic",
+      "seconds": 0.039308,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ConversionTests.test_nonsolvable_septic",
+      "seconds": 0.022428,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ConversionTests.test_original_quintic",
+      "seconds": 0.330578,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ConversionTests.test_original_sextic",
+      "seconds": 1.065097,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ConversionTests.test_power_composition",
+      "seconds": 7.408907,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ConversionTests.test_rational",
+      "seconds": 0.00116,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ConversionTests.test_real_cyclotomic_quintic",
+      "seconds": 1.173493,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ConversionTests.test_recognizer_failure_is_unknown",
+      "seconds": 0.014661,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ConversionTests.test_reducible_input",
+      "seconds": 0.003733,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ConversionTests.test_repeated_input",
+      "seconds": 0.008332,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ConversionTests.test_sextic_other_real",
+      "seconds": 0.3738,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ConversionTests.test_translated_septic_complex",
+      "seconds": 4.818111,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ConversionTests.test_translated_septic_real",
+      "seconds": 0.026478,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.GaloisTests.test_corrupt_certificate_rejected",
+      "seconds": 0.060513,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.GaloisTests.test_corrupt_output_rejected",
+      "seconds": 0.062255,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.GaloisTests.test_galois_biquadratic",
+      "seconds": 0.877572,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.GaloisTests.test_galois_cyclic_cubic",
+      "seconds": 2.003662,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.GaloisTests.test_galois_d4",
+      "seconds": 65.775615,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.GaloisTests.test_galois_degree_eight",
+      "seconds": 20.566972,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.GaloisTests.test_galois_quadratic",
+      "seconds": 0.113378,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.GaloisTests.test_galois_s3_complex",
+      "seconds": 5.032392,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.GaloisTests.test_galois_s3_real",
+      "seconds": 1.273228,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.GroupAndBranchTests.test_a5_is_not_solvable",
+      "seconds": 0.025043,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.GroupAndBranchTests.test_cube_root_branch_boundary",
+      "seconds": 0.125043,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.GroupAndBranchTests.test_exact_zero_before_refinement",
+      "seconds": 2.074594,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.GroupAndBranchTests.test_fifth_root_branch_boundary",
+      "seconds": 0.413383,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.GroupAndBranchTests.test_frobenius_no_false_rejection",
+      "seconds": 0.021177,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.GroupAndBranchTests.test_rectangle_arithmetic",
+      "seconds": 0.000317,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.GroupAndBranchTests.test_solvable_group_chains",
+      "seconds": 0.005631,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.GroupAndBranchTests.test_square_root_branch_boundary",
+      "seconds": 0.025708,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ProtocolTests.test_bad_root_index",
+      "seconds": 2.620961,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ProtocolTests.test_cli_success",
+      "seconds": 3.221706,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ProtocolTests.test_cli_timeout",
+      "seconds": 1.246894,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ProtocolTests.test_dag_reject_forward_reference",
+      "seconds": 6e-05,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ProtocolTests.test_dag_reject_nonfinite",
+      "seconds": 0.000165,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ProtocolTests.test_dag_reject_unknown_operation",
+      "seconds": 2.2e-05,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ProtocolTests.test_dag_roundtrip",
+      "seconds": 0.001368,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ProtocolTests.test_embedding_hint",
+      "seconds": 0.018977,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ProtocolTests.test_nonradical_grammar",
+      "seconds": 0.002887,
+      "passed": true
+    },
+    {
+      "test": "test_rootradicals.ProtocolTests.test_rational_validation",
+      "seconds": 7.5e-05,
+      "passed": true
+    }
+  ],
+  "wolfram_kernel_tests": "Not executed: the available Wolfram service returned HTTP 404."
+}

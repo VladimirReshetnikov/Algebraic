@@ -1,0 +1,20 @@
+
+Polynomial: 5*x**5 - 25*x**3 + 25*x + 6 SymPy index: 4
+Status: success Method: dickson
+Radicals: (-3/5 + 4*I/5)**(-1/5) + (-3/5 + 4*I/5)**(1/5)
+Independent exact check: True
+
+Polynomial: x**6 + x**4 - x**3 - x**2 - 1 SymPy index: 1
+Status: success Method: reciprocal/low_degree
+Radicals: -2/(3*(1/2 + sqrt(849)/18)**(1/3)) + (1/2 + sqrt(849)/18)**(1/3)/2 + sqrt((-4/(3*(1/2 + sqrt(849)/18)**(1/3)) + (1/2 + sqrt(849)/18)**(1/3))**2 + 4)/2
+Independent exact check: True
+
+Polynomial: x**3 - 2 SymPy index: 0
+Status: success Method: galois_kummer
+Radicals: 2**(1/3)
+Independent exact check: True
+Prime indices: [3]
+
+Polynomial: x**5 - x - 1 SymPy index: 0
+Status: not_solvable Method: sympy_galois
+Exact Galois-group computation proves nonsolvability

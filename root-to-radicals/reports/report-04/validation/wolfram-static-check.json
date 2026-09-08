@@ -1,0 +1,33 @@
+{
+  "scope": "Inert delimiter checks only; not parsed or executed by a Wolfram kernel.",
+  "checks": [
+    {
+      "file": "wolfram/Tests.wlt",
+      "balanced_delimiters": true
+    },
+    {
+      "file": "wolfram/RadicalRoots.wl",
+      "balanced_delimiters": true
+    },
+    {
+      "file": "examples/cyclic-quintic-galois.wl",
+      "balanced_delimiters": true
+    },
+    {
+      "file": "examples/cubic-galois.wl",
+      "balanced_delimiters": true
+    },
+    {
+      "file": "examples/DirectExamples.wl",
+      "balanced_delimiters": true
+    },
+    {
+      "file": "examples/quintic.wl",
+      "balanced_delimiters": true
+    },
+    {
+      "file": "examples/sextic.wl",
+      "balanced_delimiters": true
+    }
+  ]
+}

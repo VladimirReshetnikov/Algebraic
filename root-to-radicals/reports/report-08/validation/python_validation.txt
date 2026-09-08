@@ -1,0 +1,41 @@
+test_01_rational (test_systematic_radicals.RadicalTests.test_01_rational) ... ok
+test_02_inexact_rejected (test_systematic_radicals.RadicalTests.test_02_inexact_rejected) ... ok
+test_03_algebraic_coefficient_rejected (test_systematic_radicals.RadicalTests.test_03_algebraic_coefficient_rejected) ... ok
+test_04_reducible_rejected (test_systematic_radicals.RadicalTests.test_04_reducible_rejected) ... ok
+test_05_constant_rejected (test_systematic_radicals.RadicalTests.test_05_constant_rejected) ... ok
+test_06_invalid_limits (test_systematic_radicals.RadicalTests.test_06_invalid_limits) ... ok
+test_07_invalid_method (test_systematic_radicals.RadicalTests.test_07_invalid_method) ... ok
+test_08_strict_grammar (test_systematic_radicals.RadicalTests.test_08_strict_grammar) ... ok
+test_09_sextic_reduction_identity (test_systematic_radicals.RadicalTests.test_09_sextic_reduction_identity) ... ok
+test_10_sextic_all_roots (test_systematic_radicals.RadicalTests.test_10_sextic_all_roots) ... ok
+test_11_sextic_positive_formula (test_systematic_radicals.RadicalTests.test_11_sextic_positive_formula) ... ok
+test_12_quintic_all_roots (test_systematic_radicals.RadicalTests.test_12_quintic_all_roots) ... ok
+test_13_quintic_selected_root (test_systematic_radicals.RadicalTests.test_13_quintic_selected_root) ... ok
+test_14_shifted_binomial (test_systematic_radicals.RadicalTests.test_14_shifted_binomial) ... ok
+test_15_power_composition (test_systematic_radicals.RadicalTests.test_15_power_composition) ... ok
+test_16_translated_dickson (test_systematic_radicals.RadicalTests.test_16_translated_dickson) ... ok
+test_17_weighted_reciprocal (test_systematic_radicals.RadicalTests.test_17_weighted_reciprocal) ... ok
+test_18_fast_miss_is_not_nonsolvability (test_systematic_radicals.RadicalTests.test_18_fast_miss_is_not_nonsolvability) ... ok
+test_19_nonsolvable (test_systematic_radicals.RadicalTests.test_19_nonsolvable) ... ok
+test_20_reducible_input_easy_factor (test_systematic_radicals.RadicalTests.test_20_reducible_input_easy_factor) ... ok
+test_21_reducible_input_hard_factor (test_systematic_radicals.RadicalTests.test_21_reducible_input_hard_factor) ... ok
+test_22_index_validation (test_systematic_radicals.RadicalTests.test_22_index_validation) ... ok
+test_23_field_degree_budget (test_systematic_radicals.RadicalTests.test_23_field_degree_budget) ... ok
+test_24_tower_quadratic (test_systematic_radicals.RadicalTests.test_24_tower_quadratic) ... ok
+test_25_tower_pure_cubic (test_systematic_radicals.RadicalTests.test_25_tower_pure_cubic) ... ok
+test_26_tower_cyclic_cubic (test_systematic_radicals.RadicalTests.test_26_tower_cyclic_cubic) ... ok
+test_27_tower_biquadratic (test_systematic_radicals.RadicalTests.test_27_tower_biquadratic) ... ok
+test_28_tower_nonabelian_quartic (test_systematic_radicals.RadicalTests.test_28_tower_nonabelian_quartic) ... ok
+test_29_tower_nonabelian_cubic (test_systematic_radicals.RadicalTests.test_29_tower_nonabelian_cubic) ... ok
+test_30_tampered_power_rejected (test_systematic_radicals.RadicalTests.test_30_tampered_power_rejected) ... ok
+test_31_wrong_polynomial_rejected (test_systematic_radicals.RadicalTests.test_31_wrong_polynomial_rejected) ... ok
+test_32_duplicate_roots_rejected (test_systematic_radicals.RadicalTests.test_32_duplicate_roots_rejected) ... ok
+test_33_json_protocol (test_systematic_radicals.RadicalTests.test_33_json_protocol) ... ok
+test_34_cli_success (test_systematic_radicals.RadicalTests.test_34_cli_success) ... ok
+test_35_cli_hard_timeout (test_systematic_radicals.RadicalTests.test_35_cli_hard_timeout) ... ok
+test_36_cli_invalid_input (test_systematic_radicals.RadicalTests.test_36_cli_invalid_input) ... ok
+
+----------------------------------------------------------------------
+Ran 36 tests in 81.380s
+
+OK

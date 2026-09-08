@@ -1,0 +1,65 @@
+{
+  "status": "Success",
+  "method": "Dickson",
+  "verified": true,
+  "verification": "exact structural identities, trusted low-degree formulas, and root separation",
+  "seconds": 0.164318,
+  "minimal_polynomial": "x**5 - 5*x**3 + 5*x + 6/5",
+  "wolfram": "HoldComplete[(-3/5 + (4/5)*I)^(-1/5) + (-3/5 + (4/5)*I)^(1/5)]",
+  "radical_dag": {
+    "assignments": [],
+    "result": [
+      "Add",
+      [
+        "Pow",
+        [
+          "Add",
+          [
+            "Q",
+            "-3",
+            "5"
+          ],
+          [
+            "Mul",
+            [
+              "Q",
+              "4",
+              "5"
+            ],
+            [
+              "I"
+            ]
+          ]
+        ],
+        "-1",
+        "5"
+      ],
+      [
+        "Pow",
+        [
+          "Add",
+          [
+            "Q",
+            "-3",
+            "5"
+          ],
+          [
+            "Mul",
+            [
+              "Q",
+              "4",
+              "5"
+            ],
+            [
+              "I"
+            ]
+          ]
+        ],
+        "1",
+        "5"
+      ]
+    ]
+  },
+  "assignments": [],
+  "final": "(-3/5 + 4*I/5)**(-1/5) + (-3/5 + 4*I/5)**(1/5)"
+}

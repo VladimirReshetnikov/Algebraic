@@ -1,0 +1,73 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.5, pytest-9.0.2, pluggy-1.6.0 -- /opt/pyvenv/bin/python3
+cachedir: .pytest_cache
+metadata: {'Python': '3.13.5', 'Platform': 'Linux-6.18.35-x86_64-with-glibc2.41', 'Packages': {'pytest': '9.0.2', 'pluggy': '1.6.0'}, 'Plugins': {'anyio': '4.13.0', 'ddtrace': '4.4.0', 'Faker': '40.1.2', 'asyncio': '1.3.0', 'cov': '7.0.0', 'json-report': '1.5.0', 'metadata': '3.1.1'}, 'PLATFORM': 'linux/amd64', 'CI': 'true'}
+rootdir: /mnt/data/RadicalRoot
+plugins: anyio-4.13.0, ddtrace-4.4.0, Faker-40.1.2, asyncio-1.3.0, cov-7.0.0, json-report-1.5.0, metadata-3.1.1
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 48 items
+
+tests/test_radicalroot.py::test_grammar[expr0-True] PASSED               [  2%]
+tests/test_radicalroot.py::test_grammar[expr1-True] PASSED               [  4%]
+tests/test_radicalroot.py::test_grammar[expr2-False] PASSED              [  6%]
+tests/test_radicalroot.py::test_grammar[expr3-False] PASSED              [  8%]
+tests/test_radicalroot.py::test_grammar[expr4-False] PASSED              [ 10%]
+tests/test_radicalroot.py::test_grammar[expr5-False] PASSED              [ 12%]
+tests/test_radicalroot.py::test_dickson_identity[2] PASSED               [ 14%]
+tests/test_radicalroot.py::test_dickson_identity[3] PASSED               [ 16%]
+tests/test_radicalroot.py::test_dickson_identity[4] PASSED               [ 18%]
+tests/test_radicalroot.py::test_dickson_identity[5] PASSED               [ 20%]
+tests/test_radicalroot.py::test_dickson_identity[6] PASSED               [ 22%]
+tests/test_radicalroot.py::test_dickson_identity[7] PASSED               [ 25%]
+tests/test_radicalroot.py::test_dickson_identity[8] PASSED               [ 27%]
+tests/test_radicalroot.py::test_dickson_identity[9] PASSED               [ 29%]
+tests/test_radicalroot.py::test_question_quintic_all_roots[0] PASSED     [ 31%]
+tests/test_radicalroot.py::test_question_quintic_all_roots[1] PASSED     [ 33%]
+tests/test_radicalroot.py::test_question_quintic_all_roots[2] PASSED     [ 35%]
+tests/test_radicalroot.py::test_question_quintic_all_roots[3] PASSED     [ 37%]
+tests/test_radicalroot.py::test_question_quintic_all_roots[4] PASSED     [ 39%]
+tests/test_radicalroot.py::test_question_sextic_real_roots[0] PASSED     [ 41%]
+tests/test_radicalroot.py::test_question_sextic_real_roots[1] PASSED     [ 43%]
+tests/test_radicalroot.py::test_fast_families[f0-0] PASSED               [ 45%]
+tests/test_radicalroot.py::test_fast_families[f1-0] PASSED               [ 47%]
+tests/test_radicalroot.py::test_fast_families[f2-0] PASSED               [ 50%]
+tests/test_radicalroot.py::test_fast_families[f3-1] PASSED               [ 52%]
+tests/test_radicalroot.py::test_fast_families[f4-0] PASSED               [ 54%]
+tests/test_radicalroot.py::test_fast_families[f5-1] PASSED               [ 56%]
+tests/test_radicalroot.py::test_complete_reference_path[f0-0] PASSED     [ 58%]
+tests/test_radicalroot.py::test_complete_reference_path[f1-0] PASSED     [ 60%]
+tests/test_radicalroot.py::test_complete_reference_path[f2-1] PASSED     [ 62%]
+tests/test_radicalroot.py::test_complete_reference_path[f3-0] PASSED     [ 64%]
+tests/test_radicalroot.py::test_complete_reference_path[f4-0] PASSED     [ 66%]
+tests/test_radicalroot.py::test_pair_resolvent_question PASSED           [ 68%]
+tests/test_radicalroot.py::test_prime_chains[g0] PASSED                  [ 70%]
+tests/test_radicalroot.py::test_prime_chains[g1] PASSED                  [ 72%]
+tests/test_radicalroot.py::test_prime_chains[g2] PASSED                  [ 75%]
+tests/test_radicalroot.py::test_prime_chains[g3] PASSED                  [ 77%]
+tests/test_radicalroot.py::test_prime_chains[g4] PASSED                  [ 79%]
+tests/test_radicalroot.py::test_nonsolvable_group PASSED                 [ 81%]
+tests/test_radicalroot.py::test_nonsolvable_polynomial PASSED            [ 83%]
+tests/test_radicalroot.py::test_notfound_is_not_nonsolvable PASSED       [ 85%]
+tests/test_radicalroot.py::test_resource_limit PASSED                    [ 87%]
+tests/test_radicalroot.py::test_bad_input[f0-0] PASSED                   [ 89%]
+tests/test_radicalroot.py::test_bad_input[f1-0] PASSED                   [ 91%]
+tests/test_radicalroot.py::test_bad_input[f2-2] PASSED                   [ 93%]
+tests/test_radicalroot.py::test_bad_input[f3-0] PASSED                   [ 95%]
+tests/test_radicalroot.py::test_wrong_conjugate_rejected PASSED          [ 97%]
+tests/test_radicalroot.py::test_notebook_degree_eight_with_hint PASSED   [100%]
+
+------- generated xml file: /mnt/data/RadicalRoot/validation/pytest.xml --------
+============================= slowest 12 durations =============================
+22.96s call     tests/test_radicalroot.py::test_complete_reference_path[f4-0]
+2.60s call     tests/test_radicalroot.py::test_question_quintic_all_roots[3]
+2.51s call     tests/test_radicalroot.py::test_question_sextic_real_roots[1]
+2.33s call     tests/test_radicalroot.py::test_question_quintic_all_roots[1]
+1.90s call     tests/test_radicalroot.py::test_question_sextic_real_roots[0]
+1.73s call     tests/test_radicalroot.py::test_question_quintic_all_roots[0]
+1.31s call     tests/test_radicalroot.py::test_question_quintic_all_roots[2]
+1.03s call     tests/test_radicalroot.py::test_fast_families[f1-0]
+0.75s call     tests/test_radicalroot.py::test_notebook_degree_eight_with_hint
+0.70s call     tests/test_radicalroot.py::test_question_quintic_all_roots[4]
+0.55s call     tests/test_radicalroot.py::test_complete_reference_path[f3-0]
+0.46s call     tests/test_radicalroot.py::test_complete_reference_path[f1-0]
+============================= 48 passed in 40.22s ==============================

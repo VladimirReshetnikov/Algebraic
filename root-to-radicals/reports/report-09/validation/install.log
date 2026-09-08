@@ -1,0 +1,14 @@
+WARNING: The directory '/home/oai/.cache/pip' or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.
+Obtaining file:///mnt/data/rootradicals
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: systematic-root-radicals
+  Building editable for systematic-root-radicals (pyproject.toml): started
+  Building editable for systematic-root-radicals (pyproject.toml): finished with status 'done'
+  Created wheel for systematic-root-radicals: filename=systematic_root_radicals-0.1.0-0.editable-py3-none-any.whl size=2700 sha256=cb19f10b15f269401f20749ee6ee00db641ab1f2c3b47725d2bf9651ac295df4
+  Stored in directory: /tmp/pip-ephem-wheel-cache-j0ee2bnm/wheels/7d/76/96/44df2d14531ff643431940e0c565c26df32c8c99ed93b8d1e4
+Successfully built systematic-root-radicals
+Installing collected packages: systematic-root-radicals
+Successfully installed systematic-root-radicals-0.1.0

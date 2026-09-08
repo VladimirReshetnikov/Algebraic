@@ -1,0 +1,58 @@
+[
+  {
+    "name": "notebook_degree8",
+    "coefficients": [
+      1,
+      8336,
+      921712,
+      -13129792,
+      564481120,
+      1608204032,
+      6328076032,
+      7852565504,
+      -27726151424
+    ],
+    "wolfram_root_index": 1,
+    "hint_polynomial": [
+      1,
+      -8336,
+      898656,
+      19035904,
+      -31334144
+    ],
+    "hint_wolfram_index": 1,
+    "validation_status": "Fixture only; no claim of successful radical conversion in this release."
+  },
+  {
+    "name": "notebook_degree9",
+    "coefficients": [
+      1,
+      -657,
+      6111,
+      3318,
+      19647,
+      -12033,
+      3972,
+      -684,
+      9,
+      -1
+    ],
+    "wolfram_root_index": 3,
+    "validation_status": "Fixture only; no claim of successful radical conversion in this release."
+  },
+  {
+    "name": "notebook_septic",
+    "coefficients": [
+      1,
+      -1,
+      -12,
+      7,
+      28,
+      -14,
+      -9,
+      -1
+    ],
+    "wolfram_root_index": 1,
+    "validation_status": "Fixture only; no claim of successful radical conversion in this release."
+  }
+]

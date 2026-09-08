@@ -1,0 +1,75 @@
+{
+  "python_version": "3.13.5",
+  "wolfram_kernel_execution": false,
+  "wolfram_connector_error": "MCP SSE probe returned 404 from wolfram.com",
+  "warning": "Delimiter checks are not a Wolfram parser, evaluation test, or kernel validation.",
+  "python_parse_checks": [
+    {
+      "file": "tests/test_systematic_radicals.py",
+      "ast_parse": true,
+      "sha256": "42bab5b7306d865f0b7ca9539f51887897469eef01f650081882a53c2a804ec5"
+    },
+    {
+      "file": "examples/examples.py",
+      "ast_parse": true,
+      "sha256": "4e595d69efc296653143f7fcc058d1922585c7b5bb414013832799b4b08cb5a0"
+    },
+    {
+      "file": "tools/benchmark.py",
+      "ast_parse": true,
+      "sha256": "f55876e1f4b30fc6bbefa27e17d89b863b1167fc80a1b661e172464c0d999c20"
+    },
+    {
+      "file": "tools/build_validation_table.py",
+      "ast_parse": true,
+      "sha256": "6521464dd3f94228cea3bc0333be371d330fa84eab00eae6e1ad11d148bcaec1"
+    },
+    {
+      "file": "tools/inspect_notebook.py",
+      "ast_parse": true,
+      "sha256": "b8614d38ac728a1fbf0739ed7eb07d50a3ac1c9a1f897179d725690652cb5f9f"
+    },
+    {
+      "file": "python/systematic_radicals.py",
+      "ast_parse": true,
+      "sha256": "dc72d892a55dbfade3dd70b1d91462060c31f0eaaf01fe9265e98a46dbfb502d"
+    }
+  ],
+  "wolfram_delimiter_checks": [
+    {
+      "file": "Wolfram/SystematicRadicals.wl",
+      "balanced_brackets": true,
+      "sha256": "749b2315e0ad85afe244d82afb97e09c33ad9c83351d150b4263f45af1afc18b"
+    },
+    {
+      "file": "Wolfram/run-tests.wls",
+      "balanced_brackets": true,
+      "sha256": "886ad62011f74892defa9f36898c6a5f2b96c3bc7661459a77662638de6ef5c8"
+    },
+    {
+      "file": "Wolfram/tests.wlt",
+      "balanced_brackets": true,
+      "sha256": "0551f83fe065b3cf10e1e607d3275a98f2e9ec07da4010927259eaf970ef064d"
+    },
+    {
+      "file": "examples/examples.wl",
+      "balanced_brackets": true,
+      "sha256": "4b49cdfaee126708325203f0c4e898ace9c9e03064728042a80c66b02d6e2b69"
+    }
+  ],
+  "independent_full_tower_verifier_passes": 5,
+  "pdf_pages": 20,
+  "pdf_layout": {
+    "renderer": "pdftoppm",
+    "all_pages_rendered": true,
+    "overfull_boxes": 0,
+    "notes": "One non-critical underfull bibliography line; pages visually inspected."
+  },
+  "pytest": {
+    "tests": "61",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "51.720"
+  }
+}

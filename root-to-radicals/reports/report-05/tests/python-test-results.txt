@@ -1,0 +1,40 @@
+test_C2 (test_radicalsolve.GeneralTests.test_C2) ... ok
+test_C3 (test_radicalsolve.GeneralTests.test_C3) ... ok
+test_C4 (test_radicalsolve.GeneralTests.test_C4) ... ok
+test_C5 (test_radicalsolve.GeneralTests.test_C5) ... ok
+test_D4 (test_radicalsolve.GeneralTests.test_D4) ... ok
+test_S3_non_disjoint (test_radicalsolve.GeneralTests.test_S3_non_disjoint) ... ok
+test_S4 (test_radicalsolve.GeneralTests.test_S4) ... skipped 'optional slow S4 integration'
+test_V4 (test_radicalsolve.GeneralTests.test_V4) ... ok
+test_invalid_limits (test_radicalsolve.GeneralTests.test_invalid_limits) ... ok
+test_limit_is_not_nonsolvability (test_radicalsolve.GeneralTests.test_limit_is_not_nonsolvability) ... ok
+test_tensor_zero_divisors (test_radicalsolve.GeneralTests.test_tensor_zero_divisors) ... ok
+test_cli (test_radicalsolve.ProtocolTests.test_cli) ... ok
+test_cli_hard_deadline (test_radicalsolve.ProtocolTests.test_cli_hard_deadline) ... ok
+test_cli_rejects_source_code (test_radicalsolve.ProtocolTests.test_cli_rejects_source_code) ... ok
+test_dag_roundtrip (test_radicalsolve.ProtocolTests.test_dag_roundtrip) ... ok
+test_forward_reference_rejected (test_radicalsolve.ProtocolTests.test_forward_reference_rejected) ... ok
+test_undefined_power_rejected (test_radicalsolve.ProtocolTests.test_undefined_power_rejected) ... ok
+test_all_original_embeddings (test_radicalsolve.StructuralTests.test_all_original_embeddings) ... ok
+test_floats_rejected (test_radicalsolve.StructuralTests.test_floats_rejected) ... ok
+test_generic_quartic (test_radicalsolve.StructuralTests.test_generic_quartic) ... ok
+test_grammar (test_radicalsolve.StructuralTests.test_grammar) ... ok
+test_invalid_index (test_radicalsolve.StructuralTests.test_invalid_index) ... ok
+test_mixed_factor_solvability (test_radicalsolve.StructuralTests.test_mixed_factor_solvability) ... ok
+test_nonroot (test_radicalsolve.StructuralTests.test_nonroot) ... ok
+test_not_solvable (test_radicalsolve.StructuralTests.test_not_solvable) ... ok
+test_original_quintic_selected (test_radicalsolve.StructuralTests.test_original_quintic_selected) ... ok
+test_original_sextic_selected (test_radicalsolve.StructuralTests.test_original_sextic_selected) ... ok
+test_parameters_rejected (test_radicalsolve.StructuralTests.test_parameters_rejected) ... ok
+test_power_composition (test_radicalsolve.StructuralTests.test_power_composition) ... ok
+test_rational (test_radicalsolve.StructuralTests.test_rational) ... ok
+test_repeated_root_indices (test_radicalsolve.StructuralTests.test_repeated_root_indices) ... ok
+test_sextic_reduction_identity (test_radicalsolve.StructuralTests.test_sextic_reduction_identity) ... ok
+test_shifted_binomial (test_radicalsolve.StructuralTests.test_shifted_binomial) ... ok
+test_shifted_reciprocal (test_radicalsolve.StructuralTests.test_shifted_reciprocal) ... ok
+test_wrong_conjugate (test_radicalsolve.StructuralTests.test_wrong_conjugate) ... ok
+
+----------------------------------------------------------------------
+Ran 35 tests in 18.624s
+
+OK (skipped=1)

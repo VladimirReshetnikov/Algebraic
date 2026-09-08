@@ -1,0 +1,6 @@
+START original_quintic 5*x**5 - 25*x**3 + 25*x + 6
+0.006 Constructing splitting field
+0.084 Adjoining a degree-4 factor to degree-5 field
+13.967 Adjoining a primitive 10-th root of unity
+22.937 Computing automorphisms in absolute degree 40
+212.146 Certifying the complex embedding and root-of-unity branch

@@ -1,0 +1,25 @@
+test_01_original_sextic (test_radicalroot.RadicalTests.test_01_original_sextic) ... ok
+test_02_original_quintic (test_radicalroot.RadicalTests.test_02_original_quintic) ... ok
+test_03_general_quadratics_and_boundary (test_radicalroot.RadicalTests.test_03_general_quadratics_and_boundary) ... ok
+test_04_general_cubics (test_radicalroot.RadicalTests.test_04_general_cubics) ... ok
+test_05_general_quartics (test_radicalroot.RadicalTests.test_05_general_quartics) ... ok
+test_06_negative_quintic (test_radicalroot.RadicalTests.test_06_negative_quintic) ... ok
+test_07_negative_prime_degree_certificate (test_radicalroot.RadicalTests.test_07_negative_prime_degree_certificate) ... ok
+test_08_reducible_selected_factor (test_radicalroot.RadicalTests.test_08_reducible_selected_factor) ... ok
+test_09_repeated_roots (test_radicalroot.RadicalTests.test_09_repeated_roots) ... ok
+test_10_resource_limits_are_unknown (test_radicalroot.RadicalTests.test_10_resource_limits_are_unknown) ... ok
+test_11_tampered_branch (test_radicalroot.RadicalTests.test_11_tampered_branch) ... ok
+test_12_tampered_output_and_conjugate (test_radicalroot.RadicalTests.test_12_tampered_output_and_conjugate) ... ok
+test_13_ast_rejects_unsupported_heads (test_radicalroot.RadicalTests.test_13_ast_rejects_unsupported_heads) ... ok
+test_14_inexact_and_symbolic_rejected (test_radicalroot.RadicalTests.test_14_inexact_and_symbolic_rejected) ... ok
+test_15_shifted_binomial_and_cyclotomic (test_radicalroot.RadicalTests.test_15_shifted_binomial_and_cyclotomic) ... ok
+test_16_wolfram_bridge_protocol (test_radicalroot.RadicalTests.test_16_wolfram_bridge_protocol) ... ok
+test_17_cli_strict_input_and_timeout (test_radicalroot.RadicalTests.test_17_cli_strict_input_and_timeout) ... ok
+test_18_unbounded_general_option (test_radicalroot.RadicalTests.test_18_unbounded_general_option) ... ok
+test_19_saved_general_quintics (test_radicalroot.RadicalTests.test_19_saved_general_quintics) ... ok
+test_20_dickson_identity (test_radicalroot.RadicalTests.test_20_dickson_identity) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 41.461s
+
+OK

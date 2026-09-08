@@ -1,0 +1,60 @@
+ENGINE 57.035775661468506 [{'stage': 'splitting-field', 'degree': 4, 'factor_degrees': [1, 3]}, {'stage': 'primitive-element', 'coefficient': 2, 'old_degree': 4, 'new_degree': 12}, {'stage': 'splitting-field', 'degree': 12, 'factor_degrees': [1, 1, 2]}, {'stage': 'primitive-element', 'coefficient': 3, 'old_degree': 12, 'new_degree': 24}, {'stage': 'splitting-field', 'degree': 24, 'factor_degrees': [1, 1, 1, 1]}, {'stage': 'automorphisms', 'order': 24, 'primitive_weights': [1, 2, 3], 'candidates_tested': 24}, {'stage': 'composition-series', 'orders': [24, 12, 4, 2, 1], 'prime_indices': [2, 3, 2, 2]}]
+Current thread 0x00007f01954c9780 (most recent call first):
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/polys/densearith.py", line 767 in dup_mul
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/polys/factortools.py", line 397 in dup_zz_zassenhaus
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/polys/factortools.py", line 714 in dup_zz_factor
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/polys/factortools.py", line 1488 in dup_factor_list
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/polys/rootisolation.py", line 665 in dup_isolate_real_roots_list
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/polys/rootisolation.py", line 1465 in _horizontal_bisection
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/polys/rootisolation.py", line 2153 in _inner_refine
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/polys/rootisolation.py", line 2176 in refine_size
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/polys/rootoftools.py", line 1046 in eval_rational
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/polys/rootoftools.py", line 975 in _eval_evalf
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/core/evalf.py", line 1494 in evalf
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/core/evalf.py", line 778 in evalf_pow
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/core/evalf.py", line 1489 in evalf
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/core/evalf.py", line 698 in evalf_mul
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/core/evalf.py", line 1489 in evalf
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/core/evalf.py", line 602 in evalf_add
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/core/evalf.py", line 1489 in evalf
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/core/evalf.py", line 698 in evalf_mul
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/core/evalf.py", line 1489 in evalf
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/core/evalf.py", line 602 in evalf_add
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/core/evalf.py", line 1489 in evalf
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/core/evalf.py", line 1808 in _evalf_with_bounded_error
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/polys/polytools.py", line 4010 in <lambda>
+  File "/opt/pyvenv/lib/python3.13/site-packages/sympy/polys/polytools.py", line 4016 in same_root
+  File "/mnt/data/RadicalSolve/python/radicalsolve/core.py", line 82 in same_known_root
+  File "/mnt/data/RadicalSolve/python/radicalsolve/core.py", line 505 in radical
+  File "/mnt/data/RadicalSolve/python/radicalsolve/core.py", line 494 in <genexpr>
+  File "/mnt/data/RadicalSolve/python/radicalsolve/core.py", line 494 in radical
+  File "/mnt/data/RadicalSolve/python/radicalsolve/core.py", line 476 in radical
+  File "/mnt/data/radical_work/probe_s4.py", line 12 in <module>
+Traceback (most recent call last):
+  File "/mnt/data/radical_work/probe_s4.py", line 12, in <module>
+    a=e.radical(r);print('ROOT',j,'TIME',time.time()-t,'OPS',s.count_ops(a),'NUM',s.N(a,20),flush=True)
+  File "/mnt/data/RadicalSolve/python/radicalsolve/core.py", line 476, in radical
+    for j in range(p):
+              ^^^^^^^^
+  File "/mnt/data/RadicalSolve/python/radicalsolve/core.py", line 494, in radical
+    q = self.tpow(R,p,p)
+            ^^^^^^^^^^^^
+  File "/mnt/data/RadicalSolve/python/radicalsolve/core.py", line 494, in <genexpr>
+    q = self.tpow(R,p,p)
+                ~^^^^^^^
+  File "/mnt/data/RadicalSolve/python/radicalsolve/core.py", line 482, in radical
+    if all(c==self.K.zero for c in R):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/RadicalSolve/python/radicalsolve/core.py", line 441, in norm_polynomial
+    key = (p,tuple(anp_key(a) for a in R))
+    ^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/RadicalSolve/python/radicalsolve/core.py", line 45, in check
+    raise ResourceLimit('The cooperative time budget was exceeded.',
+                        limit=self.max_seconds)
+radicalsolve.core.ResourceLimit: The cooperative time budget was exceeded.
+
+Outcome: ResourceLimit. The general solver constructed the degree-24 splitting
+field and the subgroup chain [24, 12, 4, 2, 1], but did not finish radical
+synthesis in this run. A slow embedding comparison delayed the cooperative
+time-budget check. This is not a successful full S4 test, nor a proof that
+radicals do not exist. The native quartic fast path is tested separately.

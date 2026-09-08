@@ -1,0 +1,26 @@
+\paragraph{Recorded Python test run.}
+61 passed, 0 failures or errors, 0 skipped; 51.72 seconds in the recorded run. The test suite and machine-readable JUnit record are included in the archive.
+\begin{table}[htbp]
+\centering\small
+\begin{tabularx}{\textwidth}{@{}X l l r r@{}}
+\toprule
+Input and Python index & Path & Status & $D$ & Seconds\\
+\midrule
+Original sextic, $i=1$ & Reciprocal & Success & -- & 2.31\\
+Original quintic, $i=4$ & Dickson & Success & -- & 1.64\\
+$x^5-x-1$, $i=0$ & Galois test & Not solvable & -- & 1.22\\
+$x^2-2$, $i=1$ & General & Success & 2 & 1.05\\
+$x^3-2$, $i=0$ & General & Success & 6 & 1.61\\
+$x^4-2$, $i=1$ & General & Success & 8 & 26.06\\
+$x^4+1$, $i=0$ & General & Success & 4 & 1.24\\
+$\Phi_5(x)$, $i=0$ & General & Success & 4 & 1.43\\
+Notebook octic $A$, $i=0$ & Power & Success & -- & 1.38\\
+Notebook octic $B$, $i=0$ & Power & Success & -- & 1.18\\
+Notebook octic $C$, $i=0$ & Pair resolvent & Success & -- & 1.79\\
+$x^5-2$ (automatic), $i=0$ & Power & Success & -- & 1.23\\
+$x^5-2$ (forced), $i=0$ & General & Inconclusive & -- & 30.02\\
+\bottomrule
+\end{tabularx}
+\caption{Recorded bounded runs. $D=[E:\Q]$ is shown only when the general field was constructed. Indices are zero-based SymPy indices. The last row reached its 30-second limit; no nonsolvability conclusion follows.}
+\label{tab:benchmark}
+\end{table}

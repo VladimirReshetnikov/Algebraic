@@ -1,0 +1,22 @@
+Get[FileNameJoin[{DirectoryName[$InputFileName],"..","wolfram","RadicalSolve.wl"}]];
+VerificationTest[RadicalExpressionQ[Sqrt[2]+(-1)^(2/5)],True,TestID->"grammar-radicals"]
+VerificationTest[RadicalExpressionQ[Root[#^5-#-1&,1]],False,TestID->"grammar-Root"]
+VerificationTest[RadicalExpressionQ[Cos[Pi/7]],False,TestID->"grammar-trig"]
+VerificationTest[RadicalExpressionQ[1.5],False,TestID->"grammar-float"]
+VerificationTest[VerifyRadical[Sqrt[2],-Sqrt[2]],False,TestID->"wrong-conjugate"]
+VerificationTest[
+ With[{r=Root[-1-#^2-#^3+#^4+#^6&,2]},VerifyRadical[r,Radicalize[r,Method->"Native"]]],
+ True,TestID->"original-sextic"]
+VerificationTest[
+ With[{r=Root[6+25#-25#^3+5#^5&,5]},VerifyRadical[r,Radicalize[r,Method->"Native"]]],
+ True,TestID->"original-quintic"]
+VerificationTest[
+ With[{r=Root[(#+1)^5+2&,1]},VerifyRadical[r,Radicalize[r,Method->"Native"]]],
+ True,TestID->"shifted-binomial"]
+VerificationTest[Head[Radicalize[1.25]],Failure,TestID->"reject-approximate"]
+VerificationTest[RadicalReport[Sqrt[2]]["Verified"],True,TestID->"report"]
+(* Requires Python plus sympy; this file was supplied but not executed here. *)
+VerificationTest[
+ With[{r=Root[#^3-3#+1&,1]},VerifyRadical[r,Radicalize[r,Method->"Galois"]]],
+ True,TestID->"backend-cyclic-cubic"]
+VerificationTest[Radicalize[Root[#^5-#-1&,1]][[1]],"NotSolvable",TestID->"nonsolvable"]
