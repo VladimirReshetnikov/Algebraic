@@ -132,3 +132,105 @@ Windows).  Kept as a checklist for future work on exact algebraic-number code.
 - Kernel seats are shared with other sessions on the machine; never run
   `taskkill /F /IM wolfram.exe` blindly.  Track the PIDs of kernels started
   by the session and kill only those.
+
+## Findings from the asymptotic-inverse work (Wolfram 15.0.1, September 2026)
+
+### Scripts and test harnesses
+
+- `wolfram.exe -script file.wl a b c` leaves `$ScriptCommandLine` **empty**;
+  the arguments are only available in `$CommandLine` (after the `-script`
+  entry).  `wolframscript -file` populates `$ScriptCommandLine`.
+- Inside a `.wlt` file run through `TestReport`, `$InputFileName` is the
+  file of the *caller*, not the `.wlt` file.  A test file that locates its
+  package through `DirectoryName[$InputFileName]` works only when driven by
+  a runner in the expected directory; preload the package in the driver to
+  make the suite location-independent.
+- Nine independently written packages for the same problem were all
+  delivered "unexecuted" (no kernel was available to their authors).  Run
+  natively, seven suites passed completely and the two failures (one each
+  in reports 01 and 04) were *zero-recognition* failures in residual
+  checkers, not wrong coefficients; see the next section.
+- One batch invocation of a kernel exited with status 1 after two seconds
+  and produced no output at all, while an identical rerun succeeded.  Treat
+  a silent instant exit as a transient kernel start failure and rerun
+  before investigating the script.
+
+### Zero recognition for exact residuals
+
+- `Simplify` does **not** denest nested radicals: it leaves
+  `-2 Sqrt[2] - 2 Sqrt[3] + 2 Sqrt[5 + 2 Sqrt[6]]` unevaluated although it
+  is zero (`Sqrt[5 + 2 Sqrt[6]] == Sqrt[2] + Sqrt[3]`).  Such expressions
+  arise as soon as `RootReduce`d exponents (`Root` objects) are multiplied
+  into coefficients and later displayed with `ToRadicals`.  Use
+  `RootReduce[expr] === 0` (or `FullSimplify`) for zero tests of algebraic
+  numbers; `Simplify[expr == 0]` is not enough.
+- `Expand` and `Simplify` do not relate `Log[4]`, `Log[8]`, `Log[32]`,
+  `Log[128]` to `Log[2]`: the residual
+  `-(Log[4]^2)/16 - Log[2] Log[32]/64 + Log[8] Log[128]/64` is exactly zero
+  but survives both.  Canonicalise logarithms of positive rationals first
+  (`Log[n] -> Sum[e Log[p]]` over the prime factorisation, or
+  `PowerExpand` on a provably positive argument), then test for zero.
+- Conclusion for residual checkers: canonicalise coefficients with
+  `RootReduce` (algebraic part) and prime-factorised logarithms before the
+  zero test, or the checker reports spurious nonzero residuals.
+
+### Series and InverseSeries with logarithms and irrational powers
+
+- `Series[f, {x, 0, n}]` handles logarithmic coefficients: e.g.
+  `Series[Sin[x] + x^2 Log[x], {x, 0, 5}]` gives
+  `SeriesData[x, 0, {1, Log[x], -1/6, 0, 1/120}, 1, 6, 1]`, and
+  `Series[x^x - 1, {x, 0, 2}]` gives `SeriesData[x, 0, {Log[x], Log[x]^2/2}, 1, 3, 1]`.
+- Terms with irrational exponents are left **outside** the `SeriesData`:
+  `Series[x + x^Sqrt[2], {x, 0, 3}]` returns
+  `x^Sqrt[2] + SeriesData[x, 0, {1}, 1, 4, 1]` (also with
+  `Assumptions -> x > 0`), and `Series[x^Pi + x, ...]` behaves the same way.
+  Hence "Series output" for a power-log germ is in general a `Plus` of a
+  `SeriesData` and finitely many irrational-power monomials, and a parser
+  must accept that shape.
+- `InverseSeries` returns unevaluated when a coefficient contains `Log[x]`
+  (`InverseSeries[Series[x + x^2 (1 + Log[x]), {x, 0, 3}], y]`), which is
+  the root of the Stack Exchange question.
+- `SeriesData` arithmetic with logarithmic coefficients works (products,
+  `D`), but the `O[y]^n` term hides logarithmic factors: a genuine
+  remainder of the log example is `O[y^3 (1 + Abs[Log[y]])^2]`, not `O[y]^3`.
+- `Series[Sqrt[x^2 + x^3], {x, 0, 2}]` without assumptions yields
+  coefficients `Sqrt[x^2]/x`; add `Assumptions -> x > 0` to obtain the
+  positive branch.
+- `Asymptotic[x + x^Sqrt[2] + x^2, x -> 0, SeriesTermGoal -> 3]` returns the
+  input unchanged (it is already a finite sum), and `Asymptotic` on
+  `ProductLog[-1, -y]` at `y -> 0` produces an unusable expression full of
+  `Floor[Arg[y]/(2 Pi)]`; the lower Lambert branch needs the explicit
+  `-Log[y] - Log[-Log[y]] + ...` expansion instead.
+
+### Throw, Catch and scripts
+
+- An **uncaught `Throw`** in `wolfram.exe -script` terminates the whole
+  script silently: no `Throw::nocatch` message is printed and the exit code
+  is 0.  Every subsequent statement is skipped.  Symptom: a log file that is
+  opened at the top of the script stays empty.
+- A wrapper `catch[body_] := Catch[body, tag]` **without a Hold attribute**
+  evaluates `body` before `Catch` is entered, so a `Throw` inside `body`
+  is uncaught (and kills a script, see above).  Give the wrapper `HoldAll`
+  (`SetAttributes[catch, HoldAll]`).  The same applies to any helper that is
+  meant to wrap `Catch`, `TimeConstrained`, `Quiet` or `Block` around an
+  argument.
+- A hung kernel keeps its licence seat; a new `wolfram.exe -script` that
+  cannot obtain a seat exits **immediately with status 0 and no output**.
+  Find the culprit with
+  `Get-CimInstance Win32_Process -Filter "name='wolfram.exe'"` (PowerShell),
+  which shows the command line of each kernel, and stop only your own with
+  `Stop-Process -Id <pid> -Force` (`taskkill /F /PID` from Git Bash did not
+  terminate it).
+- `jetPowerSeries`-style loops that stop when a truncated product becomes
+  empty never terminate when the truncation cutoff is `Infinity`; guard every
+  series loop against an infinite working order.
+- `FindRoot[f == c, {x, x0}]` inside a `Module[{..., x, ...}]` whose local
+  `x` merely *holds* the global symbol does not work: `FindRoot` has
+  `HoldAll`, receives the local `x$nnn`, and fails ("not a valid variable" /
+  no convergence).  Inject the actual symbol with `With[{xv = x}, FindRoot[...
+  {xv, x0} ...]]`.
+- `FindRoot` with `WorkingPrecision -> 60` and a starting value of precision
+  50 emits `FindRoot::precw` and, under `Check`, looks like a failure; raise
+  the precision of the starting value (`N[expr, 60]`) first.
+- `Check[expr, $Failed]` around `Quiet[...]` is the wrong order: use
+  `Quiet[Check[expr, $Failed]]` so that the messages still trigger `Check`.
