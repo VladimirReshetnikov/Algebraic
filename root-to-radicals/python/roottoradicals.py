@@ -483,14 +483,16 @@ def structural_dickson(a: AlgebraicNumber, st: _State, depth: int):
     n = a.degree
     if n < 3:
         return None
-    Q = sp.Poly(sympy_poly(a.poly), X).monic()
-    t = -Q.coeff_monomial(X ** (n - 1)) / n
-    Q = sp.Poly(sp.expand(Q.as_expr().subs(X, X + t)), X)
-    c = -Q.coeff_monomial(X ** (n - 2)) / n
-    diff = sp.Poly(sp.expand(Q.as_expr() - dickson(n, c)), X)
-    if c == 0 or diff.degree() > 0:
+    Q = fmpq_poly(a.poly) / a.poly.leading_coefficient()
+    t = -Q[n - 1] / n
+    Q = Q(fmpq_poly([t, 1]))
+    c = -Q[n - 2] / n
+    # A constant residual forces every nonconstant coefficient of the monic Dickson polynomial:
+    # (j^2 - n^2) a_j = 4 c (j+2)(j+1) a_(j+2), for 1 <= j < n.
+    dQ = Q.derivative()
+    if c == 0 or (fmpq_poly([-4 * c, 0, 1]) * dQ.derivative() + dQ.left_shift(1) - n * n * Q).degree() > 0:
         return None
-    b = -diff.as_expr()
+    t, c, b = map(sp.Rational, (t, c, (2 * (-c) ** (n // 2) if n % 2 == 0 else 0) - Q[0]))
     u = sp.Pow((b + sp.sqrt(b ** 2 - 4 * c ** n)) / 2, sp.Rational(1, n))
     zeta = sp.Pow(-1, sp.Rational(2, n))
     return st.pick([t + zeta ** j * u + c / (zeta ** j * u) for j in range(n)], a)

@@ -493,6 +493,35 @@ class CorrectnessRegressions(unittest.TestCase):
                         continue
                     self.assertEqual(restored, [fmpq(x) for x in integers])
 
+    def test_input_field_generator_preserves_linear_and_cached_branch_metadata(self):
+        import sympy as sp
+        for coefficients in ([0, 1], [-7, 3], [-2, 0, 0, 1], [-1, 0, 0, 2],
+                             [1, 1, 1, 1, 1], [-1, -1, 0, 0, 1]):
+            polynomial = fmpz_poly(coefficients)
+            reference = None
+            for index in range(1, polynomial.degree() + 1):
+                a = rd.AlgebraicNumber(polynomial, index)
+                rd._ifcache.clear()
+                data = rd.input_field_data(polynomial, a)
+                metadata = {key: value for key, value in vars(data).items() if key != "theta"}
+                if reference is None:
+                    reference = metadata
+                self.assertEqual(metadata, reference)
+                self.assertEqual(data.theta, rd.scale_algebraic(a, data.scale, data.prec))
+                if data.n == 1:
+                    # Linear fields need the reduced rational generator, including zero.
+                    value = a.as_fraction()
+                    coordinates = [fmpq(value.numerator, value.denominator)]
+                    self.assertEqual(data.subgroups, [{"index": 1, "fixed": [[1]], "elements": None, "order": 1}])
+                else:
+                    coordinates = [fmpq(0), fmpq(1, data.scale)] + [fmpq(0)] * (data.n - 2)
+                self.assertEqual(data.to_algebraic(coordinates), a)
+                with patch.object(sp.Poly, "factor_list", side_effect=AssertionError("cached field was rebuilt")):
+                    cached = rd.input_field_data(polynomial, a, 97)
+                    integral = rd.input_field_data(data.theta.poly, data.theta, 97)
+                self.assertEqual(vars(cached), dict(vars(data), prec=97))
+                self.assertEqual(vars(integral), dict(vars(data), scale=1, prec=97))
+
     def test_input_field_matrix_iterables_and_power_basis_products(self):
         for n in (1, 2, 4, 8, 16):
             polynomial = fmpz_poly([-2] + [0] * (n - 1) + [1])

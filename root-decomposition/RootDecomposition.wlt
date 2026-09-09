@@ -85,6 +85,14 @@ VerificationTest[RootSumDecomposition[s6, "Scope" -> "InputField"]["MaximumDegre
 
 VerificationTest[RootSumDecomposition[RootReduce[Exp[2 Pi I/5]]]["MaximumDegree"], 4, TestID -> "fifth root of unity"];
 VerificationTest[RootSumDecomposition[7/3]["Terms"], {7/3}, TestID -> "rational input"];
+VerificationTest[Map[RootDecomposition`Private`primitiveIntegerCoefficients,
+  {{1/2, -1/3, 1/4}, {-2/9, 0, -4/15}, {-7/5}, {0, 0, 2/3}, {0, 2^-1100, 0, 2^1100}}],
+  {{6, -4, 3}, {5, 0, 6}, {1}, {0, 0, 1}, {0, 1, 0, 2^2200}},
+  TestID -> "shared coefficient normalization preserves signs zeros and exact large denominators"];
+VerificationTest[RootDecomposition`Private`niceScale /@
+  {0, 1/7, -11/13, Sqrt[2], (1 + Sqrt[2])/7, Sqrt[2]/2^1100, 2^1100 Sqrt[2]},
+  {1, -7, 13/11, 1, 7, 2^1100, 2^-1100},
+  TestID -> "coefficient scale scoring preserves sparse rational and extreme scale choices"];
 VerificationTest[FailureQ[RootSumDecomposition[1.5]], True, {RootDecomposition::inexact}, TestID -> "inexact input rejected"];
 
 VerificationTest[RootBoundedDecomposition[ap, Times, 3, 1, 2]["MaximumDegree"], 3, TestID -> "bounded product search"];

@@ -1,6 +1,7 @@
 """Regression tests and timings for roottoradicals.py (run: python test_roottoradicals.py)."""
 import time
 import unittest
+from types import SimpleNamespace
 from unittest.mock import patch
 
 import sympy as sp
@@ -423,6 +424,30 @@ class FieldPowers(unittest.TestCase):
 
 
 class RationalPolynomials(unittest.TestCase):
+    def test_dickson_recognition_against_recurrence(self):
+        # Inspect candidate order independently of root selection, including reducible families.
+        state = SimpleNamespace(pick=lambda candidates, target: candidates)
+        for n in (1, 2, 3, 4, 5, 7, 8):
+            for c, t, b in [(0, 1, 2), (-2, 0, 3), (sp.Rational(2, 3), sp.Rational(1, 7), sp.Rational(3, 5))]:
+                p = rt.fmpz_poly_of(rt.dickson(n, c).subs(rt.X, rt.X - t) - b)
+                if n < 3 or c == 0:
+                    expected = None
+                else:
+                    u = sp.Pow((b + sp.sqrt(b ** 2 - 4 * c ** n)) / 2, sp.Rational(1, n))
+                    zeta = sp.Pow(-1, sp.Rational(2, n))
+                    expected = [t + zeta ** j * u + c / (zeta ** j * u) for j in range(n)]
+                for scale in (1, -3):
+                    q = scale * p
+                    target = SimpleNamespace(poly=q, degree=q.degree())
+                    self.assertEqual(rt.structural_dickson(target, state, 6), expected)
+                if n >= 4:
+                    q = fmpz_poly(p)
+                    q[n - 3] += 1  # leaves the shift and Dickson parameter unchanged
+                    self.assertIsNone(rt.structural_dickson(SimpleNamespace(poly=q, degree=q.degree()), state, 6))
+                if expected is not None:
+                    with rt.ctx.workprec(300):
+                        self.assertTrue(all(rt.acb_poly(p)(rt.ball(candidate, 300)).contains(0) for candidate in expected))
+
     def test_native_polynomial_conversion_and_evaluation(self):
         for degree in (0, 2, 8, 32):
             expr = sum(sp.Rational(i + 1, i + 2) * rt.X ** i for i in range(degree + 1))

@@ -3,8 +3,8 @@
 Run from any directory: python benchmarks/compare_solvers.py --baseline 204c97f
 Each workload is warmed, then timed in alternating order. Input construction and
 exact output comparison are outside the timed calls. Multiplication matrices use
-identical current field data. Radical recognition uses the same current field
-dependency in both versions, but does not call it. These are workload timings.
+identical current field data. Radical workloads share the current field dependency;
+the full expression workflow includes branch selection and verification.
 """
 from __future__ import annotations
 
@@ -50,6 +50,17 @@ def galois_signature(data):
 
 def decomposition_signature(result):
     return {**vars(result), "terms": [(tuple(term.poly.coeffs()), term.index) for term in result.terms]}
+
+
+def input_field_signature(data):
+    return {**vars(data), "theta": (tuple(data.theta.poly.coeffs()), data.theta.index)}
+
+
+def radical_signature(result):
+    if result.method != "Dickson" or result.verified is not True:
+        raise AssertionError("the radical workload must verify through Dickson recognition")
+    return {**{key: value for key, value in vars(result).items() if key != "time"},
+            "radical_depth": result.radical_depth, "leaf_count": result.leaf_count}
 
 
 def workloads(before, current, match=""):
@@ -117,6 +128,15 @@ def workloads(before, current, match=""):
     yield "degree-2 height-4 catalogue", [lambda m=m: m.catalog.__wrapped__(2, 4)
         for m in (before["rootdecomp"], current["rootdecomp"])], lambda result: tuple(
             (tuple(a.poly.coeffs()), a.index) for a in result)
+    label = "input-field S4 construction"
+    if match.lower() in label.lower():
+        def input_field(module, a):
+            module._ifcache.clear()
+            return module.input_field_data(a.poly, a)
+
+        polynomial = fmpz_poly([-1, -1, 0, 0, 1])
+        yield label, [lambda m=m, a=m.AlgebraicNumber(polynomial, 1): input_field(m, a)
+                      for m in (before["rootdecomp"], current["rootdecomp"])], input_field_signature
     labels = ("input-field degree-8 multiplication matrix", "input-field degree-8 element reconstruction")
     if any(match.lower() in label.lower() for label in labels):
         root = current["rootdecomp"]
@@ -153,6 +173,11 @@ def workloads(before, current, match=""):
                   + fmpq_poly([1]).left_shift(m)).numer()
     yield "degree-48 reciprocal recognition", [lambda module=module: module.reciprocal_decomposition(reciprocal)
         for module in (before["roottoradicals"], current["roottoradicals"])], lambda result: result
+    label = "quintic radical expression"
+    if match.lower() in label.lower():
+        a = current["rootdecomp"].AlgebraicNumber(fmpz_poly([6, 25, 0, -25, 0, 5]), 5)
+        yield label, [lambda module=module, a=a: module.root_to_radicals(a)
+                      for module in (before["roottoradicals"], current["roottoradicals"])], radical_signature
 
 
 def compare(functions, signature, samples, cold_sympy_cache=False):

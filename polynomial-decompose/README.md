@@ -69,7 +69,10 @@ digits. Python also uses FLINT's native polynomial composition over the rational
 when available, with the same exact-domain fallback used by the tests.
 Wolfram coefficient products use exact zero-padded convolution. Integer and
 rational scalars return directly from normalization; other scalars retain the
-exact algebraic reduction and validation path.
+exact algebraic reduction and validation path. Preparation and composition share
+variable validation. After that check, exact integer and rational polynomial
+inputs become singleton coefficient vectors directly, including scalar
+certificate digits; other inputs retain the general polynomial checks.
 Existing Python `Poly` inputs reuse their coefficient field and coefficient vectors;
 mixed-input verification reads their coefficients directly. Preparation and the
 coefficient reader share the check for a matching generator over the integers,
@@ -226,7 +229,7 @@ The unchanged archived native suites were independently executed with
 Wolfram 15.0.1: report 1 passed **55/107**, report 2 **39/53**, and report 3
 **60/60**. These results concern the original reports, whose historical
 metadata remains unchanged. The unified project has its own regression
-suites: **90/90 native tests** and **26 Python test methods** passed. The
+suites: **91/91 native tests** and **26 Python test methods** passed. The
 Python methods include 12 generated affine-normalization cases across exact
 fields and degree pairs, in addition to boundary, enumeration, and certificate
 tampering checks. They also exercise truncated congruences, early rejection,
@@ -235,6 +238,8 @@ without native acceleration. Typed certificate caches keep approximate and
 Boolean values distinct from equal exact coefficients.
 The native APIs and certificate verifier share an exact proper-degree check;
 pattern-valued certificate degrees are rejected without running their predicates.
+Native tests also check that variable validation precedes coefficient errors,
+including for exact scalar inputs and empty composition.
 Native digit reconstruction matches independent symbolic arithmetic in 49 cases,
 including empty digits, zero and constant bases, overlapping digits, and exact
 algebraic coefficients.

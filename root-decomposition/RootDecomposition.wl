@@ -96,10 +96,11 @@ exactZeroQ[e_] := TrueQ[Quiet[RootReduce[e]] === 0];
 
 rootObject[poly_, k_Integer] := Root[Function @@ {poly /. x -> Slot[1]}, k];
 
-primitiveIntegerPolynomial[poly_] := Module[{c = CoefficientList[poly, x], den, g},
+primitiveIntegerCoefficients[coeffs_] := Module[{c = coeffs, den, g},
   den = LCM @@ Denominator[c]; c = c den; g = GCD @@ c;
-  c = c/g; If[Last[c] < 0, c = -c];
-  FromDigits[Reverse[c], x]];
+  c = c/g; If[Last[c] < 0, c = -c]; c];
+
+primitiveIntegerPolynomial[poly_] := FromDigits[Reverse[primitiveIntegerCoefficients[CoefficientList[poly, x]]], x];
 
 polynomialHeight[poly_] := Max[Abs[CoefficientList[primitiveIntegerPolynomial[poly], x]]];
 
@@ -729,14 +730,14 @@ integralScale[f_] := Module[{d = Exponent[f, x], c, primes, q = 1, e, v},
     {p, primes}];
   q];
 
-niceScale[u_] := Module[{f, d, best = 1, h, hb = {Infinity, 0, 0}, g, q0},
+niceScale[u_] := Module[{f, c, nz, d, best = 1, h, hb = {Infinity, 0, 0}, g, q0},
   f = minimalPolynomialOf[u];
   If[f === $Failed, Return[1]];
-  d = Exponent[f, x];
+  c = CoefficientList[f, x]; d = Length[c] - 1; nz = Flatten[Position[c, Except[0], {1}, Heads -> False]];
   q0 = integralScale[f];
   Do[
-    g = primitiveIntegerPolynomial[Expand[(q q0)^d (f /. x -> x/(q q0))]];
-    h = {Max[Abs[CoefficientList[g, x]]], -Sign[g /. x -> 0], Abs[Log[Abs[q]]]};
+    g = primitiveIntegerCoefficients[ReplacePart[c, Thread[nz -> c[[nz]] (q q0)^(d + 1 - nz)]]];
+    h = {Max[Abs[g]], -Sign[First[g]], Abs[Log[Abs[q]]]};
     If[Order[h, hb] == 1, hb = h; best = q q0],
     {q, DeleteDuplicates[Flatten[Table[{s k/l, s l/k}, {k, 1, 12}, {l, 1, 12}, {s, {1, -1}}]]]}];
   best];

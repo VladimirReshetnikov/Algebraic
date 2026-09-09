@@ -56,8 +56,11 @@ trim[v_List] := Module[{k = Length[v]},
 zeroQ[v_List] := v === {0};
 vectorDegree[v_List] := If[zeroQ[v], -Infinity, Length[v] - 1];
 
+checkVariable[x_] := If[NumericQ[x],
+  fail["InvalidVariable", "The polynomial variable must be an unassigned nonnumeric symbol."]];
+prepare[p : (_Integer | _Rational), x_Symbol] := (checkVariable[x]; {p});
 prepare[p_, x_Symbol] := Module[{q, c},
-  If[NumericQ[x], fail["InvalidVariable", "The polynomial variable must be an unassigned nonnumeric symbol."]];
+  checkVariable[x];
   q = Quiet[Check[Expand[p], $Failed]];
   If[q === $Failed || !TrueQ[PolynomialQ[q, x]],
     fail["NotPolynomial", "The input must be a univariate polynomial."]];
@@ -247,7 +250,7 @@ AlgebraicDecompositionData[p_, x_Symbol] := Catch[Module[{c = prepare[p, x]},
   exhaustiveData[c, publicTest[c, #, x] & /@ properDegrees[Length[c] - 1]]], $failureTag];
 
 ComposeDecomposition[parts_List, x_Symbol] := Catch[Module[{vs},
-  If[NumericQ[x], fail["InvalidVariable", "The polynomial variable must be an unassigned nonnumeric symbol."]];
+  checkVariable[x];
   vs = prepare[#, x] & /@ parts;
   expression[composeChain[vs], x]], $failureTag];
 VerifyAlgebraicDecomposition[p_, parts_List, x_Symbol, opts : OptionsPattern[]] := Catch[

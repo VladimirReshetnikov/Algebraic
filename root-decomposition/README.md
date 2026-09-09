@@ -159,8 +159,8 @@ or product using exact composed polynomials and certified root selection. The op
 
 ## Refactoring validation (9 September 2026)
 
-Validation of the refactored solvers passed **36 Python test
-methods**, **92 native Wolfram tests**, and **12 independent cross-language
+Validation of the refactored solvers passed **37 Python test
+methods**, **94 native Wolfram tests**, and **12 independent cross-language
 identity and degree checks**. The Python input-field comparisons also passed
 under both SymPy rational backends. These checks cover exact field metadata and
 subfield order, real and complex branches, precision retries, search limits,
@@ -184,9 +184,16 @@ Sum searches delay conversion to algebraic numbers until trace centering satisfi
 the component cap, so discarded centered terms need no conversion. Scale searches
 reuse an immutable candidate table and its logarithmic costs, preserving the
 original order and tie selection even for extreme polynomial-dependent scales.
+Wolfram polynomial normalization and scale searches share `primitiveIntegerCoefficients`
+to clear denominators, remove common factors, and choose a positive leading coefficient.
+Scale candidates transform only nonzero coefficient entries, preserving their scores,
+enumeration order, and tie selection.
 The Wolfram field builder reuses the multiplication table produced by its group
 closure check. Python integral power traces try cheaper recovery before falling
 back to the original precision and exact matrix arithmetic.
+Python input-field construction reuses the field generator's existing exact coefficient
+representation (`K(K.ext.native_coeffs())`) instead of repeating `to_number_field`.
+Degree-one zero and rational inputs retain their reduced generator coordinates.
 
 The [shared benchmark](../benchmarks/README.md) compares representative workloads
 against an immutable Git revision and checks exact outputs. Its saved results

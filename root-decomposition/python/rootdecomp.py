@@ -947,7 +947,7 @@ def input_field_data(p: fmpz_poly, a: "AlgebraicNumber", prec_bits: int = 300) -
     factor_degrees = sorted(g.degree() for g, _ in fac)
     galois = all(g.degree() == 1 for g, _ in fac)
     principal = []
-    theta_el = K.from_sympy(root)
+    theta_el = K(K.ext.native_coeffs())
     for g, _ in fac:
         m = g.degree()
         if m == 1:

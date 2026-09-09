@@ -132,6 +132,15 @@ VerificationTest[Module[{b = Root[#^5 - # - 1 &, 1], exact, inexactFailure},
       Catch[AlgebraicDecomposition`Private`red[#],
         AlgebraicDecomposition`Private`$failureTag] === inexactFailure &]], True,
   TestID -> "scalar dispatch preserves exact normalization and inexact failure details"]
+VerificationTest[Module[{exact = {0, 1, -7, 2/3, 10^30/7}, invalidVariable},
+  invalidVariable = Failure["InvalidVariable", <|"MessageTemplate" ->
+    "The polynomial variable must be an unassigned nonnumeric symbol."|>];
+  AllTrue[exact, AlgebraicDecompose[#, x] === {#} && ComposeDecomposition[{#}, x] === # &] &&
+    AllTrue[Join[exact, {1., Sqrt[2], Pi, True, {1}, 1/(x + 1)}],
+      AlgebraicDecompose[#, Pi] === invalidVariable &&
+        ComposeDecomposition[{#}, Pi] === invalidVariable &] &&
+    ComposeDecomposition[{}, Pi] === invalidVariable], True,
+  TestID -> "scalar preparation and empty composition preserve variable validation before input errors"]
 VerificationTest[MatchQ[AlgebraicDecompose[1.0 x^4, x], _Failure], True,
   TestID -> "reject-machine-coefficient"]
 VerificationTest[MatchQ[AlgebraicDecompose[N[Sqrt[2], 40] x^4, x], _Failure],

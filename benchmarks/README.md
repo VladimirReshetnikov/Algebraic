@@ -12,12 +12,13 @@ and python-flint dependencies as the solvers. The baseline revision must be
 available in the local Git history; `204c97f` is the merged baseline before the
 shared solver refactoring.
 
-Nineteen workloads exercise sparse certificate generation, decomposition over an
+Twenty-one workloads exercise sparse certificate generation, decomposition over an
 algebraic coefficient field, two complete-chain enumerations, two Galois field
 constructions, bounded catalogue generation, multiplication by a root of unity,
-two input-field operations, generalized reciprocal recognition, three certificate
-verification, complete-chain generation with verification, and four full root
-searches. `--match` selects labels:
+two input-field operations, input-field construction, generalized reciprocal
+recognition, three certificate verification workloads, complete-chain generation
+with verification, four full root searches, and a full quintic radical expression.
+`--match` selects labels:
 
 ```console
 python benchmarks/compare_solvers.py --baseline 0bb70f4 --match certificate
@@ -49,28 +50,45 @@ These rows compare exact outputs; independent identity proofs remain the job
 of the project verification suites.
 
 `--cold-sympy-cache` clears registered SymPy caches before every timed call,
-outside the clock. It does not clear solver field/result caches or rebuild inputs.
-The JSON records this choice; the default retains warmed caches.
+outside the clock. This flag does not clear solver field/result caches or rebuild
+inputs; workload-specific cache handling is described below. The JSON records
+this choice; the default retains warmed SymPy caches.
 
 The script loads each baseline implementation directly from the resolved commit.
 It warms both versions, alternates their execution order, and checks exact output
-equality after every sample. Input construction and equality checks are excluded
-from the measured calls. The Galois checks compare the complete exact action,
-coordinates, Gram matrices, subgroup data, and exponent. Reciprocal recognition
-is measured with identical dependencies; that recognizer does not invoke the
-shared field engine. A mismatch fails the command.
+equality after every sample. Input polynomial and algebraic-number construction,
+signature calculation, and equality checks are excluded from the measured calls.
+The Galois checks compare the complete exact action, coordinates, Gram matrices,
+subgroup data, and exponent. A mismatch fails the command.
 
 The catalogue workload bypasses the result cache and compares every polynomial
 and root index in enumeration order. The multiplication workload uses identical
 current field data for both implementations and measures only matrix recovery,
 with its original precision fallback. It does not measure field construction.
 Its selected cube root of unity is uniquely isolated before timing.
-The input-field workloads copy identical current field data into each version's
-own field class, so both multiplication and element reconstruction use the
-corresponding implementation. Field construction is excluded; every resulting
-matrix or minimal-polynomial/root-index pair is compared exactly.
-These isolate the `InputFieldData` methods; the prepared `theta` object and its
-root evaluator come from the current implementation in both cases.
+The two prepared input-field degree-8 workloads copy identical current field data
+into each version's own field class, so both multiplication and element
+reconstruction use the corresponding implementation. Field construction is
+excluded; every resulting matrix or minimal-polynomial/root-index pair is
+compared exactly. These isolate the `InputFieldData` methods; the prepared
+`theta` object and its root evaluator come from the current implementation in
+both cases.
+
+The separate `input-field S4 construction` workload builds the degree-four input
+field for root index one of \(x^4-x-1\). Each revision receives an input constructed
+with its own algebraic-number class. Every call clears that revision's `_ifcache`
+and runs `input_field_data`; **both cache clearing and field construction are
+inside the clock**. The comparison retains every field-data attribute, with
+`theta` represented by its exact polynomial and root index.
+
+Both radical workloads share the current `rootdecomp` dependency. Reciprocal
+recognition does not invoke that dependency. The `quintic radical expression`
+workload calls each revision's public `root_to_radicals` on the same current-class
+algebraic number: root index five of \(5x^5-25x^3+25x+6\). Its timed call includes
+expression generation, branch selection, and verification. Each result must use
+the `Dickson` method and have `verified is True`. The comparison retains the
+full result record except its elapsed `time`, and also checks radical depth and
+leaf count. Those signatures are calculated outside the clock.
 
 The JSON records the baseline commit, current Git HEAD, dependency versions,
 hashes of the current Python source text with normalized newlines, every timing

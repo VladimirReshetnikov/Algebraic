@@ -109,6 +109,14 @@ the classical formulas for degree ≤ 4, decomposition, reciprocal symmetry and 
 polynomials; the pair-sum reduction (factorization over a number field) is Wolfram-only,
 and the general descent covers those cases.
 
+The Python Dickson recognizer uses exact FLINT rational coefficients. For a centered
+monic polynomial `Q` of degree `n`, set `c = -Q[n-2]/n`. The residual
+`(x^2 - 4c) Q'' + x Q' - n^2 Q` is constant exactly when the nonconstant
+coefficients match `D_n(x, c)`. Thus `Q = D_n(x, c) - b`, with
+`b = D_n(0, c) - Q[0]`: the Dickson constant term is zero for odd `n` and
+`2(-c)^(n/2)` for even `n`. The recognizer retains its `c = 0` rejection and
+the existing candidate order and principal-branch selection.
+
 Both implementations reconstruct resolvent powers and eigenvector quotients directly
 from conjugates using the companion package's integer-trace coordinate checks. The
 shared `power_divider` / `powerDivider` helper fixes one denominator: after clearing
@@ -133,7 +141,7 @@ The resulting subgroups, prime-series order, and solvability decisions are uncha
 
 ## Refactoring validation (9 September 2026)
 
-Validation of the refactored solver passed **31 Python test
+Validation of the refactored solver passed **32 Python test
 methods**, **75 native Wolfram tests**, and **13 independent cross-language
 checks**. Additional exact comparisons cover all resolvent forms, complete
 result metadata, matrix and coordinate arithmetic, and real/complex branches.
