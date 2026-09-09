@@ -69,9 +69,9 @@ rootObject = RootDecomposition`Private`rootObject;
 inputData = RootDecomposition`Private`inputData;
 failure = RootDecomposition`Private`failure;
 locateTarget = RootDecomposition`Private`locateTarget;
-conjugates = RootDecomposition`Private`conjugates;
 multiplicationMatrixOfElement = RootDecomposition`Private`multiplicationMatrixOfElement;
 powerCoordinates = RootDecomposition`Private`powerCoordinates;
+powerDivider = RootDecomposition`Private`powerDivider;
 rationalQ = RootDecomposition`Private`rationalQ;
 precTag = RootDecomposition`Private`precTag;
 frobeniusExponentMultiple = RootDecomposition`Private`frobeniusExponentMultiple;
@@ -388,13 +388,13 @@ descend[gd_, a_, primes_, resolventForm_] := Module[
   (* branch[Rk, q, level]: the q-th root of Rk^q (one level down) with the branch equal to Rk *)
   branch[Rk_, q_, level_] := branch[Rk, q, level] = Module[{qrad, sel},
     qrad = rad[powerCoordinates[gd, Rk, q], level - 1];
-    sel = selectCandidate[Table[zeta[q]^e qrad^(1/q), {e, 0, q - 1}], conjugates[gd, Rk][[gd["Identity"]]]];
+    sel = selectCandidate[Table[zeta[q]^e qrad^(1/q), {e, 0, q - 1}], gd["Values"][[gd["Identity"]]] . Rk];
     If[sel === $Failed, Throw[failure["Branch", "Could not identify the radical branch"], radTag]];
     sel];
   (* one prime step: v is fixed by steps[[level]]["Normal"]; extract q-th roots of the Lagrange resolvents
      R_k = Sum_j zeta^(-kj) sigma^j(v) (Fourier form), or of R_k1 alone with R_k = c_k R_k1^m, c_k one
      level down (eigenvector form) *)
-  radCompute[v_, level_] := Module[{st = steps[[level]], M, q, zw, R, nonzero, R0rad, k1, u, Mk1, ck, choices = {}},
+  radCompute[v_, level_] := Module[{st = steps[[level]], M, q, zw, R, nonzero, R0rad, k1, u, divide, ck, choices = {}},
     If[v == 0 v, Return[0, Module]];
     M = st["Group"]; q = st["Prime"];
     If[fixedByQ[gd, v, M], Return[rad[v, level - 1], Module]];
@@ -408,10 +408,10 @@ descend[gd_, a_, primes_, resolventForm_] := Module[
     If[resolventForm =!= "Fourier" && q > 2,
       k1 = First[nonzero];
       u = branch[R[[k1 + 1]], q, level];
-      Mk1 = multiplicationMatrixOfElement[gd, R[[k1 + 1]]];
+      divide = powerDivider[gd, R[[k1 + 1]]];
       AppendTo[choices, (R0rad + u + Sum[
         With[{m = Mod[k PowerMod[k1, -1, q], q]},
-          ck = LinearSolve[MatrixPower[Mk1, m], R[[k + 1]]];
+          ck = divide[R[[k + 1]], m];
           If[! fixedByQ[gd, ck, M], Throw[failure["Descent", "Eigenvector ratio is not in the lower field"], radTag]];
           rad[ck, level - 1] u^m],
         {k, DeleteCases[nonzero, k1]}])/q]];

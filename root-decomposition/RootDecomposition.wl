@@ -366,6 +366,23 @@ powerCoordinates[gd_, v_, k_Integer?positiveIntegerQ] := Module[{den = LCM @@ De
   If[result === "precision",
     With[{matrix = multiplicationMatrixOfElement[gd, v]}, Nest[matrix . # &, v, k - 1]], result]];
 
+(* Fix a denominator once.  For integral B, Norm(B)/B is integral; its conjugates permit exact
+   quotient coordinates from integer traces.  Uncertain traces use one lazily cached matrix. *)
+powerDivider[gd_, v_] := Module[{den = LCM @@ Denominator[v], values, norm, reciprocals, matrix, divide},
+  If[v == 0 v, Return[failure["ZeroDenominator", "The field denominator is zero"]]];
+  reciprocals = Catch[
+    values = conjugates[gd, den v]; norm = roundInteger[Times @@ values];
+    If[norm == 0 || AnyTrue[values, TrueQ[# == 0] &], Throw["precision", precTag]];
+    norm/values, precTag];
+  matrix[] := matrix[] = multiplicationMatrixOfElement[gd, v];
+  divide[num_, 0] := num;
+  divide[num_, k_Integer?positiveIntegerQ] := Module[{numDen = LCM @@ Denominator[num], result},
+    result = If[reciprocals === "precision", "precision", Catch[
+      (den^k/(numDen norm^k)) gd["GramInverse"] .
+        (roundInteger /@ (Transpose[gd["Values"]] . (conjugates[gd, numDen num] reciprocals^k))), precTag]];
+    If[result === "precision", LinearSolve[MatrixPower[matrix[], k], num], result]];
+  divide];
+
 elementDegree[gd_, v_] := Module[{cnt = 0}, Do[If[aut . v == v, cnt++], {aut, gd["Automorphisms"]}]; gd["Order"]/cnt];
 
 coordinateOfOne[gd_] := UnitVector[gd["Order"], 1];

@@ -1,6 +1,7 @@
 """Regression tests and timings for roottoradicals.py (run: python test_roottoradicals.py)."""
 import time
 import unittest
+from unittest.mock import patch
 
 import sympy as sp
 from flint import fmpz_poly
@@ -148,6 +149,68 @@ class FieldPowers(unittest.TestCase):
             with self.assertRaises(rd.PrecisionError):
                 rd.coords_from_conjugates(gd, [z ** 5 for z in rd.conj_vector(gd, integers)])
         self.assertEqual(rd.power_coordinates(gd, v, 5), self.matrix_power(v, 5))
+
+    def test_power_divider(self):
+        gd = self.gd
+        one = [rt.fmpq(1)] + [rt.fmpq(0)] * (gd.order - 1)
+        mixed = [a / 3 + b / 7 for a, b in zip(gd.root_coords[0], gd.root_coords[1])]
+        numerators = [[rt.fmpq(0)] * gd.order, one, gd.root_coords[1], mixed]
+        denominators = [one, gd.root_coords[1], mixed, [c / 10 ** 100 for c in one]]
+        for denominator in denominators:
+            divide = rd.power_divider(gd, denominator)
+            with rt.ctx.workprec(gd.prec):
+                matrix = rd.multiplication_matrix_of(gd, denominator)
+            for numerator in numerators:
+                for exponent in (0, 1, 2, 3, 5):
+                    self.assertEqual(divide(numerator, exponent), rd.fmpq_solve(matrix ** exponent, numerator))
+        with self.assertRaises(ZeroDivisionError):
+            rd.power_divider(gd, numerators[0])
+        with self.assertRaises(ValueError):
+            divide(one, -1)
+
+    def test_power_divider_norm_fallback_reuses_matrix(self):
+        gd = self.gd
+        denominator = [rt.fmpq(10 ** 40)] + [rt.fmpq(1, 7)] * (gd.order - 1)
+        numerator = gd.root_coords[1]
+        with rt.ctx.workprec(gd.prec):
+            integers, _ = rd._clear_denominators(denominator)
+            with self.assertRaises(rd.PrecisionError):
+                rd._unique_integer(rt.math.prod(rd.conj_vector(gd, integers), start=rt.acb(1)))
+            matrix = rd.multiplication_matrix_of(gd, denominator)
+        with patch.object(rd, "multiplication_matrix_of", wraps=rd.multiplication_matrix_of) as reconstruct:
+            divide = rd.power_divider(gd, denominator)
+            denominator[:] = [rt.fmpq(0)] * gd.order  # the lazy fallback owns its denominator snapshot
+            self.assertEqual(divide(iter(numerator), 0), numerator)
+            self.assertEqual(reconstruct.call_count, 0)
+            for exponent in (1, 3, 5):
+                self.assertEqual(divide(iter(numerator), exponent), rd.fmpq_solve(matrix ** exponent, numerator))
+            self.assertEqual(reconstruct.call_count, 1)
+
+    def test_power_divider_trace_fallback(self):
+        gd = self.gd
+        denominator = gd.root_coords[1]
+        numerator = [rt.fmpq(10 ** 100)] + [rt.fmpq(1)] * (gd.order - 1)
+        with rt.ctx.workprec(gd.prec):
+            values = rd.conj_vector(gd, denominator)
+            norm = rd._unique_integer(rt.math.prod(values, start=rt.acb(1)))
+            with self.assertRaises(rd.PrecisionError):
+                rd.coords_from_conjugates(gd, [z * (rt.acb(norm) / w) ** 3
+                    for z, w in zip(rd.conj_vector(gd, numerator), values)])
+            expected = rd.fmpq_solve(rd.multiplication_matrix_of(gd, denominator) ** 3, numerator)
+        with patch.object(rd, "multiplication_matrix_of", wraps=rd.multiplication_matrix_of) as reconstruct:
+            self.assertEqual(rd.power_divider(gd, iter(denominator))(iter(numerator), 3), expected)
+            self.assertEqual(reconstruct.call_count, 1)
+
+    def test_power_divider_negative_norm(self):
+        gd = rd.galois_data(fmpz_poly([1, -3, 0, 1]), 300, 20)
+        denominator = gd.root_coords[0]
+        numerator = [rt.fmpq(i == 0, 5) + c / 7 for i, c in enumerate(gd.root_coords[1])]
+        with rt.ctx.workprec(gd.prec):
+            self.assertEqual(rd._unique_integer(rt.math.prod(rd.conj_vector(gd, denominator), start=rt.acb(1))), -1)
+            matrix = rd.multiplication_matrix_of(gd, denominator)
+        divide = rd.power_divider(gd, denominator)
+        for exponent in (1, 2, 3, 5):
+            self.assertEqual(divide(numerator, exponent), rd.fmpq_solve(matrix ** exponent, numerator))
 
 
 class Negative(unittest.TestCase):

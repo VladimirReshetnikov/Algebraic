@@ -692,14 +692,8 @@ def _vec_fmpq(v):
 
 def conj_vector(gd: GaloisData, v) -> list[acb]:
     """values of all conjugates (rows of the value matrix) of the element with coordinates v"""
-    out = []
-    for s in range(gd.order):
-        acc = acb(0)
-        for j in range(gd.order):
-            if v[j] != 0:
-                acc += gd.values[s, j] * acb(fmpq(v[j]).p) / acb(fmpq(v[j]).q)
-        out.append(acc)
-    return out
+    column = acb_mat(gd.order, 1, [_fmpq_to_acb(fmpq(q)) for q in v])
+    return (gd.values * column).entries()
 
 
 def _fmpq_to_acb(q: fmpq) -> acb:
@@ -745,6 +739,47 @@ def power_coordinates(gd: GaloisData, v, exponent: int) -> list[fmpq]:
             for _ in range(exponent - 1):
                 result = apply_matrix(matrix, result)
             return result
+
+
+def power_divider(gd: GaloisData, denominator):
+    """Prepare exact division by powers of one nonzero field element, reusing its norm or matrix."""
+    denominator = _vec_fmpq(denominator)
+    integers, den = _clear_denominators(denominator)
+    if not any(integers):
+        raise ZeroDivisionError("the field denominator is zero")
+    matrix = None
+    with ctx.workprec(gd.prec):
+        try:
+            values = conj_vector(gd, integers)
+            norm = _unique_integer(math.prod(values, start=acb(1)))
+            if norm == 0 or any(z.contains(0) for z in values):
+                raise PrecisionError("the nonzero denominator is not resolved")
+            reciprocals = [acb(norm) / z for z in values]
+        except PrecisionError:
+            reciprocals = None
+
+    def divide(numerator, exponent: int):
+        nonlocal matrix
+        if not isinstance(exponent, int) or exponent < 0:
+            raise ValueError("the exponent must be a nonnegative integer")
+        numerator = _vec_fmpq(numerator)
+        if exponent == 0:
+            return numerator
+        with ctx.workprec(gd.prec):
+            if reciprocals is not None:
+                try:
+                    integers, num_den = _clear_denominators(numerator)
+                    # For integral B, Norm(B)/B is integral, so these traces are integers.
+                    values = [z * w ** exponent for z, w in zip(conj_vector(gd, integers), reciprocals)]
+                    scale = fmpq(den ** exponent, num_den * norm ** exponent)
+                    return [scale * c for c in coords_from_conjugates(gd, values)]
+                except PrecisionError:
+                    pass
+            if matrix is None:
+                matrix = multiplication_matrix_of(gd, denominator)
+            return fmpq_solve(matrix ** exponent, numerator)
+
+    return divide
 
 
 def apply_matrix(M: fmpq_mat, v):

@@ -231,6 +231,27 @@ class CorrectnessRegressions(unittest.TestCase):
         target = rd.AlgebraicNumber(fractional, 2)
         self.assertTrue(rd.verify_exact(target, rd.sum_decomposition(target, engine="splitting")))
 
+    def test_conjugate_coordinates_roundtrip_and_low_precision(self):
+        gd = rd.galois_data(fmpz_poly([-1, -1, 0, 0, 1]))
+        vectors = [gd.root_coords[0], [fmpq(i - 1, i + 1) for i in range(gd.order)]]
+        for vector in vectors:
+            integers, denominator = rd._clear_denominators(vector)
+            with ctx.workprec(gd.prec):
+                reference = rd.conj_vector(gd, vector)
+                restored = rd.coords_from_conjugates(gd, [z * denominator for z in reference])
+                self.assertEqual([q / denominator for q in restored], vector)
+            for precision in (16, 32, 64):
+                with ctx.workprec(precision):
+                    low = rd.conj_vector(gd, vector)
+                    self.assertTrue(all(a.overlaps(b) for a, b in zip(low, reference)))
+                    # Insufficient precision may fail certification, but must
+                    # never reconstruct a different exact coordinate vector.
+                    try:
+                        restored = rd.coords_from_conjugates(gd, [z * denominator for z in low])
+                    except rd.PrecisionError:
+                        continue
+                    self.assertEqual(restored, [fmpq(x) for x in integers])
+
     def test_input_validation(self):
         rd.catalog(1, 1)
         for degree, height in ((True, 1), (1, True), (0, 1), (1, -1)):

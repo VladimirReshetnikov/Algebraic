@@ -109,17 +109,21 @@ the classical formulas for degree ≤ 4, decomposition, reciprocal symmetry and 
 polynomials; the pair-sum reduction (factorization over a number field) is Wolfram-only,
 and the general descent covers those cases.
 
+Both implementations reconstruct resolvent powers and eigenvector quotients directly
+from conjugates using the companion package's integer-trace coordinate checks. The
+shared `power_divider` / `powerDivider` helper fixes one denominator: after clearing
+denominators, an integral element `B` has integral `Norm(B)/B`, so a quotient can be
+recovered from integer traces as well. If the norm or a trace cannot be recovered at
+the working precision, the helper falls back to the exact matrix calculation and
+retains its precision escalation behavior. That matrix is built only when needed and
+reused for subsequent powers of the same denominator.
+
 Root indices of non-real roots are exchanged between the two systems by value, not by
 index (see the companion project's README).
 
-Descent reuses branches common to the Fourier and eigenvector forms. To raise
-a field element to a power, the shared field engine recovers its coordinate
-vector directly from conjugate powers and integer traces. Clearing coordinate
-denominators first makes the traced element integral; multiplication by the
-inverse trace Gram matrix then recovers exact rational coordinates. If power
-traces exhaust the available precision, the original multiplication-matrix
-calculation supplies the fallback. Composition chains also solve each suffix
-over the smaller-degree algebraic value already obtained at the previous step.
+Descent reuses branches common to the Fourier and eigenvector forms. Composition
+chains solve each suffix over the smaller-degree algebraic value already obtained
+at the previous step.
 
 ## Measurements
 

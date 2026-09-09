@@ -56,6 +56,11 @@ Ordinary searches stop at the first nonconstant digit; certificate generation
 retains every digit. The independent checker verifies the leading-coefficient
 congruence that forces \(h\), the full digit reconstruction, and the stated
 obstruction. It does not rerun candidate construction or polynomial division.
+For a monomial inner component \(h=x^d\), consecutive coefficient chunks are
+the base digits, so searches can stop without computing polynomial quotients.
+For a positive certificate, full digit reconstruction already proves a zero
+residual; the verifier still checks the supplied residual, without composing
+the outer polynomial again.
 A truncated binary power checks the congruence without constructing all of
 \(h^m\). Composition and certificate reconstruction share Horner arithmetic;
 Python also uses FLINT's native polynomial composition over the rationals
@@ -209,7 +214,7 @@ The unchanged archived native suites were independently executed with
 Wolfram 15.0.1: report 1 passed **55/107**, report 2 **39/53**, and report 3
 **60/60**. These results concern the original reports, whose historical
 metadata remains unchanged. The unified project has its own regression
-suites: **83/83 native tests** and **19 Python test methods** passed. The
+suites: **85/85 native tests** and **21 Python test methods** passed. The
 Python methods include 12 generated affine-normalization cases across exact
 fields and degree pairs, in addition to boundary, enumeration, and certificate
 tampering checks. They also exercise truncated congruences, early rejection,

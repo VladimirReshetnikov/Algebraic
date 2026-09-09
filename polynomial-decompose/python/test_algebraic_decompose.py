@@ -196,13 +196,41 @@ class CertificateTests(unittest.TestCase):
             self.assertEqual(ad.decomposition_data(p, x), expected)
             self.assertTrue(ad.verify_decomposition_data(p, expected, x))
             self.assertEqual(ad.decompose(p, x), [x**2, x**4 + x])
-        engine, (c,) = ad._prepare([x**120 + x], x)
+        negative = sp.Poly((x**2 + x)**60 + x, x)
+        engine, (c,) = ad._prepare([negative], x)
         with patch.object(engine, "divide_monic", wraps=engine.divide_monic) as divide:
             self.assertIsNone(engine.attempt(c, 2))
             self.assertEqual(divide.call_count, 1)
         certificate = engine.certificate(c, 2, x)
         self.assertEqual(len(certificate["digits"]), 61)
-        self.assertTrue(ad.verify_decomposition_data(x**120 + x, certificate, x))
+        self.assertTrue(ad.verify_decomposition_data(negative, certificate, x))
+
+    def test_monomial_digits_for_scaled_algebraic_inputs(self):
+        for generator in (sp.sqrt(2), sp.I):
+            field = sp.QQ.algebraic_field(generator)
+            for tail in (generator*x**12, x**5):
+                p = sp.Poly((2 + generator)*x**24 + tail + generator, x, domain=field)
+                with self.subTest(generator=generator, tail=tail), \
+                     patch.object(ad._Engine, "divide_monic", side_effect=AssertionError("monomial division used")):
+                    data = ad.decomposition_data(p, x, 4)
+                    self.assertEqual(len(data["digits"]), 7)
+                    self.assertEqual(data["inner"], x**4)
+                    self.assertTrue(ad.verify_decomposition_data(p, data, x))
+                    self.assertEqual(data["decomposable"], tail != x**5)
+        engine = ad._Engine(sp.QQ)
+        self.assertEqual(list(engine.base_digits((engine.zero,), (engine.zero, engine.zero, engine.one))), [])
+
+    def test_positive_residual_reuses_verified_reconstruction(self):
+        r, h = sp.sqrt(2), x**3 + sp.sqrt(2)*x
+        p = sp.Poly((2 + r)*h**4 + 7*h + 3, x, extension=r)
+        with patch.object(ad._Engine, "compose", side_effect=AssertionError("redundant composition used")):
+            data = ad.decomposition_data(p, x, 3)
+            self.assertTrue(ad.verify_decomposition_data(p, data, x))
+            self.assertFalse(ad.verify_decomposition_data(p + 1, data, x))
+            for invalid in (x, 1, 0.0, False):
+                with self.subTest(residual=invalid):
+                    changed = dict(data, residual=invalid)
+                    self.assertFalse(ad.verify_decomposition_data(p, changed, x))
 
     def test_fixed_degree_does_not_enumerate_divisors(self):
         with patch.object(ad, "_degrees", side_effect=AssertionError("divisors enumerated")):

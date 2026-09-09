@@ -134,15 +134,18 @@ monicDivide[a_List, h_List] := Module[{r = a, q, d, n, k, j, t, nonzero},
   {trim[q], trim[Take[r, d]]}
 ];
 
-baseDigits[c_List, h_List, full_: True] := Module[{q = c, qr, out = {}},
-  While[!zeroQ[q],
-    qr = monicDivide[q, h];
-    AppendTo[out, qr[[2]]];
+baseDigits[c_List, h_List, full_: True] :=
+  Module[{q = c, digit, out, d = Length[h] - 1, monomial, j = 1, tag},
+  monomial = AllTrue[Most[h], # === 0 &];
+  out = Reap[While[If[monomial, j <= Length[c], !zeroQ[q]],
+    If[monomial,
+      digit = trim[Take[c, {j, Min[j + d - 1, Length[c]]}]]; j += d,
+      {q, digit} = monicDivide[q, h]];
+    Sow[digit, tag];
     (* Once a digit is nonconstant no outer polynomial can exist. Ordinary
        searches stop here; exported certificates retain the entire expansion. *)
-    If[!full && Length[qr[[2]]] > 1, Break[]];
-    q = qr[[1]]];
-  If[out === {}, {{0}}, out]
+    If[!full && Length[digit] > 1, Break[]]], tag][[2]];
+  If[out === {}, {{0}}, First[out]]
 ];
 
 (* Obstruction indices are mathematical, zero-based digit/power indices. *)
@@ -168,7 +171,7 @@ publicTest[c_List, d_Integer, x_] := Module[{h, digits, outer, obs},
     "Inner" -> expression[h, x], "OuterCandidate" -> expression[outer, x],
     "Digits" -> (expression[#, x] & /@ digits),
     "Decomposable" -> (obs === None), "Obstruction" -> obs,
-    "Residual" -> expression[subtract[c, compose[outer, h]], x]|>
+    "Residual" -> If[obs === None, 0, expression[subtract[c, compose[outer, h]], x]]|>
 ];
 
 checkDegree[c_List, d_] := If[!IntegerQ[d] || d < 2 ||
@@ -294,7 +297,8 @@ verifyTest[c_List, t_, x_] := Module[
     If[red[Lookup[t["Obstruction"], "Coefficient", Indeterminate] -
         obs["Coefficient"]] =!= 0, Return[False]]];
   res = prepare[t["Residual"], x];
-  zeroQ[subtract[res, subtract[c, compose[f, h]]]]
+  (* Reconstruction with constant digits already proves c = f(h). *)
+  If[obs === None, zeroQ[res], zeroQ[subtract[res, subtract[c, compose[f, h]]]]]
 ];
 
 verifyData[c_List, data_, x_] := Module[{ds, ts, good, status, keys},

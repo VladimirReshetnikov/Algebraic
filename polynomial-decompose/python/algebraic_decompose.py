@@ -307,6 +307,11 @@ class _Engine:
 
     def base_digits(self, c, h):
         """Yield successive remainders; searches can stop at the first obstruction."""
+        if not any(h[:-1]):
+            d = len(h) - 1
+            if c != (self.zero,):
+                yield from (self.trim(c[j:j + d]) for j in range(0, len(c), d))
+            return
         while c != (self.zero,):
             c, remainder = self.divide_monic(c, h)
             yield remainder
@@ -364,7 +369,8 @@ class _Engine:
                 "inner": self.expression(h, x), "outer_candidate": self.expression(outer, x),
                 "digits": [self.expression(r, x) for r in digits],
                 "decomposable": obstruction is None, "obstruction": obstruction,
-                "residual": self.expression(self.subtract(c, self.compose(outer, h)), x)}
+                "residual": sp.S.Zero if witness is None else
+                    self.expression(self.subtract(c, self.compose(outer, h)), x)}
 
 
 def decompose(p, x):
@@ -510,8 +516,9 @@ def _verify_degree_data(c, test, engine, vector):
                 or obstruction["digit_index"] != j or obstruction["power"] != k
                 or vector(obstruction["coefficient"]) != (coefficient,)):
             return False
-    residual = engine.subtract(c, engine.compose(outer, h))
-    return vector(test["residual"]) == residual and (residual == (engine.zero,)) == test["decomposable"]
+    # Reconstruction with constant digits already proves c = outer(h).
+    residual = (engine.zero,) if witness is None else engine.subtract(c, engine.compose(outer, h))
+    return vector(test["residual"]) == residual
 
 
 def verify_decomposition_data(p, data, x):

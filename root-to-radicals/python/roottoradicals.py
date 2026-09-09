@@ -647,11 +647,11 @@ def _descend(gd, a: AlgebraicNumber, primes: list, st: _State):
             if st.resolvents != "fourier" and q > 2:
                 k1 = nonzero[0]
                 u = branch(R[k1], q, level)
-                Mk1 = rd.multiplication_matrix_of(gd, R[k1])
+                divide = rd.power_divider(gd, R[k1])
                 total = R0 + u
                 for k in nonzero[1:]:
                     m = (k * pow(k1, -1, q)) % q
-                    ck = rd.fmpq_solve(Mk1 ** m, R[k])          # c_k = R_k / R_k1^m lies one level down
+                    ck = divide(R[k], m)                     # c_k = R_k / R_k1^m lies one level down
                     if ck is None or not _fixed_by(gd, ck, M):
                         raise DescentError("eigenvector ratio is not in the lower field")
                     total += rad(ck, level - 1) * u ** m

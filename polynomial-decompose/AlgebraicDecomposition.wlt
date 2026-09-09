@@ -271,3 +271,22 @@ VerificationTest[Module[{vectors, product, size},
       AlgebraicDecomposition`Private`trim[RootReduce /@ Take[product, UpTo[size]]],
     {a, vectors}, {b, vectors}, {d, {1, 2, 5, Infinity}}]]], True,
   TestID -> "exact convolution matches symbolic polynomial products"]
+VerificationTest[Module[{p, data, calls},
+  And @@ Flatten[Table[
+    p = (2 + a) x^24 + tail + a;
+    calls = Trace[data = AlgebraicDecompositionData[p, x, 4],
+      AlgebraicDecomposition`Private`monicDivide[___]];
+    calls === {} && Length[data["Digits"]] === 7 && data["Inner"] === x^4 &&
+      data["Decomposable"] === (tail =!= x^5) && VerifyAlgebraicDecompositionData[p, data, x],
+    {a, {Sqrt[2], I}}, {tail, {a x^12, x^5}}]] &&
+    AlgebraicDecomposition`Private`baseDigits[{0}, {0, 0, 1}] === {{0}}], True,
+  TestID -> "monomial coefficient chunks preserve scaled algebraic certificates"]
+VerificationTest[Module[{h = x^3 + Sqrt[2] x, p, data, accepted, calls},
+  p = (2 + Sqrt[2]) h^4 + 7 h + 3;
+  calls = Trace[data = AlgebraicDecompositionData[p, x, 3];
+    accepted = VerifyAlgebraicDecompositionData[p, data, x],
+    AlgebraicDecomposition`Private`compose[___]];
+  calls === {} && accepted && !VerifyAlgebraicDecompositionData[p + 1, data, x] &&
+    AllTrue[{x, 1, 0., False},
+      !VerifyAlgebraicDecompositionData[p, Join[data, <|"Residual" -> #|>], x] &]], True,
+  TestID -> "positive residual reuses exact reconstruction but checks supplied residual"]

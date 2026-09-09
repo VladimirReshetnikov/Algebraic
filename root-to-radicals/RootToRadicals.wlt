@@ -87,6 +87,31 @@ VerificationTest[Module[{gd, vectors, one},
     {v, vectors}, {k, {0, 1, 2, 3, 5}}]]],
   True, TestID -> "coordinate powers match matrices including precision fallback"];
 
+VerificationTest[Module[{gd, one, numerators, denominators, divide, matrix},
+  gd = RootGaloisData[RootDecomposition`Private`x^3 - 2, RootDecomposition`Private`x, "WorkingPrecision" -> 80];
+  one = UnitVector[gd["Order"], 1];
+  numerators = {0 one, one, gd["RootCoordinates"][[2]], 10^100 one + ConstantArray[1, gd["Order"]]};
+  denominators = {one, gd["RootCoordinates"][[2]],
+    gd["RootCoordinates"][[1]]/3 + gd["RootCoordinates"][[2]]/7,
+    10^40 one + ConstantArray[1/7, gd["Order"]], one/10^100};
+  FailureQ[RootDecomposition`Private`powerDivider[gd, 0 one]] && And @@ Flatten[Table[
+    divide = RootDecomposition`Private`powerDivider[gd, denominator];
+    matrix = RootDecomposition`Private`multiplicationMatrixOfElement[gd, denominator];
+    Table[divide[numerator, k] == If[k == 0, numerator, LinearSolve[MatrixPower[matrix, k], numerator]],
+      {numerator, numerators}, {k, {0, 1, 2, 3, 5}}], {denominator, denominators}]]],
+  True, TestID -> "coordinate quotients match solves including norm and trace fallback"];
+
+VerificationTest[Module[{gd, denominator, numerator, divide, matrix},
+  gd = RootGaloisData[RootDecomposition`Private`x^3 - 3 RootDecomposition`Private`x + 1,
+    RootDecomposition`Private`x, "WorkingPrecision" -> 80];
+  denominator = gd["RootCoordinates"][[1]];
+  numerator = UnitVector[gd["Order"], 1]/5 + gd["RootCoordinates"][[2]]/7;
+  divide = RootDecomposition`Private`powerDivider[gd, denominator];
+  matrix = RootDecomposition`Private`multiplicationMatrixOfElement[gd, denominator];
+  RootDecomposition`Private`roundInteger[Times @@ RootDecomposition`Private`conjugates[gd, denominator]] == -1 &&
+    And @@ Table[divide[numerator, k] == LinearSolve[MatrixPower[matrix, k], numerator], {k, {1, 2, 3, 5}}]],
+  True, TestID -> "coordinate quotients preserve negative norm signs in odd degree"];
+
 (* structural families *)
 rd10 = RootRadicalReport[Root[#^10 + #^8 - 4 #^6 - 3 #^4 + 3 #^2 + 1 &, 5]];   (* c5's polynomial composed with x^2 *)
 VerificationTest[rd10["Verified"], True, TestID -> "decomposition verified"];
