@@ -619,9 +619,36 @@ normal subgroup, which is elementary abelian and regular, so its degree is a pri
 \cite[Chapter II]{Wielandt}.  Since $n$ is not a prime power, $G$ is not solvable.
 \end{proof}
 
-Both criteria are inconclusive in the other direction (they never prove solvability),
-and neither applies to composite prime-power degrees $4,8,9,16,\dots$; in those cases the
-implementations compute the group exactly, subject to the group order limit.  For
+Composite prime-power degrees need one more step.
+
+\begin{proposition}\label{prop:primepower}
+Let $n=p^k$ with $k\ge2$.  If $G$ contains a cycle of prime length $\ell$ with
+$n/2<\ell<n-1$ (all other points fixed), then $G$ is not solvable.
+\end{proposition}
+
+\begin{proof}
+As in Proposition~\ref{prop:longcycle}, $G$ is primitive, and if it were solvable it
+would have a regular normal elementary abelian subgroup $V\cong\F_p^k$ with
+$G\le\AGL(k,p)=V\rtimes\operatorname{GL}(k,p)$ acting on $V$.  The $\ell$-cycle $g$ fixes
+a point; conjugating by a translation we may take that point to be $0$, so
+$g\in\operatorname{GL}(k,p)$, and the fixed points of $g$ form a subspace, of size $p^j$
+for some $j$.  The moved points are the single $\ell$-cycle, so $p^k-p^j=\ell$.  Since
+$\ell$ is prime and $p^j$ divides the left side, $j=0$ and $\ell=n-1$, contrary to
+$\ell<n-1$.
+\end{proof}
+
+The excluded length $\ell=n-1$ does occur in solvable groups: $\AGL(1,8)$, of order $56$
+in degree $8$, contains $7$-cycles, and $S_4$ contains $3$-cycles.  For $x^8-x-1$ the
+implementations find a $5$-cycle and for $x^9-x-1$ a $5$- or $7$-cycle within the first
+few dozen primes, and prove nonsolvability in well under a second.
+
+All three criteria are inconclusive in the other direction (they never prove
+solvability), and a nonsolvable group may fail to reveal itself through these particular
+cycle types; in those cases the implementations compute the group exactly, subject to the
+group order limit.  A cheap companion test avoids the expensive failure mode: the least
+common multiple of the orders of the Frobenius elements found divides $|G|$, and when it
+already exceeds the group order limit the status \code{ResourceLimit} is returned before
+any splitting field is built.  For
 $x^6-x-1$ (degree $6$, group $S_6$) and $x^6+x^4+3x^2-2x+5$ (group of order $120$) a
 $5$-cycle is found within the first few primes and the Frobenius test proves
 nonsolvability in about $10$ milliseconds (a full \code{RootToRadicals} call takes up to
@@ -651,9 +678,23 @@ $x^9-657x^8+6111x^7+3318x^6+19647x^5-12033x^4+3972x^3-684x^2+9x-1$) has a Galois
 of order $18$, and \code{RootToRadicals} expresses it in radicals by two Kummer steps
 of prime $3$ in $43$ seconds (verified exactly; depth $3$, $111$ leaves); the degree-$9$
 factor of the minimal polynomial over $\Q(3^{1/6})$ that vanishes at $\beta_0$ splits
-over $\Q(3^{1/6},\theta)$ into three cubics ($237$ seconds), so $\beta_0$ is a root of
-a cubic with radical coefficients and therefore has a radical expression.  We have not
-assembled that expression.  The notebook's devices, in the order they appear, are:
+over $\Q(3^{1/6},\theta)$ into three cubics ($4$ minutes), so $\beta_0$ is a root of a
+cubic with radical coefficients.  The package assembles the expression with the
+\code{"Extension"} option, which does exactly this (factor cumulatively over the given
+generators, solve the factor containing the input by the cubic formula with $\theta$ kept
+as an atom, select the branch numerically, and substitute the radical expression of
+$\theta$ once at the end): \code{NotebookTarget.wl} produces in $11$ minutes a radical
+expression for $\beta_0$ of depth $5$ with $107\,067$ leaves, equal to the inverse beta
+value to $300$ digits.  Its exactness rests on the construction (an exact factor, the
+exact cubic formula, and a branch selected among three separated candidates), because
+\code{RootReduce} on an expression of this size did not finish within the $5$-minute
+verification cap; the report therefore carries \code{Verified -> Indeterminate}.  Two
+things went wrong on the way and are worth recording: factoring the degree-$27$
+polynomial over the degree-$54$ field in one step did not finish in an hour, whereas
+factoring in two stages takes $4$ minutes; and recognizing which cubic factor vanishes at
+$\beta_0$ requires evaluating coefficients of height $10^{100}$ at a precision that
+exceeds their cancellation, since a $40$-digit evaluation leaves a residual of size
+$10^{60}$ for every factor.  The notebook's devices, in the order they appear, are:
 
 \begin{description}[nosep]
 \item[\code{radicalDepth}] the nesting depth of rational powers (and of \code{Sin},
@@ -694,7 +735,8 @@ $\Q\subset\Q(3^{1/6})\subset\Q(3^{1/6},\theta)$ over which the target becomes a 
 a cubic; what it lacks is a termination guarantee and a criterion for when to stop
 looking.  The descent of Section~\ref{sec:descent} supplies both, at the price of the
 splitting field, and for the piece $\theta$ that the notebook could not simplify it
-produces the radical expression directly.
+produces the radical expression directly; the \code{"Extension"} option then completes
+the notebook's own plan.
 
 \section{Comparison of the nine reports}\label{sec:reports}
 
@@ -818,8 +860,13 @@ depth, the leaf count, the group orders and the primes of the composition series
 the timing.  Options: \code{Method} (\code{Automatic}, \code{"Structural"},
 \code{"Galois"}), \code{"Resolvents"} (\code{Automatic}, \code{"Fourier"},
 \code{"Eigenvector"}), \code{"MaxGroupOrder"}, \code{"WorkingPrecision"},
-\code{"VerificationTimeLimit"}, \code{"MaxDepth"}.  \code{RadicalExpressionQ} and
-\code{RadicalDepth} implement the grammar of Section~\ref{sec:conventions}.
+\code{"VerificationTimeLimit"}, \code{"MaxDepth"}, and \code{"Extension"}: a list of
+exact algebraic numbers generating a subfield over which $p$ is factored first, the
+factor containing the input being solved by the classical formulas after the generators
+are themselves expressed in radicals (Proposition~\ref{prop:pairsum} with the generators
+supplied instead of searched for; this is how the notebook's target is handled in
+Section~\ref{sec:notebook}).  \code{RadicalExpressionQ} and \code{RadicalDepth}
+implement the grammar of Section~\ref{sec:conventions}.
 \end{sloppypar}
 
 \begin{lstlisting}
@@ -882,11 +929,11 @@ and decomposable inputs in milliseconds), so its \code{Decompose} path is only r
 for compositions whose outer piece the built-in function cannot solve, as in the
 degree-10 example.
 
-The regression suites were executed: \code{RunTests.wl} runs $60$ tests in $90$ s of
+The regression suites were executed: \code{RunTests.wl} runs $67$ tests in $89$ s of
 wall time (including the forced descents on both examples and all their conjugates);
-\code{test\_roottoradicals.py} runs $46$ cases in $51$ s.  \code{verify\_wolfram.py}
-re-verifies $13$ Python expressions exactly in a Wolfram kernel with \code{RootReduce};
-all pass.
+\code{test\_roottoradicals.py} runs $48$ cases in $39$ s.  \code{verify\_wolfram.py}
+re-verifies $13$ Python expressions exactly in a Wolfram kernel with \code{RootReduce},
+identifying each conjugate by value; all pass.
 
 \subsection{Limits and scope of the certificates}
 
@@ -901,9 +948,10 @@ its time limit.
 series of the computed group.  The group computation relies on numerical matching with
 counting and closure checks; its exactness has the same standing as in the companion
 project.
-\item \code{ResourceLimit} asserts nothing about solvability.  Nonsolvable polynomials of
-composite prime-power degree with a group larger than the limit end here; so do solvable
-ones with $|H|\varphi(m)$ beyond the limit.
+\item \code{ResourceLimit} asserts nothing about solvability.  Nonsolvable polynomials
+whose Frobenius cycle types (within the first sixty good primes) show none of the
+obstructions of Section~\ref{sec:negative} and whose group is larger than the limit end
+here; so do solvable ones with $|H|\varphi(m)$ beyond the limit.
 \item The structural layer never asserts nonexistence; \code{NotFound} is returned only
 when the general descent was disabled.
 \item Root indices of non-real roots are exchanged between Wolfram and Python by

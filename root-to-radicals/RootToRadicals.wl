@@ -126,18 +126,28 @@ agl1TypeQ[degs_, n_] := degs === {n} || degs === ConstantArray[1, n] ||
 longPrimeCycleQ[degs_, n_] := Module[{m = Last[degs]},
   PrimeQ[m] && 2 m > n && Union[Most[degs]] === {1}];
 
+(* composite prime-power degree n = p^k: a solvable primitive group lies in AGL(k,p); an element fixing a
+   point is conjugate into GL(k,p), its fixed points form a subspace of size p^j, so a single prime cycle
+   of length l (the rest fixed) needs p^k - p^j = l, i.e. j = 0 and l = n - 1.  A prime cycle with
+   n/2 < l < n - 1 therefore proves nonsolvability (primitivity as in longPrimeCycleQ). *)
+primePowerCycleQ[degs_, n_] := Module[{m = Last[degs]},
+  PrimeQ[m] && 2 m > n && m < n - 1 && Union[Most[degs]] === {1}];
+
 (* True: proved nonsolvable.  False: no obstruction found (inconclusive). *)
-frobeniusNonsolvableQ[poly_, maxPrimes_: 60] := Module[{n = Exponent[poly, x], disc, lc, p = 2, count = 0, degs},
-  If[! PrimeQ[n] && PrimePowerQ[n], Return[False]];
+frobeniusNonsolvableQ[poly_, maxPrimes_: 60] := Module[{n = Exponent[poly, x], disc, lc, p = 2, count = 0, degs, test},
+  test = Which[PrimeQ[n], ! agl1TypeQ[#, n] &, PrimePowerQ[n], primePowerCycleQ[#, n] &, True, longPrimeCycleQ[#, n] &];
   disc = Discriminant[poly, x]; lc = Coefficient[poly, x, n];
   While[count < maxPrimes,
     p = NextPrime[p];
     If[Mod[disc lc, p] == 0, Continue[]];
     count++;
     degs = frobeniusCycleType[poly, p];
-    If[PrimeQ[n], If[! agl1TypeQ[degs, n], Return[True, Module]],
-      If[longPrimeCycleQ[degs, n], Return[True, Module]]]];
+    If[test[degs], Return[True, Module]]];
   False];
+
+(* the lcm of the orders of the Frobenius elements divides |G|; a multiple beyond the group order limit
+   settles the resource status without building the splitting field *)
+frobeniusOrderMultiple[poly_] := RootDecomposition`Private`frobeniusExponentMultiple[poly, 40];
 
 (* ------------------------------------------------------------------ *)
 (* Structural layer                                                    *)
@@ -149,8 +159,22 @@ $method = Automatic; $opts = {}; $methodUsed = None; $galoisInfo = <||>;
 
 (* radical solutions of g(x) = v where g has rational coefficients and v is a radical expression:
    degree <= 4 by Solve, or a binomial x^m + c by an m-th root with all branches *)
-solveWithRadicalRHS[g_, v_] := Module[{n = Exponent[g, x], sols, c, zeta},
+(* explicit formulas for degrees 2 and 3 (Solve can spend a long time simplifying large radical
+   coefficients); the coefficient list is low to high *)
+quadraticRoots[{c0_, c1_, c2_}] := Module[{d = Sqrt[c1^2 - 4 c2 c0]}, {(-c1 + d)/(2 c2), (-c1 - d)/(2 c2)}];
+
+cubicRoots[{d0_, c0_, b0_, a0_}] := Module[{b = b0/a0, c = c0/a0, d = d0/a0, pp, qq, u, w = (-1)^(2/3)},
+  pp = c - b^2/3; qq = 2 b^3/27 - b c/3 + d;
+  If[pp === 0, Return[Table[w^k (-qq)^(1/3) - b/3, {k, 0, 2}]]];
+  u = (-qq/2 + Sqrt[qq^2/4 + pp^3/27])^(1/3);
+  Table[w^k u - pp/(3 w^k u) - b/3, {k, 0, 2}]];
+
+solveWithRadicalRHS[g_, v_] := Module[{n = Exponent[g, x], sols, c, zeta, cl},
+  cl = CoefficientList[Expand[g - v], x];
   Which[
+    n == 1, {-cl[[1]]/cl[[2]]},
+    n == 2, quadraticRoots[cl],
+    n == 3 && cl[[1]] =!= 0, cubicRoots[cl],
     n <= 4,
       sols = Quiet[x /. Solve[g == v, x, Cubics -> True, Quartics -> True]];
       If[! ListQ[sols], $Failed, Select[sols, RadicalExpressionQ]],
@@ -261,8 +285,7 @@ structuralPairSum[a_, p_, depth_] := Module[{n = Exponent[p, x], r2, facs, cands
       ny = N[y0, 40];
       If[Min[Abs[ny - na - nroots]] > 10^-15, Continue[]];
       (* y0 = a + a' for a conjugate a': factor p over Q(y0) *)
-      fac = SelectFirst[First /@ FactorList[p, Extension -> y0],
-        Exponent[#, x] > 0 && Abs[# /. {y0 -> ny, x -> na}] < 10^-15 &, $Failed];
+      fac = SelectFirst[First /@ FactorList[p, Extension -> y0], vanishesAtQ[#, a] &, $Failed];
       If[fac === $Failed || Exponent[fac, x] > 4, Continue[]];
       yrad = radicalsOf[y0, depth - 1];
       If[FailureQ[yrad] || yrad === $Failed, Continue[]];
@@ -274,7 +297,55 @@ structuralPairSum[a_, p_, depth_] := Module[{n = Exponent[p, x], r2, facs, cands
     {g, facs}];
   $Failed];
 
+(* 0. user-supplied subfield generators ("Extension" option): factor p over Q(gens); if the factor
+   containing a has degree <= 4 (or is a binomial), solve it after replacing each non-radical generator
+   by its own radical expression.  This is the pair-sum reduction with the generators given instead of
+   searched for, and it is what the notebook of the question does by hand. *)
+$extension = None;
+
+(* does the polynomial fac (exact algebraic coefficients, possibly of height 10^100) vanish at a?
+   The evaluation is done at a precision that exceeds the cancellation between the terms, and the
+   residual is compared with the scale of the terms. *)
+vanishesAtQ[fac_, a_] := Module[{n = Exponent[fac, x], cl, mags, prec, na, terms, scale, val},
+  If[n < 1, Return[False]];
+  cl = CoefficientList[fac, x];
+  mags = Abs[N[cl, 20]];
+  prec = 60 + Max[0, Ceiling[Log10[Max[Append[mags, 1]]]]];
+  na = N[a, prec];
+  terms = Table[N[cl[[k + 1]], prec] na^k, {k, 0, n}];
+  scale = Max[Abs[terms]];
+  val = Abs[Total[terms]];
+  TrueQ[val < 10^-25 scale]];
+
+structuralExtension[a_, p_, depth_] := Module[{gens, facs, fac, rules, rads, facRad, cands},
+  If[$extension === None, Return[$Failed]];
+  gens = Flatten[{$extension}];
+  (* factor cumulatively, one generator at a time: the factor containing a over a larger field divides
+     the one over the smaller field, and factoring a small polynomial over a large field is much cheaper
+     than factoring p over it *)
+  fac = p;
+  Do[
+    facs = First /@ Quiet[FactorList[fac, Extension -> gens[[1 ;; i]]]];
+    fac = SelectFirst[facs, vanishesAtQ[#, a] &, $Failed];
+    If[fac === $Failed, Return[$Failed, Module]],
+    {i, Length[gens]}];
+  If[Exponent[fac, x] > 4 && Exponent[fac - Coefficient[fac, x, Exponent[fac, x]] x^Exponent[fac, x] - Coefficient[fac, x, 0], x] > 0,
+    Return[$Failed]];
+  rads = Table[If[RadicalExpressionQ[g], g, Block[{$extension = None}, radicalsOf[g, depth - 1]]], {g, gens}];
+  If[AnyTrue[rads, FailureQ[#] || # === $Failed &], Return[$Failed]];
+  rules = DeleteCases[Thread[gens -> rads], HoldPattern[g_ -> g_]];
+  (* solve with the generators kept as atoms (their radical expressions substituted into
+     high-degree polynomial coefficients and expanded would blow up), select the branch
+     numerically, and substitute once at the end without expansion *)
+  cands = solveWithRadicalRHS[fac, 0];
+  If[cands === $Failed, Return[$Failed]];
+  facRad = selectCandidate[cands, a];
+  If[facRad === $Failed, Return[$Failed]];
+  facRad = facRad /. rules;
+  If[RadicalExpressionQ[facRad], facRad, $Failed]];
+
 structuralMethods = {
+  {"Extension", structuralExtension},
   {"ToRadicals", Function[{a, p, depth}, Module[{r}, r = Quiet[TimeConstrained[ToRadicals[a], 5, $Failed]];
       If[r =!= $Failed && RadicalExpressionQ[r], r, $Failed]]]},
   {"Decompose", structuralDecompose},
@@ -418,6 +489,10 @@ galoisRadicals[a_, p_, opts_] := Module[{n = Exponent[p, x], gd0, order, primes,
   maxOrder = OptionValue[RootToRadicals, opts, "MaxGroupOrder"];
   prec = OptionValue[RootToRadicals, opts, "WorkingPrecision"];
   form = OptionValue[RootToRadicals, opts, "Resolvents"];
+  With[{mult = frobeniusOrderMultiple[p]},
+    If[mult > maxOrder,
+      Return[failure["ResourceLimit", "A divisor of the Galois group order exceeds \"MaxGroupOrder\"",
+        <|"GroupOrderMultiple" -> mult, "Limit" -> maxOrder|>]]]];
   gd0 = RootGaloisData[p, x, "MaxGroupOrder" -> maxOrder, "WorkingPrecision" -> prec];
   If[FailureQ[gd0], Return[mapEngineFailure[gd0]]];
   order = gd0["Order"];
@@ -454,7 +529,8 @@ Options[RootToRadicals] = {
   "MaxGroupOrder" -> 400,
   "WorkingPrecision" -> 80,
   "VerificationTimeLimit" -> 60,
-  "MaxDepth" -> 6
+  "MaxDepth" -> 6,
+  "Extension" -> None          (* exact algebraic numbers generating a subfield over which p is factored first *)
 };
 Options[RootRadicalReport] = Options[RootToRadicals];
 
@@ -471,8 +547,9 @@ radicalsOf[a_, depth_] := Module[{in, p, n, r},
     If[r =!= $Failed && ! FailureQ[r], Return[r]]];
   If[$method === "Structural", Return[failure["NotFound", "No structural radical form was found"]]];
   If[frobeniusNonsolvableQ[p],
-    Message[RootToRadicals::notsolv, If[PrimeQ[n], "Frobenius cycle type outside AGL(1," <> ToString[n] <> ")",
-      "Frobenius element with a long prime cycle in a non-prime-power degree"]];
+    Message[RootToRadicals::notsolv, Which[PrimeQ[n], "Frobenius cycle type outside AGL(1," <> ToString[n] <> ")",
+      PrimePowerQ[n], "Frobenius element with a long prime cycle that no affine group of degree " <> ToString[n] <> " contains",
+      True, "Frobenius element with a long prime cycle in a non-prime-power degree"]];
     $galoisInfo = <|"Method" -> "Frobenius"|>;
     Return[failure["NotSolvable", "The Galois group is not solvable (Frobenius cycle types)"]]];
   r = galoisRadicals[a, p, $opts];
@@ -483,7 +560,9 @@ validOptionsQ[opts_] := MemberQ[{Automatic, "Structural", "Galois"}, OptionValue
   MemberQ[{Automatic, "Fourier", "Eigenvector"}, OptionValue[RootToRadicals, opts, "Resolvents"]] &&
   IntegerQ[OptionValue[RootToRadicals, opts, "MaxGroupOrder"]] && OptionValue[RootToRadicals, opts, "MaxGroupOrder"] > 0 &&
   IntegerQ[OptionValue[RootToRadicals, opts, "WorkingPrecision"]] && OptionValue[RootToRadicals, opts, "WorkingPrecision"] >= 30 &&
-  IntegerQ[OptionValue[RootToRadicals, opts, "MaxDepth"]] && OptionValue[RootToRadicals, opts, "MaxDepth"] > 0;
+  IntegerQ[OptionValue[RootToRadicals, opts, "MaxDepth"]] && OptionValue[RootToRadicals, opts, "MaxDepth"] > 0 &&
+  (OptionValue[RootToRadicals, opts, "Extension"] === None ||
+    AllTrue[Flatten[{OptionValue[RootToRadicals, opts, "Extension"]}], FreeQ[#, _Real] && minimalPolynomialOf[#] =!= $Failed &]);
 
 RootRadicalReport[a_, opts : OptionsPattern[]] := Module[{t0 = AbsoluteTime[], in, r, expr, ver},
   If[! validOptionsQ[Flatten[{opts}]], Message[RootToRadicals::opts, Flatten[{opts}]]; Return[failure["InvalidOptions", "Invalid options"]]];
@@ -491,7 +570,7 @@ RootRadicalReport[a_, opts : OptionsPattern[]] := Module[{t0 = AbsoluteTime[], i
   in = inputData[a];
   If[FailureQ[in], Return[in]];
   Block[{$method = OptionValue[Method], $opts = Flatten[{opts}], $methodUsed = None, $galoisInfo = <||>,
-         $prec = Max[60, OptionValue["WorkingPrecision"]]},
+         $prec = Max[60, OptionValue["WorkingPrecision"]], $extension = OptionValue["Extension"]},
     r = radicalsOf[a, OptionValue["MaxDepth"]];
     If[FailureQ[r], Return[Failure[r[[1]], Join[r[[2]], $galoisInfo, <|"Degree" -> in["Degree"], "Time" -> AbsoluteTime[] - t0|>]], Module]];
     expr = r;
@@ -510,6 +589,10 @@ RootSolvableQ[a_, opts : OptionsPattern[RootToRadicals]] := Module[{in, gd},
   If[FailureQ[in], Return[in]];
   If[in["Degree"] <= 4, Return[True]];
   If[frobeniusNonsolvableQ[in["Polynomial"]], Return[False]];
+  With[{mult = frobeniusOrderMultiple[in["Polynomial"]]},
+    If[mult > OptionValue["MaxGroupOrder"],
+      Return[failure["ResourceLimit", "A divisor of the Galois group order exceeds \"MaxGroupOrder\"",
+        <|"GroupOrderMultiple" -> mult, "Limit" -> OptionValue["MaxGroupOrder"]|>]]]];
   gd = RootGaloisData[in["Polynomial"], x, "MaxGroupOrder" -> OptionValue["MaxGroupOrder"], "WorkingPrecision" -> OptionValue["WorkingPrecision"]];
   If[FailureQ[gd], Return[mapEngineFailure[gd]]];
   solvableQ[gd["MultiplicationTable"], gd["Identity"], Range[gd["Order"]]]];

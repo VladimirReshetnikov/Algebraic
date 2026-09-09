@@ -40,7 +40,11 @@ kernel is provided by verify_wolfram.py.
 
 Nonsolvability is proved by Frobenius cycle types (prime degree n: a solvable
 transitive group of prime degree lies in AGL(1, n), whose elements have cycle
-types 1^n, n, or 1 d^((n-1)/d)) or by the exact Galois group.
+types 1^n, n, or 1 d^((n-1)/d); other degrees: a single prime cycle longer than
+n/2 forces primitivity, and solvable primitive groups have prime-power degree and
+lie in AGL(k, p), which excludes such cycles unless their length is n - 1) or by
+the exact Galois group.  The lcm of the Frobenius element orders divides |G| and
+gives an early ResourceLimit for large groups.
 
 Requires python-flint >= 0.8, SymPy >= 1.14 and rootdecomp.py from the
 sibling project root-decomposition/python (located automatically).
@@ -276,17 +280,29 @@ def _is_prime_power(n: int) -> bool:
     return len(sp.factorint(n)) == 1
 
 
+def _prime_power_cycle(degs: list, n: int) -> bool:
+    """Composite prime-power degree n = p^k: a solvable primitive group lies in AGL(k, p); an element
+    fixing a point is conjugate into GL(k, p) and its fixed points form a subspace of size p^j, so a
+    single prime cycle of length l (the rest fixed) needs p^k - p^j = l, i.e. l = n - 1.  A prime
+    cycle with n/2 < l < n - 1 therefore proves nonsolvability."""
+    m = degs[-1]
+    return sp.isprime(m) and 2 * m > n and m < n - 1 and set(degs[:-1]) == {1}
+
+
 def frobenius_nonsolvable(p: fmpz_poly, max_primes: int = 60) -> bool:
     """True if some Frobenius cycle type proves that the Galois group is not solvable.
 
-    Prime degree n: every cycle type must be of the AGL(1, n) shape.  Degree that is
-    not a prime power: a long prime cycle is an obstruction.  Composite prime-power
-    degrees are left to the exact group computation.
+    Prime degree n: every cycle type must be of the AGL(1, n) shape.  Composite
+    prime-power degree: a single prime cycle of length strictly between n/2 and n-1.
+    Other degrees: a single prime cycle of length > n/2.
     """
     n = p.degree()
-    prime_degree = bool(sp.isprime(n))
-    if not prime_degree and _is_prime_power(n):
-        return False
+    if sp.isprime(n):
+        test = lambda degs: not _agl1_type(degs, n)
+    elif _is_prime_power(n):
+        test = lambda degs: _prime_power_cycle(degs, n)
+    else:
+        test = lambda degs: _long_prime_cycle(degs, n)
     disc = int(p.resultant(p.derivative()))
     lc = int(p.leading_coefficient())
     count, q = 0, 2
@@ -297,12 +313,14 @@ def frobenius_nonsolvable(p: fmpz_poly, max_primes: int = 60) -> bool:
         count += 1
         f = nmod_poly([int(c) for c in p.coeffs()], q).factor()
         degs = sorted(g.degree() for g, _ in f[1] if g.degree() > 0)
-        if prime_degree:
-            if not _agl1_type(degs, n):
-                return True
-        elif _long_prime_cycle(degs, n):
+        if test(degs):
             return True
     return False
+
+
+def frobenius_order_multiple(p: fmpz_poly) -> int:
+    """The lcm of the orders of the Frobenius elements found; it divides |G|."""
+    return rd.frobenius_exponent_multiple(p, 40)
 
 
 # ---------------------------------------------------------------------------
@@ -736,6 +754,9 @@ def _descend(gd, a: AlgebraicNumber, primes: list, st: _State):
 
 def _galois_radicals(a: AlgebraicNumber, st: _State):
     p = a.poly
+    mult = frobenius_order_multiple(p)
+    if mult > st.maxorder:
+        raise ResourceLimit(f"a divisor {mult} of the Galois group order exceeds maxorder={st.maxorder}")
     try:
         gd0 = rd.galois_data(p, st.prec_bits, st.maxorder)
     except ValueError as e:
@@ -784,7 +805,11 @@ def _radicals_of(a: AlgebraicNumber, st: _State, depth: int):
         raise NotFound("no structural radical form was found")
     if frobenius_nonsolvable(a.poly):
         st.method_used = "Frobenius"
-        raise NotSolvable("Frobenius cycle type outside AGL(1, n): not solvable")
+        n = a.degree
+        reason = ("cycle type outside AGL(1, n)" if sp.isprime(n) else
+                  "a long prime cycle that no affine group of this degree contains" if _is_prime_power(n) else
+                  "a long prime cycle in a non-prime-power degree")
+        raise NotSolvable(f"Frobenius element with {reason}: not solvable")
     return _galois_radicals(a, st)
 
 
@@ -874,6 +899,9 @@ def is_solvable(a, maxorder: int = 400, prec_bits: int = 300) -> bool:
         return True
     if frobenius_nonsolvable(a.poly):
         return False
+    mult = frobenius_order_multiple(a.poly)
+    if mult > maxorder:
+        raise ResourceLimit(f"a divisor {mult} of the Galois group order exceeds maxorder={maxorder}")
     try:
         gd = rd.galois_data(a.poly, prec_bits, maxorder)
     except ValueError as e:

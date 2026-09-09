@@ -171,9 +171,13 @@ unvalidated.
    outside); general descent with Fourier and eigenvector forms, precision escalation,
    Frobenius negative tests (prime degree, and long prime cycles in non-prime-power
    degree). — done
-4. Wolfram test suite: 60 tests, all pass (`wolfram -script RunTests.wl`, 90 s). — done
-5. Python port and its suite: 46 cases in 51 s, all pass; `verify_wolfram.py` re-verifies
-   13 expressions exactly in a kernel. — done
+4. Wolfram test suite: 67 tests, all pass (`wolfram -script RunTests.wl`, 89 s). — done
+5. Python port and its suite: 48 cases in 39 s, all pass; `verify_wolfram.py` re-verifies
+   13 expressions exactly in a kernel (conjugates identified by value). — done
+8. Later additions: the prime-power-degree Frobenius rule (a single prime cycle of length
+   strictly between n/2 and n-1), the early `ResourceLimit` from the lcm of Frobenius
+   element orders, and the `"Extension"` option (user-supplied subfield generators), used
+   by `NotebookTarget.wl` to assemble the notebook's degree-27 number. — done
 6. Article written against measured results, compiled to PDF. — done
 7. README, `WOLFRAM-NOTES.md` additions, final timings. — done
 
@@ -200,6 +204,14 @@ root of x^9-657x^8+6111x^7+3318x^6+19647x^5-12033x^4+3972x^3-684x^2+9x-1) has Ga
 group of order 18, exponent 6; `RootRadicalReport[θ]` returns a verified radical
 expression in 43 s (series primes {3, 3}, depth 3, 111 leaves).  The degree-9 factor
 over Q(3^(1/6)) vanishing at β0 splits over Q(3^(1/6), θ) into three cubics (237 s), so
-β0 is expressible by radicals; the full expression was not assembled.  Pitfall met again:
-`Abs[N[factor /. x -> b0, 40]] < 10^-20` on an exact zero emits `N::meprec`; substitute
-numerical values for the algebraic numbers first.
+β0 is expressible by radicals.  `NotebookTarget.wl` assembles the expression with
+`RootRadicalReport[root, "Extension" -> {3^(1/6), theta}]`: depth 5, LeafCount 107067,
+11 minutes, equal to β0 to 300 digits; `RootReduce` did not finish within the 300 s cap,
+so the report says `"Verified" -> Indeterminate` (exact by construction).  The expression
+is saved in `NotebookTarget-expression.m`.  Pitfalls met: (a) `N` of an exact zero emits
+`N::meprec`; (b) factoring the degree-27 polynomial over the degree-54 field in one step
+did not finish in an hour, cumulative factoring takes 4 minutes; (c) recognizing the
+factor that vanishes at β0 needs a scale-aware zero test, because its coefficients have
+height 10^100 and a 40-digit evaluation cancels catastrophically; (d) substituting the
+radical form of θ into degree-8 polynomial coefficients and expanding blows up; keep θ
+atomic through the cubic formula and substitute once at the end.

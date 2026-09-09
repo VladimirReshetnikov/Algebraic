@@ -84,20 +84,29 @@ rps = RootRadicalReport[Root[3 - 9 # + 6 #^2 - 7 #^3 - #^6 &, 1], Method -> "Str
 VerificationTest[rps["Verified"], True, TestID -> "pair-sum verified"];
 VerificationTest[rps["Method"], "PairSum", TestID -> "pair-sum method"];
 VerificationTest[RootRadicalReport[c5, Method -> "Structural"][[1]], "NotFound", TestID -> "structural search exhausted"];
+rext = RootRadicalReport[a6, "Extension" -> {Root[#^3 + 4 # - 1 &, 1]}];   (* the subfield Q(a - 1/a) given explicitly *)
+VerificationTest[rext["Verified"], True, TestID -> "extension option verified"];
+VerificationTest[rext["Method"], "Extension", TestID -> "extension option method"];
+VerificationTest[RootRadicalReport[a6, "Extension" -> {1.5}][[1]], "InvalidOptions", {RootToRadicals::opts}, TestID -> "extension option validation"];
 
 (* negative results *)
 VerificationTest[RootRadicalReport[Root[#^5 - # - 1 &, 1]][[1]], "NotSolvable", {RootToRadicals::notsolv}, TestID -> "x^5-x-1 not solvable"];
 VerificationTest[RootRadicalReport[Root[#^7 - # - 1 &, 1]][[1]], "NotSolvable", {RootToRadicals::notsolv}, TestID -> "x^7-x-1 not solvable"];
 VerificationTest[RootRadicalReport[Root[#^6 - # - 1 &, 1]][[1]], "NotSolvable", {RootToRadicals::notsolv}, TestID -> "x^6-x-1 not solvable (long prime cycle)"];
 VerificationTest[RootRadicalReport[Root[#^6 + #^4 + 3 #^2 - 2 # + 5 &, 1]][[1]], "NotSolvable", {RootToRadicals::notsolv}, TestID -> "sextic with group of order 120"];
+VerificationTest[RootRadicalReport[Root[#^8 - # - 1 &, 1]][[1]], "NotSolvable", {RootToRadicals::notsolv}, TestID -> "x^8-x-1 not solvable (prime-power degree)"];
+VerificationTest[RootRadicalReport[Root[#^9 - # - 1 &, 1]][[1]], "NotSolvable", {RootToRadicals::notsolv}, TestID -> "x^9-x-1 not solvable (prime-power degree)"];
 VerificationTest[RootSolvableQ[Root[#^5 - # - 1 &, 1]], False, TestID -> "RootSolvableQ negative"];
+VerificationTest[RootSolvableQ[Root[#^9 - # - 1 &, 1]], False, TestID -> "RootSolvableQ negative, degree 9"];
 VerificationTest[RootSolvableQ[c5], True, TestID -> "RootSolvableQ cyclic quintic"];
 VerificationTest[RootSolvableQ[a6], True, TestID -> "RootSolvableQ sextic example"];
 VerificationTest[RootSolvableQ[Root[#^4 - # - 1 &, 1]], True, TestID -> "RootSolvableQ quartic"];
 
 (* resource limits, trivial and invalid input *)
 VerificationTest[RootRadicalReport[Root[#^4 - # - 1 &, 1], Method -> "Galois", "MaxGroupOrder" -> 10][[1]], "ResourceLimit",
-  {RootDecomposition::order}, TestID -> "group order limit"];
+  TestID -> "group order limit (Frobenius order multiple)"];
+VerificationTest[RootRadicalReport[Root[#^4 - # - 1 &, 1], Method -> "Galois", "MaxGroupOrder" -> 12][[1]], "ResourceLimit",
+  {RootDecomposition::order}, TestID -> "group order limit (engine)"];
 VerificationTest[RootToRadicals[3/4], 3/4, TestID -> "rational input"];
 VerificationTest[RootToRadicals[1 + Sqrt[2]], 1 + Sqrt[2], TestID -> "radical input is returned"];
 VerificationTest[RootRadicalReport[1.5][[1]], "Inexact", {RootToRadicals::inexact}, TestID -> "inexact input"];

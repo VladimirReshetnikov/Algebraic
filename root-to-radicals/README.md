@@ -19,6 +19,7 @@ notebook, and a comparison of the nine reports); this file documents the softwar
 | --- | --- |
 | `RootToRadicals.wl` | Wolfram Language package (Wolfram 15.0.1). Requires `../root-decomposition/RootDecomposition.wl`, loaded automatically. |
 | `RootToRadicals.wlt`, `RunTests.wl` | Regression tests (`wolfram -script RunTests.wl`). |
+| `NotebookTarget.wl` | Reproduces the notebook's target (a degree-27 number) and assembles its radical expression (`wolfram -script NotebookTarget.wl`, about 15 minutes). |
 | `python/roottoradicals.py` | Python implementation on python-flint and SymPy, reusing `../root-decomposition/python/rootdecomp.py`. |
 | `python/test_roottoradicals.py` | Python regression suite with timings; failures exit nonzero. |
 | `python/verify_wolfram.py` | Exact verification of Python's expressions in a native Wolfram kernel (`RootReduce`). |
@@ -60,8 +61,18 @@ Functions:
 
 Options: `Method -> Automatic | "Structural" | "Galois"`, `"Resolvents" -> Automatic |
 "Fourier" | "Eigenvector"` (the form of the Kummer step; `Automatic` keeps the shorter
-expression), `"MaxGroupOrder"` (default 400), `"WorkingPrecision"` (80), 
-`"VerificationTimeLimit"` (60 s), `"MaxDepth"` (6).
+expression), `"MaxGroupOrder"` (default 400), `"WorkingPrecision"` (80),
+`"VerificationTimeLimit"` (60 s), `"MaxDepth"` (6), and `"Extension" -> {gens...}`: exact
+algebraic numbers generating a subfield over which the minimal polynomial is factored
+first; the factor containing the input is solved by the classical formulas after the
+generators are expressed in radicals themselves (the notebook's method, made a one-line
+option; see `NotebookTarget.wl`).
+
+Nonsolvability is proved without the group whenever a Frobenius cycle type allows it:
+prime degree (AGL(1, n) shapes), composite prime-power degree (a single prime cycle of
+length strictly between n/2 and n−1), other degrees (a single prime cycle longer than
+n/2).  The lcm of the Frobenius element orders divides the group order and gives an
+early `ResourceLimit` for large groups.
 
 The structural layer (built-in `ToRadicals`, functional decomposition, generalized
 reciprocal symmetry `p(x) = x^m P(x + c/x)`, Dickson polynomials `D_n(x, c) - b`, and the
@@ -110,3 +121,7 @@ are solved by the structural layer in under 0.2 s; the forced general descent ta
 Python; the cyclic quintic (which needs the descent) takes 8 s in Wolfram and 0.4 s in
 Python; nonsolvable prime-degree inputs are refused in milliseconds by Frobenius cycle
 types, whereas the exact group of `x^5 - x - 1` (order 120) takes 18 minutes in Wolfram.
+The notebook's own target, a degree-27 number, is expressed by radicals in 11 minutes
+through the `"Extension"` option (depth 5, about 107 000 leaves, equal to the inverse beta
+value to 300 digits; the exact `RootReduce` check exceeds the time cap, so the report is
+honest about `"Verified" -> Indeterminate`).

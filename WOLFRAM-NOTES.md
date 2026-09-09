@@ -274,3 +274,19 @@ for future work on exact algebraic-number code.
   useless at every precision.  Decide reality and sign from exact data (the
   conjugation automorphism, or the root ordering of an algebraic number) and rewrite
   the root as `(-1)^(1/q) (-Q)^(1/q)`.
+- Recognizing which factor of `Factor[p, Extension -> {...}]` vanishes at a root by
+  `Abs[N[fac /. x -> N[a, 40]]] < 10^-15` fails silently when the coefficients have
+  height 10^100: the terms cancel catastrophically and every factor leaves a residual
+  of size 10^60.  Evaluate at a precision of 60 digits plus the coefficient height and
+  compare the residual with the largest term (`vanishesAtQ` in RootToRadicals.wl).
+  `SelectFirst` without a default returns `Missing["NotFound"]`, which is not `$Failed`
+  and has `Exponent[..., x] == 0`; always pass an explicit default.
+- `Factor[p, Extension -> {3^(1/6), theta}]` on a degree-27 polynomial did not finish
+  in an hour; factoring first over `3^(1/6)` (12 s), then the degree-9 factor over both
+  generators (4 min), gives the same result.  Factor cumulatively.
+- Substituting a nested radical expression for a `Root` object into polynomial
+  coefficients of degree 8 in it and calling `Expand` blows up (multinomial expansion of
+  nested radicals with auto-simplification).  Keep the `Root` object as an atom through
+  the formula steps and substitute once at the end, without `Expand`.
+- `RootReduce[expr - a]` for an expression with 10^5 leaves does not finish in 5
+  minutes; report the numerical check honestly instead of waiting.

@@ -99,7 +99,7 @@ class Examples(unittest.TestCase):
 class Negative(unittest.TestCase):
     def test_not_solvable(self):
         for s in ["Root[-1 - # + #^5 &, 1]", "Root[-1 - # + #^7 &, 1]", "Root[-1 - # + #^6 &, 1]",
-                  "Root[5 - 2 # + 3 #^2 + #^4 + #^6 &, 1]"]:
+                  "Root[5 - 2 # + 3 #^2 + #^4 + #^6 &, 1]", "Root[-1 - # + #^8 &, 1]", "Root[-1 - # + #^9 &, 1]"]:
             with self.assertRaises(rt.NotSolvable):
                 rt.root_to_radicals(s)
             self.assertFalse(rt.is_solvable(s))
@@ -120,7 +120,10 @@ class Negative(unittest.TestCase):
         self.assertTrue(rt.frobenius_nonsolvable(fmpz_poly([-1, -1, 0, 0, 0, 1])))
         self.assertFalse(rt.frobenius_nonsolvable(fmpz_poly([1, 3, -3, -4, 1, 1])))
         self.assertTrue(rt.frobenius_nonsolvable(fmpz_poly([-1, -1, 0, 0, 0, 0, 1])))
-        self.assertFalse(rt.frobenius_nonsolvable(fmpz_poly([-1, 0, 0, 0, 0, 0, 0, 0, 1])))   # prime-power degree: no test
+        self.assertFalse(rt.frobenius_nonsolvable(fmpz_poly([-1, 0, 0, 0, 0, 0, 0, 0, 1])))   # x^8-1: solvable, no obstruction
+        self.assertTrue(rt.frobenius_nonsolvable(fmpz_poly([-1, -1, 0, 0, 0, 0, 0, 0, 0, 1])))  # x^9-x-1: a 5- or 7-cycle
+        self.assertFalse(rt.frobenius_nonsolvable(fmpz_poly([1, 3, -3, -4, 1, 1])))
+        self.assertTrue(rt.frobenius_order_multiple(fmpz_poly([-1, -1, 0, 0, 0, 1])) % 60 == 0)   # S5 element orders
 
 
 if __name__ == "__main__":
