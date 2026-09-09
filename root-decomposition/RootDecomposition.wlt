@@ -24,6 +24,21 @@ VerificationTest[gd["Order"], 36, TestID -> "Galois group order S3 x S3"];
 VerificationTest[gd["Exponent"], 6, TestID -> "Galois group exponent"];
 VerificationTest[Tally[gd["SubfieldDegrees"]], {{1, 1}, {2, 3}, {3, 6}, {4, 1}, {6, 20}, {9, 9}, {12, 4}, {18, 15}, {36, 1}}, TestID -> "subfield degree distribution"];
 
+VerificationTest[Module[{data, matrices, one, auts, perms, products},
+  data = RootGaloisData[Root[#^4 - # - 1 &, 1]];
+  matrices = RootDecomposition`Private`multiplicationMatrixOfElement[data, #] & /@ data["RootCoordinates"];
+  one = UnitVector[data["Order"], 1]; auts = data["Automorphisms"]; perms = data["Permutations"];
+  products = Association[Thread[perms -> auts]];
+  And @@ Flatten[Table[auts[[s]] . one == one &&
+      And @@ Table[auts[[s]] . matrices[[i]] == matrices[[perms[[s, i]]]] . auts[[s]], {i, Length[matrices]}],
+    {s, data["Order"]}]] &&
+    And @@ Flatten[Table[auts[[s]] . auts[[t]] == products[perms[[s]][[perms[[t]]]]],
+      {s, data["Order"]}, {t, data["Order"]}]]],
+  True, TestID -> "S4 automorphisms preserve field multiplication and noncommutative composition"];
+
+VerificationTest[Module[{data = RootGaloisData[RootDecomposition`Private`x - 2, RootDecomposition`Private`x]},
+  data["Automorphisms"]], {{{1}}}, TestID -> "trivial Galois action with no generators"];
+
 rp = RootProductDecomposition[ap];
 VerificationTest[Sort[rp["Terms"]], Sort[{u, v}], TestID -> "product example recovers the two cubics"];
 VerificationTest[rp["MaximumDegree"], 3, TestID -> "product example maximum degree"];

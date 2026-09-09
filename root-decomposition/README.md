@@ -211,6 +211,23 @@ matrix construction, subgroup closure and coordinate-power reconstruction
 with the radicals solver. Prime-degree lower bounds return immediately once
 the degree-divisibility bound is already sharp.
 
+Both field engines recover automorphism matrices from traces only for generators
+of the full Galois group. The shared subgroup traversal then propagates the action
+using exact matrix products: the matrix for `parent * generator` is the product
+of their matrices in that order. Every resulting matrix still undergoes the
+root-coordinate consistency check. Regression tests also check preservation of
+field multiplication and all noncommutative composition identities in `S4`.
+
+Python's affine arithmetic shares one primitive-polynomial transform:
+if `p(a) = 0`, substitution into `p((x - shift)/scale)` gives the polynomial
+for `scale*a + shift`. FLINT performs rational composition, denominator
+clearing and content removal directly. Scaling searches, rational shifts,
+negation and composed-polynomial rescaling use this helper; polynomial
+inflation uses FLINT's `inflate`. Positive rational scaling and rational
+translation preserve the Python root ordering, while negative scaling still
+identifies the transformed branch through certified root matching. Scaling
+by zero returns the rational number zero directly.
+
 ## Main mathematical results
 
 - Both examples have globally optimal maximum degree 3.

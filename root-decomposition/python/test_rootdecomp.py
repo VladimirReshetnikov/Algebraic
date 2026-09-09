@@ -87,6 +87,9 @@ class CorrectnessRegressions(unittest.TestCase):
         self.assertEqual(rd.group_closure(cyclic_four, 0, []), frozenset({0}))
         self.assertEqual(rd.group_closure(cyclic_four, 0, [2]), frozenset({0, 2}))
         self.assertEqual(rd.group_closure(cyclic_four, 0, [1]), frozenset(range(4)))
+        edges = []
+        self.assertEqual(rd.group_closure(cyclic_four, 0, [1], lambda *edge: edges.append(edge)), frozenset(range(4)))
+        self.assertEqual(edges, [(0, 1, 1), (1, 1, 2), (2, 1, 3)])
         self.assertEqual(len(rd._subgroup_lattice(cyclic_four, 0, 4)), 3)
         golden_ratio = fmpz_poly([-1, -1, 1])
         self.assertEqual(list(rd.frobenius_cycle_types(golden_ratio, 4)), [[2], [2], [2], [1, 1]])
@@ -95,6 +98,28 @@ class CorrectnessRegressions(unittest.TestCase):
         self.assertEqual(list(rd.frobenius_cycle_types(golden_ratio, 0)), [])
         with self.assertRaises(ValueError):
             list(rd.frobenius_cycle_types(fmpz_poly([1, -2, 1])))
+
+    def test_automorphisms_preserve_field_multiplication(self):
+        # Check multiplication on the whole basis, independently of generator propagation.
+        gd = rd.galois_data(fmpz_poly([-1, -1, 0, 0, 1]), 300, 24)
+        with ctx.workprec(gd.prec):
+            root_matrices = [rd.multiplication_matrix_of(gd, v) for v in gd.root_coords]
+        one = [fmpq(i == 0) for i in range(gd.order)]
+        for action, perm in zip(gd.automorphisms, gd.perms):
+            self.assertEqual(rd.apply_matrix(action, one), one)
+            for i, j in enumerate(perm):
+                self.assertEqual(action * root_matrices[i], root_matrices[j] * action)
+        index = {p: i for i, p in enumerate(gd.perms)}
+        noncommuting = False
+        for s, left in enumerate(gd.perms):
+            for t, right in enumerate(gd.perms):
+                product = tuple(left[right[i]] for i in range(len(left)))
+                noncommuting |= product != tuple(right[left[i]] for i in range(len(left)))
+                self.assertEqual(gd.automorphisms[s] * gd.automorphisms[t], gd.automorphisms[index[product]])
+        self.assertTrue(noncommuting)
+        trivial = rd.galois_data(fmpz_poly([-2, 1]))
+        self.assertEqual(trivial.order, 1)
+        self.assertEqual(trivial.automorphisms[0].tolist(), [[1]])
 
     def test_degree_bounds_and_single_component(self):
         for fn, name in ((rd.sum_decomposition, "max_terms"), (rd.product_decomposition, "max_factors")):
@@ -297,6 +322,30 @@ class CorrectnessRegressions(unittest.TestCase):
         p = fmpz_poly([-2, 0, 1])
         with self.assertRaises(rd.PrecisionError):
             rd.AlgebraicNumber.from_value(p, acb(arb(0, 2)), 100)
+
+    def test_affine_arithmetic_preserves_real_and_complex_branches(self):
+        for coefficients in ([-2, 0, 1], [-2, 0, 0, 1], [25, 0, -2, 0, 1]):
+            polynomial = fmpz_poly(coefficients)
+            for index in range(1, polynomial.degree() + 1):
+                target = rd.AlgebraicNumber(polynomial, index)
+                self.assertEqual(rd.scale_algebraic(target, 0, 160).as_fraction(), 0)
+                for scale in (Fraction(2, 3), Fraction(-5, 7)):
+                    with ctx.workprec(200):
+                        value = target.value(200) * rd._fmpq_to_acb(fmpq(scale.numerator, scale.denominator))
+                        scaled = rd.scale_algebraic(target, scale, 200)
+                        expected = rd.AlgebraicNumber.from_value(scaled.poly, value, 200)
+                        self.assertEqual(scaled.index, expected.index)
+                        if scale > 0:
+                            self.assertEqual(scaled.index, index)
+                        shift = Fraction(11, 13)
+                        translated = rd.combine_algebraic(scaled, rd.AlgebraicNumber.from_rational(shift), "+")
+                        value += rd._fmpq_to_acb(fmpq(11, 13))
+                        expected = rd.AlgebraicNumber.from_value(translated.poly, value, 200)
+                        self.assertEqual(translated.index, expected.index)
+                        self.assertEqual(translated.poly, rd._affine_polynomial(polynomial, scale, shift))
+        self.assertEqual(rd.primitive(fmpz_poly()), fmpz_poly())
+        self.assertEqual(rd.primitive(fmpz_poly([12, -18])), fmpz_poly([-2, 3]))
+        self.assertEqual(rd.poly_from_fractions([Fraction(2, 3), Fraction(-1, 2)]), fmpz_poly([-4, 3]))
 
     def test_complex_roots_and_precision_stability(self):
         for coeffs in ([25, 0, -2, 0, 1], [6, 0, 5, 0, 1]):

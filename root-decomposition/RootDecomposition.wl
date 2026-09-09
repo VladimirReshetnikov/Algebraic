@@ -239,11 +239,12 @@ galoisGroupNumerically[roots_List, nums_List, prec_, maxOrder_, maxTries_] :=
     <|"Permutations" -> perms, "Order" -> Length[perms], "Tower" -> tower, "PrimitiveElement" -> thetaExact|>];
 
 (* Shared with RootToRadicals: queue-based closure with constant-time membership. *)
-groupClosure[mt_, idElem_, gs_] := Module[{seen = ConstantArray[False, Length[mt]], queue = {idElem}, pos = 1, h},
+groupClosure[mt_, idElem_, gs_, visit_: None] := Module[{seen = ConstantArray[False, Length[mt]], queue = {idElem}, pos = 1, h},
   seen[[idElem]] = True;
   While[pos <= Length[queue],
     Do[h = mt[[queue[[pos]], g]];
-      If[! seen[[h]], seen[[h]] = True; AppendTo[queue, h]], {g, gs}];
+      If[! seen[[h]], seen[[h]] = True; AppendTo[queue, h];
+        If[visit =!= None, visit[queue[[pos]], g, h]]], {g, gs}];
     pos++];
   Sort[queue]];
 
@@ -275,7 +276,7 @@ buildGaloisData[poly_, prec0_, maxOrder_, maxTries_] :=
 
 buildGaloisDataAtPrecision[poly_, prec_, maxOrder_, maxTries_] := Module[
   {roots, nums, n, gg, perms, ord, tower, gens, expo, basisExp, pw, val, gram, gramInv, set, mt, idElem,
-   rootCoords, auts, subs, fixed, orders, numsPerm},
+   rootCoords, auts, subs, fixed, orders, numsPerm, groupGens},
   roots = allRoots[poly];
   n = Length[roots];
   nums = N[roots, prec];
@@ -293,10 +294,16 @@ buildGaloisDataAtPrecision[poly_, prec_, maxOrder_, maxTries_] := Module[
   idElem = set[Range[n]];
   numsPerm = Map[nums[[#]] &, perms];
   rootCoords = Transpose[gramInv . roundIntegerMatrix[Transpose[val] . numsPerm]];
-  auts = Table[gramInv . roundIntegerMatrix[Transpose[val] . val[[mt[[All, s]]]]], {s, ord}];
-  (* consistency check: automorphisms permute the root coordinates *)
-  Do[If[auts[[s]] . rootCoords[[i]] != rootCoords[[perms[[s, i]]]], Throw["precision", precTag]], {s, ord}, {i, n}];
   subs = subgroupLattice[mt, idElem];
+  groupGens = SelectFirst[subs, #["Order"] == ord &]["Generators"];
+  auts = ConstantArray[None, ord]; auts[[idElem]] = IdentityMatrix[ord];
+  Do[auts[[s]] = gramInv . roundIntegerMatrix[Transpose[val] . val[[mt[[All, s]]]]], {s, groupGens}];
+  (* The multiplication table determines every remaining automorphism exactly. *)
+  groupClosure[mt, idElem, groupGens, Function[{parent, generator, element},
+    If[auts[[element]] === None, auts[[element]] = auts[[parent]] . auts[[generator]]]]];
+  (* consistency check: automorphisms permute the root coordinates *)
+  Do[If[Transpose[auts[[s]] . Transpose[rootCoords]] != rootCoords[[perms[[s]]]],
+    Throw["precision", precTag]], {s, ord}];
   fixed = Table[
     If[sub["Order"] == 1, IdentityMatrix[ord],
       NullSpace[Join @@ Table[auts[[g]] - IdentityMatrix[ord], {g, sub["Generators"]}]]],
