@@ -274,18 +274,20 @@ retryPrecision[compute_, prec0_] := Module[{prec = prec0, result, attempt = 0},
 buildGaloisData[poly_, prec0_, maxOrder_, maxTries_] :=
   retryPrecision[Function[prec, Catch[buildGaloisDataAtPrecision[poly, prec, maxOrder, maxTries], failTag]], prec0];
 
+basisValues[nums_, perms_, tower_, basisExp_] := Module[{gens = tower[[All, 1]], pw},
+  pw = Table[nums[[i]]^e, {i, Length[nums]}, {e, 0, Max[Flatten[{0, basisExp}]]}];
+  Table[Times @@ Table[pw[[perm[[gens[[j]]]], ex[[j]] + 1]], {j, Length[gens]}], {perm, perms}, {ex, basisExp}]];
+
 buildGaloisDataAtPrecision[poly_, prec_, maxOrder_, maxTries_] := Module[
-  {roots, nums, n, gg, perms, ord, tower, gens, expo, basisExp, pw, val, gram, gramInv, set, mt, idElem,
+  {roots, nums, n, gg, perms, ord, tower, basisExp, val, gram, gramInv, set, mt, idElem,
    rootCoords, auts, subs, fixed, orders, numsPerm, groupGens},
   roots = allRoots[poly];
   n = Length[roots];
   nums = N[roots, prec];
   gg = galoisGroupNumerically[roots, nums, prec, maxOrder, maxTries];
   perms = gg["Permutations"]; ord = gg["Order"]; tower = gg["Tower"];
-  gens = tower[[All, 1]]; expo = tower[[All, 2]];
-  basisExp = If[gens === {}, {{}}, Tuples[Range[0, # - 1] & /@ expo]];
-  pw = Table[nums[[i]]^e, {i, n}, {e, 0, Max[Append[expo, 1]]}];
-  val = Table[Times @@ Table[pw[[perm[[gens[[j]]]], basisExp[[b, j]] + 1]], {j, Length[gens]}], {perm, perms}, {b, ord}];
+  basisExp = Tuples[Range[0, # - 1] & /@ tower[[All, 2]]];
+  val = basisValues[nums, perms, tower, basisExp];
   gram = roundIntegerMatrix[Transpose[val] . val];
   If[Det[gram] == 0, Throw["precision", precTag]];
   gramInv = Inverse[gram];
@@ -349,12 +351,8 @@ RootGaloisData[poly0_, var_Symbol, OptionsPattern[]] := Module[{poly, c, n, res,
 (* Field element utilities                                            *)
 (* ------------------------------------------------------------------ *)
 
-valuesAtPrecision[gd_, prec_] := Module[{nums, gens, expo, basisExp, pw, perms, ord = gd["Order"]},
-  If[prec <= gd["Precision"], Return[gd["Values"]]];
-  nums = N[gd["Roots"], prec];
-  gens = gd["Tower"][[All, 1]]; expo = gd["Tower"][[All, 2]]; basisExp = gd["BasisExponents"]; perms = gd["Permutations"];
-  pw = Table[nums[[i]]^e, {i, Length[nums]}, {e, 0, Max[Append[expo, 1]]}];
-  Table[Times @@ Table[pw[[perm[[gens[[j]]]], basisExp[[b, j]] + 1]], {j, Length[gens]}], {perm, perms}, {b, ord}]];
+valuesAtPrecision[gd_, prec_] := If[prec <= gd["Precision"], gd["Values"],
+  basisValues[N[gd["Roots"], prec], gd["Permutations"], gd["Tower"], gd["BasisExponents"]]];
 
 conjugates[gd_, v_] := gd["Values"] . v;
 

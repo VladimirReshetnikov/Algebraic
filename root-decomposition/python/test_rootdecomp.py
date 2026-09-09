@@ -337,6 +337,30 @@ class CorrectnessRegressions(unittest.TestCase):
                         continue
                     self.assertEqual(restored, [fmpq(x) for x in integers])
 
+    def test_shared_basis_and_sparse_precision_fallback(self):
+        for polynomial in (fmpz_poly([-2, 1]), fmpz_poly([-2, 0, 0, 1]), fmpz_poly([-1, -1, 0, 0, 1])):
+            gd = rd.galois_data(polynomial)
+            with ctx.workprec(gd.prec * 2):
+                values = rd._basis_values(rd.poly_roots(polynomial, ctx.prec), gd.perms, gd.tower, gd.basis_exp)
+                self.assertEqual(rd.mat_round(values.transpose() * values), gd.gram)
+                vectors = [[fmpq(0)] * gd.order, gd.root_coords[0],
+                           [fmpq(i - 2, i + 1) for i in range(gd.order)]]
+                for vector in vectors:
+                    integers, denominator = rd._clear_denominators(vector)
+                    with patch.object(rd, "_basis_values", wraps=rd._basis_values) as evaluate:
+                        conjugates = rd._conj_vector_at(gd, vector, ctx.prec)
+                    self.assertEqual(len(evaluate.call_args.args[3]), sum(bool(q) for q in vector))
+                    self.assertEqual(rd.coords_from_conjugates(gd, [z * denominator for z in conjugates]),
+                                     [fmpq(q) for q in integers])
+            expected = rd.element_to_algebraic(gd, gd.root_coords[0])
+            with ctx.workprec(97):
+                with patch.object(rd, "conj_vector", side_effect=rd.PrecisionError("force precision retry")), \
+                        patch.object(rd, "_conj_vector_at", wraps=rd._conj_vector_at) as fallback:
+                    actual = rd.element_to_algebraic(gd, gd.root_coords[0])
+                self.assertEqual(ctx.prec, 97)
+                self.assertEqual(fallback.call_count, int(gd.order > 1))
+            self.assertEqual((actual.poly, actual.index), (expected.poly, expected.index))
+
     def test_input_validation(self):
         rd.catalog(1, 1)
         for degree, height in ((True, 1), (1, True), (0, 1), (1, -1)):

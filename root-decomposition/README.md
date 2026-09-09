@@ -97,6 +97,8 @@ matching, counting checks and a group-closure check. Its search-exhaustion concl
 that numerical matching; these are distinct from the exact positive identity and degree checks
 performed with `RootReduce` and `MinimalPolynomial`. Element reconstruction selects distinct
 conjugates by exact coordinate equality under the group action, preserving their first occurrence.
+Both implementations share cached-power basis evaluation between Galois construction and precision
+escalation; Python reevaluates only the nonzero coordinate columns when reconstructing an element.
 The resolvent construction is practical
 for Galois groups of order up to a few hundred.
 

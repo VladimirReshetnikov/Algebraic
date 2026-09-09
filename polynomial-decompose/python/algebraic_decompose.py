@@ -399,7 +399,8 @@ def decompositions(p, x, *, max_chains=None):
     stream = engine.chains(c)
     if max_chains is not None:
         stream = itertools.islice(stream, max_chains + 1)
-    chains = [[engine.expression(v, x) for v in chain] for chain in stream]
+    expression = lru_cache(maxsize=None)(lambda v: engine.expression(v, x))
+    chains = [[expression(v) for v in chain] for chain in stream]
     if max_chains is not None and len(chains) > max_chains:
         raise EnumerationLimitError(max_chains, chains[:max_chains])
     return chains

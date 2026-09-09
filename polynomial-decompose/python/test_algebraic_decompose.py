@@ -1,9 +1,11 @@
 """Exact regression suite: python -m unittest -v test_algebraic_decompose."""
 
 import copy
+import gc
 import random
 import unittest
 from unittest.mock import patch
+import weakref
 
 import sympy as sp
 
@@ -137,6 +139,40 @@ class FunctionalDecompositionTests(unittest.TestCase):
         self.assertFalse(ad.verify_decomposition(x**6, [x**3/8, 2*x**2], x, require_normalized=True))
         self.assertFalse(ad.verify_decomposition(x**6, [x**3, x, x**2], x, require_complete=True))
         self.assertFalse(ad.verify_decomposition(x**6, [x**2, x**2], x))
+
+    def test_enumeration_conversion_cache_lifetime(self):
+        references, prepare = [], ad._prepare
+
+        def track_prepare(*args):
+            engine, vectors = prepare(*args)
+            references.append(weakref.ref(engine))
+            return engine, vectors
+
+        # A per-call cache must release the field engine even before cyclic GC.
+        enabled = gc.isenabled()
+        gc.disable()
+        try:
+            with patch.object(ad, "_prepare", track_prepare):
+                full = ad.decompositions(x**30, x)
+                self.assertEqual(len(full), 6)
+                self.assertIsNone(references[-1]())
+                self.assertEqual(ad.decompositions(x**30, x, max_chains=6), full)
+                self.assertIsNone(references[-1]())
+                try:
+                    ad.decompositions(x**30, x, max_chains=1)
+                except ad.EnumerationLimitError as error:
+                    self.assertEqual(error.partial_chains, full[:1])
+                    self.assertFalse(error.complete)
+                else:
+                    self.fail("expected an enumeration limit exception")
+                self.assertIsNone(references[-1]())
+                y = sp.Symbol("y")
+                self.assertEqual(ad.decompositions(y**30, y),
+                                 [[part.subs(x, y) for part in chain] for chain in full])
+                self.assertIsNone(references[-1]())
+        finally:
+            if enabled:
+                gc.enable()
 
     def test_input_rejection(self):
         y = sp.Symbol("y")

@@ -217,13 +217,15 @@ The unchanged archived native suites were independently executed with
 Wolfram 15.0.1: report 1 passed **55/107**, report 2 **39/53**, and report 3
 **60/60**. These results concern the original reports, whose historical
 metadata remains unchanged. The unified project has its own regression
-suites: **86/86 native tests** and **22 Python test methods** passed. The
+suites: **86/86 native tests** and **23 Python test methods** passed. The
 Python methods include 12 generated affine-normalization cases across exact
 fields and degree pairs, in addition to boundary, enumeration, and certificate
 tampering checks. They also exercise truncated congruences, early rejection,
 full certificate digits, 256 convolution products, and the Python fallback
 without native acceleration. Typed certificate caches keep approximate and
 Boolean values distinct from equal exact coefficients.
+Enumeration tests check that symbolic conversion caches release their field
+engines and keep each call's polynomial variable separate.
 All **15 cross-language corpus cases** passed as well.
 Reproduce these checks with:
 

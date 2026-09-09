@@ -184,4 +184,13 @@ VerificationTest[Module[{data = RootGaloisData[x^2 - 2, x, "WorkingPrecision" ->
       MinimalPolynomial[result, x] === Expand[(den^2 (x - 1)^2 - 2)/2], {j, 2}]],
   True, TestID -> "exact element orbits preserve extremely close conjugate branches"];
 
+VerificationTest[And @@ Table[
+  Module[{data = RootGaloisData[p, x], values},
+    values = RootDecomposition`Private`valuesAtPrecision[data, 2 data["Precision"]];
+    RootDecomposition`Private`basisValues[data["NumericRoots"], data["Permutations"], data["Tower"],
+      data["BasisExponents"]] === data["Values"] &&
+      RootDecomposition`Private`roundIntegerMatrix[Transpose[values] . values] === data["Gram"]],
+  {p, {x - 2, x^3 - 2, x^4 - x - 1}}], True,
+  TestID -> "shared basis evaluation preserves exact trace matrices at higher precision"];
+
 EndTestSection[];

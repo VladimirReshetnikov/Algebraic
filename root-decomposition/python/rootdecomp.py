@@ -589,6 +589,21 @@ def _element_order(mt, g, ident):
     return k
 
 
+def _basis_values(roots, perms, tower, basis_exp):
+    """Evaluate the selected tower monomials at each root permutation."""
+    gens = [g for g, _ in tower]
+    maxe = max((e for ex in basis_exp for e in ex), default=0)
+    powers = [[root ** e for e in range(maxe + 1)] for root in roots]
+    values = acb_mat(len(perms), len(basis_exp))
+    for s, perm in enumerate(perms):
+        for b, ex in enumerate(basis_exp):
+            value = acb(1)
+            for j, g in enumerate(gens):
+                value *= powers[perm[g]][ex[j]]
+            values[s, b] = value
+    return values
+
+
 def build_galois_data(poly: fmpz_poly, prec_bits: int = 300, maxorder: int = 400, seed: int = 1) -> GaloisData:
     """Complete Galois/field data for the roots of a monic squarefree integer polynomial."""
     rng = random.Random(seed)
@@ -601,18 +616,8 @@ def _build_at_precision(poly, prec, maxorder, rng) -> GaloisData:
     n = len(roots)
     perms, tower = galois_group(roots, maxorder, rng)
     order = len(perms)
-    gens = [g for g, _ in tower]
-    expo = [e for _, e in tower]
-    basis_exp = list(itertools.product(*[range(e) for e in expo])) if gens else [()]
-    maxe = max(expo) if expo else 1
-    pw = [[roots[i] ** e for e in range(maxe + 1)] for i in range(n)]
-    values = acb_mat(order, order)
-    for s, perm in enumerate(perms):
-        for b, ex in enumerate(basis_exp):
-            v = acb(1)
-            for j, g in enumerate(gens):
-                v *= pw[perm[g]][ex[j]]
-            values[s, b] = v
+    basis_exp = list(itertools.product(*(range(e) for _, e in tower)))
+    values = _basis_values(roots, perms, tower, basis_exp)
     vt = values.transpose()
     gram = mat_round(vt * values)
     if gram.det() == 0:
@@ -820,19 +825,9 @@ def element_to_algebraic(gd: GaloisData, v) -> AlgebraicNumber:
 
 def _conj_vector_at(gd: GaloisData, w, prec):
     roots = poly_roots(gd.poly, prec)
-    gens = [g for g, _ in gd.tower]
-    out = []
-    for perm in gd.perms:
-        acc = acb(0)
-        for b, ex in enumerate(gd.basis_exp):
-            if w[b] == 0:
-                continue
-            m = acb(1)
-            for j, g in enumerate(gens):
-                m *= roots[perm[g]] ** ex[j]
-            acc += m * _fmpq_to_acb(fmpq(w[b]))
-        out.append(acc)
-    return out
+    indices = [i for i, q in enumerate(w) if q]
+    values = _basis_values(roots, gd.perms, gd.tower, [gd.basis_exp[i] for i in indices])
+    return (values * acb_mat(len(indices), 1, [_fmpq_to_acb(fmpq(w[i])) for i in indices])).entries()
 
 
 
@@ -1038,7 +1033,7 @@ class Decomposition:
 
 
 def locate_target(gd: GaloisData, a: AlgebraicNumber) -> int:
-    """index of scale*a among gd.roots (same ordering as Mathematica for the scaled polynomial)"""
+    """Locate scale*a among the splitting-field roots by a unique ball overlap."""
     z = a.value(gd.prec) * gd.scale
     matches = [i for i, root in enumerate(gd.roots) if root.overlaps(z)]
     if len(matches) != 1:
@@ -1783,7 +1778,6 @@ def verify_exact(a: AlgebraicNumber, dec: Decomposition, prec_bits: int = 300) -
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    import sys
     import time
 
     ap = parse_wolfram_root("Root[-1 - # + 3 #^3 - #^4 + #^5 - 3 #^6 + 2 #^7 + #^9 &, 1]")
