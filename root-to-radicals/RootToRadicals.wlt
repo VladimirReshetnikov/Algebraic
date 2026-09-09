@@ -73,6 +73,25 @@ rg5 = RootRadicalReport[a5, Method -> "Galois"];
 VerificationTest[rg5["Verified"], True, TestID -> "quintic example by descent"];
 VerificationTest[{rg5["GaloisGroupOrder"], rg5["ExtendedGroupOrder"]}, {20, 40}, TestID -> "quintic example group orders"];
 
+(* Each suffix of quotient generators generates the corresponding subgroup. *)
+VerificationTest[Module[{x, gd, H, index, steps, generators, identity, fixedSpace, basis},
+  And @@ Table[
+    gd = RootGaloisData[case[[1]], x]; H = Range[gd["Order"]];
+    If[case[[2]] != 0,
+      index = First@FirstPosition[gd["Roots"], _?(RootReduce[# - gd["Scale"] Exp[2 Pi I/case[[2]]]] === 0 &)];
+      H = Select[H, gd["Permutations"][[#, index]] == index &]];
+    identity = IdentityMatrix[gd["Order"]];
+    fixedSpace[group_] := RowReduce[NullSpace[Join @@ (gd["Automorphisms"][[#]] - identity & /@ group)]];
+    steps = RootToRadicals`Private`primeSeries[gd["MultiplicationTable"], gd["Identity"], H];
+    {gd["Order"], Length[H]} == case[[3]] && And @@ Table[
+      generators = steps[[i ;;, "Generator"]]; basis = fixedSpace[generators];
+      RootDecomposition`Private`groupClosure[gd["MultiplicationTable"], gd["Identity"], generators] == steps[[i, "Group"]] &&
+        basis == fixedSpace[steps[[i, "Group"]]] && Length[basis] Length[steps[[i, "Group"]]] == gd["Order"] &&
+        AllTrue[basis, RootToRadicals`Private`fixedByQ[gd, #, steps[[i, "Group"]]] &], {i, Length[steps]}],
+    {case, {{x^3 - 3 x + 1, 0, {3, 3}}, {x^4 - x - 1, 0, {24, 24}},
+      {(x^5 + x^4 - 4 x^3 - 3 x^2 + 3 x + 1) Cyclotomic[5, x], 5, {20, 5}}}}]],
+  True, TestID -> "series generator suffixes preserve exact fixed spaces including extended base"];
+
 (* Exact coordinate powers agree with the former matrix route, including nonintegral elements. *)
 VerificationTest[Module[{gd, vectors, one},
   gd = RootGaloisData[RootDecomposition`Private`x^3 - 2,

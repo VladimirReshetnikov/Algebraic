@@ -531,10 +531,6 @@ def _iterate(M: fmpq_mat, v, times: int) -> list:
     return out
 
 
-def _is_zero(v) -> bool:
-    return all(q == 0 for q in v)
-
-
 def _fixed_by(gd, v, elems) -> bool:
     return all(_apply(gd.automorphisms[s], v) == v for s in elems)
 
@@ -620,17 +616,17 @@ def _descend(gd, a: AlgebraicNumber, primes: list, st: _State):
             if sol is None:
                 raise DescentError("element not in the base cyclotomic field")
             return sp.expand(sum(sp.Rational(s) * sym for s, (sym, _) in zip(sol, base_basis)))
-        if _is_zero(v):
+        if not any(v):
             return sp.Integer(0)
         step = steps[level - 1]
-        M, q = step["group"], step["prime"]
-        if _fixed_by(gd, v, M):
+        generators, q = [s["generator"] for s in steps[level - 1:]], step["prime"]
+        if _fixed_by(gd, v, generators):
             return rad(v, level - 1)
         with ctx.workprec(gd.prec):
             # zw[j][e] = zeta^e sigma^j(v): q^2 matrix-vector products instead of matrix powers
             zw = [_iterate(zeta_mult[q], w, q - 1) for w in _iterate(gd.automorphisms[step["generator"]], v, q - 1)]
             R = [[sum(zw[j][(-k * j) % q][i] for j in range(q)) for i in range(order)] for k in range(q)]
-            nonzero = [k for k in range(1, q) if not _is_zero(R[k])]
+            nonzero = [k for k in range(1, q) if any(R[k])]
             R0 = rad(R[0], level - 1)
             choices = []
             if st.resolvents != "eigenvector" or q == 2:
@@ -643,7 +639,7 @@ def _descend(gd, a: AlgebraicNumber, primes: list, st: _State):
                 for k in nonzero[1:]:
                     m = (k * pow(k1, -1, q)) % q
                     ck = divide(R[k], m)                     # c_k = R_k / R_k1^m lies one level down
-                    if ck is None or not _fixed_by(gd, ck, M):
+                    if ck is None or not _fixed_by(gd, ck, generators):
                         raise DescentError("eigenvector ratio is not in the lower field")
                     total += rad(ck, level - 1) * u ** m
                 choices.append(total / q)

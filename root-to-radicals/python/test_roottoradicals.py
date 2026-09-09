@@ -119,6 +119,38 @@ class Examples(unittest.TestCase):
             run(f"dense degree-16 decomposition conjugate {k}", rd.AlgebraicNumber(p, k), "Decompose")
 
 
+class CompositionSeries(unittest.TestCase):
+    def test_suffix_generators_and_fixed_spaces(self):
+        for p, base_prime, expected_order, expected_subgroup in [
+                (fmpz_poly([1, -3, 0, 1]), None, 3, 3),
+                (fmpz_poly([-1, -1, 0, 0, 1]), None, 24, 24),
+                (fmpz_poly([1, 3, -3, -4, 1, 1]) * rt.cyclotomic(5), 5, 20, 5)]:
+            gd = rd.galois_data(p)
+            H = list(range(gd.order))
+            if base_prime:
+                with rt.ctx.workprec(gd.prec):
+                    zeta = gd.scale * (rt.acb(0, 2) * rt.arb.pi() / base_prime).exp()
+                    indices = [i for i, root in enumerate(gd.roots) if root.overlaps(zeta)]
+                self.assertEqual(len(indices), 1)
+                H = [g for g in H if gd.perms[g][indices[0]] == indices[0]]
+            self.assertEqual((gd.order, len(H)), (expected_order, expected_subgroup))
+            identity = rt.fmpq_mat([[int(i == j) for j in range(gd.order)] for i in range(gd.order)])
+
+            def fixed_space(group):
+                constraints = rt.fmpq_mat([row for g in group for row in (gd.automorphisms[g] - identity).tolist()])
+                return rd.rowspace_basis(rd.fmpq_nullspace(constraints), gd.order)
+
+            steps = rt.prime_series(gd.mult_table, gd.identity, H)
+            for i, step in enumerate(steps):
+                with self.subTest(order=gd.order, step=i):
+                    generators = [s["generator"] for s in steps[i:]]
+                    self.assertEqual(rd.group_closure(gd.mult_table, gd.identity, generators), frozenset(step["group"]))
+                    basis = fixed_space(generators)
+                    self.assertEqual(basis, fixed_space(step["group"]))
+                    self.assertEqual(len(basis) * len(step["group"]), gd.order)
+                    self.assertTrue(all(rt._fixed_by(gd, v, step["group"]) for v in basis))
+
+
 class FieldPowers(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

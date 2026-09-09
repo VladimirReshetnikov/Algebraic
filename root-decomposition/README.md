@@ -95,7 +95,9 @@ coefficient-selection problem is not the fixed-space linear problem.
 The Wolfram Galois engine uses exact minimal polynomials from `RootReduce`, numerical root
 matching, counting checks and a group-closure check. Its search-exhaustion conclusions rely on
 that numerical matching; these are distinct from the exact positive identity and degree checks
-performed with `RootReduce` and `MinimalPolynomial`. The resolvent construction is practical
+performed with `RootReduce` and `MinimalPolynomial`. Element reconstruction selects distinct
+conjugates by exact coordinate equality under the group action, preserving their first occurrence.
+The resolvent construction is practical
 for Galois groups of order up to a few hundred.
 
 ## Python implementation

@@ -169,4 +169,19 @@ VerificationTest[Module[{attempts = {}, result},
     Throw["precision", RootDecomposition`Private`precTag]], 10], RootDecomposition::prec];
   {FailureQ[result], attempts}], {True, {10, 20, 40, 80}}, TestID -> "shared precision retry preserves four attempt limit"];
 
+VerificationTest[Module[{data = RootGaloisData[x^3 - 2, x], one, result},
+  one = UnitVector[data["Order"], 1];
+  And @@ Table[RootDecomposition`Private`elementToAlgebraic[data, q one] === q, {q, {0, -2/7, 7/3}}] &&
+    And @@ Table[
+      result = RootDecomposition`Private`elementToAlgebraic[data, one + data["RootCoordinates"][[j]]/3];
+      RootReduce[result - 1 - data["Roots"][[j]]/3] === 0 &&
+        MinimalPolynomial[result, x] === Expand[27 (x - 1)^3 - 2], {j, 3}]],
+  True, TestID -> "exact element orbits preserve rational real complex and nonintegral branches"];
+VerificationTest[Module[{data = RootGaloisData[x^2 - 2, x, "WorkingPrecision" -> 30], result, den = 10^40},
+  And @@ Table[
+    result = RootDecomposition`Private`elementToAlgebraic[data, UnitVector[2, 1] + data["RootCoordinates"][[j]]/den];
+    RootReduce[result - 1 - data["Roots"][[j]]/den] === 0 &&
+      MinimalPolynomial[result, x] === Expand[(den^2 (x - 1)^2 - 2)/2], {j, 2}]],
+  True, TestID -> "exact element orbits preserve extremely close conjugate branches"];
+
 EndTestSection[];

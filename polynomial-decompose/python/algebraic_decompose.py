@@ -285,8 +285,8 @@ class _Engine:
                     break
                 scalar = (m + 1) * i - m * k
                 if scalar and u[k - i]:
-                    total += self.K.convert(scalar) * s[i] * u[k - i]
-            u[k] = self.K.exquo(total, self.K.convert(m * k))
+                    total += scalar * s[i] * u[k - i]
+            u[k] = total / (m * k)
         return (self.zero,) + tuple(reversed(u))
 
     def divide_monic(self, a, h):

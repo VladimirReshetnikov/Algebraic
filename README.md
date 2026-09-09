@@ -10,6 +10,8 @@ answers [*Is it possible to make Decompose work with coefficients containing
 radicals?*](https://mathematica.stackexchange.com/q/206618/7288): express a
 polynomial with exact algebraic coefficients as a composition of
 indecomposable polynomials, and enumerate or certify all normalized answers.
+The root-to-radicals project expresses solvable algebraic numbers in radicals
+using structural family recognizers and Galois descent.
 
 ## Layout
 
@@ -28,6 +30,8 @@ indecomposable polynomials, and enumerate or certify all normalized answers.
 | `polynomial-decompose/AlgebraicDecomposition.wl` | Native Wolfram package for one/all complete chains, all pairs, fixed-degree attempts, and independent certificate checking. |
 | `polynomial-decompose/python/` | Exact Python implementation using SymPy number fields, regression tests, benchmarks, and native Wolfram cross-checks. |
 | `polynomial-decompose/reports/` | Three original reports, preserved with their sources, PDFs, code, tests, licenses, and historical validation results. |
+| `root-to-radicals/` | Radical expressions: Wolfram and Python implementations, native and Python tests, independent cross-language checks, and the accompanying article. |
+| `benchmarks/` | Reproducible comparisons of all three Python solvers against an immutable Git revision, with exact output checks and raw timing samples. |
 | `WOLFRAM-NOTES.md` | Subtle Wolfram Language behaviour discovered while developing and running the code. |
 | `LICENSE`, `polynomial-decompose/LICENSE` | MIT-0 for the original project; MIT for polynomial-decompose, retaining its report 3 source notice. Original reports retain their own licenses. |
 

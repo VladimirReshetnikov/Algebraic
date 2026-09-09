@@ -77,6 +77,26 @@ class ArticleExamples(unittest.TestCase):
 
 
 class CorrectnessRegressions(unittest.TestCase):
+    def test_element_reconstruction_preserves_exact_orbits_and_branches(self):
+        gd = rd.galois_data(fmpz_poly([-2, 0, 0, 1]))
+        one = [fmpq(i == 0) for i in range(gd.order)]
+        for numerator, denominator in ((0, 1), (-2, 7), (7, 3)):
+            result = rd.element_to_algebraic(gd, [q * fmpq(numerator, denominator) for q in one])
+            self.assertEqual(result.poly, fmpz_poly([-numerator, denominator]))
+            self.assertEqual(result.index, 1)
+        # Each cubic root has three distinct images in a splitting field of degree six.
+        # If a^3 = 2, then 1 + a/3 has polynomial 27 (x-1)^3 - 2.
+        for j, root in enumerate(gd.root_coords, 1):
+            result = rd.element_to_algebraic(gd, [u + q / 3 for u, q in zip(one, root)])
+            self.assertEqual(result.poly, fmpz_poly([-29, 81, -81, 27]))
+            self.assertEqual(result.index, j)  # Covers the real root and both complex branches.
+        gd = rd.galois_data(fmpz_poly([-2, 0, 1]), prec_bits=100)
+        den = 10 ** 40
+        for j, root in enumerate(gd.root_coords, 1):
+            result = rd.element_to_algebraic(gd, [fmpq(i == 0) + q / den for i, q in enumerate(root)])
+            self.assertEqual(result.poly, fmpz_poly([den * den // 2 - 1, -den * den, den * den // 2]))
+            self.assertEqual(result.index, j)
+
     def test_precision_retry_context_limits_and_exception_filter(self):
         with ctx.workprec(97):
             attempts = []

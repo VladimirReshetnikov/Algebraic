@@ -397,20 +397,16 @@ coordinateOfOne[gd_] := UnitVector[gd["Order"], 1];
 (* exact mean of the conjugates: Tr(y)/[L:Q] with Tr(b_j) = Gram[j,1] *)
 meanTrace[gd_, v_] := (v . gd["Gram"][[1]])/gd["Order"];
 
-elementToAlgebraic[gd_, v_] := Module[{d, den, prec, vals, distinct, poly, cl, k, cands, tol, mag, need, id = gd["Identity"]},
-  If[v == 0 v, Return[0]];
-  d = elementDegree[gd, v];
-  If[d == 1, Return[v[[1]]]];
+elementToAlgebraic[gd_, v_] := Module[{reps, d, den, prec, vals, poly, cl, k, cands, mag, need, id = gd["Identity"]},
+  If[Rest[v] == 0 Rest[v], Return[First[v]]];
+  reps = DeleteDuplicatesBy[Range[gd["Order"]], gd["Automorphisms"][[#]] . v &];
+  d = Length[reps];
   den = LCM @@ Denominator[v];
   mag = Max[Abs[conjugates[gd, den v]]];
   need = Ceiling[d Log10[2 Max[mag, 2]]] + 30;
   prec = Max[gd["Precision"], need];
   vals = valuesAtPrecision[gd, prec] . (den v);
-  tol = 10^(-Floor[prec/3]);
-  distinct = {};
-  Do[If[! AnyTrue[distinct, Abs[# - z] < tol &], AppendTo[distinct, z]], {z, vals}];
-  If[Length[distinct] != d, Throw["precision", precTag]];
-  poly = Expand[Times @@ (x - distinct)];
+  poly = Expand[Times @@ (x - vals[[reps]])];
   cl = roundInteger /@ CoefficientList[poly, x];
   poly = primitiveIntegerPolynomial[FromDigits[Reverse[cl], x] /. x -> den x];
   cands = Table[N[rootObject[poly, j], prec], {j, d}];

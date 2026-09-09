@@ -121,9 +121,10 @@ reused for subsequent powers of the same denominator.
 Root indices of non-real roots are exchanged between the two systems by value, not by
 index (see the companion project's README).
 
-Descent reuses branches common to the Fourier and eigenvector forms. Composition
-chains solve each suffix over the smaller-degree algebraic value already obtained
-at the previous step.
+Descent reuses branches common to the Fourier and eigenvector forms and checks fixed
+fields using the remaining composition-series generators, which generate the whole
+subgroup. Composition chains solve each suffix over the smaller-degree algebraic value
+already obtained at the previous step.
 
 ## Measurements
 

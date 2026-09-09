@@ -799,10 +799,7 @@ def mean_trace(gd: GaloisData, v) -> fmpq:
 def element_to_algebraic(gd: GaloisData, v) -> AlgebraicNumber:
     """Minimal polynomial and root index of the element with coordinates v."""
     v = _vec_fmpq(v)
-    if all(q == 0 for q in v):
-        return AlgebraicNumber.from_rational(0)
-    d = element_degree(gd, v)
-    if d == 1:
+    if not any(v[1:]):
         return AlgebraicNumber.from_rational(Fraction(int(v[0].p), int(v[0].q)))
     w, den = _clear_denominators(v)
     # distinct conjugates: orbit of the coordinate vector
@@ -813,7 +810,6 @@ def element_to_algebraic(gd: GaloisData, v) -> AlgebraicNumber:
         if img not in seen:
             seen.add(img)
             reps.append(s)
-    assert len(reps) == d
     def reconstruct(prec):
         vals = conj_vector(gd, w) if prec == gd.prec else _conj_vector_at(gd, w, prec)
         p = _round_poly(_poly_from_roots([vals[s] for s in reps]))

@@ -395,10 +395,10 @@ descend[gd_, a_, primes_, resolventForm_] := Module[
   (* one prime step: v is fixed by steps[[level]]["Normal"]; extract q-th roots of the Lagrange resolvents
      R_k = Sum_j zeta^(-kj) sigma^j(v) (Fourier form), or of R_k1 alone with R_k = c_k R_k1^m, c_k one
      level down (eigenvector form) *)
-  radCompute[v_, level_] := Module[{st = steps[[level]], M, q, zw, R, nonzero, R0rad, k1, u, divide, ck, choices = {}},
+  radCompute[v_, level_] := Module[{st = steps[[level]], generators, q, zw, R, nonzero, R0rad, k1, u, divide, ck, choices = {}},
     If[v == 0 v, Return[0, Module]];
-    M = st["Group"]; q = st["Prime"];
-    If[fixedByQ[gd, v, M], Return[rad[v, level - 1], Module]];
+    generators = steps[[level ;;, "Generator"]]; q = st["Prime"];
+    If[fixedByQ[gd, v, generators], Return[rad[v, level - 1], Module]];
     (* zw[[j+1, e+1]] = zeta^e sigma^j(v), as vectors: q^2 matrix-vector products instead of matrix powers *)
     zw = NestList[zetaMult[q] . # &, #, q - 1] & /@ NestList[gd["Automorphisms"][[st["Generator"]]] . # &, v, q - 1];
     R = Table[Sum[zw[[j + 1, Mod[-k j, q] + 1]], {j, 0, q - 1}], {k, 0, q - 1}];
@@ -413,7 +413,7 @@ descend[gd_, a_, primes_, resolventForm_] := Module[
       AppendTo[choices, (R0rad + u + Sum[
         With[{m = Mod[k PowerMod[k1, -1, q], q]},
           ck = divide[R[[k + 1]], m];
-          If[! fixedByQ[gd, ck, M], Throw[failure["Descent", "Eigenvector ratio is not in the lower field"], radTag]];
+          If[! fixedByQ[gd, ck, generators], Throw[failure["Descent", "Eigenvector ratio is not in the lower field"], radTag]];
           rad[ck, level - 1] u^m],
         {k, DeleteCases[nonzero, k1]}])/q]];
     First[SortBy[choices, LeafCount]]];
