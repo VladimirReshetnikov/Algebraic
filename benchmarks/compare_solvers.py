@@ -90,12 +90,16 @@ def workloads(before, current, match=""):
 
         yield label, [lambda m=m: checked_chains(m)
                       for m in (before["algebraic_decompose"], current["algebraic_decompose"])], lambda result: result
-    for label, coefficients, method in (
-        ("sum of degree-9 product root", [-1, -1, 0, 3, -1, 1, -3, 2, 0, 1], "sum_decomposition"),
-        ("product of degree-9 sum root", [8, -4, 24, -15, 0, 3, 6, 0, 0, 1], "product_decomposition"),
+    for label, coefficients, index, method, options in (
+        ("sum of degree-9 product root", [-1, -1, 0, 3, -1, 1, -3, 2, 0, 1], 1, "sum_decomposition", {}),
+        ("product of degree-9 sum root", [8, -4, 24, -15, 0, 3, 6, 0, 0, 1], 1, "product_decomposition", {}),
+        ("two-term quartic sum", [-8, 16, -4, -4, 1], 4, "sum_decomposition", {"max_terms": 2}),
+        ("three-factor degree-8 tensor product", [4096, 4096, -16384, 6144, 3008, -768, -256, -8, 1],
+         8, "product_decomposition", {"max_factors": 3, "depth": 0}),
     ):
         if match.lower() in label.lower():
-            yield label, [lambda m=m, a=m.AlgebraicNumber(fmpz_poly(coefficients), 1), f=method: getattr(m, f)(a)
+            yield label, [lambda m=m, a=m.AlgebraicNumber(fmpz_poly(coefficients), index), f=method, o=options:
+                          getattr(m, f)(a, **o)
                           for m in (before["rootdecomp"], current["rootdecomp"])], decomposition_signature
     for label, coefficients in (
         ("S4 field construction", [-1, -1, 0, 0, 1]),

@@ -12,11 +12,11 @@ and python-flint dependencies as the solvers. The baseline revision must be
 available in the local Git history; `204c97f` is the merged baseline before the
 shared solver refactoring.
 
-Fifteen workloads exercise sparse certificate generation, decomposition over an
+Seventeen workloads exercise sparse certificate generation, decomposition over an
 algebraic coefficient field, two complete-chain enumerations, two Galois field
 constructions, bounded catalogue generation, multiplication by a root of unity,
 two input-field operations, generalized reciprocal recognition, dense certificate
-verification, complete-chain generation with verification, and two full root
+verification, complete-chain generation with verification, and four full root
 searches. `--match` selects labels:
 
 ```console
@@ -34,10 +34,14 @@ python benchmarks/compare_solvers.py --baseline b2a8ada --match "of degree-9" --
 The verification-only workload prepares one certificate before timing and
 requires both verifiers to accept it. The chain workflow includes enumeration
 and complete/normalized verification, then compares the entire returned chain
-sets outside the clock. The two root searches use each revision's own algebraic
+sets outside the clock. The four root searches use each revision's own algebraic
 number class and compare every result field, including normalized term
 polynomials/root indices, bounds, optimality flags, method, and extra metadata.
 The warm-up populates each version's field caches before those search timings.
+The capped quartic sum allows at most two terms; the degree-eight tensor product
+allows at most three factors and disables recursive splitting. Their inputs are
+\(1+\sqrt{2}+\sqrt{3}\) and \((1+\sqrt{2})(1+\sqrt{3})(1+\sqrt{5})\), respectively,
+represented by exact polynomials and selected root indices.
 These rows compare exact outputs; independent identity proofs remain the job
 of the project verification suites.
 
@@ -124,3 +128,37 @@ earlier table. The added rank check can cost time on nonempty nullspaces, and
 the low-precision trace trial can cost time when it needs the original fallback.
 The selected workloads show where the refinements help; they do not establish
 that every input becomes faster.
+
+## Exact-domain and bounded-search comparison (9 September 2026)
+
+The [capped-sum snapshot](results/capped-sum-2026-09-09.json),
+[tensor-product snapshot](results/tensor-product-2026-09-09.json), and
+[exact-domain verification snapshot](results/exact-domain-verification-2026-09-09.json)
+compare solver revision `2a827ce` against `90d2386`. Each records seven alternating
+samples and complete exact-output checks. The root searches retain warm field and
+SymPy caches. The chain-generation-and-verification workload clears registered
+SymPy caches outside each timed call.
+
+| Workload | Baseline (seconds) | Refined (seconds) | Baseline / refined |
+| --- | ---: | ---: | ---: |
+| Two-term quartic sum | 0.000162 | 0.000121 | 1.34x |
+| Three-factor degree-8 tensor product | 0.009630 | 0.007552 | 1.28x |
+| Chebyshev degree-120 chains with verification | 0.049570 | 0.039397 | 1.26x |
+
+Reproduce these comparisons with:
+
+```console
+python benchmarks/compare_solvers.py --baseline 90d2386 --match two-term --samples 7
+python benchmarks/compare_solvers.py --baseline 90d2386 --match three-factor --samples 7
+python benchmarks/compare_solvers.py --baseline 90d2386 --match "chains with verification" --cold-sympy-cache --samples 7
+```
+
+The capped sum avoids converting two centered components that the term cap would
+discard. The tensor example exercises reuse of the fixed scale-candidate table.
+The polynomial change avoids materializing expressions for exact `Poly` inputs
+merely to scan for floating-point values. Its benefit depends on cache state:
+a separate warm verification-only T120 comparison was about 7% slower, while
+cold comparisons improved. These rows measure the specified complete workflows,
+and do not establish a universal speedup. Unordered commutator pairs also reduce
+derived-subgroup work in both languages, but this benchmark does not isolate that
+change or claim a substantial full-descent improvement from it.
