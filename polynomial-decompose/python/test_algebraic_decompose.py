@@ -174,6 +174,29 @@ class FunctionalDecompositionTests(unittest.TestCase):
             if enabled:
                 gc.enable()
 
+    def test_mixed_poly_and_factored_component_representations(self):
+        h, f = x*(x+r), (2+r)*(x+1)**3+5
+        p = sp.Poly(f.subs(x, h), x, extension=r)
+        for outer in (f, sp.expand(f), sp.Poly(f, x, extension=r)):
+            for inner in (h, sp.expand(h), sp.Poly(h, x, extension=r)):
+                with self.subTest(outer=outer, inner=inner):
+                    self.assertEqual(sp.Poly(ad.compose([outer, inner], x), x, extension=r), p)
+                    self.assertTrue(ad.verify_decomposition(p, [outer, inner], x,
+                        require_complete=True, require_normalized=True))
+                    for polynomial in (p, p + sp.Poly(x, x)):
+                        data = ad.decomposition_data(polynomial, x, 2)
+                        data.update(inner=inner, outer_candidate=outer)
+                        self.assertTrue(ad.verify_decomposition_data(polynomial, data, x))
+
+        y = sp.Symbol("y")
+        data = ad.decomposition_data(x**4, x, 2)
+        for bad in (sp.Poly(x**2, x, modulus=2), sp.Poly(x**2 + 0.0*x + 1.0, x),
+                    sp.Poly(y**2, y), sp.Poly(x*y, x, y)):
+            with self.subTest(bad=bad):
+                self.assertFalse(ad.verify_decomposition_data(x**4, dict(data, inner=bad), x))
+                with self.assertRaises(ValueError):
+                    ad.compose([x**2, bad], x)
+
     def test_input_rejection(self):
         y = sp.Symbol("y")
         for p in (x**2 + 0.1, x**2 + sp.pi, x**2 + sp.E, x**2+y,

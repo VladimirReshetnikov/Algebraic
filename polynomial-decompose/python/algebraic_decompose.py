@@ -77,13 +77,20 @@ def _raw_coefficients(expression, x):
         raise ValueError("approximate coefficients are not accepted")
     if isinstance(expression, sp.Expr) and x not in expression.free_symbols:
         return [expression]
+    if (isinstance(expression, sp.Poly) and expression.gens == (x,)
+            and expression.domain.characteristic() == 0):
+        return list(reversed(expression.all_coeffs()))
     # CRootOf binds its own polynomial variable. SymPy's expression-domain
     # Poly constructor can nevertheless mistake that bound x for the outer
     # generator. Shield exact algebraic atoms while collecting coefficients.
     atoms = expression.atoms(sp.CRootOf, sp.AlgebraicNumber)
     shield = {atom: sp.Dummy("algebraic_coefficient") for atom in atoms}
     restore = {temporary: atom for atom, temporary in shield.items()}
-    polynomial = sp.Poly(expression.xreplace(shield), x, domain=sp.EX)
+    expression = expression.xreplace(shield)
+    try:
+        polynomial = sp.Poly(expression, x, domain=sp.EX, expand=False)
+    except PolynomialError:
+        polynomial = sp.Poly(expression, x, domain=sp.EX)
     return [c.xreplace(restore) for c in reversed(polynomial.all_coeffs())]
 
 
@@ -101,7 +108,6 @@ def _prepare(expressions, x):
         if isinstance(expression, sp.Poly):
             if expression.gens != (x,) or expression.domain.characteristic() != 0:
                 raise ValueError("a univariate characteristic-zero polynomial is required")
-            expression = expression.as_expr()
         try:
             raw = _raw_coefficients(expression, x)
         except (PolynomialError, CoercionFailed) as exc:
