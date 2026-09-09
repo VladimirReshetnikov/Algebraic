@@ -282,6 +282,24 @@ class CorrectnessRegressions(unittest.TestCase):
                      dmax=2, max_factors=3)
         self.assertEqual(len(result.terms), 3)
 
+    def test_input_field_subfield_order_and_metadata(self):
+        polynomial = fmpz_poly([1, 0, -10, 0, 1])  # theta = sqrt(2) + sqrt(3)
+        target = rd.AlgebraicNumber(polynomial, 4)
+        with patch.dict(rd._ifcache, {}, clear=True):
+            data = rd.input_field_data(polynomial, target, 200)
+        one = [1, 0, 0, 0]
+        bases = [
+            [one, [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]],
+            [one, [0, 1, 0, -fmpq(1, 9)]],  # Q(sqrt(2))
+            [one, [0, 0, 1, 0]],            # Q(sqrt(6))
+            [one],                         # Q appears before the final quadratic subfield
+            [one, [0, 1, 0, -fmpq(1, 11)]], # Q(sqrt(3))
+        ]
+        self.assertEqual(data.subgroups, [dict(index=len(b), fixed=b, elements=None, order=4 // len(b)) for b in bases])
+        self.assertEqual((data.poly, data.scale, data.n, data.theta.poly, data.theta.index,
+                          data.factor_degrees, data.galois, data.traces, data.prec, data.kind),
+                         (polynomial, 1, 4, polynomial, 4, [1, 1, 1, 1], True, [4, 0, 20, 0], 200, "InputField"))
+
     def test_input_field_does_not_extract_external_radicals(self):
         # A Galois input field still must honor the request to keep its factors
         # in that field: norm exponent one is the applicable scoped search.

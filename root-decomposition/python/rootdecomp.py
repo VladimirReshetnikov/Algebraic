@@ -895,10 +895,6 @@ def power_sums(P: fmpz_poly, n: int):
     return s[:n]
 
 
-def _canonical_rows(rows, n):
-    return rowspace_basis(rows, n)
-
-
 def _intersect_rowspaces(A, B, n):
     ca = fmpq_nullspace(fmpq_mat([[fmpq(x) for x in r] for r in A])) if A else None
     cb = fmpq_nullspace(fmpq_mat([[fmpq(x) for x in r] for r in B])) if B else None
@@ -959,21 +955,14 @@ def input_field_data(p: fmpz_poly, a: "AlgebraicNumber", prec_bits: int = 300) -
         for i in range(m):
             for k in range(n):
                 eqs.append([rows[j][i][k] for j in range(n)])
-        principal.append(_canonical_rows(fmpq_nullspace(fmpq_mat(eqs)), n))
+        principal.append(rowspace_basis(fmpq_nullspace(fmpq_mat(eqs)), n))
     ident = [[fmpq(1) if i == j else fmpq(0) for j in range(n)] for i in range(n)]
-    subfields = [ident]
+    subfields = {tuple(map(tuple, ident)): ident}
     for V in principal:
-        new = list(subfields)
-        for S in subfields:
-            new.append(_canonical_rows(_intersect_rowspaces(S, V, n), n))
-        uniq = []
-        seen = set()
-        for S in new:
-            key2 = tuple(tuple(str(q) for q in r) for r in S)
-            if key2 not in seen:
-                seen.add(key2)
-                uniq.append(S)
-        subfields = uniq
+        for S in list(subfields.values()):
+            rows = rowspace_basis(_intersect_rowspaces(S, V, n), n)
+            subfields.setdefault(tuple(map(tuple, rows)), rows)
+    subfields = list(subfields.values())
     one = [[fmpq(1)] + [fmpq(0)] * (n - 1)]
     if not any(len(S) == 1 for S in subfields):
         subfields.append(one)
