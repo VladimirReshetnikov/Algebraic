@@ -71,6 +71,19 @@ def workloads(before, current, match=""):
     yield "degree-2 height-4 catalogue", [lambda m=m: m.catalog.__wrapped__(2, 4)
         for m in (before["rootdecomp"], current["rootdecomp"])], lambda result: tuple(
             (tuple(a.poly.coeffs()), a.index) for a in result)
+    labels = ("input-field degree-8 multiplication matrix", "input-field degree-8 element reconstruction")
+    if any(match.lower() in label.lower() for label in labels):
+        root = current["rootdecomp"]
+        polynomial = fmpz_poly([-2] + [0] * 7 + [1])
+        data = root.input_field_data(polynomial, root.AlgebraicNumber(polynomial, 1))
+        fields = [module.InputFieldData(**vars(data)) for module in (before["rootdecomp"], root)]
+        vector = [fmpq(i + 1, i + 2) for i in range(data.n)]
+        for label, method, signature in (
+            (labels[0], "mult_matrix", lambda result: result),
+            (labels[1], "to_algebraic", lambda result: (tuple(result.poly.coeffs()), result.index)),
+        ):
+            yield label, [lambda field=field, method=method, vector=vector: getattr(field, method)(vector)
+                          for field in fields], signature
     label = "order-48 unity multiplication matrix"
     if match.lower() in label.lower():
         data = current["rootdecomp"].galois_data(fmpz_poly([-1, -1, 0, 0, 1]) * fmpz_poly([1, 1, 1]))

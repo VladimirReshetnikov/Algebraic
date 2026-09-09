@@ -337,6 +337,58 @@ class CorrectnessRegressions(unittest.TestCase):
                         continue
                     self.assertEqual(restored, [fmpq(x) for x in integers])
 
+    def test_input_field_matrix_iterables_and_power_basis_products(self):
+        for n in (1, 2, 4, 8, 16):
+            polynomial = fmpz_poly([-2] + [0] * (n - 1) + [1])
+            field = rd.InputFieldData(polynomial, 1, n, rd.AlgebraicNumber(polynomial, 1),
+                                      [], False, [], [])
+            vectors = [[0] * n, [True] + [0] * (n - 1),
+                       [fmpq(i - 3, i + 1) for i in range(n)]]
+            w = [fmpq(i + 1, i + 2) for i in range(n)]
+            for v in vectors:
+                # In Q[t]/(t^n-2), each overflowing product contributes twice
+                # to its wrapped coefficient. This fixes both column order and padding.
+                expected = [fmpq(0)] * n
+                for i, a in enumerate(v):
+                    for j, b in enumerate(w):
+                        expected[(i + j) % n] += fmpq(a) * b * (2 if i + j >= n else 1)
+                for coordinates in (v, tuple(v), (q for q in v)):
+                    matrix = field.mult_matrix(coordinates)
+                    self.assertEqual((matrix.nrows(), matrix.ncols()), (n, n))
+                    self.assertEqual(rd.apply_matrix(matrix, w), expected)
+        for invalid in (0.0, 1.25, Fraction(1, 2)):
+            with self.subTest(coefficient=invalid), self.assertRaises(TypeError):
+                field.mult_matrix([invalid] + [0] * (n - 1))
+
+    def test_input_field_reconstruction_branches_and_precision(self):
+        for n in (2, 4):
+            polynomial = fmpz_poly([-2] + [0] * (n - 1) + [1])
+            for index in range(1, n + 1):
+                field = rd.InputFieldData(polynomial, 1, n, rd.AlgebraicNumber(polynomial, index),
+                                          [], False, [], [])
+                for vector in ([], [0] * n, [fmpq(-2, 7)] + [0] * (n - 1)):
+                    self.assertEqual(field.to_algebraic(iter(vector)).as_fraction(),
+                                     Fraction(-2, 7) if vector and vector[0] else 0)
+                # Positive affine changes preserve the root index, including complex branches.
+                for denominator in (7, 2**60):
+                    vector = [fmpq(i == 0) + fmpq(i == 1, denominator) for i in range(n)]
+                    expected = rd.primitive(fmpz_poly([-denominator, denominator]) ** n - 2)
+                    for precision in (32, 300):
+                        field.prec = precision
+                        with ctx.workprec(97):
+                            try:
+                                result = field.to_algebraic(vector)
+                            except rd.PrecisionError:
+                                self.assertEqual(precision, 32)
+                            else:
+                                self.assertEqual((result.poly, result.index), (expected, index))
+                            self.assertEqual(ctx.prec, 97)
+                if n == 4:
+                    # theta^2 lies in a proper subfield: its characteristic polynomial is squared.
+                    result = field.to_algebraic([0, 0, 1, 0])
+                    self.assertEqual((result.poly, result.index),
+                                     (fmpz_poly([-2, 0, 1]), 2 if index <= 2 else 1))
+
     def test_shared_basis_and_sparse_precision_fallback(self):
         for polynomial in (fmpz_poly([-2, 1]), fmpz_poly([-2, 0, 0, 1]), fmpz_poly([-1, -1, 0, 0, 1])):
             gd = rd.galois_data(polynomial)
@@ -360,6 +412,28 @@ class CorrectnessRegressions(unittest.TestCase):
                 self.assertEqual(ctx.prec, 97)
                 self.assertEqual(fallback.call_count, int(gd.order > 1))
             self.assertEqual((actual.poly, actual.index), (expected.poly, expected.index))
+
+    def test_newton_sums_match_roots_and_multiplication_traces(self):
+        self.assertEqual(rd.power_sums(fmpz_poly([1]), 0), [])
+        for roots in ([0], [-3, 0, 0, 2], [1, 1, 1, 1, 1], [-5, -2, 1, 3, 4, 7]):
+            polynomial = fmpz_poly([1])
+            for root in roots:
+                polynomial *= fmpz_poly([-root, 1])
+            self.assertEqual(rd.power_sums(polynomial, len(roots)),
+                             [sum(root ** k for root in roots) for k in range(len(roots))])
+        for polynomial in (fmpz_poly([2, -3, 1]), fmpz_poly([-2, 0, 0, 1]), fmpz_poly([1, 1, 1, 1, 1])):
+            n = polynomial.degree()
+            companion = rd.fmpq_mat(n, n)
+            for i in range(n):
+                companion[i, n - 1] = -polynomial[i]
+                if i:
+                    companion[i, i - 1] = 1
+            matrix = companion ** 0
+            traces = []
+            for _ in range(n):
+                traces.append(sum(matrix[i, i] for i in range(n)))
+                matrix *= companion
+            self.assertEqual(rd.power_sums(polynomial, n), traces)
 
     def test_selected_conjugate_rows(self):
         for polynomial in (fmpz_poly([0, 1]), fmpz_poly([-2, 0, 0, 1]), fmpz_poly([-1, -1, 0, 0, 1])):

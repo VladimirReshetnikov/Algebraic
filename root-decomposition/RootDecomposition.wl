@@ -428,10 +428,9 @@ canonicalRows[rows_] := DeleteCases[RowReduce[rows], {0 ..}];
 fieldContainsQ[big_, small_] := MatrixRank[Join[big, small]] == Length[big];
 
 (* Newton power sums p_j = sum of j-th powers of the roots of a monic polynomial *)
-powerSums[P_, n_] := Module[{e, s},
-  e[k_] := (-1)^k Coefficient[P, x, n - k];
+powerSums[P_, n_] := Module[{s},
   s[0] = n;
-  s[k_] := s[k] = Sum[(-1)^(i - 1) e[i] s[k - i], {i, 1, Min[k - 1, n]}] + If[k <= n, (-1)^(k - 1) k e[k], 0];
+  s[k_] := s[k] = -k Coefficient[P, x, n - k] - Sum[Coefficient[P, x, n - i] s[k - i], {i, k - 1}];
   Table[s[j], {j, 0, n - 1}]];
 
 inputFieldData[poly_] := Module[{n, c, P, Pz, theta, fac, factors, principal, subfields, newS, traces, galois, m, rows, eqs, r, key, data},

@@ -219,4 +219,17 @@ VerificationTest[Check[With[{p = RootDecomposition`Private`x^4 - Times @@ Prime[
   {RootDecomposition`Private`frobeniusExponentMultiple[p, 40], RootDecomposition`Private`lowerBoundFromPolynomial[p]}], $Failed],
   {1, 2}, TestID -> "finite Frobenius prime window with no good primes preserves valid lower bound"];
 
+VerificationTest[RootDecomposition`Private`powerSums[1, 0], {}, TestID -> "Newton sums preserve the empty degree zero range"];
+VerificationTest[And @@ Table[With[{xx = RootDecomposition`Private`x, n = Length[roots]},
+  RootDecomposition`Private`powerSums[Expand[Times @@ (xx - roots)], n] ===
+    Prepend[Table[Total[roots^k], {k, 1, n - 1}], n]],
+  {roots, {{0}, {-3, 0, 0, 2}, {1, 1, 1, 1, 1}, {-5, -2, 1, 3, 4, 7}}}], True,
+  TestID -> "Newton sums match independent root powers including repeated and zero roots"];
+VerificationTest[And @@ Table[Module[{xx = RootDecomposition`Private`x, n, matrix},
+  n = Exponent[p, x];
+  matrix = Table[If[i == j + 1, 1, 0] - If[j == n, Coefficient[p, x, i - 1], 0], {i, n}, {j, n}];
+  RootDecomposition`Private`powerSums[p /. x -> xx, n] === Table[Tr[MatrixPower[matrix, k]], {k, 0, n - 1}]],
+  {p, {2 - 3 x + x^2, x^3 - 2, 1 + x + x^2 + x^3 + x^4}}], True,
+  TestID -> "Newton sums match exact companion matrix traces for real and complex roots"];
+
 EndTestSection[];

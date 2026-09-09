@@ -866,51 +866,33 @@ class InputFieldData:
 
     def mult_matrix(self, v) -> fmpq_mat:
         """matrix of multiplication by sum v_j theta^j in the power basis"""
-        n = self.n
-        coeffs = _fmpz_list(self.poly.coeffs())
-        cols = []
-        cur = [fmpq(x) for x in v]
-        for k in range(n):
-            cols.append(cur)
-            # multiply by theta: shift and reduce
-            nxt = [fmpq(0)] + cur[:-1]
-            top = cur[-1]
-            if top != 0:
-                nxt = [nxt[i] - top * coeffs[i] for i in range(n)]
-            cur = nxt
-        return _col_matrix(cols, n)
+        current, modulus, columns = fmpq_poly(_vec_fmpq(v)), fmpq_poly(self.poly), []
+        for _ in range(self.n):
+            columns.append(current.coeffs() + [fmpq(0)] * (self.n - len(current)))
+            current = current.left_shift(1) % modulus
+        return _col_matrix(columns, self.n)
 
     def mean_trace(self, v) -> fmpq:
         return sum((fmpq(v[j]) * int(self.traces[j]) for j in range(self.n)), fmpq(0)) / self.n
 
     def to_algebraic(self, v) -> "AlgebraicNumber":
         v = _vec_fmpq(v)
-        if all(q == 0 for q in v):
-            return AlgebraicNumber.from_rational(0)
-        if all(q == 0 for q in v[1:]):
-            return AlgebraicNumber.from_rational(Fraction(int(v[0].p), int(v[0].q)))
-        M = self.mult_matrix(v)
-        cp = M.charpoly()                       # fmpq_poly, = minpoly^(n/d)
-        ip = fmpz_poly(_clear_denominators(cp.coeffs())[0])
+        if not any(v[1:]):
+            q = v[0] if v else fmpq(0)
+            return AlgebraicNumber.from_rational(Fraction(int(q.p), int(q.q)))
+        ip = self.mult_matrix(v).charpoly().numer()  # minpoly^(n/d), with denominators cleared
         with ctx.workprec(self.prec):
-            th = self.theta.value(self.prec)
-            val = acb(0)
-            for j in range(self.n - 1, -1, -1):
-                val = val * th + _fmpq_to_acb(v[j])
+            val = acb_poly(fmpq_poly(v))(self.theta.value(self.prec))
             g = _matching_factor(ip.factor()[1], val)
             return AlgebraicNumber.from_value(g, val, self.prec)
 
 
 def power_sums(P: fmpz_poly, n: int):
     c = _fmpz_list(P.coeffs())
-    e = lambda k: (-1) ** k * c[n - k]
-    s = {0: n}
+    s = [n]
     for k in range(1, n):
-        acc = sum((-1) ** (i - 1) * e(i) * s[k - i] for i in range(1, min(k - 1, n) + 1))
-        if k <= n:
-            acc += (-1) ** (k - 1) * k * e(k)
-        s[k] = acc
-    return [s[j] for j in range(n)]
+        s.append(-k * c[n - k] - sum(c[n - i] * s[k - i] for i in range(1, k)))
+    return s[:n]
 
 
 def _canonical_rows(rows, n):
