@@ -186,6 +186,31 @@ polynomial products, exact subgroup containment, the stronger compositum-degree 
 early rejection of impossible bounded-search boxes. Many-factor tensor search starts at the
 unrestricted lower bound rather than the two-factor square-root bound.
 
+## Tensor search implementation
+
+Tensor candidates first pass an exact compositum check. For fixed fields
+`L^H_i` in a Galois field `L`, their compositum is fixed by the intersection
+of the subgroups `H_i`. A nontrivial intersection means the product basis
+cannot span `L`, so the candidate can be discarded before constructing
+multiplication matrices. The two-factor and tensor searches share this
+degree calculation.
+
+Python also tests necessary tensor identities using rigorous Arb enclosures.
+When the field degrees multiply to `|G|` and the subgroup intersection is
+trivial, the map `g -> (g H_1, ..., g H_r)` bijects the Galois group with the
+product of the right-coset sets. Conjugates of a product of field elements
+therefore form a rank-one tensor in these coordinates. A tensor minor whose
+ball excludes zero proves that a candidate fails. Inconclusive enclosures
+continue to the exact rational tensor solve. Accepted decompositions retain
+the existing exact checks, and both the candidate order and search caps are
+preserved. Wolfram uses the exact subgroup filter; its numerical precision
+estimates are not used to certify this additional rejection test.
+
+The field engine also shares integral-polynomial normalization, rational
+matrix construction, subgroup closure and coordinate-power reconstruction
+with the radicals solver. Prime-degree lower bounds return immediately once
+the degree-divisibility bound is already sharp.
+
 ## Main mathematical results
 
 - Both examples have globally optimal maximum degree 3.

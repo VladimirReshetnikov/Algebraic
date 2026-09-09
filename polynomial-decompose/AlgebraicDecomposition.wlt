@@ -261,3 +261,13 @@ VerificationTest[And @@ Flatten[Table[
       PadRight[Take[CoefficientList[(1 + 2 x - 3 x^3 + x^4)^m, x], UpTo[d]], d]],
   {m, {1, 2, 3, 8, 17}}, {d, {1, 2, 4, 9}}]], True,
   TestID -> "truncated binary powers match full polynomial arithmetic"]
+VerificationTest[Module[{vectors, product, size},
+  vectors = {{0}, {1}, {1, 2}, {0, 0, 3}, {1/3, -2/5, 7},
+    {Sqrt[2], 1, -Sqrt[2]}, {I, 2 + I, -3}, {Root[#^5 - # - 1 &, 1], 1, 2}};
+  And @@ Flatten[Table[
+    size = Min[Length[a] + Length[b] - 1, d];
+    product = CoefficientList[Expand[FromDigits[Reverse[a], x] FromDigits[Reverse[b], x]], x];
+    AlgebraicDecomposition`Private`multiply[a, b, d] ===
+      AlgebraicDecomposition`Private`trim[RootReduce /@ Take[product, UpTo[size]]],
+    {a, vectors}, {b, vectors}, {d, {1, 2, 5, Infinity}}]]], True,
+  TestID -> "exact convolution matches symbolic polynomial products"]

@@ -87,7 +87,9 @@ class FunctionalDecompositionTests(unittest.TestCase):
         alpha = sp.CRootOf(t**5-t-1, 0)
         field = sp.QQ.algebraic_field(alpha)
         p = sp.Poly((1+alpha)*(x**3+alpha*x)**2 + alpha**2*(x**3+alpha*x) + alpha, x, domain=field)
-        pair = ad.right_decompose(p, x, 3)
+        with patch.object(type(field), "from_AlgebraicField",
+                          side_effect=AssertionError("existing field coefficients converted again")):
+            pair = ad.right_decompose(p, x, 3)
         self.assertIsNotNone(pair)
         self.assert_complete(p, ad.decompose(p, x))
         cancelled = (alpha**5-alpha-1)*x**8 + x**2
@@ -207,6 +209,16 @@ class CertificateTests(unittest.TestCase):
             self.assertEqual(ad.right_decompose(x**12, x, 4), (x**3, x**4))
             data = ad.decomposition_data(x**12, x, 4)
             self.assertTrue(ad.verify_decomposition_data(x**12, data, x))
+
+    def test_cached_vectors_still_reject_inexact_and_boolean_digits(self):
+        source = ad.decomposition_data(x**12 + 1, x, 2)
+        # The exact constant digit 1 is converted before the leading digit.
+        # Python's 1.0 and True compare equal to it but are invalid certificates.
+        for invalid in (1.0, True, sp.Float(1), [1]):
+            with self.subTest(digit=invalid):
+                data = copy.deepcopy(source)
+                data["digits"][-1] = invalid
+                self.assertFalse(ad.verify_decomposition_data(x**12 + 1, data, x))
 
     def test_tampered_fixed_degree_certificates(self):
         p = (x**4+x)**2

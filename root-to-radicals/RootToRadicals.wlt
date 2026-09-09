@@ -73,6 +73,20 @@ rg5 = RootRadicalReport[a5, Method -> "Galois"];
 VerificationTest[rg5["Verified"], True, TestID -> "quintic example by descent"];
 VerificationTest[{rg5["GaloisGroupOrder"], rg5["ExtendedGroupOrder"]}, {20, 40}, TestID -> "quintic example group orders"];
 
+(* Exact coordinate powers agree with the former matrix route, including nonintegral elements. *)
+VerificationTest[Module[{gd, vectors, one},
+  gd = RootGaloisData[RootDecomposition`Private`x^3 - 2,
+    RootDecomposition`Private`x, "WorkingPrecision" -> 80];
+  one = UnitVector[gd["Order"], 1];
+  vectors = {0 one, gd["RootCoordinates"][[2]],
+    gd["RootCoordinates"][[1]]/3 + gd["RootCoordinates"][[2]]/7,
+    10^40 one + ConstantArray[1/7, gd["Order"]]};
+  And @@ Flatten[Table[
+    RootDecomposition`Private`powerCoordinates[gd, v, k] ==
+      If[k == 0, one, MatrixPower[RootDecomposition`Private`multiplicationMatrixOfElement[gd, v], k] . one],
+    {v, vectors}, {k, {0, 1, 2, 3, 5}}]]],
+  True, TestID -> "coordinate powers match matrices including precision fallback"];
+
 (* structural families *)
 rd10 = RootRadicalReport[Root[#^10 + #^8 - 4 #^6 - 3 #^4 + 3 #^2 + 1 &, 5]];   (* c5's polynomial composed with x^2 *)
 VerificationTest[rd10["Verified"], True, TestID -> "decomposition verified"];

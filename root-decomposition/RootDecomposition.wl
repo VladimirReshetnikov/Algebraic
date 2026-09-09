@@ -160,8 +160,9 @@ frobeniusExponentMultiple[poly_, maxPrimes_: 40] := Module[{disc, lc, ps, orders
     {q, ps}];
   LCM @@ orders];
 
-lowerBoundFromPolynomial[poly_] := Module[{n = Exponent[poly, x]},
-  If[n == 1, 1, Max[largestPrimeFactor[n], exponentBound[frobeniusExponentMultiple[poly]]]]];
+lowerBoundFromPolynomial[poly_] := Module[{n = Exponent[poly, x], bound},
+  bound = largestPrimeFactor[n];
+  If[bound == n, bound, Max[bound, exponentBound[frobeniusExponentMultiple[poly]]]]];
 
 RootDecompositionLowerBound[a_] := Module[{in = inputData[a]},
   If[FailureQ[in], Return[in]];
@@ -354,6 +355,16 @@ multiplicationMatrix[gd_, yv_] := gd["GramInverse"] . roundIntegerMatrix[Transpo
 
 multiplicationMatrixOfElement[gd_, v_] := Module[{den = LCM @@ Denominator[v]},
   multiplicationMatrix[gd, conjugates[gd, den v]]/den];
+
+(* Reconstruct one coordinate vector from integral traces; retain the matrix route if a large power
+   exhausts trace precision at which the multiplication matrix itself can still be recovered. *)
+powerCoordinates[gd_, v_, 0] := coordinateOfOne[gd];
+powerCoordinates[gd_, v_, 1] := v;
+powerCoordinates[gd_, v_, k_Integer?positiveIntegerQ] := Module[{den = LCM @@ Denominator[v], result},
+  result = Catch[gd["GramInverse"] .
+    (roundInteger /@ (Transpose[gd["Values"]] . conjugates[gd, den v]^k))/den^k, precTag];
+  If[result === "precision",
+    With[{matrix = multiplicationMatrixOfElement[gd, v]}, Nest[matrix . # &, v, k - 1]], result]];
 
 elementDegree[gd_, v_] := Module[{cnt = 0}, Do[If[aut . v == v, cnt++], {aut, gd["Automorphisms"]}]; gd["Order"]/cnt];
 
@@ -714,6 +725,9 @@ niceScale[u_] := Module[{f, d, best = 1, h, hb = {Infinity, 0, 0}, g, q0},
 
 principalRoot[u_, t_Integer] := If[t == 1, u, RootReduce[Power[u, 1/t]]];
 
+compositumDegreeBound[fd_, fields_] := If[fd["Type"] === "Galois",
+  fd["Order"]/Length[Intersection @@ (#["Elements"] & /@ fields)], Times @@ (#["Index"] & /@ fields)];
+
 twoFactorSearch[fd_, va_, a_, n_, d_, stab_, scope_, ma_] := Module[{tmax, subs, pairs, mt},
   tmax = If[scope === "Global" && stab === None && (fd["Type"] === "Galois" || fd["Galois"]), Min[d, Floor[d^2/n]], 1];
   Catch[
@@ -722,9 +736,7 @@ twoFactorSearch[fd_, va_, a_, n_, d_, stab_, scope_, ma_] := Module[{tmax, subs,
       If[subs === {}, Continue[]];
       mt = MatrixPower[ma, t];
       pairs = Select[Join @@ Table[{subs[[i]], subs[[j]]}, {i, Length[subs]}, {j, i, Length[subs]}],
-        n <= t If[fd["Type"] === "Galois",
-          fd["Order"]/Length[Intersection[#[[1]]["Elements"], #[[2]]["Elements"]]],
-          #[[1]]["Index"] #[[2]]["Index"]] &];
+        n <= t compositumDegreeBound[fd, #] &];
       pairs = SortBy[pairs, {Max[#[[1]]["Index"], #[[2]]["Index"]], #[[1]]["Index"] + #[[2]]["Index"]} &];
       Do[
         With[{res = tryPair[fd, pr, mt, t, a, d]}, If[res =!= $Failed, Throw[res, foundTag]]],
@@ -774,6 +786,7 @@ tensorSearch[gd_, va_, d_, stab_, maxFactors_] := Module[{subs, ord = gd["Order"
 
 tensorTest[gd_, fam_, va_] := Module[{bases, prodBasis, mats, coords, dims, tensor, piv, pos, vecs, ok, elems, ord = gd["Order"], idx},
   bases = #["FixedField"] & /@ fam; dims = Length /@ bases;
+  If[compositumDegreeBound[gd, fam] < ord, Return[$Failed]];
   mats = Map[Function[B, Map[(If[! KeyExistsQ[$multCache, #], $multCache[#] = multMatrix[gd, #]]; $multCache[#]) &, B]], bases];
   idx = Tuples[Range /@ dims];
   prodBasis = Table[Fold[#2 . #1 &, UnitVector[ord, 1], Table[mats[[j, i[[j]]]], {j, Length[fam]}]], {i, idx}];

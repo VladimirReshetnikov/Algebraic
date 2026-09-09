@@ -71,6 +71,7 @@ failure = RootDecomposition`Private`failure;
 locateTarget = RootDecomposition`Private`locateTarget;
 conjugates = RootDecomposition`Private`conjugates;
 multiplicationMatrixOfElement = RootDecomposition`Private`multiplicationMatrixOfElement;
+powerCoordinates = RootDecomposition`Private`powerCoordinates;
 rationalQ = RootDecomposition`Private`rationalQ;
 precTag = RootDecomposition`Private`precTag;
 frobeniusExponentMultiple = RootDecomposition`Private`frobeniusExponentMultiple;
@@ -386,7 +387,7 @@ descend[gd_, a_, primes_, resolventForm_] := Module[
     Expand[sol . baseBasis[[All, 1]]]];
   (* branch[Rk, q, level]: the q-th root of Rk^q (one level down) with the branch equal to Rk *)
   branch[Rk_, q_, level_] := branch[Rk, q, level] = Module[{qrad, sel},
-    qrad = rad[With[{Mk = multiplicationMatrixOfElement[gd, Rk]}, Nest[Mk . # &, Rk, q - 1]], level - 1];
+    qrad = rad[powerCoordinates[gd, Rk, q], level - 1];
     sel = selectCandidate[Table[zeta[q]^e qrad^(1/q), {e, 0, q - 1}], conjugates[gd, Rk][[gd["Identity"]]]];
     If[sel === $Failed, Throw[failure["Branch", "Could not identify the radical branch"], radTag]];
     sel];

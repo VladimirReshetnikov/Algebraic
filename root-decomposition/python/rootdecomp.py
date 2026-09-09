@@ -423,9 +423,8 @@ def lower_bound(p: fmpz_poly) -> int:
 def _lower_bound_cached(coeffs):
     p = fmpz_poly(list(coeffs))
     n = p.degree()
-    if n == 1:
-        return 1
-    return max(largest_prime_factor(n), exponent_bound(frobenius_exponent_multiple(p)))
+    bound = largest_prime_factor(n)
+    return bound if bound == n else max(bound, exponent_bound(frobenius_exponent_multiple(p)))
 
 
 # ---------------------------------------------------------------------------
@@ -671,11 +670,7 @@ _cache: dict = {}
 def galois_data(p: fmpz_poly, prec_bits: int = 300, maxorder: int = 400) -> GaloisData:
     """Galois data for a primitive integer polynomial (roots scaled to algebraic integers)."""
     p = primitive(p)
-    n = p.degree()
-    c = int(p.leading_coefficient())
-    # monic polynomial for c*root
-    coeffs = _fmpz_list(p.coeffs())
-    mon = fmpz_poly([coeffs[i] * c ** (n - 1 - i) for i in range(n)] + [1])
+    mon, c = _integral_model(p)
     key = (tuple(_fmpz_list(mon.coeffs())), c, prec_bits)
     if key in _cache:
         if _cache[key].order > maxorder:
@@ -712,14 +707,8 @@ def _fmpq_to_acb(q: fmpq) -> acb:
 
 
 def coords_from_conjugates(gd: GaloisData, yv: list[acb]) -> list[fmpq]:
-    rhs = acb_mat(gd.order, 1)
-    for l in range(gd.order):
-        acc = acb(0)
-        for s in range(gd.order):
-            acc += yv[s] * gd.values[s, l]
-        rhs[l, 0] = acc
-    r = gd.gram_inv * fmpq_mat(mat_round(rhs))
-    return [r[i, 0] for i in range(gd.order)]
+    rhs = gd.values.transpose() * acb_mat(gd.order, 1, yv)
+    return (gd.gram_inv * fmpq_mat(mat_round(rhs))).entries()
 
 
 def multiplication_matrix(gd: GaloisData, yv: list[acb]) -> fmpq_mat:
@@ -734,6 +723,28 @@ def multiplication_matrix(gd: GaloisData, yv: list[acb]) -> fmpq_mat:
 def multiplication_matrix_of(gd: GaloisData, v) -> fmpq_mat:
     integers, den = _clear_denominators(v)
     return multiplication_matrix(gd, conj_vector(gd, integers)) / den
+
+
+def power_coordinates(gd: GaloisData, v, exponent: int) -> list[fmpq]:
+    """Exact nonnegative power, reconstructing one coordinate vector instead of a matrix."""
+    if not isinstance(exponent, int) or exponent < 0:
+        raise ValueError("the exponent must be a nonnegative integer")
+    if exponent == 0:
+        return [fmpq(1)] + [fmpq(0)] * (gd.order - 1)
+    if exponent == 1:
+        return _vec_fmpq(v)
+    integers, den = _clear_denominators(v)
+    with ctx.workprec(gd.prec):
+        try:
+            powers = [z ** exponent for z in conj_vector(gd, integers)]
+            return [c / den ** exponent for c in coords_from_conjugates(gd, powers)]
+        except PrecisionError:
+            # Large powers can exhaust trace precision even when a single matrix is recoverable.
+            matrix = multiplication_matrix_of(gd, v)
+            result = _vec_fmpq(v)
+            for _ in range(exponent - 1):
+                result = apply_matrix(matrix, result)
+            return result
 
 
 def apply_matrix(M: fmpq_mat, v):
@@ -896,9 +907,7 @@ def input_field_data(p: fmpz_poly, a: "AlgebraicNumber", prec_bits: int = 300) -
     if p != a.poly:
         raise ValueError("p must be the minimal polynomial of a")
     n = p.degree()
-    c = int(p.leading_coefficient())
-    coeffs = _fmpz_list(p.coeffs())
-    mon = fmpz_poly([coeffs[i] * c ** (n - 1 - i) for i in range(n)] + [1])
+    mon, c = _integral_model(p)
     key = tuple(_fmpz_list(mon.coeffs()))
     # Positive scaling preserves the root order, including complex conjugates.
     theta = AlgebraicNumber(mon, a.index)
@@ -1263,6 +1272,14 @@ def quotient_algebraic(a: AlgebraicNumber, b: AlgebraicNumber, bt_over_field_pol
         return AlgebraicNumber.from_value(g, val, prec_bits)
 
 
+def compositum_degree_bound(fd, fields):
+    """Exact for fixed fields in Galois data; an upper bound in an input field."""
+    if fields[0]["elements"] is not None:
+        intersection = frozenset.intersection(*(h["elements"] for h in fields))
+        return fd.order // len(intersection)
+    return math.prod(h["index"] for h in fields)
+
+
 def two_factor_search(fd, va, a: AlgebraicNumber, n: int, d: int, stab,
                       allow_radicals=True, cache=None):
     tmax = min(d, d * d // n) if (allow_radicals and stab is None and fd_is_galois(fd)) else 1
@@ -1281,12 +1298,8 @@ def two_factor_search(fd, va, a: AlgebraicNumber, n: int, d: int, stab,
         if t not in cache["powers"]:
             cache["powers"][t] = cache["powers"][t - 1] * Ma
         Mt = cache["powers"][t]
-        def compositum_degree(E, F):
-            if E["elements"] is not None:
-                return fd.order // len(E["elements"] & F["elements"])
-            return E["index"] * F["index"]
         pairs = [(subs[i], subs[j]) for i in range(len(subs)) for j in range(i, len(subs))
-                 if n <= t * compositum_degree(subs[i], subs[j])]
+                 if n <= t * compositum_degree_bound(fd, [subs[i], subs[j]])]
         pairs.sort(key=lambda pr: (max(pr[0]["index"], pr[1]["index"]), pr[0]["index"] + pr[1]["index"]))
         for E, F in pairs:
             key = (t, id(E), id(F))
@@ -1383,12 +1396,43 @@ def _hstack(mats, nrows):
     return _col_matrix(columns, nrows)
 
 
+def _tensor_conjugates_possible(gd, fam, va, cache):
+    """Reject only rigorously nonzero minors; inconclusive balls need the exact test."""
+    # Embeddings of L^H are right cosets gH. The caller has proved that the
+    # tuple of these cosets bijects G with the product of the embedding sets.
+    cosets = []
+    for field in fam:
+        labels = [None] * gd.order
+        for g in range(gd.order):
+            if labels[g] is None:
+                for h in field["elements"]:
+                    labels[gd.mult_table[g][h]] = g
+        cosets.append(labels)
+    indices = list(zip(*cosets))
+    positions = {index: g for g, index in enumerate(indices)}
+    identity = indices[gd.identity]
+    with ctx.workprec(gd.prec):
+        key = ("conjugates", tuple(va))
+        if key not in cache:
+            cache[key] = conj_vector(gd, va)
+        values = cache[key]
+        pivot_power = values[gd.identity] ** (len(fam) - 1)
+        for index, value in zip(indices, values):
+            fibers = (identity[:j] + (index[j],) + identity[j + 1:] for j in range(len(fam)))
+            product = math.prod(values[positions[fiber]] for fiber in fibers)
+            if not (value * pivot_power - product).contains(0):
+                return False
+    return True
+
+
 def tensor_test(gd, fam, va, cache):
     """Test a product basis whose factor dimensions multiply to the ambient degree."""
     ord_ = gd.order
     bases = [H["fixed"] for H in fam]
     dims = [len(B) for B in bases]
-    if math.prod(dims) != ord_:
+    if math.prod(dims) != ord_ or compositum_degree_bound(gd, fam) < ord_:
+        return None
+    if isinstance(gd, GaloisData) and not _tensor_conjugates_possible(gd, fam, va, cache):
         return None
     mats = []
     for B in bases:
@@ -1570,9 +1614,8 @@ def clean_product_terms(terms, prec_bits):
 # polynomials (rigorously rounded), and the bounded dictionary search
 # ---------------------------------------------------------------------------
 
-def _integral_form(a: AlgebraicNumber):
-    """(monic polynomial, scale c) with c*a a root of the monic polynomial"""
-    p = a.poly
+def _integral_model(p: fmpz_poly):
+    """Monic polynomial for c*a, where p(a)=0 and c is the leading coefficient."""
     n = p.degree()
     c = int(p.leading_coefficient())
     coeffs = _fmpz_list(p.coeffs())
@@ -1614,8 +1657,8 @@ def combine_algebraic(a: AlgebraicNumber, b: AlgebraicNumber, op: str, prec_bits
         with ctx.workprec(prec_bits):
             bneg = AlgebraicNumber.from_value(primitive(neg), -b.value(prec_bits), prec_bits)
         return combine_algebraic(a, bneg, "+", prec_bits)
-    ma, ca = _integral_form(a)
-    mb, cb = _integral_form(b)
+    ma, ca = _integral_model(a.poly)
+    mb, cb = _integral_model(b.poly)
     prec = prec_bits
     for attempt in range(6):
         try:

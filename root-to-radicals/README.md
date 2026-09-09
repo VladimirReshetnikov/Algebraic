@@ -112,6 +112,15 @@ and the general descent covers those cases.
 Root indices of non-real roots are exchanged between the two systems by value, not by
 index (see the companion project's README).
 
+Descent reuses branches common to the Fourier and eigenvector forms. To raise
+a field element to a power, the shared field engine recovers its coordinate
+vector directly from conjugate powers and integer traces. Clearing coordinate
+denominators first makes the traced element integral; multiplication by the
+inverse trace Gram matrix then recovers exact rational coordinates. If power
+traces exhaust the available precision, the original multiplication-matrix
+calculation supplies the fallback. Composition chains also solve each suffix
+over the smaller-degree algebraic value already obtained at the previous step.
+
 ## Measurements
 
 See the article, Section "Measurements", and the test suites.  In short (Wolfram 15.0.1

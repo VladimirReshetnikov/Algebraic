@@ -15,6 +15,7 @@ polynomial arithmetic when SymPy uses its FLINT rational ground type.
 
 from __future__ import annotations
 
+from functools import lru_cache
 import itertools
 import math
 
@@ -69,6 +70,11 @@ def _obstruction(digits):
 
 
 def _raw_coefficients(expression, x):
+    expression = sp.sympify(expression)
+    if not isinstance(expression, (sp.Expr, sp.Poly)):
+        raise ValueError("the input must be a polynomial expression or Poly")
+    if expression.has(sp.Float):
+        raise ValueError("approximate coefficients are not accepted")
     # CRootOf binds its own polynomial variable. SymPy's expression-domain
     # Poly constructor can nevertheless mistake that bound x for the outer
     # generator. Shield exact algebraic atoms while collecting coefficients.
@@ -85,21 +91,15 @@ def _prepare(expressions, x):
     if len(expressions) == 1 and isinstance(expressions[0], sp.Poly):
         polynomial = expressions[0]
         if polynomial.gens == (x,) and (polynomial.domain in (sp.ZZ, sp.QQ) or polynomial.domain.is_AlgebraicField):
-            domain = sp.QQ if polynomial.domain == sp.ZZ else polynomial.domain
-            engine = _Engine(domain)
-            coefficients = [domain.convert(c, polynomial.domain) for c in reversed(polynomial.rep.to_list())]
-            return engine, [engine.trim(coefficients)]
+            polynomial = polynomial.to_field()
+            engine = _Engine(polynomial.domain)
+            return engine, [engine.trim(reversed(polynomial.rep.to_list()))]
     coefficients, sizes = [], []
     for expression in expressions:
         if isinstance(expression, sp.Poly):
             if expression.gens != (x,) or expression.domain.characteristic() != 0:
                 raise ValueError("a univariate characteristic-zero polynomial is required")
             expression = expression.as_expr()
-        expression = sp.sympify(expression)
-        if not isinstance(expression, sp.Expr):
-            raise ValueError("the input must be a polynomial expression or Poly")
-        if expression.has(sp.Float):
-            raise ValueError("approximate coefficients are not accepted")
         try:
             raw = _raw_coefficients(expression, x)
         except (PolynomialError, CoercionFailed) as exc:
@@ -466,7 +466,7 @@ def verify_decomposition(p, parts, x, *, require_complete=False, require_normali
     return True
 
 
-def _verify_degree_data(c, test, engine, x):
+def _verify_degree_data(c, test, engine, vector):
     """No candidate recurrence or polynomial division is used here."""
     required = {"type", "right_degree", "outer_degree", "inner", "outer_candidate",
                 "digits", "decomposable", "obstruction", "residual"}
@@ -481,12 +481,6 @@ def _verify_degree_data(c, test, engine, x):
         return False
     if not isinstance(test["digits"], list) or len(test["digits"]) != m + 1:
         return False
-    # Conversion uses the already selected exact field; failure means the
-    # submitted record is not a certificate over this coefficient field.
-    def vector(expr):
-        if sp.sympify(expr).has(sp.Float):
-            raise ValueError("inexact certificate")
-        return engine.trim(engine.scalar(c) for c in _raw_coefficients(sp.sympify(expr), x))
     h, outer = vector(test["inner"]), vector(test["outer_candidate"])
     digits = [vector(digit) for digit in test["digits"]]
     if len(h) != d + 1 or h[0] or h[-1] != engine.one or any(len(r) > d for r in digits):
@@ -528,11 +522,16 @@ def verify_decomposition_data(p, data, x):
     exactly every proper divisor, including all negative witnesses.
     """
     engine, (c,) = _prepare([p], x)
+    # Share conversions across degree tests, retaining this input's exact field.
+    @lru_cache(maxsize=None, typed=True)
+    def vector(expression):
+        return engine.trim(map(engine.scalar, _raw_coefficients(expression, x)))
+
     try:
         if not isinstance(data, dict):
             return False
         if data.get("type") == "DegreeTest":
-            return _verify_degree_data(c, data, engine, x)
+            return _verify_degree_data(c, data, engine, vector)
         required = {"type", "input_degree", "tested_right_degrees", "accepted_right_degrees", "indecomposable", "tests"}
         if not required <= data.keys() or data["type"] != "AllDegreeTests":
             return False
@@ -549,7 +548,7 @@ def verify_decomposition_data(p, data, x):
                 or len(data["tests"]) != len(degrees)):
             return False
         for d, test in zip(degrees, data["tests"]):
-            if not _verify_degree_data(c, test, engine, x) or test["right_degree"] != d:
+            if not _verify_degree_data(c, test, engine, vector) or test["right_degree"] != d:
                 return False
         accepted = [d for d, test in zip(degrees, data["tests"]) if test["decomposable"]]
         expected = None if n < 2 else not accepted

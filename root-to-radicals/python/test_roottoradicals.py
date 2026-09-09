@@ -109,6 +109,46 @@ class Examples(unittest.TestCase):
                 expected = (rd.conj_vector(gd, v) if prec == gd.prec else rd._conj_vector_at(gd, v, prec))[gd.identity]
                 self.assertTrue(value(prec).overlaps(expected))
 
+    def test_dense_composition_chain(self):
+        h = rt.X
+        for _ in range(4):
+            h = sp.expand(h ** 2 + h)
+        p = rt.fmpz_poly_of(h + 2)
+        for k in (1, 8, 16):
+            run(f"dense degree-16 decomposition conjugate {k}", rd.AlgebraicNumber(p, k), "Decompose")
+
+
+class FieldPowers(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.gd = rd.galois_data(fmpz_poly([-2, 0, 0, 1]), 300, 20)
+
+    def matrix_power(self, v, exponent):
+        with rt.ctx.workprec(self.gd.prec):
+            matrix = rd.multiplication_matrix_of(self.gd, v)
+        one = [rt.fmpq(1)] + [rt.fmpq(0)] * (self.gd.order - 1)
+        return rd.apply_matrix(matrix ** exponent, one)
+
+    def test_coordinate_powers(self):
+        gd = self.gd
+        vectors = [[rt.fmpq(0)] * gd.order, gd.root_coords[1],
+                   [a / 3 + b / 7 for a, b in zip(gd.root_coords[0], gd.root_coords[1])]]
+        for v in vectors:
+            for exponent in (0, 1, 2, 3, 5):
+                with self.subTest(vector=v, exponent=exponent):
+                    self.assertEqual(rd.power_coordinates(gd, v, exponent), self.matrix_power(v, exponent))
+        with self.assertRaises(ValueError):
+            rd.power_coordinates(gd, vectors[1], -1)
+
+    def test_coordinate_power_precision_fallback(self):
+        gd = self.gd
+        v = [rt.fmpq(10 ** 40)] + [rt.fmpq(1, 7)] * (gd.order - 1)
+        with rt.ctx.workprec(gd.prec):
+            integers, _ = rd._clear_denominators(v)
+            with self.assertRaises(rd.PrecisionError):
+                rd.coords_from_conjugates(gd, [z ** 5 for z in rd.conj_vector(gd, integers)])
+        self.assertEqual(rd.power_coordinates(gd, v, 5), self.matrix_power(v, 5))
+
 
 class Negative(unittest.TestCase):
     def test_not_solvable(self):

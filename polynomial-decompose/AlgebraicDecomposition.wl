@@ -84,15 +84,11 @@ add[a_List, b_List] := trim[red /@
   (PadRight[a, Max[Length[a], Length[b]]] +
    PadRight[b, Max[Length[a], Length[b]]])];
 subtract[a_List, b_List] := add[a, -b];
-multiply[a_List, b_List, limit_: Infinity] := Module[{r, i, j, size},
+multiply[a_List, b_List, limit_: Infinity] := Module[{size},
   If[zeroQ[a] || zeroQ[b], Return[{0}]];
   size = Min[Length[a] + Length[b] - 1, limit];
-  r = ConstantArray[0, size];
-  Do[If[a[[i]] =!= 0,
-    Do[If[b[[j]] =!= 0,
-      r[[i + j - 1]] = r[[i + j - 1]] + a[[i]] b[[j]]],
-      {j, Min[Length[b], size - i + 1]}]], {i, Min[Length[a], size]}];
-  trim[red /@ r]
+  trim[red /@ Take[ListConvolve[
+    Take[a, UpTo[size]], Take[b, UpTo[size]], {1, -1}, 0], size]]
 ];
 digitCompose[digits_List, h_List] :=
   Fold[add[multiply[#1, h], #2] &, {0}, Reverse[digits]];

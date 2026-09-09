@@ -423,10 +423,9 @@ def structural_decompose(a: AlgebraicNumber, st: _State, depth: int):
     comp = sp.decompose(sympy_poly(a.poly))          # outer piece first
     if len(comp) < 2:
         return None
-    vals, h = [a], X                                 # build each composition suffix once, from the inside
+    vals = [a]                                      # each component acts on the preceding, smaller-degree value
     for g in reversed(comp[1:]):
-        h = sp.expand(g.subs(X, h))
-        vals.append(algebraic_of_rational_function(h, 1, a, st.prec_bits))
+        vals.append(algebraic_of_rational_function(g, 1, vals[-1], st.prec_bits))
     vals.reverse()
     rad = st.sub(vals[0], depth - 1)
     for i in range(1, len(comp)):
@@ -619,7 +618,7 @@ def _descend(gd, a: AlgebraicNumber, primes: list, st: _State):
     @_cache_by_coordinates
     def branch(Rk, q, level):
         """the q-th root of Rk^q (one level down) with the branch equal to Rk"""
-        Qk = _iterate(rd.multiplication_matrix_of(gd, Rk), Rk, q - 1)[-1]
+        Qk = rd.power_coordinates(gd, Rk, q)
         root = principal_root(rad(Qk, level - 1), q, _negative_real_element(gd, conj, Qk))
         return select_candidate([zeta_sym[q] ** e * root for e in range(q)], _value_at_identity(gd, Rk), gd.prec)
 

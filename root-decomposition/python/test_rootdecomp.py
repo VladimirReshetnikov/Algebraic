@@ -76,6 +76,12 @@ class ArticleExamples(unittest.TestCase):
 
 
 class CorrectnessRegressions(unittest.TestCase):
+    def test_prime_degree_bound_needs_no_modular_factorization(self):
+        polynomial = fmpz_poly([-2] + [0] * 30 + [1])  # Eisenstein: degree 31.
+        rd._lower_bound_cached.cache_clear()
+        with patch.object(rd, "frobenius_exponent_multiple", side_effect=AssertionError("bound is already sharp")):
+            self.assertEqual(rd.lower_bound(polynomial), 31)
+
     def test_shared_group_and_frobenius_helpers(self):
         cyclic_four = [[(i + j) % 4 for j in range(4)] for i in range(4)]
         self.assertEqual(rd.group_closure(cyclic_four, 0, []), frozenset({0}))
@@ -154,6 +160,37 @@ class CorrectnessRegressions(unittest.TestCase):
         fd8 = rd.input_field_data(eta.poly, eta)
         quadratic = next(h for h in fd8.subgroups if h["index"] == 2)
         self.assertIsNone(rd.tensor_test(fd8, [quadratic] * 3, [fmpq(0), fmpq(1)] + [fmpq(0)] * 6, {}))
+
+    def test_galois_tensor_filters_and_inconclusive_balls(self):
+        # The cubic fixed field is not normal in this S3 splitting field.
+        gd = rd.galois_data(fmpz_poly([-2, 0, 0, 1]))
+        family = [next(h for h in gd.subgroups if h["index"] == d) for d in (2, 3)]
+        with ctx.workprec(gd.prec):
+            factors = [h["fixed"][-1] for h in family]
+            target = [q / 7 for q in rd.apply_matrix(rd.fd_mult_matrix(gd, factors[0]), factors[1])]
+            for fields in (family, family[::-1]):
+                self.assertTrue(rd._tensor_conjugates_possible(gd, fields, target, {}))
+                result = rd.tensor_test(gd, fields, target, {})
+                self.assertIsNotNone(result)
+                self.assertEqual(rd.apply_matrix(rd.fd_mult_matrix(gd, result[0]), result[1]), target)
+            shifted = list(target)
+            shifted[0] += 1
+            self.assertFalse(rd._tensor_conjugates_possible(gd, family, shifted, {}))
+            with patch.object(rd, "fd_mult_matrix", side_effect=AssertionError("rejected tensor must not build matrices")):
+                self.assertIsNone(rd.tensor_test(gd, family, shifted, {}))
+                self.assertIsNone(rd.tensor_test(gd, [family[0]] * 2, shifted, {}))
+            # A perturbation below the ball precision must reach the exact
+            # rational tensor test, which can still reject its nonzero minors.
+            tiny_shift = list(target)
+            tiny_shift[0] += fmpq(1, 2 ** (2 * gd.prec))
+            self.assertTrue(rd._tensor_conjugates_possible(gd, family, tiny_shift, {}))
+            with patch.object(rd, "fd_mult_matrix", wraps=rd.fd_mult_matrix) as exact_matrices:
+                self.assertIsNone(rd.tensor_test(gd, family, tiny_shift, {}))
+                self.assertGreater(exact_matrices.call_count, 0)
+        gd4 = rd.galois_data(fmpz_poly([1, 0, 0, 0, 1]))
+        quadratic = next(h for h in gd4.subgroups if h["index"] == 2)
+        with patch.object(rd, "fd_mult_matrix", side_effect=AssertionError("proper compositum must not build matrices")):
+            self.assertIsNone(rd.tensor_test(gd4, [quadratic] * 2, gd4.root_coords[0], {}))
 
     def test_bounded_fallback_with_explicit_bound(self):
         result = run("bounded fallback with explicit bound", rd.product_decomposition, w, 2,
