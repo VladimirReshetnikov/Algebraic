@@ -126,13 +126,29 @@ fields using the remaining composition-series generators, which generate the who
 subgroup. Composition chains solve each suffix over the smaller-degree algebraic value
 already obtained at the previous step.
 
-## Measurements
+## Refactoring validation (9 September 2026)
 
-See the article, Section "Measurements", and the test suites.  In short (Wolfram 15.0.1
-and Python 3.14 with python-flint 0.8 on the same machine): both examples of the question
-are solved by the structural layer in under 0.2 s; the forced general descent takes 41 s
-(sextic, group orders 24 → 48) and 18 s (quintic, 20 → 40) in Wolfram, 24 s and 12 s in
-Python; the cyclic quintic (which needs the descent) takes 8 s in Wolfram and 0.4 s in
+Validation accumulated through solver revision `f3fceb2` passed **28 Python test
+methods**, **73 native Wolfram tests**, and **13 independent cross-language
+checks**. Additional exact comparisons cover all resolvent forms, complete
+result metadata, matrix and coordinate arithmetic, and real/complex branches.
+Forced precision tests check both successful recovery and exhaustion; the
+Wolfram descent now refreshes field data at each retry even when no odd-prime
+roots of unity are needed.
+
+The [shared benchmark](../benchmarks/README.md) records current Python workloads
+with immutable baselines, exact-output checks, source hashes, and raw samples.
+It states which field data and dependencies are shared between the versions.
+
+## Historical article measurements
+
+The following measurements were retained in baseline `204c97f` from the article's
+"Measurements" section. They describe the original implementation on its
+development machine (Wolfram 15.0.1, Python 3.14, python-flint 0.8). Both examples
+of the question were solved by the structural layer in under 0.2 s; the forced
+general descent took 41 s (sextic, group orders 24 → 48) and 18 s (quintic, 20 → 40)
+in Wolfram, 24 s and 12 s in
+Python; the cyclic quintic (which needs the descent) took 8 s in Wolfram and 0.4 s in
 Python; nonsolvable prime-degree inputs are refused in milliseconds by Frobenius cycle
 types, whereas the exact group of `x^5 - x - 1` (order 120) takes 18 minutes in Wolfram.
 The notebook's own target, a degree-27 number, is expressed by radicals in 11 minutes

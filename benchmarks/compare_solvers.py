@@ -140,6 +140,7 @@ def main():
     current = {name: load_module(name) for name in SOURCES}
     before = {name: load_module(name, revision) for name in SOURCES}
     report = {"baseline": revision, "python": sys.version, "sympy": sp.__version__,
+              "current_head": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
               "python_flint": flint.__version__, "samples": args.samples,
               "current_source_sha256": {name: module.__source_sha256__ for name, module in current.items()},
               "workloads": {}}

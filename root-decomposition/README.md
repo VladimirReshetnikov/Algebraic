@@ -151,10 +151,24 @@ or product using exact composed polynomials and certified root selection. The op
 `verify_wolfram.py` independently checks returned identities and degrees using the native kernel;
 `python verify_wolfram.py --emit review.wl` writes the same checks for later execution.
 
+## Refactoring validation (9 September 2026)
+
+Validation accumulated through solver revision `f3fceb2` passed **30 Python test
+methods**, **85 native Wolfram tests**, and **12 independent cross-language
+identity and degree checks**. The Python input-field comparisons also passed
+under both SymPy rational backends. These checks cover exact field metadata and
+subfield order, real and complex branches, precision retries, search limits,
+certificates, and independent quotient-ring and trace identities.
+
+The [shared benchmark](../benchmarks/README.md) compares representative workloads
+against an immutable Git revision and checks exact outputs. Its saved results
+identify the source hashes, dependencies, and timing boundaries. The historical
+measurements and article validation below retain their original provenance.
+
 ## Historical timings
 
-The table below is retained as provenance for the original implementation. Current review
-measurements and validation follow it.
+The table below is retained as provenance for the original implementation. It
+predates the refactoring validation above.
 
 | Task | Wolfram | Python |
 | --- | --- | --- |
@@ -169,7 +183,7 @@ not performance guarantees. `python benchmark.py` measures the current checkout,
 regression scripts report their own results. The original Python script only printed failed
 checks; the current suite asserts its expectations and exits nonzero on failure.
 
-## Review validation (7 September 2026)
+## Historical review validation (7 September 2026)
 
 - Native Wolfram 15.0.1: `wolfram -script RunTests.wl` passed **67 tests**, with no failures.
 - Python 3.14, python-flint 0.8.0, SymPy 1.14.0: `python test_rootdecomp.py` passed
@@ -184,7 +198,8 @@ checks; the current suite asserts its expectations and exits nonzero on failure.
 
 A serial comparison in separate fresh Python processes measured the default
 `product_decomposition` search for the degree-nine **sum** example: **55.76 s** for repository
-revision `7e2314c`, **14.69 s** for this revision, approximately **3.8 times faster** in that run.
+revision `7e2314c`, **14.69 s** for the reviewed revision recorded in baseline `204c97f`,
+approximately **3.8 times faster** in that run.
 Both returned the same maximum degree 9 with global optimality unclaimed. Importing the module
 and the independent verification were outside the timed region; field construction was included.
 These are single-run local measurements, not a guaranteed ratio. Use `python benchmark.py --full`

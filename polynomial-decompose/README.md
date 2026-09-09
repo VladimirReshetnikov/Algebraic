@@ -246,13 +246,18 @@ algebraic generators, a nonradical quintic coefficient, exact leading-term
 cancellation, and degree-zero/one conventions. It compares complete chain
 sets and all pairs as well as checking exact recomposition and certificates.
 
-Controlled measurements on the sparse negative input `x**96+x+1` show the
-benefit of early rejection and the monomial-candidate shortcut. In separate
+The [shared solver comparison](../benchmarks/README.md) records measurements at
+refactoring revision `f3fceb2` against merged baseline `204c97f`, with exact
+output checks, source hashes, and all timing samples.
+
+The following historical measurements were retained in baseline `204c97f`.
+They show the benefit of early rejection and the monomial-candidate shortcut
+on the sparse negative input `x**96+x+1`. In separate
 fresh Wolfram kernels, `RepeatedTiming[...,1]` for all pairs took 0.5751 seconds
-in original report 3 and 0.02458 seconds in the live package, about **23.4×**
+in original report 3 and 0.02458 seconds in the unified package, about **23.4×**
 faster. In Python, seven fresh searches over the same rational coefficient
 vector, excluding coefficient-field conversion, gave median times of
-0.03932 seconds for report 1 and 0.001100 seconds for the live engine, about
+0.03932 seconds for report 1 and 0.001100 seconds for the unified engine, about
 **35.7×** faster. Both comparisons return the same exact empty pair set.
 These are improvements on a specific sparse workload, not general speed
 ratios. The full Python benchmark also checked a dense degree-96 input over
