@@ -275,7 +275,7 @@ buildGaloisData[poly_, prec0_, maxOrder_, maxTries_] :=
   retryPrecision[Function[prec, Catch[buildGaloisDataAtPrecision[poly, prec, maxOrder, maxTries], failTag]], prec0];
 
 basisValues[nums_, perms_, tower_, basisExp_] := Module[{gens = tower[[All, 1]], pw},
-  pw = Table[nums[[i]]^e, {i, Length[nums]}, {e, 0, Max[Flatten[{0, basisExp}]]}];
+  pw = Table[Prepend[Table[nums[[i]]^e, {e, Max[Flatten[{0, basisExp}]]}], 1], {i, Length[nums]}];
   Table[Times @@ Table[pw[[perm[[gens[[j]]]], ex[[j]] + 1]], {j, Length[gens]}], {perm, perms}, {ex, basisExp}]];
 
 buildGaloisDataAtPrecision[poly_, prec_, maxOrder_, maxTries_] := Module[
@@ -948,8 +948,8 @@ productSearch[fd_, a_, va_, stab_, n_, lb_, dmax_, scope_, maxFactors_, depth_, 
 
 RootDecompositionCatalog[d_Integer?Positive, h_Integer?Positive] := Module[{polys},
   polys = Join @@ Table[
-    Select[Tuples[Range[-h, h], m + 1],
-      Last[#] > 0 && GCD @@ # == 1 && IrreduciblePolynomialQ[FromDigits[Reverse[#], x]] &],
+    Select[Tuples[Append[ConstantArray[Range[-h, h], m], Range[h]]],
+      GCD @@ # == 1 && IrreduciblePolynomialQ[FromDigits[Reverse[#], x]] &],
     {m, 1, d}];
   polys = FromDigits[Reverse[#], x] & /@ polys;
   DeleteDuplicates[Join @@ Table[RootReduce[rootObject[p, j]], {p, polys}, {j, Exponent[p, x]}]]];

@@ -162,6 +162,67 @@ class FieldPowers(unittest.TestCase):
         one = [rt.fmpq(1)] + [rt.fmpq(0)] * (self.gd.order - 1)
         return rd.apply_matrix(matrix ** exponent, one)
 
+    def test_multiplication_matrix_precision_trials(self):
+        gd = self.gd
+        one = [rt.fmpq(i == 0) for i in range(gd.order)]
+        mixed = [a / 3 + b / 7 for a, b in zip(gd.root_coords[0], gd.root_coords[1])]
+        vectors = [[0] * gd.order, [q * rt.fmpq(7, 3) for q in one], gd.root_coords[1], mixed,
+                   [10 ** 40 * a + b for a, b in zip(one, mixed)], [q / 10 ** 100 for q in mixed]]
+        for prec in (gd.prec, 2 * gd.prec):
+            with rt.ctx.workprec(prec):
+                for v in vectors:
+                    integers, den = rd._clear_denominators(v)
+                    expected = rd.multiplication_matrix(gd, rd.conj_vector(gd, integers)) / den
+                    self.assertEqual(rd.multiplication_matrix_of(gd, v), expected)
+                    self.assertEqual(rt.ctx.prec, prec)
+
+    def test_multiplication_matrix_restores_caller_precision(self):
+        gd, outer_prec = self.gd, rt.ctx.prec
+        round_matrix, precisions = rd.mat_round, []
+
+        def record_round(matrix):
+            precisions.append(rt.ctx.prec)
+            return round_matrix(matrix)
+
+        # The low attempt really fails for these large traces; the higher caller precision succeeds.
+        v = [rt.fmpq(10 ** 40 * (i == 0)) + c / 7 for i, c in enumerate(gd.root_coords[1])]
+        with rt.ctx.workprec(2 * gd.prec), patch.object(rd, "mat_round", side_effect=record_round):
+            rd.multiplication_matrix_of(gd, v)
+            self.assertEqual(precisions, [64, 2 * gd.prec])
+            self.assertEqual(rt.ctx.prec, 2 * gd.prec)
+        self.assertEqual(rt.ctx.prec, outer_prec)
+
+        # No duplicate attempt when the original precision is already at or below the trial limit.
+        precisions.clear()
+        with rt.ctx.workprec(53), patch.object(rd, "mat_round", side_effect=record_round):
+            rd.multiplication_matrix_of(gd, [1] + [0] * (gd.order - 1))
+            self.assertEqual(precisions, [53])
+
+        def fail_round(matrix):
+            precisions.append(rt.ctx.prec)
+            raise rd.PrecisionError("original precision failure")
+
+        for prec in (53, 96):
+            precisions.clear()
+            with rt.ctx.workprec(prec), patch.object(rd, "mat_round", side_effect=fail_round):
+                with self.assertRaisesRegex(rd.PrecisionError, "original precision failure"):
+                    rd.multiplication_matrix_of(gd, v)
+                self.assertEqual(precisions, [53] if prec == 53 else [64, 96])
+                self.assertEqual(rt.ctx.prec, prec)
+            self.assertEqual(rt.ctx.prec, outer_prec)
+
+    def test_raw_rounding_retains_nonintegral_input_behavior(self):
+        gd = rd.galois_data(fmpz_poly([-1, 1]))
+        with rt.ctx.workprec(300):
+            value = rt.acb(1) + rt.acb(2) ** -100
+            with self.assertRaises(rd.PrecisionError):
+                rd.mat_round(rd.acb_mat([[value]]))
+            with self.assertRaises(rd.PrecisionError):
+                rd.multiplication_matrix(gd, [value])
+            # The coordinate wrapper establishes integrality by clearing this denominator first.
+            q = rt.fmpq(1) + rt.fmpq(1, 2 ** 100)
+            self.assertEqual(rd.multiplication_matrix_of(gd, [q]), rt.fmpq_mat([[q]]))
+
     def test_coordinate_powers(self):
         gd = self.gd
         vectors = [[rt.fmpq(0)] * gd.order, gd.root_coords[1],

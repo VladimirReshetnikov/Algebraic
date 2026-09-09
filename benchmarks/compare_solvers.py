@@ -2,9 +2,9 @@
 
 Run from any directory: python benchmarks/compare_solvers.py --baseline 204c97f
 Each workload is warmed, then timed in alternating order. Input construction and
-exact output comparison are outside the timed calls. Radical recognition uses
-the same current field-engine dependency in both versions; its timed function
-does not use that engine. These are workload timings, not whole-suite ratios.
+exact output comparison are outside the timed calls. Multiplication matrices use
+identical current field data. Radical recognition uses the same current field
+dependency in both versions, but does not call it. These are workload timings.
 """
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ import time
 import types
 
 import flint
-from flint import fmpq, fmpq_poly, fmpz_poly
+from flint import acb, arb, ctx, fmpq, fmpq_poly, fmpz_poly
 import sympy as sp
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -48,7 +48,7 @@ def galois_signature(data):
         "identity", "root_coords", "automorphisms", "subgroups", "exponent"))
 
 
-def workloads(before, current):
+def workloads(before, current, match=""):
     x = sp.Symbol("x")
     sparse = sp.Poly(x ** 600 + x + 1, x)
     algebraic = sp.Poly((x ** 4 + x ** 2 + sp.sqrt(2) * x) ** 24, x, extension=sp.sqrt(2))
@@ -57,6 +57,7 @@ def workloads(before, current):
         ("sparse degree-600 certificate", sparse, "decomposition_data", (2,)),
         ("algebraic degree-96 chain", algebraic, "decompose", ()),
         ("Chebyshev degree-120 all chains", chebyshev, "decompositions", ()),
+        ("power degree-360 all chains", sp.Poly(x ** 360, x), "decompositions", ()),
     ):
         yield label, [lambda m=m, p=polynomial, f=method, a=args: getattr(m, f)(p, x, *a)
                       for m in (before["algebraic_decompose"], current["algebraic_decompose"])], lambda result: result
@@ -67,6 +68,25 @@ def workloads(before, current):
         polynomial = fmpz_poly(coefficients)
         yield label, [lambda m=m, p=polynomial: m.build_galois_data(p)
                       for m in (before["rootdecomp"], current["rootdecomp"])], galois_signature
+    yield "degree-2 height-4 catalogue", [lambda m=m: m.catalog.__wrapped__(2, 4)
+        for m in (before["rootdecomp"], current["rootdecomp"])], lambda result: tuple(
+            (tuple(a.poly.coeffs()), a.index) for a in result)
+    label = "order-48 unity multiplication matrix"
+    if match.lower() in label.lower():
+        data = current["rootdecomp"].galois_data(fmpz_poly([-1, -1, 0, 0, 1]) * fmpz_poly([1, 1, 1]))
+        with ctx.workprec(data.prec):
+            unity = data.scale * (acb(0, 2) * arb.pi() / 3).exp()
+            matches = [i for i, root in enumerate(data.roots) if root.overlaps(unity)]
+        if len(matches) != 1:
+            raise AssertionError("cube root of unity is not uniquely isolated")
+        vector = [q / data.scale for q in data.root_coords[matches[0]]]
+
+        def multiplication(module):
+            with ctx.workprec(data.prec):
+                return module.multiplication_matrix_of(data, vector)
+
+        yield label, [lambda m=m: multiplication(m)
+            for m in (before["rootdecomp"], current["rootdecomp"])], lambda result: result
     # x^m P(x+c/x), with P(y)=y^m+3*y^7+1 and m=24.
     m, c = 24, fmpq(2, 3)
     quadratic = fmpq_poly([c, 0, 1])
@@ -110,7 +130,7 @@ def main():
               "python_flint": flint.__version__, "samples": args.samples,
               "current_source_sha256": {name: module.__source_sha256__ for name, module in current.items()},
               "workloads": {}}
-    for label, functions, signature in workloads(before, current):
+    for label, functions, signature in workloads(before, current, args.match):
         if args.match.lower() in label.lower():
             result = compare(functions, signature, args.samples)
             report["workloads"][label] = result

@@ -201,26 +201,23 @@ oneChain[c_List] := Module[{v = c, out = {}, pair},
   Prepend[out, v]
 ];
 
+checkedChain[c_List, chain_List] := If[zeroQ[subtract[c, composeChain[chain]]], chain,
+  fail["InternalVerification", "A complete chain failed exact recomposition."]];
+
 allChains[c_List, limit_] := Module[{pairs, atomic, walk, out = {}, capTag = Unique["EnumerationCap"]},
   pairs[v_List] := pairs[v] = allPairs[v];
   atomic[v_List] := atomic[v] = (firstPair[v] === None);
-  walk[v_List, suffix_List] := Module[{ps = pairs[v], chain},
+  walk[v_List, suffix_List] := Module[{ps = pairs[v]},
     If[ps === {},
-      chain = Prepend[suffix, v];
-      If[!zeroQ[subtract[c, composeChain[chain]]],
-        fail["InternalVerification", "An enumerated chain failed exact recomposition."]];
-      AppendTo[out, chain];
+      AppendTo[out, checkedChain[c, Prepend[suffix, v]]];
       If[limit =!= Infinity && Length[out] > limit, Throw[Null, capTag]],
       Do[If[atomic[pr[[2]]], walk[pr[[1]], Prepend[suffix, pr[[2]]]]], {pr, ps}]]];
   Catch[walk[c, {}], capTag];
   out
 ];
 
-AlgebraicDecompose[p_, x_Symbol] := Catch[Module[{c = prepare[p, x], chain},
-  chain = oneChain[c];
-  If[!zeroQ[subtract[c, composeChain[chain]]],
-    fail["InternalVerification", "The complete chain failed exact recomposition."]];
-  expression[#, x] & /@ chain], $failureTag];
+AlgebraicDecompose[p_, x_Symbol] := Catch[Module[{c = prepare[p, x]},
+  expression[#, x] & /@ checkedChain[c, oneChain[c]]], $failureTag];
 AlgebraicDecompositions[p_, x_Symbol, opts : OptionsPattern[]] := Catch[
   Module[{c, limit, chains},
     checkOptions[AlgebraicDecompositions, {opts}];

@@ -192,11 +192,9 @@ class _Engine:
         if expression.is_Rational:
             value = self.K.convert(expression)
         elif expression.is_Add:
-            value = sum((self.scalar(arg) for arg in expression.args), self.zero)
+            value = sum(map(self.scalar, expression.args), self.zero)
         elif expression.is_Mul:
-            value = self.one
-            for arg in expression.args:
-                value *= self.scalar(arg)
+            value = math.prod(map(self.scalar, expression.args), start=self.one)
         elif expression.is_Pow and expression.exp.is_Integer:
             value = self.scalar(expression.base) ** int(expression.exp)
         elif isinstance(expression, sp.AlgebraicNumber):

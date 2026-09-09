@@ -12,9 +12,10 @@ and python-flint dependencies as the solvers. The baseline revision must be
 available in the local Git history; `204c97f` is the merged baseline before the
 shared solver refactoring.
 
-Six workloads exercise sparse certificate generation, decomposition over an
-algebraic coefficient field, complete chain enumeration, two Galois field
-constructions, and generalized reciprocal recognition. `--match` selects labels:
+Nine workloads exercise sparse certificate generation, decomposition over an
+algebraic coefficient field, two complete-chain enumerations, two Galois field
+constructions, bounded catalogue generation, multiplication by a root of unity,
+and generalized reciprocal recognition. `--match` selects labels:
 
 ```console
 python benchmarks/compare_solvers.py --baseline 0bb70f4 --match certificate
@@ -27,6 +28,12 @@ from the measured calls. The Galois checks compare the complete exact action,
 coordinates, Gram matrices, subgroup data, and exponent. Reciprocal recognition
 is measured with identical dependencies; that recognizer does not invoke the
 shared field engine. A mismatch fails the command.
+
+The catalogue workload bypasses the result cache and compares every polynomial
+and root index in enumeration order. The multiplication workload uses identical
+current field data for both implementations and measures only matrix recovery,
+with its original precision fallback. It does not measure field construction.
+Its selected cube root of unity is uniquely isolated before timing.
 
 The JSON records the baseline commit, dependency versions, hashes of the current
 Python source text with normalized newlines, every timing sample, medians, and

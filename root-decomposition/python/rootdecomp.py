@@ -720,8 +720,17 @@ def multiplication_matrix(gd: GaloisData, yv: list[acb]) -> fmpq_mat:
 
 
 def multiplication_matrix_of(gd: GaloisData, v) -> fmpq_mat:
+    """Exact multiplication by rational coordinates in a basis of algebraic integers."""
     integers, den = _clear_denominators(v)
-    return multiplication_matrix(gd, conj_vector(gd, integers)) / den
+    values = conj_vector(gd, integers)
+    # Clearing denominators makes the product traces integers; try cheaper arithmetic first.
+    for prec in (min(64, ctx.prec), ctx.prec):
+        try:
+            with ctx.workprec(prec):
+                return multiplication_matrix(gd, values) / den
+        except PrecisionError:
+            if prec == ctx.prec:
+                raise
 
 
 def power_coordinates(gd: GaloisData, v, exponent: int) -> list[fmpq]:
@@ -1680,13 +1689,8 @@ def catalog(d: int, h: int) -> tuple:
     _positive_integer(h, "h")
     out = []
     for m in range(1, d + 1):
-        for coeffs in itertools.product(range(-h, h + 1), repeat=m + 1):
-            if coeffs[-1] <= 0:
-                continue
-            g = 0
-            for c in coeffs:
-                g = math.gcd(g, abs(c))
-            if g != 1:
+        for coeffs in itertools.product(*([range(-h, h + 1)] * m + [range(1, h + 1)])):
+            if math.gcd(*coeffs) != 1:
                 continue
             p = fmpz_poly(list(coeffs))
             fac = p.factor()[1]

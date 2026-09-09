@@ -361,6 +361,18 @@ class CorrectnessRegressions(unittest.TestCase):
                 self.assertEqual(fallback.call_count, int(gd.order > 1))
             self.assertEqual((actual.poly, actual.index), (expected.poly, expected.index))
 
+    def test_catalog_preserves_coefficient_and_root_order(self):
+        self.assertEqual([a.as_fraction() for a in rd.catalog(1, 2)],
+                         [Fraction(2), Fraction(1), Fraction(1, 2), Fraction(0),
+                          Fraction(-1), Fraction(-1, 2), Fraction(-2)])
+        expected = [((-1, 1), 1), ((0, 1), 1), ((1, 1), 1)]
+        expected += [(coeffs, index) for coeffs in ((-1, -1, 1), (-1, 1, 1), (1, -1, 1), (1, 0, 1), (1, 1, 1))
+                     for index in (1, 2)]
+        self.assertEqual([(tuple(a.poly.coeffs()), a.index) for a in rd.catalog(2, 1)], expected)
+        keys = [(a.degree, tuple(a.poly.coeffs()), a.index) for a in rd.catalog(2, 2)]
+        self.assertEqual(len(keys), 61)
+        self.assertEqual(keys, sorted(set(keys)))
+
     def test_input_validation(self):
         rd.catalog(1, 1)
         for degree, height in ((True, 1), (1, True), (0, 1), (1, -1)):

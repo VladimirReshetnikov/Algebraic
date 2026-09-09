@@ -193,4 +193,19 @@ VerificationTest[And @@ Table[
   {p, {x - 2, x^3 - 2, x^4 - x - 1}}], True,
   TestID -> "shared basis evaluation preserves exact trace matrices at higher precision"];
 
+VerificationTest[RootDecompositionCatalog[1, 2], {2, 1, 1/2, 0, -1, -1/2, -2},
+  TestID -> "catalog preserves positive leading coefficient enumeration order"];
+VerificationTest[RootDecompositionCatalog[2, 1], Join[{1, 0, -1}, Flatten[Table[
+  RootDecomposition`Private`rootObject[p /. x -> RootDecomposition`Private`x, j],
+  {p, {-1 - x + x^2, -1 + x + x^2, 1 - x + x^2, 1 + x^2, 1 + x + x^2}}, {j, 2}]]],
+  TestID -> "catalog preserves quadratic polynomial and branch order"];
+VerificationTest[Check[Module[{data = RootGaloisData[x, x, "Cache" -> False]},
+  {data["Order"], data["Values"], data["RootCoordinates"],
+   RootDecomposition`Private`valuesAtPrecision[data, 2 data["Precision"]]}], $Failed],
+  {1, {{1}}, {{0}}, {{1}}}, TestID -> "zero root field avoids indeterminate zero powers"];
+VerificationTest[Check[Module[{data = RootGaloisData[x (x^2 - 2), x, "Cache" -> False], values},
+  values = RootDecomposition`Private`valuesAtPrecision[data, 2 data["Precision"]];
+  {data["Order"], RootDecomposition`Private`roundIntegerMatrix[Transpose[values] . values] === data["Gram"]}], $Failed],
+  {2, True}, TestID -> "splitting field containing zero preserves trace matrices without messages"];
+
 EndTestSection[];
