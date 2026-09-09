@@ -97,8 +97,12 @@ matching, counting checks and a group-closure check. Its search-exhaustion concl
 that numerical matching; these are distinct from the exact positive identity and degree checks
 performed with `RootReduce` and `MinimalPolynomial`. Element reconstruction selects distinct
 conjugates by exact coordinate equality under the group action, preserving their first occurrence.
+Input preparation first tries a `Root` object's stored index and accepts it only after exact
+equality with the canonical root succeeds; a mismatch retains the existing root-matching fallback.
 Both implementations share cached-power basis evaluation between Galois construction and precision
 escalation; Python reevaluates only the nonzero coordinate columns when reconstructing an element.
+Wolfram coordinate powers and power division share trace-to-coordinate reconstruction, with
+integer-trace rounding before rational normalization and the same precision fallbacks.
 Radical branch selection requests only the identity embedding when it needs higher precision.
 For multiplication matrices, Python first tries at most 64-bit arithmetic after clearing coordinate
 denominators, which makes the product traces integers. If unique-integer recovery fails, it retries
@@ -154,7 +158,7 @@ or product using exact composed polynomials and certified root selection. The op
 ## Refactoring validation (9 September 2026)
 
 Validation of the refactored solvers passed **35 Python test
-methods**, **88 native Wolfram tests**, and **12 independent cross-language
+methods**, **91 native Wolfram tests**, and **12 independent cross-language
 identity and degree checks**. The Python input-field comparisons also passed
 under both SymPy rational backends. These checks cover exact field metadata and
 subfield order, real and complex branches, precision retries, search limits,

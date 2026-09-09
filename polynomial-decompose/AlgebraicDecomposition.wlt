@@ -123,6 +123,15 @@ VerificationTest[Module[{b = Root[#^5 - # - 1 &, 1], p},
 VerificationTest[Module[{b = Root[#^5 - # - 1 &, 1]},
   AlgebraicDecompositionData[(b^5 - b - 1) x^12, x]["InputDegree"]],
   -Infinity, TestID -> "algebraic-cancellation-to-zero"]
+VerificationTest[Module[{b = Root[#^5 - # - 1 &, 1], exact, inexactFailure},
+  exact = {0, 1, -7, 2/3, 10^30/7, I, Sqrt[2], 1 + Sqrt[3], b, b^5 - b - 1};
+  inexactFailure = Failure["InexactCoefficient", <|"MessageTemplate" ->
+    "Approximate coefficients are not accepted."|>];
+  (AlgebraicDecomposition`Private`red /@ exact) === (RootReduce /@ exact) &&
+    AllTrue[{1., N[Sqrt[2], 40]},
+      Catch[AlgebraicDecomposition`Private`red[#],
+        AlgebraicDecomposition`Private`$failureTag] === inexactFailure &]], True,
+  TestID -> "scalar dispatch preserves exact normalization and inexact failure details"]
 VerificationTest[MatchQ[AlgebraicDecompose[1.0 x^4, x], _Failure], True,
   TestID -> "reject-machine-coefficient"]
 VerificationTest[MatchQ[AlgebraicDecompose[N[Sqrt[2], 40] x^4, x], _Failure],

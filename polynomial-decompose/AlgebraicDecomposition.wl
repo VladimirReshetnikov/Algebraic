@@ -38,8 +38,8 @@ invalid[] := Failure["InvalidArguments", <|"MessageTemplate" ->
 
 (* This is the only algebraic-number normalization boundary. In particular,
    RootReduce is applied to scalars, never to a polynomial containing x. *)
+red[z : (_Integer | _Rational)] := z;
 red[z_] := Module[{r},
-  If[MatchQ[z, _Integer | _Rational], Return[z]];
   If[!FreeQ[z, _Real], fail["InexactCoefficient", "Approximate coefficients are not accepted."]];
   r = Quiet[Check[RootReduce[z], $Failed]];
   If[r === $Failed || !FreeQ[r, _RootReduce],

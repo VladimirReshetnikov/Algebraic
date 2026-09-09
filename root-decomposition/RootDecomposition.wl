@@ -111,6 +111,9 @@ minimalPolynomialOf[a_] := Module[{p},
 algebraicDegree[a_] := Module[{p = minimalPolynomialOf[a]}, If[p === $Failed, $Failed, Exponent[p, x]]];
 
 rootIndexOf[a_, poly_] := Module[{n = Exponent[poly, x], vals, av, k},
+  (* A stored Root index is only a candidate: isolation methods can order roots differently. *)
+  If[Head[a] === Root && IntegerQ[a[[2]]] && 1 <= a[[2]] <= n &&
+      exactZeroQ[a - rootObject[poly, a[[2]]]], Return[a[[2]]]];
   av = N[a, 40];
   vals = Table[N[rootObject[poly, j], 40], {j, n}];
   k = First[Ordering[Abs[vals - av], 1]];
@@ -351,6 +354,8 @@ valuesAtPrecision[gd_, prec_] := If[prec <= gd["Precision"], gd["Values"],
 
 conjugates[gd_, v_] := gd["Values"] . v;
 
+coordinatesFromConjugates[gd_, yv_] := gd["GramInverse"] . (roundInteger /@ (Transpose[gd["Values"]] . yv));
+
 multiplicationMatrix[gd_, yv_] := gd["GramInverse"] . roundIntegerMatrix[Transpose[gd["Values"]] . (yv gd["Values"])];
 
 multiplicationMatrixOfElement[gd_, v_] := Module[{den = LCM @@ Denominator[v]},
@@ -361,8 +366,7 @@ multiplicationMatrixOfElement[gd_, v_] := Module[{den = LCM @@ Denominator[v]},
 powerCoordinates[gd_, v_, 0] := coordinateOfOne[gd];
 powerCoordinates[gd_, v_, 1] := v;
 powerCoordinates[gd_, v_, k_Integer?positiveIntegerQ] := Module[{den = LCM @@ Denominator[v], result},
-  result = Catch[gd["GramInverse"] .
-    (roundInteger /@ (Transpose[gd["Values"]] . conjugates[gd, den v]^k))/den^k, precTag];
+  result = Catch[coordinatesFromConjugates[gd, conjugates[gd, den v]^k]/den^k, precTag];
   If[result === "precision",
     With[{matrix = multiplicationMatrixOfElement[gd, v]}, Nest[matrix . # &, v, k - 1]], result]];
 
@@ -378,12 +382,11 @@ powerDivider[gd_, v_] := Module[{den = LCM @@ Denominator[v], values, norm, reci
   divide[num_, 0] := num;
   divide[num_, k_Integer?positiveIntegerQ] := Module[{numDen = LCM @@ Denominator[num], result},
     result = If[reciprocals === "precision", "precision", Catch[
-      (den^k/(numDen norm^k)) gd["GramInverse"] .
-        (roundInteger /@ (Transpose[gd["Values"]] . (conjugates[gd, numDen num] reciprocals^k))), precTag]];
+      (den^k/(numDen norm^k)) coordinatesFromConjugates[gd, conjugates[gd, numDen num] reciprocals^k], precTag]];
     If[result === "precision", LinearSolve[MatrixPower[matrix[], k], num], result]];
   divide];
 
-elementDegree[gd_, v_] := Module[{cnt = 0}, Do[If[aut . v == v, cnt++], {aut, gd["Automorphisms"]}]; gd["Order"]/cnt];
+elementDegree[gd_, v_] := gd["Order"]/Count[gd["Automorphisms"], _?(# . v == v &)];
 
 coordinateOfOne[gd_] := UnitVector[gd["Order"], 1];
 

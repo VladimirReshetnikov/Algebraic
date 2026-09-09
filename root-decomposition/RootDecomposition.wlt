@@ -184,6 +184,23 @@ VerificationTest[Module[{data = RootGaloisData[x^2 - 2, x, "WorkingPrecision" ->
       MinimalPolynomial[result, x] === Expand[(den^2 (x - 1)^2 - 2)/2], {j, 2}]],
   True, TestID -> "exact element orbits preserve extremely close conjugate branches"];
 
+VerificationTest[And @@ Table[Module[{data = RootGaloisData[p, x], snapshot, one, pairs, den},
+  snapshot = data; one = UnitVector[data["Order"], 1];
+  pairs = Join[{{0 one, 0}, {one/7, 1/7}},
+    Table[{one + data["RootCoordinates"][[j]]/3, 1 + data["Roots"][[j]]/3}, {j, Length[data["Roots"]]}],
+    {{10^40 one + data["RootCoordinates"][[1]]/7, 10^40 + data["Roots"][[1]]/7}}];
+  AllTrue[pairs, Function[pair, den = LCM @@ Denominator[pair[[1]]];
+    RootDecomposition`Private`coordinatesFromConjugates[data,
+      RootDecomposition`Private`conjugates[data, den pair[[1]]]]/den === pair[[1]] &&
+      RootDecomposition`Private`elementDegree[data, pair[[1]]] === Exponent[MinimalPolynomial[pair[[2]], x], x]]] &&
+    data === snapshot], {p, {x - 2, x^3 - 2, x^3 - 3 x + 1, x^4 + 1}}], True,
+  TestID -> "shared trace coordinates and stabilizer degrees preserve exact real complex and rational elements"];
+VerificationTest[With[{data = <|"Values" -> IdentityMatrix[2], "GramInverse" -> IdentityMatrix[2]|>},
+  RootDecomposition`Private`coordinatesFromConjugates[data, {2, -3}] === {2, -3} &&
+    AllTrue[{{1/3, 0}, {I, 0}, {N[1, 8], 0}},
+      Catch[RootDecomposition`Private`coordinatesFromConjugates[data, #], RootDecomposition`Private`precTag] === "precision" &]],
+  True, TestID -> "shared trace coordinates retain tagged noninteger imaginary and low accuracy failures"];
+
 VerificationTest[And @@ Table[
   Module[{data = RootGaloisData[p, x], values},
     values = RootDecomposition`Private`valuesAtPrecision[data, 2 data["Precision"]];
@@ -247,5 +264,17 @@ VerificationTest[Module[{spaces = Table[<|"Basis" -> {UnitVector[4, i]}|>, {i, 4
 VerificationTest[With[{spaces = Table[<|"Basis" -> {UnitVector[5, i]}|>, {i, 4}]},
   RootDecomposition`Private`findSumRepresentation[spaces, UnitVector[5, 5], Infinity]], $Failed,
   TestID -> "unrestricted sum rejects an impossible full span"];
+
+VerificationTest[Module[{x = RootDecomposition`Private`x, roots, data, a, poly},
+  roots = Join[Flatten[Table[Root[Function @@ {p /. x -> Slot[1]}, k, mode],
+      {p, {x^5 - x - 1, x^8 - 2}}, {k, Exponent[p, x]}, {mode, {0, 1}}]],
+    {1 + Sqrt[2], Sqrt[2] + I Sqrt[3], 1 + Sqrt[2]/10^50}];
+  a = Root[#^5 - # - 1 &, 2]; poly = (x^5 - x - 1) (x^2 - 2);
+  (* The stored index is 2, but this larger polynomial places the same root at 4. *)
+  RootDecomposition`Private`rootIndexOf[a, poly] === 4 && AllTrue[roots,
+    Function[value, data = RootDecomposition`Private`inputData[value];
+      IntegerQ[data["Index"]] && 1 <= data["Index"] <= data["Degree"] &&
+        RootReduce[value - RootDecomposition`Private`rootObject[data["Polynomial"], data["Index"]]] === 0]]],
+  True, TestID -> "stored Root indices are verified and mismatched candidates retain exact fallback"];
 
 EndTestSection[];
