@@ -241,6 +241,8 @@ class FieldPowers(unittest.TestCase):
                 rd.mat_round(rd.acb_mat([[value]]))
             with self.assertRaises(rd.PrecisionError):
                 rd.multiplication_matrix(gd, [value])
+            with self.assertRaises(rd.PrecisionError):
+                rd.coords_from_conjugates(gd, [value])
             # The coordinate wrapper establishes integrality by clearing this denominator first.
             q = rt.fmpq(1) + rt.fmpq(1, 2 ** 100)
             self.assertEqual(rd.multiplication_matrix_of(gd, [q]), rt.fmpq_mat([[q]]))
@@ -274,6 +276,58 @@ class FieldPowers(unittest.TestCase):
             with self.assertRaises(rd.PrecisionError):
                 rd.coords_from_conjugates(gd, [z ** 5 for z in rd.conj_vector(gd, integers)])
         self.assertEqual(rd.power_coordinates(gd, v, 5), self.matrix_power(v, 5))
+
+    def test_coordinate_power_trace_precision_trials(self):
+        gd, outer_prec = self.gd, rt.ctx.prec
+        mixed = [a / 3 + b / 7 for a, b in zip(gd.root_coords[0], gd.root_coords[1])]
+        conjugates, coordinates = rd.conj_vector, rd.coords_from_conjugates
+        for shift, trace_precisions in ((0, [64]), (10 ** 10, [64, gd.prec])):
+            v = [q + shift * (i == 0) for i, q in enumerate(mixed)]
+            expected = self.matrix_power(v, 3)
+            observed_values, observed_traces = [], []
+
+            def record_values(field, vector):
+                observed_values.append(rt.ctx.prec)
+                return conjugates(field, vector)
+
+            def record_traces(field, values):
+                observed_traces.append(rt.ctx.prec)
+                return coordinates(field, values)
+
+            with rt.ctx.workprec(97), patch.object(rd, "conj_vector", side_effect=record_values), \
+                    patch.object(rd, "coords_from_conjugates", side_effect=record_traces), \
+                    patch.object(rd, "multiplication_matrix_of") as matrix:
+                self.assertEqual(rd.power_coordinates(gd, v, 3), expected)
+                self.assertEqual(observed_values, [gd.prec])
+                self.assertEqual(observed_traces, trace_precisions)
+                matrix.assert_not_called()
+                self.assertEqual(rt.ctx.prec, 97)
+            self.assertEqual(rt.ctx.prec, outer_prec)
+
+    def test_coordinate_power_trace_errors_restore_precision(self):
+        gd, outer_prec = self.gd, rt.ctx.prec
+        v = gd.root_coords[1]
+        expected, observed = self.matrix_power(v, 3), []
+
+        def fail_traces(field, values):
+            observed.append(rt.ctx.prec)
+            raise rd.PrecisionError("uncertain traces")
+
+        with rt.ctx.workprec(97), patch.object(rd, "coords_from_conjugates", side_effect=fail_traces), \
+                patch.object(rd, "multiplication_matrix_of", wraps=rd.multiplication_matrix_of) as matrix:
+            self.assertEqual(rd.power_coordinates(gd, v, 3), expected)
+            self.assertEqual(observed, [64, gd.prec])
+            self.assertEqual(matrix.call_count, 1)
+            self.assertEqual(rt.ctx.prec, 97)
+        self.assertEqual(rt.ctx.prec, outer_prec)
+
+        with rt.ctx.workprec(97), patch.object(rd, "coords_from_conjugates", side_effect=ValueError("coordinate failure")), \
+                patch.object(rd, "multiplication_matrix_of") as matrix:
+            with self.assertRaisesRegex(ValueError, "coordinate failure"):
+                rd.power_coordinates(gd, v, 3)
+            matrix.assert_not_called()
+            self.assertEqual(rt.ctx.prec, 97)
+        self.assertEqual(rt.ctx.prec, outer_prec)
 
     def test_power_divider(self):
         gd = self.gd

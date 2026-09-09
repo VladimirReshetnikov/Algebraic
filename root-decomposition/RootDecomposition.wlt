@@ -244,5 +244,8 @@ VerificationTest[Module[{spaces = Table[<|"Basis" -> {UnitVector[4, i]}|>, {i, 4
     RootDecomposition`Private`findSumRepresentation[spaces, {1, 1, 1, 1}, 3] === $Failed &&
     RootDecomposition`Private`findSumRepresentation[spaces, {1, 1, 1, 1}, 4] === expected], True,
   TestID -> "sum span search retains full space fallback and finite term caps"];
+VerificationTest[With[{spaces = Table[<|"Basis" -> {UnitVector[5, i]}|>, {i, 4}]},
+  RootDecomposition`Private`findSumRepresentation[spaces, UnitVector[5, 5], Infinity]], $Failed,
+  TestID -> "unrestricted sum rejects an impossible full span"];
 
 EndTestSection[];

@@ -86,7 +86,7 @@ class CorrectnessRegressions(unittest.TestCase):
         with patch.object(rd, "solve_in_spaces", wraps=rd.solve_in_spaces) as solve:
             result = rd.find_sum_representation(spaces, [1, 1, 0, 0], None)
             self.assertEqual([entry[0] for entry in result], spaces[:2])
-            self.assertEqual(solve.call_count, 5)
+            self.assertEqual(solve.call_count, 6)
         for cap, calls in ((None, 15), (3, 14), (4, 15)):
             with patch.object(rd, "solve_in_spaces", wraps=rd.solve_in_spaces) as solve:
                 result = rd.find_sum_representation(spaces, [1, 1, 1, 1], cap)
@@ -95,6 +95,26 @@ class CorrectnessRegressions(unittest.TestCase):
                 self.assertIsNone(result)
             else:
                 self.assertEqual(result, [(space, space["basis"][0]) for space in spaces])
+        impossible = [dict(index=1, basis=[[fmpq(i == j) for j in range(5)]]) for i in range(4)]
+        with patch.object(rd, "solve_in_spaces", wraps=rd.solve_in_spaces) as solve:
+            self.assertIsNone(rd.find_sum_representation(impossible, [0, 0, 0, 0, 1], None))
+            self.assertEqual(solve.call_count, 1)
+
+    def test_nullspace_rank_guard_preserves_nonzero_bases(self):
+        matrices = [rd.fmpq_mat(0, 3), rd.fmpq_mat(3, 0), rd.fmpq_mat(2, 3),
+                    rd.fmpq_mat([[fmpq(1, 2), fmpq(1, 3)], [fmpq(1, 4), fmpq(1, 6)]]),
+                    rd.fmpq_mat([[fmpq(1, 2), 1], [1, 2], [fmpq(3, 2), 3]])]
+        for matrix in matrices:
+            basis = rd.fmpq_nullspace(matrix)
+            self.assertEqual(len(basis), matrix.ncols() - matrix.rank())
+            for vector in basis:
+                self.assertEqual(rd.apply_matrix(matrix, vector), [0] * matrix.nrows())
+            if matrix.nrows() and matrix.ncols():
+                integer = rd.fmpz_mat([rd._clear_denominators(row)[0] for row in matrix.tolist()])
+                expected, nullity = integer.nullspace()
+                self.assertEqual(basis, [[expected[i, j] for i in range(matrix.ncols())] for j in range(nullity)])
+        with patch.object(rd, "_clear_denominators", side_effect=AssertionError("full rank needs no integer conversion")):
+            self.assertEqual(rd.fmpq_nullspace(rd.fmpq_mat([[1, 2], [0, 1], [1, 3]])), [])
 
     def test_matrix_power_first_column_preserves_scaled_root_coordinates(self):
         for polynomial in (fmpz_poly([-1, 0, 0, 2]), fmpz_poly([1, 0, 2])):

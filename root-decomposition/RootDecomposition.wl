@@ -192,7 +192,7 @@ roundIntegerMatrix[m_] := Map[roundInteger, m, {2}];
 
 galoisGroupNumerically[roots_List, nums_List, prec_, maxOrder_, maxTries_] :=
   Module[{n = Length[roots], orbit, vals, thetaExact = 0, tower = {}, k, w, newTheta, m, md, mroots,
-          cand, matched, idx, used, ok, perms, set, lastDeg, tol, dists, pos, rprec},
+          cand, matched, idx, used, ok, perms, set, mt, lastDeg, tol, dists, pos, rprec},
     orbit = {{}}; vals = {0};
     rprec = Max[30, Floor[prec/2]];
     tol = 10^(-Floor[rprec/2]);
@@ -230,10 +230,10 @@ galoisGroupNumerically[roots_List, nums_List, prec_, maxOrder_, maxTries_] :=
     perms = orbit;
     set = Association[Thread[perms -> Range[Length[perms]]]];
     If[! KeyExistsQ[set, Range[n]], Throw[failure["GaloisGroup", "Identity missing"], failTag]];
-    Do[If[! KeyExistsQ[set, perms[[i]][[perms[[j]]]]],
-        Throw[failure["GaloisGroup", "Closure check failed"], failTag]],
-      {i, Length[perms]}, {j, Length[perms]}];
-    <|"Permutations" -> perms, "Order" -> Length[perms], "Tower" -> tower, "PrimitiveElement" -> thetaExact|>];
+    mt = Table[set[perms[[i]][[perms[[j]]]]], {i, Length[perms]}, {j, Length[perms]}];
+    If[! FreeQ[mt, _Missing], Throw[failure["GaloisGroup", "Closure check failed"], failTag]];
+    <|"Permutations" -> perms, "Order" -> Length[perms], "Tower" -> tower, "PrimitiveElement" -> thetaExact,
+      "MultiplicationTable" -> mt, "Identity" -> set[Range[n]]|>];
 
 (* Shared with RootToRadicals: queue-based closure with constant-time membership. *)
 groupClosure[mt_, idElem_, gs_, visit_: None] := Module[{seen = ConstantArray[False, Length[mt]], queue = {idElem}, pos = 1, h},
@@ -276,7 +276,7 @@ basisValues[nums_, perms_, tower_, basisExp_] := Module[{gens = tower[[All, 1]],
   Table[Times @@ Table[pw[[perm[[gens[[j]]]], ex[[j]] + 1]], {j, Length[gens]}], {perm, perms}, {ex, basisExp}]];
 
 buildGaloisDataAtPrecision[poly_, prec_, maxOrder_, maxTries_] := Module[
-  {roots, nums, n, gg, perms, ord, tower, basisExp, val, gram, gramInv, set, mt, idElem,
+  {roots, nums, n, gg, perms, ord, tower, basisExp, val, gram, gramInv, mt, idElem,
    rootCoords, auts, subs, fixed, orders, numsPerm, groupGens},
   roots = allRoots[poly];
   n = Length[roots];
@@ -288,9 +288,7 @@ buildGaloisDataAtPrecision[poly_, prec_, maxOrder_, maxTries_] := Module[
   gram = roundIntegerMatrix[Transpose[val] . val];
   If[Det[gram] == 0, Throw["precision", precTag]];
   gramInv = Inverse[gram];
-  set = Association[Thread[perms -> Range[ord]]];
-  mt = Table[set[perms[[i]][[perms[[j]]]]], {i, ord}, {j, ord}];
-  idElem = set[Range[n]];
+  mt = gg["MultiplicationTable"]; idElem = gg["Identity"];
   numsPerm = Map[nums[[#]] &, perms];
   rootCoords = Transpose[gramInv . roundIntegerMatrix[Transpose[val] . numsPerm]];
   subs = subgroupLattice[mt, idElem];
@@ -555,12 +553,15 @@ solveInSpaces[spaces_, v_] := Module[{B, sol, lens, p = 1, chunks},
   chunks = Table[With[{ch = Take[sol, {p, p + lens[[i]] - 1}]}, p += lens[[i]]; ch], {i, Length[spaces]}];
   Select[MapThread[{#1, #2 . #1["Basis"]} &, {spaces, chunks}], #[[2]] != 0 #[[2]] &]];
 
-findSumRepresentation[spaces_, v_, maxTerms_] := Module[{limit, res},
+findSumRepresentation[spaces_, v_, maxTerms_] := Module[{limit, res, full = $Failed},
   limit = If[maxTerms === Infinity, Min[3, Length[spaces]], Min[maxTerms, Length[spaces]]];
+  If[maxTerms === Infinity && Length[spaces] > limit,
+    full = solveInSpaces[spaces, v];
+    If[full === $Failed, Return[$Failed]]];
   res = Catch[
     Do[Do[With[{r = solveInSpaces[s, v]}, If[r =!= $Failed, Throw[r, foundTag]]], {s, Subsets[spaces, {k}]}], {k, 1, limit}];
     $Failed, foundTag];
-  If[res === $Failed && maxTerms === Infinity && Length[spaces] > limit, solveInSpaces[spaces, v], res]];
+  If[res === $Failed, full, res]];
 
 RootSumDecomposition[a_, opts : OptionsPattern[]] := RootSumDecomposition[a, Automatic, opts];
 

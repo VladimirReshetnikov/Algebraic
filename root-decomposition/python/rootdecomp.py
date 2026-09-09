@@ -131,6 +131,8 @@ def fmpq_nullspace(m: fmpq_mat) -> list[list[fmpq]]:
     cols = m.ncols()
     if rows == 0:
         return [[fmpq(1) if k == j else fmpq(0) for k in range(cols)] for j in range(cols)]
+    if rows >= cols and m.rank() == cols:
+        return []
     introws = [_clear_denominators(row)[0] for row in m.tolist()]
     M = fmpz_mat(introws)
     ns, nullity = M.nullspace()
@@ -719,18 +721,23 @@ def multiplication_matrix(gd: GaloisData, yv: list[acb]) -> fmpq_mat:
     return gd.gram_inv * fmpq_mat(mat_round(gd.values.transpose() * scaled))
 
 
+def _try_lower_precision(compute):
+    """Try cheaper recovery of known integer traces, then the caller's precision."""
+    for prec in (min(64, ctx.prec), ctx.prec):
+        try:
+            with ctx.workprec(prec):
+                return compute()
+        except PrecisionError:
+            if prec == ctx.prec:
+                raise
+
+
 def multiplication_matrix_of(gd: GaloisData, v) -> fmpq_mat:
     """Exact multiplication by rational coordinates in a basis of algebraic integers."""
     integers, den = _clear_denominators(v)
     values = conj_vector(gd, integers)
-    # Clearing denominators makes the product traces integers; try cheaper arithmetic first.
-    for prec in (min(64, ctx.prec), ctx.prec):
-        try:
-            with ctx.workprec(prec):
-                return multiplication_matrix(gd, values) / den
-        except PrecisionError:
-            if prec == ctx.prec:
-                raise
+    # Clearing denominators makes the product traces integers.
+    return _try_lower_precision(lambda: multiplication_matrix(gd, values) / den)
 
 
 def power_coordinates(gd: GaloisData, v, exponent: int) -> list[fmpq]:
@@ -745,7 +752,9 @@ def power_coordinates(gd: GaloisData, v, exponent: int) -> list[fmpq]:
     with ctx.workprec(gd.prec):
         try:
             powers = [z ** exponent for z in conj_vector(gd, integers)]
-            return [c / den ** exponent for c in coords_from_conjugates(gd, powers)]
+            # Integer coefficients in the integral monomial basis make these powers integral.
+            coordinates = _try_lower_precision(lambda: coords_from_conjugates(gd, powers))
+            return [c / den ** exponent for c in coordinates]
         except PrecisionError:
             # Large powers can exhaust trace precision even when a single matrix is recoverable.
             matrix = multiplication_matrix_of(gd, v)
@@ -1063,14 +1072,17 @@ def solve_in_spaces(spaces, v):
 
 def find_sum_representation(spaces, v, max_terms):
     limit = min(3, len(spaces)) if max_terms is None else min(max_terms, len(spaces))
+    full = None
+    if max_terms is None and len(spaces) > limit:
+        full = solve_in_spaces(spaces, v)
+        if full is None:
+            return None
     for k in range(1, limit + 1):
         for s in itertools.combinations(spaces, k):
             r = solve_in_spaces(list(s), v)
             if r is not None:
                 return r
-    if max_terms is None and len(spaces) > limit:
-        return solve_in_spaces(spaces, v)
-    return None
+    return full
 
 
 def _sum_search(fd, a, va, stab, n, lb, dmax, scope, max_terms, method, complete):

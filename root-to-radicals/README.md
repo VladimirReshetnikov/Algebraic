@@ -128,13 +128,17 @@ already obtained at the previous step.
 
 ## Refactoring validation (9 September 2026)
 
-Validation accumulated through solver revision `f3fceb2` passed **28 Python test
+Validation of the refactored solver passed **30 Python test
 methods**, **73 native Wolfram tests**, and **13 independent cross-language
 checks**. Additional exact comparisons cover all resolvent forms, complete
 result metadata, matrix and coordinate arithmetic, and real/complex branches.
 Forced precision tests check both successful recovery and exhaustion; the
 Wolfram descent now refreshes field data at each retry even when no odd-prime
 roots of unity are needed.
+The shared Python field engine also tries 64-bit recovery of known integer
+power traces before using the original precision and exact matrix fallback.
+Tests exercise both successful recovery and fallback, including restoration of
+the caller's precision and propagation of unrelated errors.
 
 The [shared benchmark](../benchmarks/README.md) records current Python workloads
 with immutable baselines, exact-output checks, source hashes, and raw samples.

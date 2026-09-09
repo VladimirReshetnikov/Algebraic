@@ -153,18 +153,24 @@ or product using exact composed polynomials and certified root selection. The op
 
 ## Refactoring validation (9 September 2026)
 
-Validation of the refactored solvers passed **32 Python test
-methods**, **87 native Wolfram tests**, and **12 independent cross-language
+Validation of the refactored solvers passed **33 Python test
+methods**, **88 native Wolfram tests**, and **12 independent cross-language
 identity and degree checks**. The Python input-field comparisons also passed
 under both SymPy rational backends. These checks cover exact field metadata and
 subfield order, real and complex branches, precision retries, search limits,
 certificates, and independent quotient-ring and trace identities.
 
-The sum search tries the full set of spaces again only when its subset search
-has not already tried it. Python product searches recover powers directly from
+Unrestricted sum searches with more than three spaces first check whether the
+full span contains the target, then retain the existing subset order and reuse
+that result as the final fallback. Python product searches recover powers directly from
 the existing multiplication matrix; both field bases start with the constant
 one. Wolfram search results reuse degree comparisons while retaining independent
 exact verification of the returned terms and their degrees.
+An exact full-column-rank check avoids converting rational matrices whose
+nullspace is empty; nonempty nullspaces retain their previous basis construction.
+The Wolfram field builder reuses the multiplication table produced by its group
+closure check. Python integral power traces try cheaper recovery before falling
+back to the original precision and exact matrix arithmetic.
 
 The [shared benchmark](../benchmarks/README.md) compares representative workloads
 against an immutable Git revision and checks exact outputs. Its saved results
