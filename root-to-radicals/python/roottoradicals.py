@@ -61,6 +61,7 @@ import time
 from dataclasses import dataclass
 from fractions import Fraction
 from functools import cache
+from itertools import combinations
 from typing import Callable, Optional
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "root-decomposition", "python"))
@@ -312,8 +313,9 @@ def closure(mt, ident: int, gens) -> list:
 
 
 def commutator_subgroup(mt, ident: int, H) -> list:
+    """Reversing a pair inverts its commutator, so unordered pairs generate the same subgroup."""
     inv = {g: mt[g].index(ident) for g in H}
-    return closure(mt, ident, sorted({mt[mt[inv[g]][inv[h]]][mt[g][h]] for g in H for h in H}))
+    return closure(mt, ident, {mt[mt[inv[g]][inv[h]]][mt[g][h]] for g, h in combinations(H, 2)})
 
 
 def is_solvable_group(mt, ident: int, H) -> bool:

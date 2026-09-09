@@ -153,7 +153,7 @@ or product using exact composed polynomials and certified root selection. The op
 
 ## Refactoring validation (9 September 2026)
 
-Validation of the refactored solvers passed **34 Python test
+Validation of the refactored solvers passed **35 Python test
 methods**, **88 native Wolfram tests**, and **12 independent cross-language
 identity and degree checks**. The Python input-field comparisons also passed
 under both SymPy rational backends. These checks cover exact field metadata and
@@ -172,6 +172,10 @@ Rational solves scan successive RREF pivots from the previous pivot, preserving
 zero free variables and inconsistent-system detection. Product searches, exact
 power division, and tensor coordinates share native square-system solving;
 tensor searches still reject singular product bases.
+Sum searches delay conversion to algebraic numbers until trace centering satisfies
+the component cap, so discarded centered terms need no conversion. Scale searches
+reuse an immutable candidate table and its logarithmic costs, preserving the
+original order and tie selection even for extreme polynomial-dependent scales.
 The Wolfram field builder reuses the multiplication table produced by its group
 closure check. Python integral power traces try cheaper recovery before falling
 back to the original precision and exact matrix arithmetic.

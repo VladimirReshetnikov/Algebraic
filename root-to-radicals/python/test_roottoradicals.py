@@ -142,6 +142,36 @@ class Examples(unittest.TestCase):
 
 
 class CompositionSeries(unittest.TestCase):
+    def test_unordered_commutators_preserve_groups_and_series(self):
+        from sympy.combinatorics.group_constructs import DirectProduct
+        from sympy.combinatorics.named_groups import CyclicGroup, SymmetricGroup
+
+        def all_pairs(mt, ident, H):
+            inverse = {g: mt[g].index(ident) for g in H}
+            return rt.closure(mt, ident, {mt[mt[inverse[g]][inverse[h]]][mt[g][h]] for g in H for h in H})
+
+        for group in (SymmetricGroup(4), DirectProduct(SymmetricGroup(3), SymmetricGroup(3)),
+                      DirectProduct(SymmetricGroup(4), CyclicGroup(2)), SymmetricGroup(5)):
+            elements = list(group.generate_schreier_sims())
+            indices = {g: i for i, g in enumerate(elements)}
+            mt = [[indices[g * h] for h in elements] for g in elements]
+            ident, H = indices[group.identity], list(range(len(elements)))
+            derived = sorted(indices[g] for g in group.derived_subgroup().generate_schreier_sims())
+            self.assertEqual(rt.commutator_subgroup(mt, ident, H), derived)
+            self.assertEqual(rt.is_solvable_group(mt, ident, H), group.is_solvable)
+            if group.is_solvable:
+                actual = rt.prime_series(mt, ident, H)
+                with patch.object(rt, "commutator_subgroup", side_effect=all_pairs):
+                    self.assertEqual(actual, rt.prime_series(mt, ident, H))
+            else:
+                with self.assertRaises(rt.NotSolvable):
+                    rt.prime_series(mt, ident, H)
+            for collection in ([], [ident], H[:3] + H[:3], [indices[g] for g in group.generators], H, H[::-1]):
+                for convert in (list, tuple, set, iter):
+                    with self.subTest(order=len(H), collection=collection, convert=convert):
+                        self.assertEqual(rt.commutator_subgroup(mt, ident, convert(collection)),
+                                         all_pairs(mt, ident, convert(collection)))
+
     def test_suffix_generators_and_fixed_spaces(self):
         for p, base_prime, expected_order, expected_subgroup in [
                 (fmpz_poly([1, -3, 0, 1]), None, 3, 3),

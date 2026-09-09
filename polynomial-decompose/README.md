@@ -69,7 +69,10 @@ digits. Python also uses FLINT's native polynomial composition over the rational
 when available, with the same exact-domain fallback used by the tests.
 Wolfram coefficient products use exact zero-padded convolution. Existing
 Python `Poly` inputs reuse their coefficient field and coefficient vectors;
-mixed-input verification reads their coefficients directly. Expression inputs
+mixed-input verification reads their coefficients directly. Preparation and the
+coefficient reader share the check for a matching generator over the integers,
+rationals, or an exact algebraic field. These domains need no expression-wide
+floating-point scan; other domains retain the original validation. Expression inputs
 try coefficient collection without expansion first and expand only when needed.
 The independent verifier shares exact conversions across its degree tests.
 Scalar certificate digits skip polynomial parsing while retaining exact field
@@ -221,7 +224,7 @@ The unchanged archived native suites were independently executed with
 Wolfram 15.0.1: report 1 passed **55/107**, report 2 **39/53**, and report 3
 **60/60**. These results concern the original reports, whose historical
 metadata remains unchanged. The unified project has its own regression
-suites: **89/89 native tests** and **24 Python test methods** passed. The
+suites: **89/89 native tests** and **25 Python test methods** passed. The
 Python methods include 12 generated affine-normalization cases across exact
 fields and degree pairs, in addition to boundary, enumeration, and certificate
 tampering checks. They also exercise truncated congruences, early rejection,

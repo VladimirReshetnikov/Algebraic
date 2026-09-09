@@ -105,6 +105,24 @@ VerificationTest[Module[{x, gd, H, index, steps, generators, identity, fixedSpac
       {(x^5 + x^4 - 4 x^3 - 3 x^2 + 3 x + 1) Cyclotomic[5, x], 5, {20, 5}}}}]],
   True, TestID -> "series generator suffixes preserve exact fixed spaces including extended base"];
 
+VerificationTest[Module[{perms, mt, H, allPairs, expected, actual, collections},
+  allPairs[table_, id_, group_] := Module[{inv = Association @@ Table[g -> First[FirstPosition[table[[g]], id]], {g, group}]},
+    RootDecomposition`Private`groupClosure[table, id,
+      DeleteDuplicates[Flatten[Table[table[[table[[inv[g], inv[h]]], table[[g, h]]]], {g, group}, {h, group}]]]]];
+  And @@ Table[
+    perms = Permutations[Range[n]]; H = Range[Length[perms]];
+    mt = Table[First@FirstPosition[perms, g[[h]]], {g, perms}, {h, perms}];
+    actual = RootToRadicals`Private`primeSeries[mt, 1, H];
+    expected = Block[{RootToRadicals`Private`commutatorSubgroup},
+      RootToRadicals`Private`commutatorSubgroup[table_, id_, group_] := allPairs[table, id, group];
+      RootToRadicals`Private`primeSeries[mt, 1, H]];
+    collections = {{}, {1}, H, Reverse[H], Take[H, 3], Join[Take[H, 3], Take[H, 3]]};
+    actual === expected && RootToRadicals`Private`solvableQ[mt, 1, H] === (n == 4) &&
+      RootToRadicals`Private`commutatorSubgroup[mt, 1, H] === Pick[H, Signature /@ perms, 1] &&
+      And @@ Table[RootToRadicals`Private`commutatorSubgroup[mt, 1, collection] === allPairs[mt, 1, collection],
+        {collection, collections}], {n, {4, 5}}]],
+  True, TestID -> "unordered commutators preserve derived groups, exact series, and partial collections"];
+
 (* Exact coordinate powers agree with the former matrix route, including nonintegral elements. *)
 VerificationTest[Module[{gd, vectors, one},
   gd = RootGaloisData[RootDecomposition`Private`x^3 - 2,

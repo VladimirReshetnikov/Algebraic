@@ -1106,14 +1106,14 @@ def _sum_search(fd, a, va, stab, n, lb, dmax, scope, max_terms, method, complete
             t = list(e)
             t[0] = t[0] - m
             if any(x != 0 for x in t):
-                terms.append(fd_to_algebraic(fd, t))
+                terms.append(t)
+        if rational != 0 and max_terms is not None and len(terms) >= max_terms:
+            # Keep the original components if centering would exceed the cap.
+            terms = [e for _, e in rep]
+            rational = fmpq(0)
+        terms = [fd_to_algebraic(fd, t) for t in terms]
         if rational != 0:
-            if max_terms is not None and len(terms) >= max_terms:
-                # Trace centering may not turn a two-term answer into three
-                # terms. Keep the rational part in its original field.
-                terms = [fd_to_algebraic(fd, e) for _, e in rep]
-            else:
-                terms.append(AlgebraicNumber.from_rational(Fraction(int(rational.p), int(rational.q))))
+            terms.append(AlgebraicNumber.from_rational(Fraction(int(rational.p), int(rational.q))))
         if not terms:
             terms = [AlgebraicNumber.from_rational(0)]
         degs = [t.degree for t in terms]
@@ -1223,20 +1223,21 @@ def integral_scale(p: fmpz_poly) -> Fraction:
     return q
 
 
+# Preserve the original enumeration order, including ties between opposite signs.
+_SCALE_CANDIDATES = tuple((q, abs(math.log(abs(q))))
+    for q in {q for k in range(1, 13) for l in range(1, 13) for s in (1, -1)
+              for q in (Fraction(s * k, l), Fraction(s * l, k))})
+
+
 def nice_scale(p: fmpz_poly) -> Fraction:
     """rational q minimizing the height of the minimal polynomial of q*u, where p = minpoly(u)"""
     q0 = integral_scale(p)
-    best, hb = q0, None
-    cands = {q for k in range(1, 13) for l in range(1, 13) for s in (1, -1)
-             for q in (Fraction(s * k, l), Fraction(s * l, k))}
-    for q in cands:
-        qq = q * q0
-        g = _affine_polynomial(p, qq)
-        gc = _fmpz_list(g.coeffs())
-        h = (height(g), -(gc[0] > 0) + (gc[0] < 0), abs(math.log(abs(q))))
-        if hb is None or h < hb:
-            hb, best = h, qq
-    return best
+    def score(candidate):
+        q, cost = candidate
+        g = _affine_polynomial(p, q * q0)
+        constant = int(g[0])
+        return height(g), -(constant > 0) + (constant < 0), cost
+    return min(_SCALE_CANDIDATES, key=score)[0] * q0
 
 
 def scale_algebraic(u: AlgebraicNumber, q: Fraction, prec_bits: int) -> AlgebraicNumber:

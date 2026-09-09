@@ -331,8 +331,10 @@ structural[a_, p_, depth_] := Module[{r},
 (* Group theory on the multiplication table                            *)
 (* ------------------------------------------------------------------ *)
 
+(* Reversing a pair inverts its commutator, so unordered pairs generate the same subgroup. *)
 commutatorSubgroup[mt_, idElem_, H_] := Module[{inv = Association @@ Table[g -> First[FirstPosition[mt[[g]], idElem]], {g, H}]},
-  groupClosure[mt, idElem, DeleteDuplicates[Flatten[Table[mt[[mt[[inv[g], inv[h]]], mt[[g, h]]]], {g, H}, {h, H}]]]]];
+  groupClosure[mt, idElem, DeleteDuplicates[
+    Function[{g, h}, mt[[mt[[inv[g], inv[h]]], mt[[g, h]]]]] @@@ Subsets[H, {2}]]]];
 
 solvableQ[mt_, idElem_, H_] := Module[{cur = Sort[H], nxt},
   While[Length[cur] > 1,

@@ -226,6 +226,32 @@ class FunctionalDecompositionTests(unittest.TestCase):
 
 
 class CertificateTests(unittest.TestCase):
+    def test_poly_field_guards_and_generator_fallback(self):
+        for domain in (sp.ZZ, sp.QQ, sp.QQ.algebraic_field(r), sp.EX):
+            with self.subTest(domain=domain):
+                p = sp.Poly(x**6 + 2*x**4, x, domain=domain)
+                inner = sp.Poly(x**2, x, domain=domain)
+                outer = sp.Poly(x**3 + 2*x**2, x, domain=domain)
+                data = ad.decomposition_data(p, x, 2)
+                self.assertTrue(ad.verify_decomposition_data(p, dict(data, inner=inner), x))
+                self.assertTrue(ad.verify_decomposition(p, [outer, inner], x,
+                    require_complete=True, require_normalized=True))
+
+        data = ad.decomposition_data(x**4, x, 2)
+        for inner in (sp.Poly(1.0*x**2, x, domain=sp.EX), sp.Poly(x**2, x, domain=sp.RR),
+                      sp.Poly(x**2, x, modulus=2)):
+            with self.subTest(inner=inner):
+                self.assertFalse(ad.verify_decomposition_data(x**4, dict(data, inner=inner), x))
+                with self.assertRaises(ValueError):
+                    ad.compose([x**2, inner], x)
+
+        # Certificate expressions can be recollected in x even if a Poly names
+        # a different generator; standalone preparation requires matching gens.
+        inner = sp.Poly(x**2, sp.Symbol("y"), domain=sp.EX)
+        self.assertTrue(ad.verify_decomposition_data(x**4, dict(data, inner=inner), x))
+        with self.assertRaisesRegex(ValueError, "a univariate characteristic-zero polynomial is required"):
+            ad.compose([x**2, inner], x)
+
     def test_positive_negative_and_exhaustive(self):
         for p in (QUESTION, x**16+x, x**12, (x**4+x)**2):
             with self.subTest(p=p):

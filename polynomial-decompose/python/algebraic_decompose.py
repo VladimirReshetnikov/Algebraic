@@ -69,11 +69,16 @@ def _obstruction(digits):
                  for k, value in enumerate(digit[1:], 1) if value), None)
 
 
+def _is_exact_poly(expression, x):
+    return (isinstance(expression, sp.Poly) and expression.gens == (x,)
+            and (expression.domain in (sp.ZZ, sp.QQ) or expression.domain.is_AlgebraicField))
+
+
 def _raw_coefficients(expression, x):
     expression = sp.sympify(expression)
     if not isinstance(expression, (sp.Expr, sp.Poly)):
         raise ValueError("the input must be a polynomial expression or Poly")
-    if expression.has(sp.Float):
+    if not _is_exact_poly(expression, x) and expression.has(sp.Float):
         raise ValueError("approximate coefficients are not accepted")
     if isinstance(expression, sp.Expr) and x not in expression.free_symbols:
         return [expression]
@@ -97,12 +102,10 @@ def _raw_coefficients(expression, x):
 def _prepare(expressions, x):
     if not isinstance(x, sp.Symbol):
         raise ValueError("x must be a Symbol")
-    if len(expressions) == 1 and isinstance(expressions[0], sp.Poly):
-        polynomial = expressions[0]
-        if polynomial.gens == (x,) and (polynomial.domain in (sp.ZZ, sp.QQ) or polynomial.domain.is_AlgebraicField):
-            polynomial = polynomial.to_field()
-            engine = _Engine(polynomial.domain)
-            return engine, [engine.trim(reversed(polynomial.rep.to_list()))]
+    if len(expressions) == 1 and _is_exact_poly(expressions[0], x):
+        polynomial = expressions[0].to_field()
+        engine = _Engine(polynomial.domain)
+        return engine, [engine.trim(reversed(polynomial.rep.to_list()))]
     coefficients, sizes = [], []
     for expression in expressions:
         if isinstance(expression, sp.Poly):

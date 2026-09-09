@@ -267,8 +267,26 @@ class CorrectnessRegressions(unittest.TestCase):
                 self.assertFalse(result.optimal)
 
     def test_affine_two_term_sum(self):
-        result = run("two affine quadratic summands", rd.sum_decomposition, q, 2, max_terms=2)
-        self.assertEqual(len(result.terms), 2)
+        for engine in ("input", "splitting"):
+            with patch.object(rd, "fd_to_algebraic", wraps=rd.fd_to_algebraic) as convert:
+                result = rd.sum_decomposition(q, max_terms=2, engine=engine)
+                self.assertEqual(convert.call_count, 2)
+            self.assertEqual((len(result.terms), result.max_degree), (2, 2))
+            self.assertTrue(rd.verify_exact(q, result))
+        with patch.object(rd, "fd_to_algebraic", side_effect=rd.PrecisionError("required conversion")):
+            with self.assertRaisesRegex(rd.PrecisionError, "required conversion"):
+                rd.sum_decomposition(q, max_terms=2)
+
+    def test_nice_scale_preserves_ties_and_extreme_rational_scales(self):
+        cases = [([1], Fraction(1)), ([-7], Fraction(1)), ([0, 1], Fraction(1)),
+                 ([-2, 0, 1], Fraction(1)), ([2, 0, 1], Fraction(1)),
+                 ([-8, 0, 1], Fraction(1, 2)), ([1, 0, 8], Fraction(4)),
+                 ([-2 ** 2200, 0, 1], Fraction(1, 2 ** 1100)),
+                 ([-1, 0, 2 ** 2200], Fraction(2 ** 1100))]
+        for coefficients, expected in cases:
+            self.assertEqual(rd.nice_scale(fmpz_poly(coefficients)), expected)
+        with self.assertRaises(IndexError):
+            rd.nice_scale(fmpz_poly())
 
     def test_constrained_optimality(self):
         result = rd.sum_decomposition(e3, max_terms=2)
