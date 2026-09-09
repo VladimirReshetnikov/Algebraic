@@ -12,14 +12,38 @@ and python-flint dependencies as the solvers. The baseline revision must be
 available in the local Git history; `204c97f` is the merged baseline before the
 shared solver refactoring.
 
-Eleven workloads exercise sparse certificate generation, decomposition over an
+Fifteen workloads exercise sparse certificate generation, decomposition over an
 algebraic coefficient field, two complete-chain enumerations, two Galois field
 constructions, bounded catalogue generation, multiplication by a root of unity,
-two input-field operations, and generalized reciprocal recognition. `--match` selects labels:
+two input-field operations, generalized reciprocal recognition, dense certificate
+verification, complete-chain generation with verification, and two full root
+searches. `--match` selects labels:
 
 ```console
 python benchmarks/compare_solvers.py --baseline 0bb70f4 --match certificate
 ```
+
+To reproduce the later preparation and search comparisons against their own
+baseline, use:
+
+```console
+python benchmarks/compare_solvers.py --baseline b2a8ada --match verification --cold-sympy-cache --samples 7
+python benchmarks/compare_solvers.py --baseline b2a8ada --match "of degree-9" --samples 7
+```
+
+The verification-only workload prepares one certificate before timing and
+requires both verifiers to accept it. The chain workflow includes enumeration
+and complete/normalized verification, then compares the entire returned chain
+sets outside the clock. The two root searches use each revision's own algebraic
+number class and compare every result field, including normalized term
+polynomials/root indices, bounds, optimality flags, method, and extra metadata.
+The warm-up populates each version's field caches before those search timings.
+These rows compare exact outputs; independent identity proofs remain the job
+of the project verification suites.
+
+`--cold-sympy-cache` clears registered SymPy caches before every timed call,
+outside the clock. It does not clear solver field/result caches or rebuild inputs.
+The JSON records this choice; the default retains warmed caches.
 
 The script loads each baseline implementation directly from the resolved commit.
 It warms both versions, alternates their execution order, and checks exact output
@@ -43,8 +67,7 @@ root evaluator come from the current implementation in both cases.
 
 The JSON records the baseline commit, current Git HEAD, dependency versions,
 hashes of the current Python source text with normalized newlines, every timing
-sample, medians, and
-exact-check status. Ratios describe these workloads on the current machine;
+sample, medians, and exact-check status. Ratios describe these workloads on the current machine;
 they do not compare complete test-suite runtimes. Native Wolfram and independent
 cross-language correctness remain covered by the three projects' test suites and
 `python/verify_wolfram.py` scripts.
@@ -76,3 +99,28 @@ warm-up. All eleven workloads returned identical exact outputs on every check.
 These selected cases illustrate specific improvements; they do not establish a
 universal speedup. In particular, very short timings are sensitive to system
 load. The JSON retains all samples and unrounded values for inspection.
+
+## Additional refinement comparison (9 September 2026)
+
+The [verification snapshot](results/refinement-verification-2026-09-09.json) and
+[search snapshot](results/refinement-search-2026-09-09.json) compare solver
+revision `a39acf7` against `b2a8ada`, which already includes the earlier
+refactoring. Both record seven alternating samples per version, with exact
+checks passing on every warm-up and timed result.
+
+The first two rows clear registered SymPy caches before each timed call, while
+retaining prepared inputs. The two root-search rows use warmed field and SymPy
+caches. Their timing boundaries are described above.
+
+| Workload | Baseline (seconds) | Refined (seconds) | Baseline / refined |
+| --- | ---: | ---: | ---: |
+| Dense degree-48 certificate verification | 0.737595 | 0.229719 | 3.21x |
+| Chebyshev degree-120 chains with verification | 0.236360 | 0.145153 | 1.63x |
+| Sum of degree-9 product root | 0.187873 | 0.107650 | 1.75x |
+| Product of degree-9 sum root | 0.266291 | 0.141649 | 1.88x |
+
+These comparisons concern different revisions and cache conditions from the
+earlier table. The added rank check can cost time on nonempty nullspaces, and
+the low-precision trace trial can cost time when it needs the original fallback.
+The selected workloads show where the refinements help; they do not establish
+that every input becomes faster.

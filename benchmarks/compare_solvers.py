@@ -48,6 +48,10 @@ def galois_signature(data):
         "identity", "root_coords", "automorphisms", "subgroups", "exponent"))
 
 
+def decomposition_signature(result):
+    return {**vars(result), "terms": [(tuple(term.poly.coeffs()), term.index) for term in result.terms]}
+
+
 def workloads(before, current, match=""):
     x = sp.Symbol("x")
     sparse = sp.Poly(x ** 600 + x + 1, x)
@@ -61,6 +65,38 @@ def workloads(before, current, match=""):
     ):
         yield label, [lambda m=m, p=polynomial, f=method, a=args: getattr(m, f)(p, x, *a)
                       for m in (before["algebraic_decompose"], current["algebraic_decompose"])], lambda result: result
+    label = "dense degree-48 certificate verification"
+    if match.lower() in label.lower():
+        r = sp.sqrt(2)
+        dense = sp.Poly(((2 + r) * (x ** 3 + r * x + 1)).subs(x, x ** 4 + x + r)
+                        .subs(x, x ** 4 + x + 1), x, extension=r)
+        certificate = current["algebraic_decompose"].decomposition_data(dense, x)
+
+        def check_certificate(module):
+            if module.verify_decomposition_data(dense, certificate, x) is not True:
+                raise AssertionError("certificate verification failed")
+            return True
+
+        yield label, [lambda m=m: check_certificate(m)
+                      for m in (before["algebraic_decompose"], current["algebraic_decompose"])], lambda result: result
+    label = "Chebyshev degree-120 chains with verification"
+    if match.lower() in label.lower():
+        def checked_chains(module):
+            chains = module.decompositions(chebyshev, x)
+            if not all(module.verify_decomposition(chebyshev, chain, x, require_complete=True,
+                                                    require_normalized=True) for chain in chains):
+                raise AssertionError("complete-chain verification failed")
+            return chains
+
+        yield label, [lambda m=m: checked_chains(m)
+                      for m in (before["algebraic_decompose"], current["algebraic_decompose"])], lambda result: result
+    for label, coefficients, method in (
+        ("sum of degree-9 product root", [-1, -1, 0, 3, -1, 1, -3, 2, 0, 1], "sum_decomposition"),
+        ("product of degree-9 sum root", [8, -4, 24, -15, 0, 3, 6, 0, 0, 1], "product_decomposition"),
+    ):
+        if match.lower() in label.lower():
+            yield label, [lambda m=m, a=m.AlgebraicNumber(fmpz_poly(coefficients), 1), f=method: getattr(m, f)(a)
+                          for m in (before["rootdecomp"], current["rootdecomp"])], decomposition_signature
     for label, coefficients in (
         ("S4 field construction", [-1, -1, 0, 0, 1]),
         ("order-36 field construction", [8, -4, 24, -15, 0, 3, 6, 0, 0, 1]),
@@ -109,13 +145,15 @@ def workloads(before, current, match=""):
         for module in (before["roottoradicals"], current["roottoradicals"])], lambda result: result
 
 
-def compare(functions, signature, samples):
+def compare(functions, signature, samples, cold_sympy_cache=False):
     expected = signature(functions[0]())
     if signature(functions[1]()) != expected:
         raise AssertionError("exact warm-up outputs differ")
     times = [[], []]
     for sample in range(samples):
         for index in ((0, 1) if sample % 2 else (1, 0)):
+            if cold_sympy_cache:
+                sp.core.cache.clear_cache()
             start = time.perf_counter()
             result = functions[index]()
             times[index].append(time.perf_counter() - start)
@@ -131,6 +169,7 @@ def main():
     parser.add_argument("--baseline", default="204c97f", help="Git revision before the refactoring")
     parser.add_argument("--samples", type=int, default=7)
     parser.add_argument("--match", default="", help="run only workload labels containing this text")
+    parser.add_argument("--cold-sympy-cache", action="store_true", help="clear SymPy's cache before each timed call")
     parser.add_argument("--output", type=Path, help="also write exact-check status and raw timings as JSON")
     args = parser.parse_args()
     if args.samples < 1:
@@ -142,11 +181,12 @@ def main():
     report = {"baseline": revision, "python": sys.version, "sympy": sp.__version__,
               "current_head": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
               "python_flint": flint.__version__, "samples": args.samples,
+              "cold_sympy_cache": args.cold_sympy_cache,
               "current_source_sha256": {name: module.__source_sha256__ for name, module in current.items()},
               "workloads": {}}
     for label, functions, signature in workloads(before, current, args.match):
         if args.match.lower() in label.lower():
-            result = compare(functions, signature, args.samples)
+            result = compare(functions, signature, args.samples, args.cold_sympy_cache)
             report["workloads"][label] = result
             print(f"PASS {label}: {result['baseline_seconds']:.6f}s -> "
                   f"{result['current_seconds']:.6f}s ({result['ratio']:.2f}x)", flush=True)

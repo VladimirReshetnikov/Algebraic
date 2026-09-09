@@ -1,0 +1,68 @@
+{
+  "baseline": "b2a8adaa4280a1356431edc31dbc0d11b800e4a2",
+  "python": "3.14.4 (tags/v3.14.4:23116f9, Apr  7 2026, 14:10:54) [MSC v.1944 64 bit (AMD64)]",
+  "sympy": "1.14.0",
+  "current_head": "a39acf760c9a2a8ffb572e3a5d1d3d30a7fdee88",
+  "python_flint": "0.8.0",
+  "samples": 7,
+  "cold_sympy_cache": true,
+  "current_source_sha256": {
+    "rootdecomp": "3beb9170f0987408fc3faf1f9e9991d51e1976dd1db19f99819cf11f8e1d5ba8",
+    "algebraic_decompose": "883d60497f8a18bc1c4e6ea8918e7462d41bf1e7ceb731521efcd99e331ed24a",
+    "roottoradicals": "c29cda9ddb5708a26e2269e98b02385553f959ea83a36b8e7b1a38a31fa7d75c"
+  },
+  "workloads": {
+    "dense degree-48 certificate verification": {
+      "exact_output_match": true,
+      "baseline_seconds": 0.73759489999793,
+      "current_seconds": 0.22971910000342177,
+      "ratio": 3.210855779893545,
+      "samples_seconds": {
+        "baseline": [
+          0.6669173999980558,
+          0.8601495999973849,
+          0.6944073999984539,
+          0.73759489999793,
+          0.8426436000008835,
+          0.6846975999942515,
+          1.5901364000019385
+        ],
+        "current": [
+          0.2786793999985093,
+          0.2099508000028436,
+          0.22971910000342177,
+          0.1854927999956999,
+          0.18845710000459803,
+          0.23785639999550767,
+          0.25944909999816446
+        ]
+      }
+    },
+    "Chebyshev degree-120 chains with verification": {
+      "exact_output_match": true,
+      "baseline_seconds": 0.23636020000412827,
+      "current_seconds": 0.14515340000070864,
+      "ratio": 1.6283476653180315,
+      "samples_seconds": {
+        "baseline": [
+          0.2574698000025819,
+          0.21876239999983227,
+          0.23636020000412827,
+          0.22926269999879878,
+          0.3709186999985832,
+          0.2162663999988581,
+          0.2968475999950897
+        ],
+        "current": [
+          0.17304149999836227,
+          0.11727950000204146,
+          0.15810530000453582,
+          0.1246331999936956,
+          0.14653089999774238,
+          0.13028169999597594,
+          0.14515340000070864
+        ]
+      }
+    }
+  }
+}
