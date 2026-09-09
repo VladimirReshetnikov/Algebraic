@@ -928,9 +928,8 @@ def input_field_data(p: fmpz_poly, a: "AlgebraicNumber", prec_bits: int = 300) -
     fac = sp.Poly(P.subs(x, y), y, domain=K).factor_list()[1]
 
     def vec(el):
-        el = K.convert(el)
-        vals = [Fraction(int(q.numerator), int(q.denominator)) for q in reversed(el.to_list())]
-        return [fmpq(v.numerator, v.denominator) for v in vals] + [fmpq(0)] * (n - len(vals))
+        vals = [fmpq(int(q.numerator), int(q.denominator)) for q in reversed(K.convert(el).to_list())]
+        return vals + [fmpq(0)] * (n - len(vals))
 
     factor_degrees = sorted(g.degree() for g, _ in fac)
     galois = all(g.degree() == 1 for g, _ in fac)
@@ -951,10 +950,7 @@ def input_field_data(p: fmpz_poly, a: "AlgebraicNumber", prec_bits: int = 300) -
             coeffs_r = coeffs_r + [K.zero] * (m - len(coeffs_r))
             rows.append([vec(cc) for cc in coeffs_r])
             thpow = thpow * theta_el
-        eqs = []
-        for i in range(m):
-            for k in range(n):
-                eqs.append([rows[j][i][k] for j in range(n)])
+        eqs = [list(column) for coefficients in zip(*rows) for column in zip(*coefficients)]
         principal.append(rowspace_basis(fmpq_nullspace(fmpq_mat(eqs)), n))
     ident = [[fmpq(1) if i == j else fmpq(0) for j in range(n)] for i in range(n)]
     subfields = {tuple(map(tuple, ident)): ident}

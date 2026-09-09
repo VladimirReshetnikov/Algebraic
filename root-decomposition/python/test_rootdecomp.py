@@ -300,6 +300,27 @@ class CorrectnessRegressions(unittest.TestCase):
                           data.factor_degrees, data.galois, data.traces, data.prec, data.kind),
                          (polynomial, 1, 4, polynomial, 4, [1, 1, 1, 1], True, [4, 0, 20, 0], 200, "InputField"))
 
+    def test_input_field_packing_nonmonic_and_unequal_factor_degrees(self):
+        cases = [
+            ([-1, 0, 0, 2], [-4, 0, 0, 1], [1, 2]),
+            ([1, 0, 2], [2, 0, 1], [1, 1]),
+            ([-1, -1, 0, 0, 1], [-1, -1, 0, 0, 1], [1, 3]),
+        ]
+        with patch.dict(rd._ifcache, {}, clear=True):
+            for coefficients, integral_coefficients, factor_degrees in cases:
+                polynomial = fmpz_poly(coefficients)
+                n = polynomial.degree()
+                identity = [[int(i == j) for j in range(n)] for i in range(n)]
+                one = [[1] + [0] * (n - 1)]
+                for index in range(1, n + 1):
+                    data = rd.input_field_data(polynomial, rd.AlgebraicNumber(polynomial, index))
+                    self.assertEqual((data.poly, data.scale, data.theta.poly, data.theta.index),
+                                     (fmpz_poly(integral_coefficients), coefficients[-1],
+                                      fmpz_poly(integral_coefficients), index))
+                    self.assertEqual((data.factor_degrees, data.galois), (factor_degrees, n == 2))
+                    self.assertEqual(data.subgroups, [dict(index=len(b), fixed=b, elements=None, order=n // len(b))
+                                                     for b in (identity, one)])
+
     def test_input_field_does_not_extract_external_radicals(self):
         # A Galois input field still must honor the request to keep its factors
         # in that field: norm exponent one is the applicable scoped search.
