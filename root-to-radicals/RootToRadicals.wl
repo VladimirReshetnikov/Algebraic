@@ -75,6 +75,7 @@ powerDivider = RootDecomposition`Private`powerDivider;
 rationalQ = RootDecomposition`Private`rationalQ;
 precTag = RootDecomposition`Private`precTag;
 frobeniusExponentMultiple = RootDecomposition`Private`frobeniusExponentMultiple;
+frobeniusCycleType = RootDecomposition`Private`frobeniusCycleType;
 groupClosure = RootDecomposition`Private`groupClosure;
 
 okQ[r_] := r =!= $Failed && ! FailureQ[r];      (* a usable result of a recursive step *)
@@ -126,9 +127,6 @@ vanishesAtQ[fac_, a_] := Module[{n = Exponent[fac, x], cl, prec, na, terms},
 (* ------------------------------------------------------------------ *)
 (* Frobenius negative tests                                            *)
 (* ------------------------------------------------------------------ *)
-
-(* cycle type of a Frobenius element = degrees of the irreducible factors mod p (p not dividing disc) *)
-frobeniusCycleType[poly_, p_] := Sort[Exponent[#[[1]], x] & /@ Select[FactorList[poly, Modulus -> p], Exponent[#[[1]], x] > 0 &]];
 
 (* prime degree n: a solvable transitive group lies in AGL(1,n), whose cycle types are 1^n, n, 1 d^((n-1)/d) *)
 agl1TypeQ[degs_, n_] := degs === {n} || degs === ConstantArray[1, n] ||
@@ -434,7 +432,7 @@ galoisRadicals[a_, p_] := Module[{maxOrder, prec, form, gd0, order, primes, poly
   (* adjoin the roots of unity; a cyclotomic factor equal to p itself is already present *)
   poly = Expand[p Times @@ Select[Cyclotomic[#, x] & /@ primes, PolynomialGCD[#, p] === 1 &]];
   Do[
-    gd = If[primes === {}, gd0, galoisData[poly, maxOrder Times @@ (primes - 1), prec]];
+    gd = galoisData[poly, maxOrder Times @@ (primes - 1), prec];
     If[FailureQ[gd], Return[gd, Module]];
     res = Catch[descend[gd, a, primes, form], precTag];
     If[res =!= "precision", Break[]];

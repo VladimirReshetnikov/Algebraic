@@ -149,16 +149,13 @@ exponentBound[e_Integer] := Max[Power @@@ FactorInteger[e]];
 gaussianPrimeBound[n_Integer] := Max[1, Max[Select[First /@ FactorInteger[n], # > 2 &] /. {} -> {1}]];
 gaussianExponentBound[e_Integer] := If[MemberQ[{1, 2}, e], 1, exponentBound[e]];
 
-frobeniusExponentMultiple[poly_, maxPrimes_: 40] := Module[{disc, lc, ps, orders = {}, q, fl},
-  lc = Coefficient[poly, x, Exponent[poly, x]];
-  disc = Discriminant[poly, x];
-  ps = Select[Prime[Range[maxPrimes + 10]], Mod[disc lc, #] != 0 &];
-  ps = Take[ps, UpTo[maxPrimes]];
-  Do[
-    fl = Select[FactorList[poly, Modulus -> q], Exponent[#[[1]], x] > 0 &];
-    AppendTo[orders, LCM @@ (Exponent[#[[1]], x] & /@ fl)],
-    {q, ps}];
-  LCM @@ orders];
+(* cycle type at a prime not dividing the discriminant or leading coefficient *)
+frobeniusCycleType[poly_, p_] := Sort[Exponent[#[[1]], x] & /@ Select[FactorList[poly, Modulus -> p], Exponent[#[[1]], x] > 0 &]];
+
+frobeniusExponentMultiple[poly_, maxPrimes_: 40] := Module[
+  {bad = Discriminant[poly, x] Coefficient[poly, x, Exponent[poly, x]], ps},
+  ps = Take[Select[Prime[Range[maxPrimes + 10]], Mod[bad, #] != 0 &], UpTo[maxPrimes]];
+  LCM @@ Prepend[Flatten[frobeniusCycleType[poly, #] & /@ ps], 1]];
 
 lowerBoundFromPolynomial[poly_] := Module[{n = Exponent[poly, x], bound},
   bound = largestPrimeFactor[n];

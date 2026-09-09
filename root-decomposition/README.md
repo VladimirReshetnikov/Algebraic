@@ -99,6 +99,7 @@ performed with `RootReduce` and `MinimalPolynomial`. Element reconstruction sele
 conjugates by exact coordinate equality under the group action, preserving their first occurrence.
 Both implementations share cached-power basis evaluation between Galois construction and precision
 escalation; Python reevaluates only the nonzero coordinate columns when reconstructing an element.
+Radical branch selection requests only the identity embedding when it needs higher precision.
 For multiplication matrices, Python first tries at most 64-bit arithmetic after clearing coordinate
 denominators, which makes the product traces integers. If unique-integer recovery fails, it retries
 at the caller's original precision. Large traces can require both attempts.

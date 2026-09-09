@@ -208,4 +208,15 @@ VerificationTest[Check[Module[{data = RootGaloisData[x (x^2 - 2), x, "Cache" -> 
   {data["Order"], RootDecomposition`Private`roundIntegerMatrix[Transpose[values] . values] === data["Gram"]}], $Failed],
   {2, True}, TestID -> "splitting field containing zero preserves trace matrices without messages"];
 
+VerificationTest[With[{xx = RootDecomposition`Private`x},
+  {RootDecomposition`Private`frobeniusCycleType[xx^2 - xx - 1, 2],
+   RootDecomposition`Private`frobeniusCycleType[xx^2 - xx - 1, 11],
+   RootDecomposition`Private`frobeniusCycleType[2 xx^2 - 1, 3]}],
+  {{2}, {1, 1}, {2}}, TestID -> "shared Frobenius helper returns sorted nonconstant factor degrees"];
+VerificationTest[Check[RootDecomposition`Private`frobeniusExponentMultiple[RootDecomposition`Private`x^3 - 2, 0], $Failed],
+  1, TestID -> "zero Frobenius prime budget gives neutral exponent without messages"];
+VerificationTest[Check[With[{p = RootDecomposition`Private`x^4 - Times @@ Prime[Range[60]]},
+  {RootDecomposition`Private`frobeniusExponentMultiple[p, 40], RootDecomposition`Private`lowerBoundFromPolynomial[p]}], $Failed],
+  {1, 2}, TestID -> "finite Frobenius prime window with no good primes preserves valid lower bound"];
+
 EndTestSection[];

@@ -89,6 +89,28 @@ class Examples(unittest.TestCase):
         r5 = run("quintic example by descent", A5, "Galois", method="galois")
         self.assertEqual((r5.galois_order, r5.extended_order), (20, 40))
 
+    def test_descent_precision_retries_without_odd_primes(self):
+        a = rd.AlgebraicNumber(fmpz_poly([-2, 0, 1]), 2)
+        descend = rt._descend
+        for failures, expected_precisions in [(1, [100, 200]), (3, [100, 200, 400])]:
+            precisions = []
+
+            def attempt(gd, a, primes, state):
+                self.assertEqual(primes, [])
+                precisions.append(gd.prec)
+                if len(precisions) <= failures:
+                    raise rd.PrecisionError("forced descent ambiguity")
+                return descend(gd, a, primes, state)
+
+            with patch.object(rt, "_descend", side_effect=attempt):
+                state = rt._State(method="galois", prec_bits=100)
+                if failures == 1:
+                    self.assertEqual(rt._galois_radicals(a, state), sp.sqrt(2))
+                else:
+                    with self.assertRaisesRegex(rd.PrecisionError, "precision escalation failed in the descent"):
+                        rt._galois_radicals(a, state)
+            self.assertEqual(precisions, expected_precisions)
+
     def test_structural_families(self):
         run("decomposition", "Root[1 + 3 #^2 - 3 #^4 - 4 #^6 + #^8 + #^10 &, 5]", "Decompose")
         run("Dickson D_7", "Root[-3 - 7 # + 14 #^3 - 7 #^5 + #^7 &, 1]", "Dickson")
@@ -222,6 +244,16 @@ class FieldPowers(unittest.TestCase):
             # The coordinate wrapper establishes integrality by clearing this denominator first.
             q = rt.fmpq(1) + rt.fmpq(1, 2 ** 100)
             self.assertEqual(rd.multiplication_matrix_of(gd, [q]), rt.fmpq_mat([[q]]))
+
+    def test_branch_selection_evaluates_only_identity_at_higher_precision(self):
+        gd = self.gd
+        candidates = [2 ** sp.Rational(1, 3) * (-1) ** sp.Rational(2 * j, 3) for j in range(3)]
+        for vector, expected in zip(gd.root_coords, (candidates[0], candidates[2], candidates[1])):
+            with rt.ctx.workprec(97), patch.object(rd, "_conj_vector_at", wraps=rd._conj_vector_at) as evaluate:
+                result = rt.select_candidate(candidates, rt._value_at_identity(gd, vector), 2 * gd.prec)
+                self.assertEqual(rt.ctx.prec, 97)
+                self.assertEqual(evaluate.call_args.kwargs, {"rows": [gd.identity]})
+                self.assertEqual(result, expected)
 
     def test_coordinate_powers(self):
         gd = self.gd

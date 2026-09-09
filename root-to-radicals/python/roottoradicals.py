@@ -540,7 +540,7 @@ def _value_at_identity(gd, v) -> Callable[[int], acb]:
     def fn(prec):
         with ctx.workprec(prec):
             if prec > gd.prec:
-                return rd._conj_vector_at(gd, v, prec)[gd.identity]
+                return rd._conj_vector_at(gd, v, prec, rows=[gd.identity])[0]
             return sum((gd.values[gd.identity, j] * rd._fmpq_to_acb(fmpq(q))
                         for j, q in enumerate(v) if q), acb(0))
     return fn
@@ -586,9 +586,7 @@ def _descend(gd, a: AlgebraicNumber, primes: list, st: _State):
                 raise PrecisionError("root of unity not uniquely located")
             zeta_idx[q] = matches[0]
             zeta_mult[q] = rd.multiplication_matrix_of(gd, [v / c for v in gd.root_coords[matches[0]]])
-    zeta_mult[2] = fmpq_mat(order, order)
-    for i in range(order):
-        zeta_mult[2][i, i] = -1
+    zeta_mult[2] = -gd.automorphisms[gd.identity]
     zeta_sym = {q: sp.Pow(-1, sp.Rational(2, q)) for q in primes}
     zeta_sym[2] = sp.Integer(-1)
     conj = _conjugation_automorphism(gd)
@@ -664,8 +662,7 @@ def _galois_radicals(a: AlgebraicNumber, st: _State):
     prec = st.prec_bits
     for _ in range(3):
         try:
-            gd = _galois_data(poly, prec, st.maxorder * math.prod(q - 1 for q in primes)) if primes else \
-                (gd0 if prec == st.prec_bits else _galois_data(p, prec, st.maxorder))
+            gd = _galois_data(poly, prec, st.maxorder * math.prod(q - 1 for q in primes))
             expr, st.extended_order, st.series_primes = _descend(gd, a, primes, st)
             st.method_used = "Galois"
             return expr

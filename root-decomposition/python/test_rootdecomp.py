@@ -361,6 +361,20 @@ class CorrectnessRegressions(unittest.TestCase):
                 self.assertEqual(fallback.call_count, int(gd.order > 1))
             self.assertEqual((actual.poly, actual.index), (expected.poly, expected.index))
 
+    def test_selected_conjugate_rows(self):
+        for polynomial in (fmpz_poly([0, 1]), fmpz_poly([-2, 0, 0, 1]), fmpz_poly([-1, -1, 0, 0, 1])):
+            gd = rd.galois_data(polynomial)
+            rows = [gd.order - 1, gd.identity, gd.order - 1]
+            with ctx.workprec(gd.prec * 2):
+                for vector in ([fmpq(0)] * gd.order, gd.root_coords[-1],
+                               [fmpq(i - 2, i + 1) for i in range(gd.order)]):
+                    full = rd._conj_vector_at(gd, vector, ctx.prec)
+                    selected = rd._conj_vector_at(gd, vector, ctx.prec, rows=rows)
+                    self.assertEqual(len(full), gd.order)
+                    self.assertEqual(len(selected), len(rows))
+                    self.assertTrue(all(value.overlaps(full[i]) for value, i in zip(selected, rows)))
+                    self.assertEqual(rd._conj_vector_at(gd, vector, ctx.prec, rows=[]), [])
+
     def test_catalog_preserves_coefficient_and_root_order(self):
         self.assertEqual([a.as_fraction() for a in rd.catalog(1, 2)],
                          [Fraction(2), Fraction(1), Fraction(1, 2), Fraction(0),

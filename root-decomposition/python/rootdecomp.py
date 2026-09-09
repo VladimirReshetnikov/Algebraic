@@ -832,10 +832,11 @@ def element_to_algebraic(gd: GaloisData, v) -> AlgebraicNumber:
     return _retry_precision(reconstruct, gd.prec, "element_to_algebraic failed")
 
 
-def _conj_vector_at(gd: GaloisData, w, prec):
+def _conj_vector_at(gd: GaloisData, w, prec, rows=None):
     roots = poly_roots(gd.poly, prec)
     indices = [i for i, q in enumerate(w) if q]
-    values = _basis_values(roots, gd.perms, gd.tower, [gd.basis_exp[i] for i in indices])
+    perms = gd.perms if rows is None else [gd.perms[i] for i in rows]
+    values = _basis_values(roots, perms, gd.tower, [gd.basis_exp[i] for i in indices])
     return (values * acb_mat(len(indices), 1, [_fmpq_to_acb(fmpq(w[i])) for i in indices])).entries()
 
 

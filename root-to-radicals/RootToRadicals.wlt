@@ -65,6 +65,19 @@ VerificationTest[RootRadicalReport[Root[#^8 + 1 &, 1], Method -> "Galois"]["Veri
 VerificationTest[RootRadicalReport[Root[Cyclotomic[7, #] &, 1], Method -> "Galois"]["Verified"], True, TestID -> "descent Phi_7"];
 VerificationTest[RootRadicalReport[Root[#^6 - 2 #^3 - 1 &, 1], Method -> "Galois"]["Verified"], True, TestID -> "descent x^6-2x^3-1"];
 
+VerificationTest[Module[{run},
+  run[failures_] := Module[{precisions = {}, result},
+    result = Block[{RootToRadicals`Private`$opts = {"WorkingPrecision" -> 80},
+        RootToRadicals`Private`$galoisInfo, RootToRadicals`Private`descend},
+      RootToRadicals`Private`descend[gd_, a_, primes_, form_] := (
+        AppendTo[precisions, gd["Precision"]];
+        If[Length[precisions] <= failures, Throw["precision", RootToRadicals`Private`precTag]];
+        <|"Expression" -> Sqrt[2], "ExtendedGroupOrder" -> gd["Order"], "SeriesPrimes" -> {2}|>);
+      RootToRadicals`Private`galoisRadicals[Sqrt[2], RootToRadicals`Private`x^2 - 2]];
+    {precisions, If[FailureQ[result], result[[1]], result]}];
+  {run[1], run[3]}], {{{80, 160}, Sqrt[2]}, {{80, 160, 320}, "Precision"}},
+  TestID -> "descent without odd primes refreshes field precision and retains three-attempt limit"];
+
 (* forced descent on the two examples of the question *)
 rg6 = RootRadicalReport[a6, Method -> "Galois"];
 VerificationTest[rg6["Verified"], True, TestID -> "sextic example by descent"];
