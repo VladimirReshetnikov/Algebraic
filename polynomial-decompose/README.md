@@ -63,8 +63,8 @@ residual; the verifier still checks the supplied residual, without composing
 the outer polynomial again.
 A truncated binary power checks the congruence without constructing all of
 \(h^m\). Composition and certificate reconstruction share exact arithmetic.
-Wolfram reconstructs nonoverlapping digits in base \(x^d\) by padding and joining
-their coefficient blocks, and uses Horner arithmetic for other bases or overlapping
+Both implementations reconstruct nonoverlapping digits in base \(x^d\) by padding and joining
+their coefficient blocks, and use Horner arithmetic for other bases or overlapping
 digits. Python also uses FLINT's native polynomial composition over the rationals
 when available, with the same exact-domain fallback used by the tests.
 Wolfram coefficient products use exact zero-padded convolution. Integer and
@@ -226,7 +226,7 @@ The unchanged archived native suites were independently executed with
 Wolfram 15.0.1: report 1 passed **55/107**, report 2 **39/53**, and report 3
 **60/60**. These results concern the original reports, whose historical
 metadata remains unchanged. The unified project has its own regression
-suites: **90/90 native tests** and **25 Python test methods** passed. The
+suites: **90/90 native tests** and **26 Python test methods** passed. The
 Python methods include 12 generated affine-normalization cases across exact
 fields and degree pairs, in addition to boundary, enumeration, and certificate
 tampering checks. They also exercise truncated congruences, early rejection,

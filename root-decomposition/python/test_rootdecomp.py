@@ -131,6 +131,31 @@ class CorrectnessRegressions(unittest.TestCase):
         with patch.object(rd, "_clear_denominators", side_effect=AssertionError("full rank needs no integer conversion")):
             self.assertEqual(rd.fmpq_nullspace(rd.fmpq_mat([[1, 2], [0, 1], [1, 3]])), [])
 
+    def test_pair_search_batches_ordered_basis_actions(self):
+        for polynomial in (fmpz_poly([-2, 0, 0, 1]), fmpz_poly([-1, 0, 0, 2])):
+            a = rd.AlgebraicNumber(polynomial, 3)
+            for fd in (rd.input_field_data(polynomial, a), rd.galois_data(polynomial)):
+                if isinstance(fd, rd.InputFieldData):
+                    vector = [fmpq(0), fmpq(1, fd.scale), fmpq(0)]
+                else:
+                    vector = [q / fd.scale for q in fd.root_coords[rd.locate_target(fd, a)]]
+                with ctx.workprec(fd.prec):
+                    matrix = rd.fd_mult_matrix(fd, vector)
+                fields = fd.subgroups + [{"fixed": []}]
+                # A zero action also tests singular blocks independently of the
+                # nonzero field-element invariant used by the product search.
+                for power in (matrix, matrix ** 3, rd.fmpq_mat(fd.order, fd.order)):
+                    for E in fields:
+                        for F in fields:
+                            columns = E["fixed"] + [
+                                [-sum((power[i, j] * v[j] for j in range(fd.order)), fmpq(0))
+                                 for i in range(fd.order)] for v in F["fixed"]]
+                            expected = rd.fmpq_mat(fd.order, len(columns),
+                                [column[i] for i in range(fd.order) for column in columns])
+                            with patch.object(rd, "fmpq_nullspace", return_value=[]) as nullspace:
+                                self.assertIsNone(rd._try_pair(fd, E, F, power, 1, a, a.degree))
+                            self.assertEqual(nullspace.call_args.args[0], expected)
+
     def test_matrix_power_first_column_preserves_scaled_root_coordinates(self):
         for polynomial in (fmpz_poly([-1, 0, 0, 2]), fmpz_poly([1, 0, 2])):
             gd = rd.galois_data(polynomial, 300)

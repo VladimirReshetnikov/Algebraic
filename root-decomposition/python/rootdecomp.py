@@ -1326,8 +1326,8 @@ def shortest_vector(ns, length):
 def _try_pair(fd, E, F, Mt, t, a, d):
     ord_ = fd.order
     BE, BF = E["fixed"], F["fixed"]
-    MF = [apply_matrix(Mt, f) for f in BF]
-    M = _col_matrix(BE + [[-x for x in f] for f in MF], ord_)
+    MF = Mt * _col_matrix(BF, ord_)
+    M = _col_matrix(BE + (-MF).transpose().tolist(), ord_)
     ns = fmpq_nullspace(M)
     if not ns:
         return None

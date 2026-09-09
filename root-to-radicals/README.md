@@ -125,6 +125,8 @@ Descent reuses branches common to the Fourier and eigenvector forms and checks f
 fields using the remaining composition-series generators, which generate the whole
 subgroup. Composition chains solve each suffix over the smaller-degree algebraic value
 already obtained at the previous step.
+Python scores formula size only when a descent step produces multiple choices.
+Wolfram grammar and depth analysis dispatch directly on the expression head.
 Both implementations generate derived subgroups from unordered commutator pairs:
 reversing a pair gives its inverse, and group closure already supplies inverses.
 The resulting subgroups, prime-series order, and solvability decisions are unchanged.
@@ -132,7 +134,7 @@ The resulting subgroups, prime-series order, and solvability decisions are uncha
 ## Refactoring validation (9 September 2026)
 
 Validation of the refactored solver passed **31 Python test
-methods**, **74 native Wolfram tests**, and **13 independent cross-language
+methods**, **75 native Wolfram tests**, and **13 independent cross-language
 checks**. Additional exact comparisons cover all resolvent forms, complete
 result metadata, matrix and coordinate arithmetic, and real/complex branches.
 Forced precision tests check both successful recovery and exhaustion; the

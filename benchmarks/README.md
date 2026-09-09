@@ -12,10 +12,10 @@ and python-flint dependencies as the solvers. The baseline revision must be
 available in the local Git history; `204c97f` is the merged baseline before the
 shared solver refactoring.
 
-Seventeen workloads exercise sparse certificate generation, decomposition over an
+Nineteen workloads exercise sparse certificate generation, decomposition over an
 algebraic coefficient field, two complete-chain enumerations, two Galois field
 constructions, bounded catalogue generation, multiplication by a root of unity,
-two input-field operations, generalized reciprocal recognition, dense certificate
+two input-field operations, generalized reciprocal recognition, three certificate
 verification, complete-chain generation with verification, and four full root
 searches. `--match` selects labels:
 
@@ -31,8 +31,11 @@ python benchmarks/compare_solvers.py --baseline b2a8ada --match verification --c
 python benchmarks/compare_solvers.py --baseline b2a8ada --match "of degree-9" --samples 7
 ```
 
-The verification-only workload prepares one certificate before timing and
-requires both verifiers to accept it. The chain workflow includes enumeration
+Each verification-only workload prepares one certificate before timing and
+requires both verifiers to accept it. The dense degree-48 and power degree-360
+certificates cover every proper divisor; the sparse algebraic degree-240 certificate
+checks right degree four for \((2+\sqrt{2})x^{240}+x^7+7\).
+The chain workflow includes enumeration
 and complete/normalized verification, then compares the entire returned chain
 sets outside the clock. The four root searches use each revision's own algebraic
 number class and compare every result field, including normalized term

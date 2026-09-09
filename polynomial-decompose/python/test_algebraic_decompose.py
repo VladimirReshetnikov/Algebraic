@@ -305,6 +305,26 @@ class CertificateTests(unittest.TestCase):
         engine = ad._Engine(sp.QQ)
         self.assertEqual(list(engine.base_digits((engine.zero,), (engine.zero, engine.zero, engine.one))), [])
 
+    def test_monomial_reconstruction_and_horner_fallbacks(self):
+        t = sp.Symbol("t")
+        alpha = sp.CRootOf(t**5-t-1, 0)
+        polynomial = lambda v: sp.Add(*(c*x**i for i, c in enumerate(v)))
+        for coefficient in (sp.Rational(2, 3), r, sp.I, alpha):
+            engine, _ = ad._prepare([x + coefficient], x)
+            bases = ((0,), (1,), (0, 1), (0, 0, 1), (0, 0, 0, 1), (0, 0, 2), (0, coefficient, 1))
+            digit_sets = ((), ((),), ((0,),), ((1,),), ((1,), (2,), (3,)),
+                          ((coefficient, 1), (coefficient, 2), (3,)),
+                          ((1, 2, 3, 4), (0, coefficient), (2,)))
+            for base in bases:
+                inner = tuple(engine.scalar(sp.sympify(c)) for c in base)
+                for digits in digit_sets:
+                    with self.subTest(coefficient=coefficient, base=base, digits=digits):
+                        blocks = [tuple(engine.scalar(sp.sympify(c)) for c in digit) for digit in digits]
+                        actual = engine.compose_digits(blocks, inner)
+                        expected = sp.Poly(sp.Add(*(polynomial(digit)*polynomial(base)**j
+                            for j, digit in enumerate(digits))), x, domain=engine.K)
+                        self.assertEqual(actual, engine.trim(reversed(expected.rep.to_list())))
+
     def test_positive_residual_reuses_verified_reconstruction(self):
         r, h = sp.sqrt(2), x**3 + sp.sqrt(2)*x
         p = sp.Poly((2 + r)*h**4 + 7*h + 3, x, extension=r)

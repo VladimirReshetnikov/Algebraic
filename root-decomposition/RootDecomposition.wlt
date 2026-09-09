@@ -89,6 +89,14 @@ VerificationTest[FailureQ[RootSumDecomposition[1.5]], True, {RootDecomposition::
 
 VerificationTest[RootBoundedDecomposition[ap, Times, 3, 1, 2]["MaximumDegree"], 3, TestID -> "bounded product search"];
 VerificationTest[RootBoundedDecomposition[as, Plus, 3, 1, 2]["MaximumDegree"], 3, TestID -> "bounded sum search"];
+VerificationTest[Module[{catalog, nonrational},
+  And @@ Flatten[Table[
+    catalog = RootDecompositionCatalog[d, h];
+    nonrational = RootDecomposition`Private`catalogRoots[d, h, 2];
+    nonrational === Select[catalog, Exponent[MinimalPolynomial[#, x], x] > 1 &] &&
+      AllTrue[nonrational, ! TrueQ[RootReduce[#] === 0] &],
+    {d, 1, 3}, {h, 1, 2}]]], True,
+  TestID -> "bounded catalog preserves nonrational root order and excludes zero"];
 
 (* Public bounds and certificate semantics, including paths that return early. *)
 VerificationTest[FailureQ[RootSumDecomposition[Sqrt[2], 1]], True, TestID -> "sum degree bound survives trivial shortcut"];

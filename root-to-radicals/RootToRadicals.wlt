@@ -19,6 +19,14 @@ VerificationTest[RadicalExpressionQ[2^Sqrt[2]], False, TestID -> "grammar: irrat
 VerificationTest[RadicalDepth[Sqrt[1 + Sqrt[2]]], 2, TestID -> "depth: nested"];
 VerificationTest[RadicalDepth[Sqrt[2]^3 + 1/Sqrt[3]], 1, TestID -> "depth: integer powers do not nest"];
 VerificationTest[RadicalDepth[7/3], 0, TestID -> "depth: rational"];
+VerificationTest[Module[{y}, AllTrue[{
+    {2/3, True, 0}, {-2 + 3 I, True, 0}, {1. + I, False, 0},
+    {(1 + Sqrt[2])^(2/3), True, 2}, {2^Sqrt[2], False, 1},
+    {y^2, False, 0}, {y^(1/3), False, 1}, {(y + Sqrt[2])^(1/3), False, 2},
+    {Sin[Sqrt[2]], False, 0}, {HoldForm[Sqrt[2]], False, 0}, {{Sqrt[2]}, False, 0},
+    {True, False, 0}, {Root[#^5 - # - 1 &, 1], False, 0}},
+  {RadicalExpressionQ[First[#]], RadicalDepth[First[#]]} === Rest[#] &]], True,
+  TestID -> "typed grammar and depth preserve exact approximate symbolic and unsupported heads"];
 
 (* the built-in function fails on all three *)
 VerificationTest[Head[ToRadicals[a6]], Root, TestID -> "built-in ToRadicals fails on the sextic"];

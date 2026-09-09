@@ -643,7 +643,7 @@ def _descend(gd, a: AlgebraicNumber, primes: list, st: _State):
                         raise DescentError("eigenvector ratio is not in the lower field")
                     total += rad(ck, level - 1) * u ** m
                 choices.append(total / q)
-            return min(choices, key=leaf_count)
+            return choices[0] if len(choices) == 1 else min(choices, key=leaf_count)
 
     return rad(va, len(steps)), order, [s["prime"] for s in steps]
 

@@ -65,20 +65,26 @@ def workloads(before, current, match=""):
     ):
         yield label, [lambda m=m, p=polynomial, f=method, a=args: getattr(m, f)(p, x, *a)
                       for m in (before["algebraic_decompose"], current["algebraic_decompose"])], lambda result: result
-    label = "dense degree-48 certificate verification"
-    if match.lower() in label.lower():
-        r = sp.sqrt(2)
-        dense = sp.Poly(((2 + r) * (x ** 3 + r * x + 1)).subs(x, x ** 4 + x + r)
-                        .subs(x, x ** 4 + x + 1), x, extension=r)
-        certificate = current["algebraic_decompose"].decomposition_data(dense, x)
+    r = sp.sqrt(2)
+    for label, make_polynomial, degree in (
+        ("dense degree-48 certificate verification",
+         lambda: sp.Poly(((2 + r) * (x ** 3 + r * x + 1)).subs(x, x ** 4 + x + r)
+                         .subs(x, x ** 4 + x + 1), x, extension=r), None),
+        ("power degree-360 certificate verification", lambda: sp.Poly(x ** 360, x), None),
+        ("sparse algebraic degree-240 certificate verification",
+         lambda: sp.Poly((2 + r) * x ** 240 + x ** 7 + 7, x, extension=r), 4),
+    ):
+        if match.lower() in label.lower():
+            polynomial = make_polynomial()
+            certificate = current["algebraic_decompose"].decomposition_data(polynomial, x, degree)
 
-        def check_certificate(module):
-            if module.verify_decomposition_data(dense, certificate, x) is not True:
-                raise AssertionError("certificate verification failed")
-            return True
+            def check_certificate(module, polynomial=polynomial, certificate=certificate):
+                if module.verify_decomposition_data(polynomial, certificate, x) is not True:
+                    raise AssertionError("certificate verification failed")
+                return True
 
-        yield label, [lambda m=m: check_certificate(m)
-                      for m in (before["algebraic_decompose"], current["algebraic_decompose"])], lambda result: result
+            yield label, [lambda m=m, check=check_certificate: check(m)
+                          for m in (before["algebraic_decompose"], current["algebraic_decompose"])], lambda result: result
     label = "Chebyshev degree-120 chains with verification"
     if match.lower() in label.lower():
         def checked_chains(module):

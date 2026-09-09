@@ -84,17 +84,15 @@ okQ[r_] := r =!= $Failed && ! FailureQ[r];      (* a usable result of a recursiv
 (* Radical grammar                                                     *)
 (* ------------------------------------------------------------------ *)
 
-RadicalExpressionQ[e_] := Which[
-  rationalQ[e] || e === I, True,
-  Head[e] === Complex, rationalQ[Re[e]] && rationalQ[Im[e]],
-  Head[e] === Plus || Head[e] === Times, AllTrue[List @@ e, RadicalExpressionQ],
-  Head[e] === Power, rationalQ[e[[2]]] && RadicalExpressionQ[e[[1]]],
-  True, False];
+RadicalExpressionQ[e : (_Integer | _Rational)] := True;
+RadicalExpressionQ[e_Complex] := rationalQ[Re[e]] && rationalQ[Im[e]];
+RadicalExpressionQ[e : (_Plus | _Times)] := AllTrue[List @@ e, RadicalExpressionQ];
+RadicalExpressionQ[e_Power] := rationalQ[e[[2]]] && RadicalExpressionQ[e[[1]]];
+RadicalExpressionQ[e_] := False;
 
-RadicalDepth[e_] := Which[
-  Head[e] === Power, RadicalDepth[e[[1]]] + If[IntegerQ[e[[2]]], 0, 1],
-  Head[e] === Plus || Head[e] === Times, Max[RadicalDepth /@ List @@ e],
-  True, 0];
+RadicalDepth[e_Power] := RadicalDepth[e[[1]]] + If[IntegerQ[e[[2]]], 0, 1];
+RadicalDepth[e : (_Plus | _Times)] := Max[RadicalDepth /@ List @@ e];
+RadicalDepth[e_] := 0;
 
 (* ------------------------------------------------------------------ *)
 (* Numerics and verification                                           *)

@@ -262,6 +262,11 @@ class _Engine:
         return result
 
     def compose_digits(self, digits, inner):
+        d = len(inner) - 1
+        if (d > 0 and inner[-1] == self.one and not any(inner[:-1])
+                and all(len(r) <= d for r in reversed(digits))):
+            return self.trim(itertools.chain.from_iterable(
+                tuple(r) + (self.zero,) * (d - len(r)) for r in digits))
         result = (self.zero,)
         for digit in reversed(digits):
             result = self.add(self.multiply(result, inner), digit)

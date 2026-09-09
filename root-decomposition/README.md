@@ -109,6 +109,8 @@ denominators, which makes the product traces integers. If unique-integer recover
 at the caller's original precision. Large traces can require both attempts.
 Bounded catalogs enumerate positive leading coefficients directly, preserving their polynomial and
 root order while avoiding the discarded half of the coefficient box.
+Wolfram bounded searches also start catalog generation at degree two: irreducible polynomials
+of these degrees have no rational or zero roots, so no later degree filter is needed.
 The resolvent construction is practical
 for Galois groups of order up to a few hundred.
 
@@ -157,8 +159,8 @@ or product using exact composed polynomials and certified root selection. The op
 
 ## Refactoring validation (9 September 2026)
 
-Validation of the refactored solvers passed **35 Python test
-methods**, **91 native Wolfram tests**, and **12 independent cross-language
+Validation of the refactored solvers passed **36 Python test
+methods**, **92 native Wolfram tests**, and **12 independent cross-language
 identity and degree checks**. The Python input-field comparisons also passed
 under both SymPy rational backends. These checks cover exact field metadata and
 subfield order, real and complex branches, precision retries, search limits,
@@ -176,6 +178,8 @@ Rational solves scan successive RREF pivots from the previous pivot, preserving
 zero free variables and inconsistent-system detection. Product searches, exact
 power division, and tensor coordinates share native square-system solving;
 tensor searches still reject singular product bases.
+Two-factor searches apply each multiplication matrix to a whole field basis at once,
+retaining the basis-column order in the exact intersection system.
 Sum searches delay conversion to algebraic numbers until trace centering satisfies
 the component cap, so discarded centered terms need no conversion. Scale searches
 reuse an immutable candidate table and its logarithmic costs, preserving the

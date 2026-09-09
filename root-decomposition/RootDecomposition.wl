@@ -948,13 +948,15 @@ productSearch[fd_, a_, va_, stab_, n_, lb_, dmax_, scope_, maxFactors_, depth_, 
 (* Bounded dictionary search                                          *)
 (* ------------------------------------------------------------------ *)
 
-RootDecompositionCatalog[d_Integer?Positive, h_Integer?Positive] := Module[{polys},
+catalogRoots[d_, h_, firstDegree_] := Module[{polys},
   polys = Join @@ Table[
     Select[Tuples[Append[ConstantArray[Range[-h, h], m], Range[h]]],
       GCD @@ # == 1 && IrreduciblePolynomialQ[FromDigits[Reverse[#], x]] &],
-    {m, 1, d}];
+    {m, firstDegree, d}];
   polys = FromDigits[Reverse[#], x] & /@ polys;
   DeleteDuplicates[Join @@ Table[RootReduce[rootObject[p, j]], {p, polys}, {j, Exponent[p, x]}]]];
+
+RootDecompositionCatalog[d_Integer?Positive, h_Integer?Positive] := catalogRoots[d, h, 1];
 
 RootDecompositionCatalog[_, _] := failure["InvalidBounds", "Degree and height must be positive integers"];
 
@@ -970,9 +972,7 @@ RootBoundedDecomposition[a_, op : (Plus | Times), d_Integer, h_Integer, r_Intege
      Reject impossible boxes before constructing an exponential-size catalog. *)
   If[n > d^r, Return[failure["NotFoundWithinBounds", "The degree exceeds the product of the component degree bounds",
     <|"Degree" -> d, "Height" -> h, "Components" -> r|>]]];
-  cat = RootDecompositionCatalog[d, h];
-  If[op === Times, cat = Select[cat, # =!= 0 &]];
-  cat = Select[cat, algebraicDegree[#] > 1 &];
+  cat = catalogRoots[d, h, 2];
   residual[prefix_] := RootReduce[If[op === Plus, a - Total[prefix], a/Times @@ prefix]];
   search[prefix_, start_, slots_] := Module[{rr, deg, i},
     rr = residual[prefix];
