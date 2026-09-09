@@ -137,6 +137,23 @@ VerificationTest[MatchQ[AlgebraicDecompose[x^4, x^2], _Failure], True,
   TestID -> "reject-invalid-variable"]
 VerificationTest[And @@ (MatchQ[AlgebraicRightDecompose[x^6, x, #], _Failure] &
   /@ {0, 1, 4, 6, 12, 3/2}), True, TestID -> "invalid-right-degrees"]
+VerificationTest[Module[{bad, failure},
+  bad = {2., N[2, 30], True, False, a, Blank[], Blank[Integer],
+    Pattern[a, Blank[Integer]], Alternatives[2, 3]};
+  failure = Failure["InvalidRightDegree", <|"MessageTemplate" ->
+    "The right degree must be a proper divisor d of the polynomial degree with 1<d<n."|>];
+  And @@ Flatten[Table[api[x^6, x, d] === failure,
+    {api, {AlgebraicRightDecompose, AlgebraicDecompositionData}}, {d, bad}]]],
+  True, TestID -> "fixed degree APIs preserve exact type rejection and failure details"]
+VerificationTest[Module[{bad, calls = 0, data, accepted},
+  bad = {0, 1, 4, 6, -1, 3/2, 2., N[2, 30], True, False, a,
+    Blank[], Blank[Integer], Pattern[a, Blank[Integer]], Alternatives[2, 3],
+    PatternTest[Blank[Integer], (calls++; True) &]};
+  accepted = Table[data = AlgebraicDecompositionData[p, x, 2];
+    Table[VerifyAlgebraicDecompositionData[p, Join[data, <|"RightDegree" -> d|>], x],
+      {d, bad}], {p, {x^6, x^6 + x}}];
+  {Union[Flatten[accepted]], calls}], {{False}, 0},
+  TestID -> "certificate degrees reject malformed values without interpreting patterns"]
 VerificationTest[MatchQ[AlgebraicRightDecompose[0, x, 2], _Failure], True,
   TestID -> "invalid-right-degree-zero-polynomial"]
 VerificationTest[Module[{d = AlgebraicDecompositionData[x^4, x, 2]},

@@ -79,6 +79,7 @@ checkOptions[s_Symbol, opts_List] := If[
 
 expression[v_List, x_] := Expand[Fold[#1 x + #2 &, 0, Reverse[v]]];
 properDegrees[n_Integer] := If[n < 4, {}, Select[Divisors[n], 1 < # < n &]];
+properDegreeQ[n_Integer, d_] := IntegerQ[d] && 1 < d < n && Mod[n, d] === 0;
 
 add[a_List, b_List] := trim[red /@
   (PadRight[a, Max[Length[a], Length[b]]] +
@@ -183,8 +184,7 @@ exhaustiveData[c_List, tests_List] := Module[{good},
       Missing["NotApplicable", "DegreeBelowTwo"], good === {}], "Tests" -> tests|>
 ];
 
-checkDegree[c_List, d_] := If[!IntegerQ[d] || d < 2 ||
-    d >= Length[c] - 1 || Mod[Length[c] - 1, d] =!= 0,
+checkDegree[c_List, d_] := If[!properDegreeQ[Length[c] - 1, d],
   fail["InvalidRightDegree", "The right degree must be a proper divisor d of the polynomial degree with 1<d<n."]];
 
 firstPair[c_List] := Module[{pair = None, d},
@@ -271,7 +271,7 @@ verifyTest[c_List, t_, x_] := Module[
   If[!(And @@ (KeyExistsQ[t, #] & /@ keys)), Return[False]];
   If[t["Type"] =!= "DegreeTest", Return[False]];
   n = Length[c] - 1; d = t["RightDegree"];
-  If[!MemberQ[properDegrees[n], d], Return[False]];
+  If[!properDegreeQ[n, d], Return[False]];
   m = Quotient[n, d]; If[t["OuterDegree"] =!= m, Return[False]];
   If[!ListQ[t["Digits"]] || Length[t["Digits"]] =!= m + 1,
     Return[False]];
