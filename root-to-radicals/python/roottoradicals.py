@@ -33,18 +33,20 @@ Two layers, as in the Wolfram package:
 Branches are selected rigorously: the q candidates zeta^e Q^(1/q) are
 evaluated as balls, and a candidate is accepted only when it is the unique one
 whose ball overlaps the ball of the resolvent (which is computed independently
-from the exact coordinates).  All identities between coordinate vectors are
-exact; the final expression is checked again by ball arithmetic against all
-conjugates of a (verify_numeric).  An exact symbolic verification in a Wolfram
-kernel is provided by verify_wolfram.py.
+from the exact coordinates).  A radicand that is exactly real and negative but
+written as a sum of complex conjugate terms has a ball straddling the branch
+cut; such radicands are recognized from the exact data and their principal
+root is written as (-1)^(1/q) (-Q)^(1/q).  All identities between coordinate
+vectors are exact; the final expression is checked again by ball arithmetic
+against all conjugates of a (verify_numeric).  An exact symbolic verification
+in a Wolfram kernel is provided by verify_wolfram.py.
 
-Nonsolvability is proved by Frobenius cycle types (prime degree n: a solvable
-transitive group of prime degree lies in AGL(1, n), whose elements have cycle
-types 1^n, n, or 1 d^((n-1)/d); other degrees: a single prime cycle longer than
-n/2 forces primitivity, and solvable primitive groups have prime-power degree and
-lie in AGL(k, p), which excludes such cycles unless their length is n - 1) or by
-the exact Galois group.  The lcm of the Frobenius element orders divides |G| and
-gives an early ResourceLimit for large groups.
+Nonsolvability is proved by Frobenius cycle types (prime degree n: cycle types
+outside AGL(1, n); other degrees: a single prime cycle longer than n/2, which
+forces primitivity and is excluded for solvable groups unless the degree is a
+prime power and the cycle has length n - 1) or by the exact Galois group.  The
+lcm of the Frobenius element orders divides |G| and gives an early
+ResourceLimit for large groups.
 
 Requires python-flint >= 0.8, SymPy >= 1.14 and rootdecomp.py from the
 sibling project root-decomposition/python (located automatically).
@@ -57,14 +59,14 @@ import math
 import os
 import sys
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from fractions import Fraction
-from typing import Optional
+from typing import Callable, Optional
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "root-decomposition", "python"))
 
 import sympy as sp
-from flint import acb, acb_poly, arb, ctx, fmpq, fmpq_mat, fmpz_poly, nmod_poly
+from flint import acb, arb, ctx, fmpq, fmpq_mat, fmpz_poly, nmod_poly
 
 import rootdecomp as rd
 from rootdecomp import AlgebraicNumber, PrecisionError
@@ -96,23 +98,17 @@ class DescentError(Exception):
 def is_radical_expression(e) -> bool:
     """True if e is built from rationals, I, +, * and rational powers only."""
     e = sp.sympify(e)
-    if e.is_Rational:
-        return True
-    if e is sp.I:
+    if e.is_Rational or e is sp.I:
         return True
     if e.is_Add or e.is_Mul:
         return all(is_radical_expression(t) for t in e.args)
-    if e.is_Pow:
-        return e.exp.is_Rational and is_radical_expression(e.base)
-    return False
+    return bool(e.is_Pow and e.exp.is_Rational and is_radical_expression(e.base))
 
 
 def radical_depth(e) -> int:
     e = sp.sympify(e)
-    if e.is_Rational or e is sp.I:
-        return 0
     if e.is_Pow:
-        return radical_depth(e.base) if e.exp.is_Integer else 1 + radical_depth(e.base)
+        return radical_depth(e.base) + (0 if e.exp.is_Integer else 1)
     if e.is_Add or e.is_Mul:
         return max(radical_depth(t) for t in e.args)
     return 0
@@ -122,28 +118,22 @@ def leaf_count(e) -> int:
     return sum(1 for _ in sp.preorder_traversal(sp.sympify(e)))
 
 
+def _rational_acb(p, q) -> acb:
+    return acb(int(p)) / acb(int(q))
+
+
 def _ball(e) -> acb:
     if e.is_Rational:
-        return acb(int(e.p)) / acb(int(e.q))
+        return _rational_acb(e.p, e.q)
     if e is sp.I:
         return acb(0, 1)
     if e.is_Add:
-        s = acb(0)
-        for t in e.args:
-            s += _ball(t)
-        return s
+        return sum((_ball(t) for t in e.args), acb(0))
     if e.is_Mul:
-        s = acb(1)
-        for t in e.args:
-            s *= _ball(t)
-        return s
-    if e.is_Pow:
+        return math.prod((_ball(t) for t in e.args), start=acb(1))
+    if e.is_Pow and e.exp.is_Rational:
         b = _ball(e.base)
-        ex = e.exp
-        if ex.is_Integer:
-            return b ** int(ex)
-        if ex.is_Rational:
-            return b ** (acb(int(ex.p)) / acb(int(ex.q)))   # principal branch, as in Mathematica
+        return b ** int(e.exp) if e.exp.is_Integer else b ** _rational_acb(e.exp.p, e.exp.q)   # principal branch
     raise ValueError(f"not a radical expression: {e}")
 
 
@@ -153,23 +143,36 @@ def ball(e, prec_bits: int) -> acb:
         return _ball(sp.sympify(e))
 
 
-def select_candidate(cands: list, target, prec_bits: int, max_attempts: int = 4):
-    """The unique candidate whose ball overlaps the ball of the target.
-
-    target is a callable prec -> acb (an independent enclosure of the value that
-    is known to equal exactly one candidate).  Rigorous: the true candidate's
-    ball always overlaps the target ball, so uniqueness identifies it.
-    """
+def _escalate(fn: Callable[[int], object], prec_bits: int, attempts: int = 4, what: str = "precision"):
+    """Call fn(prec) with doubling precision until it returns something other than None."""
     prec = prec_bits
-    for _ in range(max_attempts):
+    for _ in range(attempts):
+        r = fn(prec)
+        if r is not None:
+            return r
+        prec *= 2
+    raise PrecisionError(f"{what} not decided at the working precision")
+
+
+def select_candidate(cands: list, target: Callable[[int], acb], prec_bits: int):
+    """The unique candidate whose ball overlaps the ball of the target (a callable prec -> acb giving an
+    independent enclosure of a value known to equal exactly one candidate).  Rigorous: the true
+    candidate's ball always overlaps the target ball, so uniqueness identifies it."""
+    def attempt(prec):
         tb = target(prec)
-        matches = [i for i, c in enumerate(cands) if ball(c, prec).overlaps(tb)]
-        if len(matches) == 1:
-            return cands[matches[0]]
+        matches = [c for c in cands if ball(c, prec).overlaps(tb)]
         if not matches:
             raise DescentError("no candidate matches the target")
-        prec *= 2
-    raise PrecisionError("candidates not separated at the working precision")
+        return matches[0] if len(matches) == 1 else None
+    return _escalate(attempt, prec_bits, what="candidates")
+
+
+def _sign_negative(value: Callable[[int], acb], prec_bits: int) -> bool:
+    """Rigorous sign of a real number given by an enclosure at any precision."""
+    def attempt(prec):
+        z = value(prec)
+        return True if z.real < 0 else False if z.real > 0 else None
+    return _escalate(attempt, prec_bits, what="sign")
 
 
 # ---------------------------------------------------------------------------
@@ -183,8 +186,6 @@ def select_candidate(cands: list, target, prec_bits: int, max_attempts: int = 4)
 # ---------------------------------------------------------------------------
 
 def principal_root(E, q: int, real_negative: bool):
-    if q == 2:
-        return sp.I * sp.sqrt(sp.expand(-E)) if real_negative else sp.sqrt(E)
     if real_negative:
         return sp.Pow(-1, sp.Rational(1, q)) * sp.Pow(sp.expand(-E), sp.Rational(1, q))
     return sp.Pow(E, sp.Rational(1, q))
@@ -200,17 +201,7 @@ def is_real_algebraic(a: AlgebraicNumber, prec_bits: int = 200) -> bool:
 def is_negative_real(a: AlgebraicNumber, prec_bits: int = 200) -> bool:
     if a.degree == 1:
         return a.as_fraction() < 0
-    if not is_real_algebraic(a, prec_bits):
-        return False
-    prec = prec_bits
-    for _ in range(4):
-        z = a.value(prec)
-        if z.real < 0:
-            return True
-        if z.real > 0:
-            return False
-        prec *= 2
-    raise PrecisionError("sign of a real algebraic number not determined")
+    return is_real_algebraic(a, prec_bits) and _sign_negative(a.value, prec_bits)
 
 
 # ---------------------------------------------------------------------------
@@ -224,37 +215,32 @@ def sympy_poly(p: fmpz_poly, var=X):
 def fmpz_poly_of(expr, var=X) -> fmpz_poly:
     """Primitive integer polynomial proportional to a rational polynomial expression."""
     P = sp.Poly(sp.expand(expr), var)
-    coeffs = [Fraction(int(c.p), int(c.q)) for c in reversed(P.all_coeffs())]
-    return rd.poly_from_fractions(coeffs)
+    return rd.poly_from_fractions([Fraction(int(c.p), int(c.q)) for c in reversed(P.all_coeffs())])
 
 
 def _eval_rational_poly(expr, z: acb) -> acb:
-    """Exact-coefficient evaluation of a rational polynomial expression in X at the ball z."""
-    P = sp.Poly(sp.expand(sp.sympify(expr)), X)
+    """Exact-coefficient evaluation of a rational polynomial expression in X at the ball z (Horner)."""
     acc = acb(0)
-    for c in P.all_coeffs():            # high to low (Horner)
-        acc = acc * z + acb(int(c.p)) / acb(int(c.q))
+    for c in sp.Poly(sp.expand(sp.sympify(expr)), X).all_coeffs():
+        acc = acc * z + _rational_acb(c.p, c.q)
     return acc
 
 
 def algebraic_of_rational_function(num, den, a: AlgebraicNumber, prec_bits: int = 300) -> AlgebraicNumber:
-    """The exact algebraic number num(a)/den(a) for polynomials num, den in X with rational coefficients."""
-    pt = sympy_poly(a.poly, T)
-    numt, dent = sp.sympify(num).subs(X, T), sp.sympify(den).subs(X, T)
-    res = sp.resultant(pt, sp.expand(X * dent - numt), T)
-    r = fmpz_poly_of(res)
-    prec = prec_bits
-    for _ in range(6):
-        try:
-            with ctx.workprec(prec):
-                z = a.value(prec)
-                val = _eval_rational_poly(num, z) / _eval_rational_poly(den, z)
-                # the resultant may be non-squarefree; identify the annihilating factor by a unique zero
-                g = rd._matching_factor(r.factor()[1], val)
-                return AlgebraicNumber.from_value(g, val, prec)
-        except PrecisionError:
-            prec *= 2
-    raise PrecisionError("algebraic_of_rational_function failed")
+    """The exact algebraic number num(a)/den(a) for polynomials num, den in X with rational coefficients:
+    a resultant gives an annihilating polynomial, whose factor vanishing at the value is identified."""
+    num, den = sp.sympify(num), sp.sympify(den)
+    r = fmpz_poly_of(sp.resultant(sympy_poly(a.poly, T), sp.expand(X * den.subs(X, T) - num.subs(X, T)), T))
+
+    def attempt(prec):
+        with ctx.workprec(prec):
+            z = a.value(prec)
+            val = _eval_rational_poly(num, z) / _eval_rational_poly(den, z)
+            try:
+                return AlgebraicNumber.from_value(rd._matching_factor(r.factor()[1], val), val, prec)
+            except PrecisionError:
+                return None
+    return _escalate(attempt, prec_bits, attempts=6, what="algebraic value")
 
 
 def cyclotomic(q: int) -> fmpz_poly:
@@ -262,60 +248,51 @@ def cyclotomic(q: int) -> fmpz_poly:
 
 
 # ---------------------------------------------------------------------------
-# Frobenius negative test (prime degree)
+# Frobenius negative tests
 # ---------------------------------------------------------------------------
-
-def _agl1_type(degs: list, n: int) -> bool:
-    return degs == [n] or degs == [1] * n or (degs[0] == 1 and len(set(degs[1:])) == 1 and sum(degs) == n)
-
-
-def _long_prime_cycle(degs: list, n: int) -> bool:
-    """A single prime cycle of length > n/2 with the other points fixed: the group is primitive,
-    and a solvable primitive group has prime-power degree."""
-    m = degs[-1]
-    return sp.isprime(m) and 2 * m > n and set(degs[:-1]) == {1}
-
 
 def _is_prime_power(n: int) -> bool:
     return len(sp.factorint(n)) == 1
 
 
-def _prime_power_cycle(degs: list, n: int) -> bool:
-    """Composite prime-power degree n = p^k: a solvable primitive group lies in AGL(k, p); an element
-    fixing a point is conjugate into GL(k, p) and its fixed points form a subspace of size p^j, so a
-    single prime cycle of length l (the rest fixed) needs p^k - p^j = l, i.e. l = n - 1.  A prime
-    cycle with n/2 < l < n - 1 therefore proves nonsolvability."""
-    m = degs[-1]
-    return sp.isprime(m) and 2 * m > n and m < n - 1 and set(degs[:-1]) == {1}
+def _agl1_type(degs: list, n: int) -> bool:
+    return degs == [n] or degs == [1] * n or (degs[0] == 1 and len(set(degs[1:])) == 1)
+
+
+def _single_prime_cycle(degs: list, n: int) -> bool:
+    """A single prime cycle of length l > n/2 (the rest fixed) makes a transitive group primitive; a
+    solvable primitive group has prime-power degree n = p^k and lies in AGL(k, p), where an element
+    fixing a point is conjugate into GL(k, p) with a subspace of fixed points, so p^k - p^j = l forces
+    l = n - 1.  Such a cycle therefore proves nonsolvability unless n is a prime power and l = n - 1."""
+    l = degs[-1]
+    return bool(sp.isprime(l) and 2 * l > n and set(degs[:-1]) == {1} and not (_is_prime_power(n) and l == n - 1))
+
+
+def frobenius_cycle_types(p: fmpz_poly, max_primes: int):
+    """Cycle types of Frobenius elements at the first max_primes good primes."""
+    d = int(p.resultant(p.derivative())) * int(p.leading_coefficient())
+    q, count = 2, 0
+    while count < max_primes:
+        q = int(sp.nextprime(q))
+        if d % q:
+            count += 1
+            f = nmod_poly([int(c) for c in p.coeffs()], q).factor()
+            yield sorted(g.degree() for g, _ in f[1] if g.degree() > 0)
 
 
 def frobenius_nonsolvable(p: fmpz_poly, max_primes: int = 60) -> bool:
-    """True if some Frobenius cycle type proves that the Galois group is not solvable.
-
-    Prime degree n: every cycle type must be of the AGL(1, n) shape.  Composite
-    prime-power degree: a single prime cycle of length strictly between n/2 and n-1.
-    Other degrees: a single prime cycle of length > n/2.
-    """
+    """True if some Frobenius cycle type proves that the Galois group is not solvable (inconclusive otherwise)."""
     n = p.degree()
+    bad = (lambda degs: not _agl1_type(degs, n)) if sp.isprime(n) else (lambda degs: _single_prime_cycle(degs, n))
+    return any(bad(degs) for degs in frobenius_cycle_types(p, max_primes))
+
+
+def frobenius_reason(n: int) -> str:
     if sp.isprime(n):
-        test = lambda degs: not _agl1_type(degs, n)
-    elif _is_prime_power(n):
-        test = lambda degs: _prime_power_cycle(degs, n)
-    else:
-        test = lambda degs: _long_prime_cycle(degs, n)
-    disc = int(p.resultant(p.derivative()))
-    lc = int(p.leading_coefficient())
-    count, q = 0, 2
-    while count < max_primes:
-        q = int(sp.nextprime(q))
-        if (disc * lc) % q == 0:
-            continue
-        count += 1
-        f = nmod_poly([int(c) for c in p.coeffs()], q).factor()
-        degs = sorted(g.degree() for g, _ in f[1] if g.degree() > 0)
-        if test(degs):
-            return True
-    return False
+        return "cycle type outside AGL(1, n)"
+    if _is_prime_power(n):
+        return "a long prime cycle that no affine group of this degree contains"
+    return "a long prime cycle in a non-prime-power degree"
 
 
 def frobenius_order_multiple(p: fmpz_poly) -> int:
@@ -323,13 +300,25 @@ def frobenius_order_multiple(p: fmpz_poly) -> int:
     return rd.frobenius_exponent_multiple(p, 40)
 
 
+def _check_order_limit(p: fmpz_poly, maxorder: int):
+    mult = frobenius_order_multiple(p)
+    if mult > maxorder:
+        raise ResourceLimit(f"a divisor {mult} of the Galois group order exceeds maxorder={maxorder}")
+
+
+def _galois_data(p: fmpz_poly, prec_bits: int, maxorder: int):
+    try:
+        return rd.galois_data(p, prec_bits, maxorder)
+    except ValueError as e:
+        raise ResourceLimit(str(e)) from None
+
+
 # ---------------------------------------------------------------------------
 # group theory on the multiplication table
 # ---------------------------------------------------------------------------
 
 def closure(mt, ident: int, gens) -> list:
-    elems = {ident}
-    frontier = [ident]
+    elems, frontier = {ident}, [ident]
     while frontier:
         nxt = []
         for e in frontier:
@@ -342,17 +331,9 @@ def closure(mt, ident: int, gens) -> list:
     return sorted(elems)
 
 
-def inverse(mt, ident: int, g: int) -> int:
-    return mt[g].index(ident)
-
-
 def commutator_subgroup(mt, ident: int, H) -> list:
-    comms = set()
-    inv = {g: inverse(mt, ident, g) for g in H}
-    for g in H:
-        for h in H:
-            comms.add(mt[mt[inv[g]][inv[h]]][mt[g][h]])
-    return closure(mt, ident, sorted(comms))
+    inv = {g: mt[g].index(ident) for g in H}
+    return closure(mt, ident, sorted({mt[mt[inv[g]][inv[h]]][mt[g][h]] for g in H for h in H}))
 
 
 def is_solvable_group(mt, ident: int, H) -> bool:
@@ -366,14 +347,13 @@ def is_solvable_group(mt, ident: int, H) -> bool:
 
 
 def prime_series(mt, ident: int, H0) -> list:
-    """Composition series with prime quotients from H0 down to 1: dicts group, normal, generator, prime."""
-    H = sorted(H0)
-    steps = []
+    """Composition series with prime quotients from H0 down to 1: at each step a normal subgroup of prime
+    index containing the commutator subgroup (enlarged while staying proper)."""
+    H, steps = sorted(H0), []
     while len(H) > 1:
-        D = commutator_subgroup(mt, ident, H)
-        if D == H:
+        N = commutator_subgroup(mt, ident, H)
+        if N == H:
             raise NotSolvable("not solvable")
-        N = D
         for g in H:
             if g not in N:
                 J = closure(mt, ident, N + [g])
@@ -382,8 +362,7 @@ def prime_series(mt, ident: int, H0) -> list:
         p = len(H) // len(N)
         if len(H) % len(N) or not sp.isprime(p):
             raise DescentError("composition factor is not prime")
-        sigma = next(g for g in H if g not in N)
-        steps.append({"group": H, "normal": N, "generator": sigma, "prime": p})
+        steps.append({"group": H, "normal": N, "generator": next(g for g in H if g not in N), "prime": p})
         H = N
     return steps
 
@@ -402,16 +381,19 @@ class _State:
     galois_order: Optional[int] = None
     extended_order: Optional[int] = None
     series_primes: Optional[list] = None
-    primes: Optional[list] = None
+
+    def pick(self, cands: list, target: AlgebraicNumber):
+        """the candidate equal to the exact number target"""
+        return select_candidate(cands, target.value, self.prec_bits)
+
+    def sub(self, a: AlgebraicNumber, depth: int):
+        """radical expression of a smaller piece"""
+        return _radicals_of(a, self, depth)
 
 
 # ---------------------------------------------------------------------------
 # structural layer
 # ---------------------------------------------------------------------------
-
-def _value_fn(a: AlgebraicNumber):
-    return lambda prec: a.value(prec)
-
 
 def low_degree_roots(g_expr, rhs=0) -> Optional[list]:
     """Radical roots of g(x) = rhs for deg g <= 4 (SymPy formulas), or None."""
@@ -419,10 +401,9 @@ def low_degree_roots(g_expr, rhs=0) -> Optional[list]:
     if P.degree() > 4:
         return None
     try:
-        sols = sp.roots(P, cubics=True, quartics=True, multiple=True)
+        sols = [s for s in sp.roots(P, cubics=True, quartics=True, multiple=True) if is_radical_expression(s)]
     except Exception:
         return None
-    sols = [s for s in sols if is_radical_expression(s)]
     return sols if len(sols) == P.degree() else None
 
 
@@ -430,54 +411,46 @@ def solve_with_radical_rhs(g_expr, v, v_exact: AlgebraicNumber, prec_bits: int =
     """Radical solutions of g(x) = v for a rational polynomial g and the radical expression v of the
     exact number v_exact: linear and quadratic g by formulas, binomials x^n + c by n-th roots.
     Cubic and quartic pieces with radical right-hand sides are left to the general descent."""
-    P = sp.Poly(sp.expand(g_expr), X)
-    n = P.degree()
-    coeffs = P.all_coeffs()            # high to low
-    lead = coeffs[0]
+    coeffs = sp.Poly(sp.expand(g_expr), X).all_coeffs()            # high to low
+    n, lead, c0 = len(coeffs) - 1, coeffs[0], coeffs[-1]
+
+    def exact(expr):     # exact value of a rational polynomial expression in v
+        return algebraic_of_rational_function(sp.expand(expr), 1, v_exact, prec_bits)
+
     if n == 1:
-        return [(v - coeffs[1]) / lead]
+        return [(v - c0) / lead]
     if n == 2:
-        b, c0 = coeffs[1], coeffs[2]
-        D = sp.expand(b ** 2 - 4 * lead * (c0 - v))
-        D_exact = algebraic_of_rational_function(sp.expand(b ** 2 - 4 * lead * c0 + 4 * lead * X), 1, v_exact, prec_bits)
-        s = principal_root(D, 2, is_negative_real(D_exact))
+        b = coeffs[1]
+        s = principal_root(sp.expand(b ** 2 - 4 * lead * (c0 - v)), 2, is_negative_real(exact(b ** 2 - 4 * lead * (c0 - X))))
         return [(-b + s) / (2 * lead), (-b - s) / (2 * lead)]
     if all(c == 0 for c in coeffs[1:-1]):
-        c0 = coeffs[-1]
-        c = sp.expand((v - c0) / lead)
-        c_exact = algebraic_of_rational_function(sp.expand((X - c0) / lead), 1, v_exact, prec_bits)
-        root = principal_root(c, n, is_negative_real(c_exact))
+        root = principal_root(sp.expand((v - c0) / lead), n, is_negative_real(exact((X - c0) / lead)))
         return [sp.Pow(-1, sp.Rational(2 * e, n)) * root for e in range(n)]
     return None
 
 
 def structural_low_degree(a: AlgebraicNumber, st: _State, depth: int):
-    if a.degree > 4:
-        return None
-    cands = low_degree_roots(sympy_poly(a.poly))
-    if cands is None:
-        return None
-    return select_candidate(cands, _value_fn(a), st.prec_bits)
+    cands = low_degree_roots(sympy_poly(a.poly)) if a.degree <= 4 else None
+    return None if cands is None else st.pick(cands, a)
 
 
 def structural_decompose(a: AlgebraicNumber, st: _State, depth: int):
-    comp = sp.decompose(sympy_poly(a.poly))
+    comp = sp.decompose(sympy_poly(a.poly))          # outer piece first
     if len(comp) < 2:
         return None
-    k = len(comp)
-    vals = []
-    for i in range(k - 1):
+    vals = []                                        # vals[i] = (g_{i+1} o ... o g_k)(a) exactly; vals[-1] = a
+    for i in range(len(comp) - 1):
         h = X
         for g in reversed(comp[i + 1:]):
             h = g.subs(X, h)
         vals.append(algebraic_of_rational_function(sp.expand(h), 1, a, st.prec_bits))
     vals.append(a)
-    rad = _radicals_of(vals[0], st, depth - 1)
-    for i in range(1, k):
+    rad = st.sub(vals[0], depth - 1)
+    for i in range(1, len(comp)):
         cands = solve_with_radical_rhs(comp[i], rad, vals[i - 1], st.prec_bits)
         if cands is None:
             return None
-        rad = select_candidate(cands, _value_fn(vals[i]), st.prec_bits)
+        rad = st.pick(cands, vals[i])
     return rad
 
 
@@ -490,24 +463,22 @@ def _rational_roots(q: Fraction, m: int) -> list:
 
 
 def reciprocal_decomposition(p: fmpz_poly):
-    """(a, P) with p(x) = x^m P(x + a/x) (monic normalization), or None."""
+    """(c, P) with p(x) = x^m P(x + c/x) (monic normalization), or None; c^m is the constant term."""
     n = p.degree()
     if n % 2 or n < 4:
         return None
     m = n // 2
     Q = sp.Poly(sympy_poly(p), X).monic()
-    c0 = Fraction(int(Q.all_coeffs()[-1].p), int(Q.all_coeffs()[-1].q))
-    if c0 == 0:
-        return None
-    for av in _rational_roots(c0, m):
-        rem = Q.as_expr()
-        P = 0
+    c0 = Q.all_coeffs()[-1]
+    for c in _rational_roots(Fraction(int(c0.p), int(c0.q)), m):
+        cs = sp.Rational(c.numerator, c.denominator)
+        rem, P = Q.as_expr(), 0
         for k in range(m, -1, -1):
             cf = sp.Poly(rem, X).coeff_monomial(X ** (m + k)) if rem != 0 else 0
             P += cf * X ** k
-            rem = sp.expand(rem - cf * X ** m * (X + sp.Rational(av.numerator, av.denominator) / X) ** k)
+            rem = sp.expand(rem - cf * X ** m * (X + cs / X) ** k)
         if rem == 0:
-            return av, P
+            return cs, P
     return None
 
 
@@ -515,23 +486,19 @@ def structural_reciprocal(a: AlgebraicNumber, st: _State, depth: int):
     rdp = reciprocal_decomposition(a.poly)
     if rdp is None:
         return None
-    av, P = rdp
-    avs = sp.Rational(av.numerator, av.denominator)
-    y = algebraic_of_rational_function(X ** 2 + avs, X, a, st.prec_bits)     # a + av/a, a root of P
-    yrad = _radicals_of(y, st, depth - 1)
-    D_exact = algebraic_of_rational_function(X ** 2 - 4 * avs, 1, y, st.prec_bits)
-    s = principal_root(sp.expand(yrad ** 2 - 4 * avs), 2, is_negative_real(D_exact))
-    cands = [(yrad + s) / 2, (yrad - s) / 2]
-    return select_candidate(cands, _value_fn(a), st.prec_bits)
+    c = rdp[0]
+    y = algebraic_of_rational_function(X ** 2 + c, X, a, st.prec_bits)     # a + c/a, a root of P
+    yrad = st.sub(y, depth - 1)
+    s = principal_root(sp.expand(yrad ** 2 - 4 * c), 2,
+                       is_negative_real(algebraic_of_rational_function(X ** 2 - 4 * c, 1, y, st.prec_bits)))
+    return st.pick([(yrad + s) / 2, (yrad - s) / 2], a)
 
 
-def dickson(n: int, av):
+def dickson(n: int, c):
     d0, d1 = sp.Integer(2), X
-    if n == 0:
-        return d0
     for _ in range(n - 1):
-        d0, d1 = d1, sp.expand(X * d1 - av * d0)
-    return d1
+        d0, d1 = d1, sp.expand(X * d1 - c * d0)
+    return d0 if n == 0 else d1
 
 
 def structural_dickson(a: AlgebraicNumber, st: _State, depth: int):
@@ -539,20 +506,16 @@ def structural_dickson(a: AlgebraicNumber, st: _State, depth: int):
     if n < 3:
         return None
     Q = sp.Poly(sympy_poly(a.poly), X).monic()
-    c = -Q.coeff_monomial(X ** (n - 1)) / n
-    Q = sp.Poly(sp.expand(Q.as_expr().subs(X, X + c)), X)
-    av = -Q.coeff_monomial(X ** (n - 2)) / n
-    if av == 0:
-        return None
-    diff = sp.Poly(sp.expand(Q.as_expr() - dickson(n, av)), X)
-    if diff.degree() > 0:
+    t = -Q.coeff_monomial(X ** (n - 1)) / n
+    Q = sp.Poly(sp.expand(Q.as_expr().subs(X, X + t)), X)
+    c = -Q.coeff_monomial(X ** (n - 2)) / n
+    diff = sp.Poly(sp.expand(Q.as_expr() - dickson(n, c)), X)
+    if c == 0 or diff.degree() > 0:
         return None
     b = -diff.as_expr()
-    s = (b + sp.sqrt(b ** 2 - 4 * av ** n)) / 2
-    t = sp.Pow(s, sp.Rational(1, n))
+    u = sp.Pow((b + sp.sqrt(b ** 2 - 4 * c ** n)) / 2, sp.Rational(1, n))
     zeta = sp.Pow(-1, sp.Rational(2, n))
-    cands = [c + zeta ** j * t + av / (zeta ** j * t) for j in range(n)]
-    return select_candidate(cands, _value_fn(a), st.prec_bits)
+    return st.pick([t + zeta ** j * u + c / (zeta ** j * u) for j in range(n)], a)
 
 
 STRUCTURAL_METHODS = [
@@ -585,6 +548,14 @@ def _apply(M: fmpq_mat, v):
     return rd.apply_matrix(M, v)
 
 
+def _iterate(M: fmpq_mat, v, times: int) -> list:
+    """[v, M v, M^2 v, ..., M^times v]"""
+    out = [v]
+    for _ in range(times):
+        out.append(_apply(M, out[-1]))
+    return out
+
+
 def _is_zero(v) -> bool:
     return all(q == 0 for q in v)
 
@@ -593,63 +564,39 @@ def _fixed_by(gd, v, elems) -> bool:
     return all(_apply(gd.automorphisms[s], v) == v for s in elems)
 
 
-def _vec_add(u, v):
-    return [a + b for a, b in zip(u, v)]
-
-
-def _value_at_identity(gd, v):
+def _value_at_identity(gd, v) -> Callable[[int], acb]:
     """prec -> ball of the element with coordinates v at the identity embedding"""
     def fn(prec):
         with ctx.workprec(prec):
-            if prec <= gd.prec:
-                return rd.conj_vector(gd, v)[gd.identity]
-            return rd._conj_vector_at(gd, v, prec)[gd.identity]
+            vals = rd.conj_vector(gd, v) if prec <= gd.prec else rd._conj_vector_at(gd, v, prec)
+            return vals[gd.identity]
     return fn
-
-
-def _rational(q: fmpq):
-    return sp.Rational(int(q.p), int(q.q))
 
 
 def _conjugation_automorphism(gd) -> Optional[int]:
     """Index of the automorphism acting as complex conjugation on the roots, or None."""
+    perm = []
     with ctx.workprec(gd.prec):
-        perm = []
         for z in gd.roots:
             matches = [j for j, w in enumerate(gd.roots) if w.overlaps(z.conjugate())]
             if len(matches) != 1:
                 return None
             perm.append(matches[0])
-    perm = tuple(perm)
-    for s, p in enumerate(gd.perms):
-        if tuple(p) == perm:
-            return s
-    return None
+    return next((s for s, p in enumerate(gd.perms) if list(p) == perm), None)
 
 
 def _negative_real_element(gd, conj: Optional[int], v) -> bool:
     """Rigorous: v is fixed by complex conjugation and its value is negative."""
-    if conj is None or _apply(gd.automorphisms[conj], v) != v:
-        return False
-    fn = _value_at_identity(gd, v)
-    prec = gd.prec
-    for _ in range(4):
-        z = fn(prec)
-        if z.real < 0:
-            return True
-        if z.real > 0:
-            return False
-        prec *= 2
-    raise PrecisionError("sign of a real element not determined")
+    return conj is not None and _apply(gd.automorphisms[conj], v) == v and _sign_negative(_value_at_identity(gd, v), gd.prec)
 
 
 def _descend(gd, a: AlgebraicNumber, primes: list, st: _State):
     """The descent on the Galois data of p(x) prod Phi_q(x); may raise PrecisionError."""
-    order = gd.order
-    c = gd.scale
-    target = rd.locate_target(gd, a)
-    va = [q / c for q in gd.root_coords[target]]
-    zeta_idx = {}
+    order, c = gd.order, gd.scale
+    va = [q / c for q in gd.root_coords[rd.locate_target(gd, a)]]
+    # roots of unity zeta_q = exp(2 pi i/q) among the (scaled) roots, as multiplication matrices and as
+    # radical symbols; zeta_2 = -1 is handled by the same tables
+    zeta_idx, zeta_mult = {}, {}
     with ctx.workprec(gd.prec):
         for q in primes:
             z = acb(c) * (acb(0, 2) * acb(arb.pi()) / acb(q)).exp()
@@ -657,20 +604,23 @@ def _descend(gd, a: AlgebraicNumber, primes: list, st: _State):
             if len(matches) != 1:
                 raise PrecisionError("root of unity not uniquely located")
             zeta_idx[q] = matches[0]
-        zeta_coord = {q: [v / c for v in gd.root_coords[i]] for q, i in zeta_idx.items()}
-        zeta_mult = {q: rd.multiplication_matrix_of(gd, zeta_coord[q]) for q in primes}
+            zeta_mult[q] = rd.multiplication_matrix_of(gd, [v / c for v in gd.root_coords[matches[0]]])
+    zeta_mult[2] = fmpq_mat(order, order)
+    for i in range(order):
+        zeta_mult[2][i, i] = -1
+    zeta_sym = {q: sp.Pow(-1, sp.Rational(2, q)) for q in primes}
+    zeta_sym[2] = sp.Integer(-1)
     conj = _conjugation_automorphism(gd)
     H = [s for s in range(order) if all(gd.perms[s][i] == i for i in zeta_idx.values())]
     steps = prime_series(gd.mult_table, gd.identity, H)
+    # basis of Q(zeta_m): monomials prod zeta_q^e_q, 0 <= e_q <= q-2, as symbols and as coordinate vectors
     one = [fmpq(1)] + [fmpq(0)] * (order - 1)
     base_basis = []
     for exps in itertools.product(*[range(q - 1) for q in primes]):
-        sym = sp.Integer(1)
-        vec = one
+        sym, vec = sp.Integer(1), one
         for q, e in zip(primes, exps):
-            sym *= sp.Pow(-1, sp.Rational(2 * e, q))
-            for _ in range(e):
-                vec = _apply(zeta_mult[q], vec)
+            sym *= zeta_sym[q] ** e
+            vec = _iterate(zeta_mult[q], vec, e)[-1]
         base_basis.append((sym, vec))
     B = fmpq_mat(order, len(base_basis))
     for j, (_, vec) in enumerate(base_basis):
@@ -684,104 +634,69 @@ def _descend(gd, a: AlgebraicNumber, primes: list, st: _State):
             memo[key] = rad_compute(v, level)
         return memo[key]
 
+    def branch(Rk, q, level):
+        """the q-th root of Rk^q (one level down) with the branch equal to Rk"""
+        Qk = _iterate(rd.multiplication_matrix_of(gd, Rk), Rk, q - 1)[-1]
+        root = principal_root(rad(Qk, level - 1), q, _negative_real_element(gd, conj, Qk))
+        return select_candidate([zeta_sym[q] ** e * root for e in range(q)], _value_at_identity(gd, Rk), gd.prec)
+
     def rad_compute(v, level):
-        if level == 0:
+        if level == 0:                                   # the element lies in Q(zeta_m)
             sol = rd.fmpq_solve(B, v)
             if sol is None:
                 raise DescentError("element not in the base cyclotomic field")
-            return sp.expand(sum(_rational(s) * sym for s, (sym, _) in zip(sol, base_basis)))
+            return sp.expand(sum(sp.Rational(int(s.p), int(s.q)) * sym for s, (sym, _) in zip(sol, base_basis)))
         if _is_zero(v):
             return sp.Integer(0)
         step = steps[level - 1]
-        M, sigma, q = step["group"], step["generator"], step["prime"]
+        M, q = step["group"], step["prime"]
         if _fixed_by(gd, v, M):
             return rad(v, level - 1)
         with ctx.workprec(gd.prec):
-            aut = gd.automorphisms[sigma]
-            if q == 2:
-                zm = -fmpq_mat(order, order)
-                for i in range(order):
-                    zm[i, i] = -1
-            else:
-                zm = zeta_mult[q]
-            sv = [v]
-            for _ in range(q - 1):
-                sv.append(_apply(aut, sv[-1]))
-            zpows = [zm ** j for j in range(q)]
-            R = []
-            for k in range(q):
-                acc = [fmpq(0)] * order
-                for j in range(q):
-                    acc = _vec_add(acc, _apply(zpows[(-k * j) % q], sv[j]))
-                R.append(acc)
-            zsym = sp.Integer(-1) if q == 2 else sp.Pow(-1, sp.Rational(2, q))
-
-            def branch(Rk):
-                Mk = rd.multiplication_matrix_of(gd, Rk)
-                Qk = _apply(Mk ** (q - 1), Rk)
-                qrad = rad(Qk, level - 1)
-                root = principal_root(qrad, q, _negative_real_element(gd, conj, Qk))
-                cands = [zsym ** e * root for e in range(q)]
-                return select_candidate(cands, _value_at_identity(gd, Rk), gd.prec)
-
+            # zw[j][e] = zeta^e sigma^j(v): q^2 matrix-vector products instead of matrix powers
+            zw = [_iterate(zeta_mult[q], w, q - 1) for w in _iterate(gd.automorphisms[step["generator"]], v, q - 1)]
+            R = [[sum(zw[j][(-k * j) % q][i] for j in range(q)) for i in range(order)] for k in range(q)]
+            nonzero = [k for k in range(1, q) if not _is_zero(R[k])]
             R0 = rad(R[0], level - 1)
             choices = []
             if st.resolvents != "eigenvector" or q == 2:
-                total = R0
-                for k in range(1, q):
-                    if not _is_zero(R[k]):
-                        total = total + branch(R[k])
-                choices.append(total / q)
+                choices.append((R0 + sum(branch(R[k], q, level) for k in nonzero)) / q)
             if st.resolvents != "fourier" and q > 2:
-                k1 = next(k for k in range(1, q) if not _is_zero(R[k]))
-                u = branch(R[k1])
-                total = R0 + u
+                k1 = nonzero[0]
+                u = branch(R[k1], q, level)
                 Mk1 = rd.multiplication_matrix_of(gd, R[k1])
-                for k in range(1, q):
-                    if k == k1 or _is_zero(R[k]):
-                        continue
+                total = R0 + u
+                for k in nonzero[1:]:
                     m = (k * pow(k1, -1, q)) % q
-                    ck = rd.fmpq_solve(Mk1 ** m, R[k])
+                    ck = rd.fmpq_solve(Mk1 ** m, R[k])          # c_k = R_k / R_k1^m lies one level down
                     if ck is None or not _fixed_by(gd, ck, M):
                         raise DescentError("eigenvector ratio is not in the lower field")
-                    total = total + rad(ck, level - 1) * u ** m
+                    total += rad(ck, level - 1) * u ** m
                 choices.append(total / q)
             return min(choices, key=leaf_count)
 
-    expr = rad(va, len(steps))
-    return expr, order, [s["prime"] for s in steps]
+    return rad(va, len(steps)), order, [s["prime"] for s in steps]
 
 
 def _galois_radicals(a: AlgebraicNumber, st: _State):
     p = a.poly
-    mult = frobenius_order_multiple(p)
-    if mult > st.maxorder:
-        raise ResourceLimit(f"a divisor {mult} of the Galois group order exceeds maxorder={st.maxorder}")
-    try:
-        gd0 = rd.galois_data(p, st.prec_bits, st.maxorder)
-    except ValueError as e:
-        raise ResourceLimit(str(e)) from None
+    _check_order_limit(p, st.maxorder)
+    gd0 = _galois_data(p, st.prec_bits, st.maxorder)
     st.galois_order = gd0.order
     if not is_solvable_group(gd0.mult_table, gd0.identity, range(gd0.order)):
         raise NotSolvable(f"Galois group of order {gd0.order} is not solvable")
     primes = sorted(q for q in sp.factorint(gd0.order) if q % 2)
     poly = p
-    for q in primes:
+    for q in primes:                        # adjoin the roots of unity (a cyclotomic factor equal to p is already present)
         cq = cyclotomic(q)
         if poly.gcd(cq).degree() == 0:
             poly = poly * cq
     prec = st.prec_bits
-    for attempt in range(3):
+    for _ in range(3):
         try:
-            if primes:
-                try:
-                    gd = rd.galois_data(poly, prec, st.maxorder * math.prod(q - 1 for q in primes))
-                except ValueError as e:
-                    raise ResourceLimit(str(e)) from None
-            else:
-                gd = gd0 if prec == st.prec_bits else rd.galois_data(p, prec, st.maxorder)
-            expr, ext_order, series = _descend(gd, a, primes, st)
-            st.extended_order, st.series_primes, st.primes = ext_order, series, primes
+            gd = _galois_data(poly, prec, st.maxorder * math.prod(q - 1 for q in primes)) if primes else \
+                (gd0 if prec == st.prec_bits else _galois_data(p, prec, st.maxorder))
+            expr, st.extended_order, st.series_primes = _descend(gd, a, primes, st)
             st.method_used = "Galois"
             return expr
         except PrecisionError:
@@ -805,11 +720,7 @@ def _radicals_of(a: AlgebraicNumber, st: _State, depth: int):
         raise NotFound("no structural radical form was found")
     if frobenius_nonsolvable(a.poly):
         st.method_used = "Frobenius"
-        n = a.degree
-        reason = ("cycle type outside AGL(1, n)" if sp.isprime(n) else
-                  "a long prime cycle that no affine group of this degree contains" if _is_prime_power(n) else
-                  "a long prime cycle in a non-prime-power degree")
-        raise NotSolvable(f"Frobenius element with {reason}: not solvable")
+        raise NotSolvable(f"Frobenius element with {frobenius_reason(a.degree)}: not solvable")
     return _galois_radicals(a, st)
 
 
@@ -843,26 +754,18 @@ class RadicalResult:
 
 def verify_numeric(expr, a: AlgebraicNumber, prec_bits: int = 300) -> bool:
     """Rigorous ball check: the expression encloses a and no other conjugate of a."""
-    prec = prec_bits
-    for _ in range(4):
+    def attempt(prec):
         with ctx.workprec(prec):
             z = ball(expr, prec)
-            roots = rd.poly_roots(a.poly, prec)
-            matches = [i for i, r in enumerate(roots) if r.overlaps(z)]
-        if len(matches) == 1:
-            return matches[0] == a.index - 1
-        if not matches:
-            return False
-        prec *= 2
-    raise PrecisionError("verification inconclusive")
+            matches = [i for i, r in enumerate(rd.poly_roots(a.poly, prec)) if r.overlaps(z)]
+        return (matches[0] == a.index - 1) if len(matches) == 1 else (False if not matches else None)
+    return _escalate(attempt, prec_bits, what="verification")
 
 
 def _as_algebraic(a) -> AlgebraicNumber:
     if isinstance(a, AlgebraicNumber):
         return a
-    if isinstance(a, str):
-        return rd.parse_wolfram_root(a)
-    return AlgebraicNumber.from_rational(Fraction(a))
+    return rd.parse_wolfram_root(a) if isinstance(a, str) else AlgebraicNumber.from_rational(Fraction(a))
 
 
 def root_to_radicals(a, method: str = "auto", resolvents: str = "auto", maxorder: int = 400,
@@ -886,9 +789,8 @@ def root_to_radicals(a, method: str = "auto", resolvents: str = "auto", maxorder
     expr = _radicals_of(a, st, max_depth)
     if not is_radical_expression(expr):
         raise DescentError("the result is not a radical expression")
-    ok = verify_numeric(expr, a, prec_bits)
-    return RadicalResult(expression=expr, method=st.method_used or "Rational", verified=ok, degree=a.degree,
-                         galois_order=st.galois_order, extended_order=st.extended_order,
+    return RadicalResult(expression=expr, method=st.method_used or "Rational", verified=verify_numeric(expr, a, prec_bits),
+                         degree=a.degree, galois_order=st.galois_order, extended_order=st.extended_order,
                          series_primes=st.series_primes, time=time.perf_counter() - t0)
 
 
@@ -899,13 +801,8 @@ def is_solvable(a, maxorder: int = 400, prec_bits: int = 300) -> bool:
         return True
     if frobenius_nonsolvable(a.poly):
         return False
-    mult = frobenius_order_multiple(a.poly)
-    if mult > maxorder:
-        raise ResourceLimit(f"a divisor {mult} of the Galois group order exceeds maxorder={maxorder}")
-    try:
-        gd = rd.galois_data(a.poly, prec_bits, maxorder)
-    except ValueError as e:
-        raise ResourceLimit(str(e)) from None
+    _check_order_limit(a.poly, maxorder)
+    gd = _galois_data(a.poly, prec_bits, maxorder)
     return is_solvable_group(gd.mult_table, gd.identity, range(gd.order))
 
 
@@ -913,9 +810,8 @@ if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("usage: python roottoradicals.py \"Root[poly &, k]\" [auto|structural|galois]")
         sys.exit(2)
-    meth = sys.argv[2] if len(sys.argv) > 2 else "auto"
     try:
-        res = root_to_radicals(sys.argv[1], method=meth)
+        res = root_to_radicals(sys.argv[1], method=sys.argv[2] if len(sys.argv) > 2 else "auto")
         print(res)
         print("Wolfram:", res.wolfram())
     except NotSolvable as e:

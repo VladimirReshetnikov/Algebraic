@@ -215,3 +215,21 @@ factor that vanishes at β0 needs a scale-aware zero test, because its coefficie
 height 10^100 and a 40-digit evaluation cancels catastrophically; (d) substituting the
 radical form of θ into degree-8 polynomial coefficients and expanding blows up; keep θ
 atomic through the cubic formula and substitute once at the end.
+
+## 9. Simplification pass (2026-09-08)
+
+`RootToRadicals.wl` 601 → 521 lines, `roottoradicals.py` 923 → 819 lines, same behaviour
+(Wolfram 67/67, Python 48 cases, all pass).  Extracted: `okQ`, `sub` (recursive radical
+call), `solveAndSelect`, `binomialQ`/`formulaSolvableQ`, `galoisData` (engine call with
+renamed resource failure), `orderLimitFailure`, `frobeniusReason`; the two long-cycle
+predicates merged into `singlePrimeCycleQ`; ζ₂ = −1 stored in the same tables as the other
+roots of unity, removing the q = 2 special cases in the descent; matrix powers and matrix
+products in the Kummer step replaced by vector iterations (`zw`, `Nest`); `dickson`
+memoized.  Python: `_escalate` (precision doubling loop) shared by candidate selection,
+sign tests, algebraic values and verification; `_State.pick`/`_State.sub`; `_iterate`;
+`_galois_data`, `_check_order_limit`, `frobenius_cycle_types` as a generator.  Measured
+old vs new on the same kernel, sequentially: cyclic quintic 3.3 → 3.2 s, S4 quartic
+22.6 → 21.9 s, sextic descent 22.2 → 24.1 s, Φ₇ 0.90 → 0.86 s (Wolfram); Python
+0.22 → 0.19 s, 4.9 → 4.6 s, 15.1 → 15.2 s, 0.12 → 0.12 s: unchanged within noise, because
+the descent time is dominated by the engine's splitting-field construction and by
+`RootReduce`, neither of which is in this package.
