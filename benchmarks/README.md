@@ -165,3 +165,34 @@ cold comparisons improved. These rows measure the specified complete workflows,
 and do not establish a universal speedup. Unordered commutator pairs also reduce
 derived-subgroup work in both languages, but this benchmark does not isolate that
 change or claim a substantial full-descent improvement from it.
+
+## Monomial verification and field-basis comparison (9 September 2026)
+
+The [monomial verification snapshot](results/monomial-verification-2026-09-09.json)
+and [field-basis product snapshot](results/basis-product-2026-09-09.json) compare
+solver revision `88ade00` against `9dadd5c`. Each row records seven alternating
+samples and exact checks of every warm-up and timed result. The verification rows
+clear registered SymPy caches before each timed call, retaining the prepared
+polynomial and certificate. The product search uses each revision's own warmed
+field caches and compares every result field.
+
+| Workload | Baseline (seconds) | Refined (seconds) | Baseline / refined |
+| --- | ---: | ---: | ---: |
+| Dense degree-48 certificate verification | 0.056046 | 0.051602 | 1.09x |
+| Power degree-360 certificate verification | 0.032872 | 0.002866 | 11.47x |
+| Sparse algebraic degree-240 certificate verification | 0.021861 | 0.001177 | 18.58x |
+| Product of degree-9 sum root | 0.056431 | 0.045789 | 1.23x |
+
+Reproduce these comparisons with:
+
+```console
+python benchmarks/compare_solvers.py --baseline 9dadd5c --match "certificate verification" --cold-sympy-cache --samples 7
+python benchmarks/compare_solvers.py --baseline 9dadd5c --match "product of degree-9" --samples 7
+```
+
+Monomial certificate reconstruction pads and concatenates nonoverlapping digit
+blocks, while retaining the same verification criteria and Horner fallback.
+The product search batches multiplication and negation of the second field basis
+in exact FLINT arithmetic, preserving column order. These measurements concern
+certificate verification and the specified root search; generic polynomial-chain
+enumeration remained approximately unchanged in the separate prototype comparison.
