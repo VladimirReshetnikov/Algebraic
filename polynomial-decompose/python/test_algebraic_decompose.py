@@ -232,6 +232,25 @@ class CertificateTests(unittest.TestCase):
                     changed = dict(data, residual=invalid)
                     self.assertFalse(ad.verify_decomposition_data(p, changed, x))
 
+    def test_scalar_digits_preserve_exact_field_and_bound_root_checks(self):
+        root = sp.CRootOf(x**5 - 2*x - 2, 0)
+        coefficients = [root + j for j in range(8)]
+        field = sp.QQ.algebraic_field(root)
+        p = sp.Poly.from_dict({(2*j,): field.unit + field.convert(j) for j in range(8)},
+                              (x,), domain=field)
+        data = ad.decomposition_data(p, x, 2)
+        self.assertEqual(data["digits"], coefficients)
+        self.assertTrue(ad.verify_decomposition_data(p, data, x))
+        # These scalar expressions take the shortcut and still require exact
+        # conversion into the original coefficient field.
+        for invalid in (sp.pi, sp.oo, sp.Symbol("parameter"), sp.sqrt(2), 0.0, False):
+            with self.subTest(digit=invalid):
+                changed = copy.deepcopy(data)
+                changed["digits"][0] = invalid
+                self.assertFalse(ad.verify_decomposition_data(p, changed, x))
+        self.assertTrue(ad.verify_decomposition_data(
+            p, dict(data, residual=root**5-2*root-2), x))
+
     def test_fixed_degree_does_not_enumerate_divisors(self):
         with patch.object(ad, "_degrees", side_effect=AssertionError("divisors enumerated")):
             self.assertEqual(ad.right_decompose(x**12, x, 4), (x**3, x**4))

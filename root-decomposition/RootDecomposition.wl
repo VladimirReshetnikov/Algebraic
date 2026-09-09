@@ -499,6 +499,9 @@ attachTarget[fd_, a_] := Module[{P = fd["Polynomial"], c = fd["Scale"], n = fd["
   If[k === $Failed, Return[$Failed]];
   Join[fd, <|"Theta" -> rootObject[P, k], "TargetCoordinates" -> UnitVector[n, 2]/c|>]];
 
+inputFieldAt[poly_, a_] := Module[{fd = inputFieldData[poly]},
+  If[FailureQ[fd], $Failed, attachTarget[fd, a]]];
+
 (* ------------------------------------------------------------------ *)
 (* Result assembly                                                    *)
 (* ------------------------------------------------------------------ *)
@@ -594,9 +597,7 @@ RootSumDecomposition[a_, dmax_, OptionsPattern[]] := Module[
     Return[If[dmax === Automatic || n <= dmax,
       makeResult[a, Plus, {RootReduce[a]}, lb, scope, "SingleTerm", lb == n, True],
       failure["NotFound", "The input itself exceeds the degree bound for a single term"]]]];
-  If[n == 1, Return[trivial]];
-  If[dmax =!= Automatic && dmax >= n, Return[trivial]];
-  If[lb == n, Return[trivial]];
+  If[n == 1 || (dmax =!= Automatic && dmax >= n) || lb == n, Return[trivial]];
   retryPrecision[Function[prec, sumDecompositionCore[a, in, dmax, lb, scope, gaussian, OptionValue["MaxTerms"], prec,
     OptionValue["MaxGroupOrder"], OptionValue["MaxTries"], OptionValue["Engine"]]], OptionValue["WorkingPrecision"]]];
 
@@ -605,14 +606,12 @@ sumDecompositionCore[a_, in_, dmax_, lb0_, scope_, gaussian_, maxTerms_, prec_, 
   poly = in["Polynomial"];
   (* fast path inside K = Q(a): complete within K; globally complete when K is Galois *)
   If[! gaussian && engine =!= "SplittingField",
-    fd = inputFieldData[poly];
-    If[! FailureQ[fd],
-      fd = attachTarget[fd, a];
-      If[fd =!= $Failed,
-        res = sumSearch[fd, a, fd["TargetCoordinates"], None, n, lb, dmax, scope, maxTerms,
-          If[fd["Galois"], "GaloisInputField", "InputFieldSubfields"], fd["Galois"]];
-        If[fd["Galois"] || scope === "InputField" || engine === "InputField" ||
-            (! FailureQ[res] && res["MaximumDegree"] == lb), Return[res]]]]];
+    fd = inputFieldAt[poly, a];
+    If[fd =!= $Failed,
+      res = sumSearch[fd, a, fd["TargetCoordinates"], None, n, lb, dmax, scope, maxTerms,
+        If[fd["Galois"], "GaloisInputField", "InputFieldSubfields"], fd["Galois"]];
+      If[fd["Galois"] || scope === "InputField" || engine === "InputField" ||
+          (! FailureQ[res] && res["MaximumDegree"] == lb), Return[res]]]];
   If[gaussian && PolynomialRemainder[poly, x^2 + 1, x] =!= 0, poly = Expand[poly (x^2 + 1)]];
   gd = RootGaloisData[poly, x, "WorkingPrecision" -> prec, "MaxGroupOrder" -> maxOrder, "MaxTries" -> maxTries];
   If[FailureQ[gd], Return[If[res =!= $Failed && ! FailureQ[res], res, gd]]];
@@ -863,9 +862,7 @@ RootProductDecomposition[a_, dmax_, OptionsPattern[]] := Module[
       makeResult[a, Times, {RootReduce[a]}, lb, scope, "SingleFactor", lb == n, True,
         <|"TwoFactorOptimal" -> (lb == n), "NormExponent" -> 1|>],
       failure["NotFound", "The input itself exceeds the degree bound for a single factor"]]]];
-  If[n == 1, Return[trivial]];
-  If[dmax =!= Automatic && dmax >= n, Return[trivial]];
-  If[lb == n, Return[trivial]];
+  If[n == 1 || (dmax =!= Automatic && dmax >= n) || lb == n, Return[trivial]];
   retryPrecision[Function[prec, productDecompositionCore[a, in, dmax, lb, scope, OptionValue["MaxFactors"], OptionValue["RecursionDepth"],
     OptionValue["TensorTest"], prec, OptionValue["MaxGroupOrder"], OptionValue["MaxTries"], OptionValue["Engine"], bd]],
     OptionValue["WorkingPrecision"]]];
@@ -874,14 +871,12 @@ productDecompositionCore[a_, in_, dmax_, lb0_, scope_, maxFactors_, depth_, tens
   {n = in["Degree"], lb = lb0, gd, fd, res = $Failed},
   (* fast path inside K = Q(a) *)
   If[engine =!= "SplittingField",
-    fd = inputFieldData[in["Polynomial"]];
-    If[! FailureQ[fd],
-      fd = attachTarget[fd, a];
-      If[fd =!= $Failed,
-        res = productSearch[fd, a, fd["TargetCoordinates"], None, n, lb, dmax, scope, maxFactors, depth, tensorQ, prec, maxOrder, maxTries, engine,
-          fd["Galois"] || scope === "InputField", bounded];
-        If[fd["Galois"] || scope === "InputField" || engine === "InputField" || (! FailureQ[res] && res["MaximumDegree"] == lb),
-          Return[res]]]]];
+    fd = inputFieldAt[in["Polynomial"], a];
+    If[fd =!= $Failed,
+      res = productSearch[fd, a, fd["TargetCoordinates"], None, n, lb, dmax, scope, maxFactors, depth, tensorQ, prec, maxOrder, maxTries, engine,
+        fd["Galois"] || scope === "InputField", bounded];
+      If[fd["Galois"] || scope === "InputField" || engine === "InputField" || (! FailureQ[res] && res["MaximumDegree"] == lb),
+        Return[res]]]];
   gd = RootGaloisData[in["Polynomial"], x, "WorkingPrecision" -> prec, "MaxGroupOrder" -> maxOrder, "MaxTries" -> maxTries];
   If[FailureQ[gd], Return[If[res =!= $Failed && ! FailureQ[res], res, gd]]];
   Module[{c = gd["Scale"], target, va, stab},

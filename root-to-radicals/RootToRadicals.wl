@@ -186,13 +186,14 @@ sub[a_, depth_] := With[{r = radicalsOf[a, depth]}, If[okQ[r], r, $Failed]];
 
 (* explicit formulas for degrees 2 and 3 (Solve can spend a long time simplifying large radical
    coefficients); the coefficient list is low to high *)
-quadraticRoots[{c0_, c1_, c2_}] := With[{d = Sqrt[c1^2 - 4 c2 c0]}, {(-c1 + d)/(2 c2), (-c1 - d)/(2 c2)}];
+rootOrbit[root_, n_] := root (-1)^(2 Range[0, n - 1]/n);
+quadraticRoots[{c0_, c1_, c2_}] := (-c1 + {1, -1} Sqrt[c1^2 - 4 c2 c0])/(2 c2);
 
-cubicRoots[{d0_, c0_, b0_, a0_}] := Module[{b = b0/a0, c = c0/a0, d = d0/a0, pp, qq, u, w = (-1)^(2/3)},
+cubicRoots[{d0_, c0_, b0_, a0_}] := Module[{b = b0/a0, c = c0/a0, d = d0/a0, pp, qq, branches},
   pp = c - b^2/3; qq = 2 b^3/27 - b c/3 + d;
-  If[pp === 0, Return[Table[w^k (-qq)^(1/3) - b/3, {k, 0, 2}]]];
-  u = (-qq/2 + Sqrt[qq^2/4 + pp^3/27])^(1/3);
-  Table[w^k u - pp/(3 w^k u) - b/3, {k, 0, 2}]];
+  If[pp === 0, Return[rootOrbit[(-qq)^(1/3), 3] - b/3]];
+  branches = rootOrbit[(-qq/2 + Sqrt[qq^2/4 + pp^3/27])^(1/3), 3];
+  branches - pp/(3 branches) - b/3];
 
 (* all radical solutions of g(x) = v for a polynomial g whose coefficients may be radicals or
    algebraic atoms: degree <= 4 by formulas or Solve, binomials x^n + c by n-th roots; else $Failed *)
@@ -203,7 +204,7 @@ solveWithRadicalRHS[g_, v_] := Module[{n = Exponent[g, x], cl = CoefficientList[
     n == 3 && cl[[1]] =!= 0, cubicRoots[cl],
     n <= 4, sols = Quiet[x /. Solve[g == v, x, Cubics -> True, Quartics -> True]];
       If[ListQ[sols], Select[sols, RadicalExpressionQ], $Failed],
-    binomialQ[g], With[{c = -cl[[1]]/cl[[-1]]}, Table[(-1)^(2 e/n) c^(1/n), {e, 0, n - 1}]],
+    binomialQ[g], rootOrbit[(-cl[[1]]/cl[[-1]])^(1/n), n],
     True, $Failed]];
 
 (* solve g(x) = v and pick the solution equal to the exact number target *)
@@ -282,7 +283,7 @@ structuralDickson[a_, p_, depth_] := Module[{n = Exponent[p, x], q = monic[p], t
   If[c == 0 || Exponent[diff, x] > 0, Return[$Failed]];
   b = -diff;
   u = ((b + Sqrt[b^2 - 4 c^n])/2)^(1/n);
-  selectCandidate[Table[t + (-1)^(2 j/n) u + c/((-1)^(2 j/n) u), {j, 0, n - 1}], a]];
+  selectCandidate[t + # + c/# & /@ rootOrbit[u, n], a]];
 
 (* 4. pair-sum resolvent: Res_x(p(x), p(y-x)) = 2^n p(y/2) R2(y)^2 where the roots of R2 are a_i + a_j (i<j).
    A root y0 of a low-degree factor of R2 generates a field over which p may have a factor of
@@ -388,7 +389,7 @@ descend[gd_, a_, primes_, resolventForm_] := Module[
   (* branch[Rk, q, level]: the q-th root of Rk^q (one level down) with the branch equal to Rk *)
   branch[Rk_, q_, level_] := branch[Rk, q, level] = Module[{qrad, sel},
     qrad = rad[powerCoordinates[gd, Rk, q], level - 1];
-    sel = selectCandidate[Table[zeta[q]^e qrad^(1/q), {e, 0, q - 1}], gd["Values"][[gd["Identity"]]] . Rk];
+    sel = selectCandidate[rootOrbit[qrad^(1/q), q], gd["Values"][[gd["Identity"]]] . Rk];
     If[sel === $Failed, Throw[failure["Branch", "Could not identify the radical branch"], radTag]];
     sel];
   (* one prime step: v is fixed by steps[[level]]["Normal"]; extract q-th roots of the Lagrange resolvents

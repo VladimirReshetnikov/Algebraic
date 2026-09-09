@@ -213,6 +213,45 @@ class FieldPowers(unittest.TestCase):
             self.assertEqual(divide(numerator, exponent), rd.fmpq_solve(matrix ** exponent, numerator))
 
 
+class RationalPolynomials(unittest.TestCase):
+    def test_native_polynomial_conversion_and_evaluation(self):
+        for degree in (0, 2, 8, 32):
+            expr = sum(sp.Rational(i + 1, i + 2) * rt.X ** i for i in range(degree + 1))
+            poly = rt._rational_poly(expr)
+            self.assertEqual(rt.sympy_poly(poly), expr)
+            for prec in (80, 300):
+                with rt.ctx.workprec(prec):
+                    z = rt.acb(1, 2) / 3
+                    expected = rt.acb(0)
+                    for coefficient in sp.Poly(expr, rt.X).all_coeffs():
+                        expected = expected * z + rt._rational_acb(coefficient.p, coefficient.q)
+                    self.assertTrue(rt.acb_poly(poly)(z).overlaps(expected))
+        self.assertEqual(rt.fmpz_poly_of(-(rt.X + 1) ** 2 / 6), fmpz_poly([1, 2, 1]))
+        self.assertEqual(rt.fmpz_poly_of(0), fmpz_poly())
+
+    def test_reciprocal_rational_families_and_near_misses(self):
+        for m in range(2, 10):
+            outer = rt.X ** m + sum((j + 1) * rt.X ** j for j in range(m))
+            for c in (0, -1, sp.Rational(2, 3), sp.Rational(-3, 2)):
+                p = rt.fmpz_poly_of(sp.expand(rt.X ** m * outer.subs(rt.X, rt.X + c / rt.X)))
+                result = rt.reciprocal_decomposition(p)
+                self.assertIsNotNone(result)
+                cs, reduced = result
+                self.assertEqual(sp.expand(rt.X ** m * reduced.subs(rt.X, rt.X + cs / rt.X)),
+                                 rt.sympy_poly(p) / int(p.leading_coefficient()))
+                if c:
+                    p[2 * m - 1] += 1
+                    self.assertIsNone(rt.reciprocal_decomposition(p))
+
+    def test_cyclotomic_base_with_two_primes(self):
+        p = rt.cyclotomic(15)
+        a = rd.AlgebraicNumber(p, 1)
+        gd = rd.galois_data(p * rt.cyclotomic(3) * rt.cyclotomic(5), 300, 50)
+        expression, order, steps = rt._descend(gd, a, [3, 5], rt._State())
+        self.assertEqual((order, steps), (8, []))
+        self.assertTrue(rt.is_radical_expression(expression) and rt.verify_numeric(expression, a))
+
+
 class Negative(unittest.TestCase):
     def test_not_solvable(self):
         for s in ["Root[-1 - # + #^5 &, 1]", "Root[-1 - # + #^7 &, 1]", "Root[-1 - # + #^6 &, 1]",

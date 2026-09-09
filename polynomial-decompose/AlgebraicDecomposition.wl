@@ -174,6 +174,15 @@ publicTest[c_List, d_Integer, x_] := Module[{h, digits, outer, obs},
     "Residual" -> If[obs === None, 0, expression[subtract[c, compose[outer, h]], x]]|>
 ];
 
+(* Pure presentation of independently established degree-test results. *)
+exhaustiveData[c_List, tests_List] := Module[{good},
+  good = Lookup[Select[tests, TrueQ[#["Decomposable"]] &], "RightDegree", {}];
+  <|"Type" -> "AllDegreeTests", "InputDegree" -> vectorDegree[c],
+    "TestedRightDegrees" -> properDegrees[Length[c] - 1], "AcceptedRightDegrees" -> good,
+    "Indecomposable" -> If[Length[c] < 3,
+      Missing["NotApplicable", "DegreeBelowTwo"], good === {}], "Tests" -> tests|>
+];
+
 checkDegree[c_List, d_] := If[!IntegerQ[d] || d < 2 ||
     d >= Length[c] - 1 || Mod[Length[c] - 1, d] =!= 0,
   fail["InvalidRightDegree", "The right degree must be a proper divisor d of the polynomial degree with 1<d<n."]];
@@ -186,11 +195,9 @@ firstPair[c_List] := Module[{pair = None, d},
 allPairs[c_List] := DeleteCases[rightPair[c, #] & /@ properDegrees[Length[c] - 1], None];
 
 oneChain[c_List] := Module[{v = c, out = {}, pair},
-  pair = firstPair[v];
-  While[pair =!= None,
+  While[(pair = firstPair[v]) =!= None,
     (* Minimal successful right degree implies an indecomposable inner factor. *)
-    PrependTo[out, pair[[2]]]; v = pair[[1]];
-    pair = firstPair[v]];
+    PrependTo[out, pair[[2]]]; v = pair[[1]]];
   Prepend[out, v]
 ];
 
@@ -235,15 +242,8 @@ AlgebraicRightDecompose[p_, x_Symbol, d_] := Catch[Module[{c, pair},
 AlgebraicDecompositionData[p_, x_Symbol, d_] := Catch[Module[{c},
   c = prepare[p, x]; checkDegree[c, d]; publicTest[c, d, x]],
   $failureTag];
-AlgebraicDecompositionData[p_, x_Symbol] := Catch[Module[{c, ds, ts, good},
-  c = prepare[p, x]; ds = properDegrees[Length[c] - 1];
-  ts = publicTest[c, #, x] & /@ ds;
-  good = (#["RightDegree"] & /@ Select[ts, TrueQ[#["Decomposable"]] &]);
-  <|"Type" -> "AllDegreeTests", "InputDegree" -> vectorDegree[c],
-    "TestedRightDegrees" -> ds, "AcceptedRightDegrees" -> good,
-    "Indecomposable" -> If[Length[c] < 3,
-      Missing["NotApplicable", "DegreeBelowTwo"], good === {}],
-    "Tests" -> ts|>], $failureTag];
+AlgebraicDecompositionData[p_, x_Symbol] := Catch[Module[{c = prepare[p, x]},
+  exhaustiveData[c, publicTest[c, #, x] & /@ properDegrees[Length[c] - 1]]], $failureTag];
 
 ComposeDecomposition[parts_List, x_Symbol] := Catch[Module[{vs},
   If[NumericQ[x], fail["InvalidVariable", "The polynomial variable must be an unassigned nonnumeric symbol."]];
@@ -301,23 +301,15 @@ verifyTest[c_List, t_, x_] := Module[
   If[obs === None, zeroQ[res], zeroQ[subtract[res, subtract[c, compose[f, h]]]]]
 ];
 
-verifyData[c_List, data_, x_] := Module[{ds, ts, good, status, keys},
+verifyData[c_List, data_, x_] := Module[{ds, ts, expected},
   If[!AssociationQ[data] || !KeyExistsQ[data, "Type"], Return[False]];
   If[data["Type"] === "DegreeTest", Return[verifyTest[c, data, x]]];
   If[data["Type"] =!= "AllDegreeTests", Return[False]];
-  keys = {"InputDegree", "TestedRightDegrees", "AcceptedRightDegrees",
-    "Indecomposable", "Tests"};
-  If[!(And @@ (KeyExistsQ[data, #] & /@ keys)), Return[False]];
-  ds = properDegrees[Length[c] - 1]; ts = data["Tests"];
-  If[data["InputDegree"] =!= vectorDegree[c] ||
-      data["TestedRightDegrees"] =!= ds || !ListQ[ts] ||
-      Length[ts] =!= Length[ds], Return[False]];
-  If[!(And @@ (verifyTest[c, #, x] & /@ ts)), Return[False]];
-  If[(#["RightDegree"] & /@ ts) =!= ds, Return[False]];
-  good = (#["RightDegree"] & /@ Select[ts, TrueQ[#["Decomposable"]] &]);
-  status = If[Length[c] < 3, Missing["NotApplicable", "DegreeBelowTwo"],
-    good === {}];
-  data["AcceptedRightDegrees"] === good && data["Indecomposable"] === status
+  ds = properDegrees[Length[c] - 1]; ts = Lookup[data, "Tests", None];
+  If[!ListQ[ts] || Length[ts] =!= Length[ds], Return[False]];
+  If[!AllTrue[ts, verifyTest[c, #, x] &] || Lookup[ts, "RightDegree", {}] =!= ds, Return[False]];
+  expected = exhaustiveData[c, ts];
+  Lookup[data, Keys[expected], None] === Values[expected]
 ];
 
 VerifyAlgebraicDecompositionData[p_, data_, x_Symbol] := Catch[

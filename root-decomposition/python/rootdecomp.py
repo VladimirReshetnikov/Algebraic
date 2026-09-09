@@ -46,7 +46,6 @@ from fractions import Fraction
 from functools import lru_cache
 from typing import Optional
 
-import flint
 from flint import (acb, acb_mat, acb_poly, arb, ctx, fmpq, fmpq_mat, fmpq_poly, fmpz,
                    fmpz_mat, fmpz_poly, nmod_poly)
 
@@ -57,6 +56,17 @@ from flint import (acb, acb_mat, acb_poly, arb, ctx, fmpq, fmpq_mat, fmpq_poly, 
 
 class PrecisionError(Exception):
     """Raised when a rigorous rounding step fails at the current precision."""
+
+
+def _retry_precision(compute, prec, message, exceptions=(PrecisionError,)):
+    """Try six doubling precisions, restoring the caller's context after each attempt."""
+    for _ in range(6):
+        try:
+            with ctx.workprec(prec):
+                return compute(prec)
+        except exceptions:
+            prec *= 2
+    raise PrecisionError(message)
 
 
 def _fmpz_list(coeffs):
@@ -233,15 +243,10 @@ def _cached_poly_roots(coeffs, prec_bits):
     p = fmpz_poly(list(coeffs))
     if p.degree() < 1 or p.gcd(p.derivative()).degree() > 0:
         raise ValueError("root isolation requires a nonconstant squarefree polynomial")
-    work = prec_bits
-    for attempt in range(6):
-        try:
-            with flint.ctx.workprec(work):
-                rts = acb_poly(p).roots(tol=arb(2) ** (-(work - 20)), maxprec=8 * work)
-                return tuple(_ordered_roots(p, rts, work))
-        except (ValueError, PrecisionError):
-            work *= 2
-    raise PrecisionError("root isolation failed")
+    def isolate(work):
+        rts = acb_poly(p).roots(tol=arb(2) ** (-(work - 20)), maxprec=8 * work)
+        return tuple(_ordered_roots(p, rts, work))
+    return _retry_precision(isolate, prec_bits, "root isolation failed", (ValueError, PrecisionError))
 
 
 @lru_cache(maxsize=512)
@@ -587,14 +592,8 @@ def _element_order(mt, g, ident):
 def build_galois_data(poly: fmpz_poly, prec_bits: int = 300, maxorder: int = 400, seed: int = 1) -> GaloisData:
     """Complete Galois/field data for the roots of a monic squarefree integer polynomial."""
     rng = random.Random(seed)
-    prec = prec_bits
-    for attempt in range(6):
-        try:
-            with ctx.workprec(prec):
-                return _build_at_precision(poly, prec, maxorder, rng)
-        except PrecisionError:
-            prec *= 2
-    raise PrecisionError("precision escalation failed")
+    return _retry_precision(lambda prec: _build_at_precision(poly, prec, maxorder, rng),
+                            prec_bits, "precision escalation failed")
 
 
 def _build_at_precision(poly, prec, maxorder, rng) -> GaloisData:
@@ -628,7 +627,7 @@ def _build_at_precision(poly, prec, maxorder, rng) -> GaloisData:
         for i in range(n):
             nums_perm[s, i] = roots[perm[i]]
     rc = gram_inv * fmpq_mat(mat_round(vt * nums_perm))
-    root_coords = [[rc[j, i] for j in range(order)] for i in range(n)]
+    root_coords = rc.transpose().tolist()
     # Reconstruct generators from traces, then propagate the exact group action.
     subs = _subgroup_lattice(mt, ident, order)
     group_gens = next(sub["gens"] for sub in subs if sub["order"] == order)
@@ -651,13 +650,9 @@ def _build_at_precision(poly, prec, maxorder, rng) -> GaloisData:
             raise PrecisionError("automorphism consistency failed")
     for sub in subs:
         if sub["order"] == 1:
-            sub["fixed"] = [[fmpq(1) if k == j else fmpq(0) for k in range(order)] for j in range(order)]
+            sub["fixed"] = I.tolist()
         else:
-            rows = []
-            for g in sub["gens"]:
-                D = auts[g] - I
-                for r in range(order):
-                    rows.append([D[r, c] for c in range(order)])
+            rows = [row for g in sub["gens"] for row in (auts[g] - I).tolist()]
             sub["fixed"] = fmpq_nullspace(fmpq_mat(rows))
     exponent = 1
     for g in range(order):
@@ -819,19 +814,12 @@ def element_to_algebraic(gd: GaloisData, v) -> AlgebraicNumber:
             seen.add(img)
             reps.append(s)
     assert len(reps) == d
-    prec = gd.prec
-    for attempt in range(6):
-        try:
-            with ctx.workprec(prec):
-                vals = conj_vector(gd, w) if prec == gd.prec else _conj_vector_at(gd, w, prec)
-                p = _round_poly(_poly_from_roots([vals[s] for s in reps]))
-                # polynomial of y = w/den:  p(den x)
-                q = poly_from_fractions([Fraction(int(c)) * Fraction(den) ** i for i, c in enumerate(_fmpz_list(p.coeffs()))])
-                val = vals[gd.identity] / den
-                return AlgebraicNumber.from_value(q, val, prec)
-        except PrecisionError:
-            prec *= 2
-    raise PrecisionError("element_to_algebraic failed")
+    def reconstruct(prec):
+        vals = conj_vector(gd, w) if prec == gd.prec else _conj_vector_at(gd, w, prec)
+        p = _round_poly(_poly_from_roots([vals[s] for s in reps]))
+        q = _affine_polynomial(p, Fraction(1, den))
+        return AlgebraicNumber.from_value(q, vals[gd.identity] / den, prec)
+    return _retry_precision(reconstruct, gd.prec, "element_to_algebraic failed")
 
 
 def _conj_vector_at(gd: GaloisData, w, prec):
@@ -1010,10 +998,6 @@ def input_field_data(p: fmpz_poly, a: "AlgebraicNumber", prec_bits: int = 300) -
     d = InputFieldData(mon, c, n, theta, factor_degrees, galois, subs, power_sums(mon, n), prec_bits)
     _ifcache[key] = d
     return d
-
-
-def _galois_mult_matrix(gd, v):
-    return multiplication_matrix_of(gd, v)
 
 
 def fd_mult_matrix(fd, v):
@@ -1259,12 +1243,8 @@ def nice_scale(p: fmpz_poly) -> Fraction:
     """rational q minimizing the height of the minimal polynomial of q*u, where p = minpoly(u)"""
     q0 = integral_scale(p)
     best, hb = q0, None
-    cands = set()
-    for k in range(1, 13):
-        for l in range(1, 13):
-            for s in (1, -1):
-                cands.add(Fraction(s * k, l))
-                cands.add(Fraction(s * l, k))
+    cands = {q for k in range(1, 13) for l in range(1, 13) for s in (1, -1)
+             for q in (Fraction(s * k, l), Fraction(s * l, k))}
     for q in cands:
         qq = q * q0
         g = _affine_polynomial(p, qq)
@@ -1688,29 +1668,18 @@ def combine_algebraic(a: AlgebraicNumber, b: AlgebraicNumber, op: str, prec_bits
         return combine_algebraic(a, scale_algebraic(b, -1, prec_bits), "+", prec_bits)
     ma, ca = _integral_model(a.poly)
     mb, cb = _integral_model(b.poly)
-    prec = prec_bits
-    for attempt in range(6):
-        try:
-            with ctx.workprec(prec):
-                ra = poly_roots(ma, prec)
-                rb = poly_roots(mb, prec)
-                if op == "+":
-                    vals = [cb * x + ca * y for x in ra for y in rb]   # ca*cb*(a_i + b_j)
-                    scale = ca * cb
-                else:
-                    vals = [x * y for x in ra for y in rb]             # ca*cb*(a_i*b_j)
-                    scale = ca * cb
-                comp = _round_poly(_poly_from_roots(vals))
-                target = (a.value(prec) + b.value(prec)) if op == "+" else a.value(prec) * b.value(prec)
-                tv = target * scale
-                g = _matching_factor(comp.factor()[1], tv)
-                # The composed polynomial is proved to annihilate target;
-                # unique factor and root isolation now identify it exactly.
-                q = _affine_polynomial(g, Fraction(1, scale))
-                return AlgebraicNumber.from_value(q, target, prec)
-        except PrecisionError:
-            prec *= 2
-    raise PrecisionError("combine_algebraic failed")
+    scale = ca * cb
+    def combine(prec):
+        ra = poly_roots(ma, prec)
+        rb = poly_roots(mb, prec)
+        # Conjugates of the scaled sum/product are algebraic integers.
+        vals = [cb * x + ca * y if op == "+" else x * y for x in ra for y in rb]
+        comp = _round_poly(_poly_from_roots(vals))
+        target = (a.value(prec) + b.value(prec)) if op == "+" else a.value(prec) * b.value(prec)
+        g = _matching_factor(comp.factor()[1], target * scale)
+        # Exact annihilation plus unique factor/root isolation identifies the result.
+        return AlgebraicNumber.from_value(_affine_polynomial(g, Fraction(1, scale)), target, prec)
+    return _retry_precision(combine, prec_bits, "combine_algebraic failed")
 
 
 @lru_cache(maxsize=16, typed=True)

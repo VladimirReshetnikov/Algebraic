@@ -75,6 +75,8 @@ def _raw_coefficients(expression, x):
         raise ValueError("the input must be a polynomial expression or Poly")
     if expression.has(sp.Float):
         raise ValueError("approximate coefficients are not accepted")
+    if isinstance(expression, sp.Expr) and x not in expression.free_symbols:
+        return [expression]
     # CRootOf binds its own polynomial variable. SymPy's expression-domain
     # Poly constructor can nevertheless mistake that bound x for the outer
     # generator. Shield exact algebraic atoms while collecting coefficients.

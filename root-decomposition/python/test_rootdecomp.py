@@ -1,6 +1,7 @@
 """Regression tests and timings for rootdecomp.py (run: python test_rootdecomp.py)."""
 import time
 import unittest
+import random
 from unittest.mock import patch
 from fractions import Fraction
 
@@ -76,6 +77,45 @@ class ArticleExamples(unittest.TestCase):
 
 
 class CorrectnessRegressions(unittest.TestCase):
+    def test_precision_retry_context_limits_and_exception_filter(self):
+        with ctx.workprec(97):
+            attempts = []
+            def succeeds(prec):
+                attempts.append(prec)
+                self.assertEqual(ctx.prec, prec)
+                if prec < 80:
+                    raise rd.PrecisionError("retry")
+                return "done"
+            self.assertEqual(rd._retry_precision(succeeds, 20, "exhausted"), "done")
+            self.assertEqual(attempts, [20, 40, 80])
+            self.assertEqual(ctx.prec, 97)
+            attempts.clear()
+            def fails(prec):
+                attempts.append(prec)
+                self.assertEqual(ctx.prec, prec)
+                raise ValueError("invalid")
+            with self.assertRaisesRegex(ValueError, "invalid"):
+                rd._retry_precision(fails, 20, "exhausted")
+            self.assertEqual(attempts, [20])
+            self.assertEqual(ctx.prec, 97)
+            attempts.clear()
+            with self.assertRaisesRegex(rd.PrecisionError, "exhausted"):
+                rd._retry_precision(fails, 20, "exhausted", (ValueError, rd.PrecisionError))
+            self.assertEqual(attempts, [20, 40, 80, 160, 320, 640])
+            self.assertEqual(ctx.prec, 97)
+
+    def test_galois_retry_preserves_random_state(self):
+        draws = []
+        def build(poly, prec, maxorder, rng):
+            draws.append(rng.randrange(10 ** 6))
+            if len(draws) < 3:
+                raise rd.PrecisionError("retry")
+            return "built"
+        with patch.object(rd, "_build_at_precision", side_effect=build):
+            self.assertEqual(rd.build_galois_data(fmpz_poly([-2, 0, 1]), seed=123), "built")
+        rng = random.Random(123)
+        self.assertEqual(draws, [rng.randrange(10 ** 6) for _ in range(3)])
+
     def test_prime_degree_bound_needs_no_modular_factorization(self):
         polynomial = fmpz_poly([-2] + [0] * 30 + [1])  # Eisenstein: degree 31.
         rd._lower_bound_cached.cache_clear()

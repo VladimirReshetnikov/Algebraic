@@ -54,7 +54,6 @@ sibling project root-decomposition/python (located automatically).
 
 from __future__ import annotations
 
-import itertools
 import math
 import os
 import sys
@@ -67,7 +66,7 @@ from typing import Callable, Optional
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "root-decomposition", "python"))
 
 import sympy as sp
-from flint import acb, arb, ctx, fmpq, fmpq_mat, fmpz_poly
+from flint import acb, acb_poly, arb, ctx, fmpq, fmpq_mat, fmpq_poly, fmpz_poly
 
 import rootdecomp as rd
 from rootdecomp import AlgebraicNumber, PrecisionError
@@ -209,22 +208,17 @@ def is_negative_real(a: AlgebraicNumber, prec_bits: int = 200) -> bool:
 # polynomial helpers
 # ---------------------------------------------------------------------------
 
-def sympy_poly(p: fmpz_poly, var=X):
-    return sum(int(c) * var ** i for i, c in enumerate(p.coeffs()))
+def sympy_poly(p, var=X):
+    return sum(sp.Rational(c) * var ** i for i, c in enumerate(p.coeffs()))
+
+
+def _rational_poly(expr, var=X) -> fmpq_poly:
+    return fmpq_poly([fmpq(int(c.p), int(c.q)) for c in reversed(sp.Poly(expr, var).all_coeffs())])
 
 
 def fmpz_poly_of(expr, var=X) -> fmpz_poly:
     """Primitive integer polynomial proportional to a rational polynomial expression."""
-    P = sp.Poly(sp.expand(expr), var)
-    return rd.poly_from_fractions([Fraction(int(c.p), int(c.q)) for c in reversed(P.all_coeffs())])
-
-
-def _eval_rational_poly(expr, z: acb) -> acb:
-    """Exact-coefficient evaluation of a rational polynomial expression in X at the ball z (Horner)."""
-    acc = acb(0)
-    for c in sp.Poly(sp.expand(sp.sympify(expr)), X).all_coeffs():
-        acc = acc * z + _rational_acb(c.p, c.q)
-    return acc
+    return rd.primitive(_rational_poly(expr, var).numer())
 
 
 def algebraic_of_rational_function(num, den, a: AlgebraicNumber, prec_bits: int = 300) -> AlgebraicNumber:
@@ -233,11 +227,12 @@ def algebraic_of_rational_function(num, den, a: AlgebraicNumber, prec_bits: int 
     num, den = sp.sympify(num), sp.sympify(den)
     r = fmpz_poly_of(sp.resultant(sympy_poly(a.poly, T), sp.expand(X * den.subs(X, T) - num.subs(X, T)), T))
     factors = r.factor()[1]
+    num_poly, den_poly = map(_rational_poly, (num, den))
 
     def attempt(prec):
         with ctx.workprec(prec):
             z = a.value(prec)
-            val = _eval_rational_poly(num, z) / _eval_rational_poly(den, z)
+            val = acb_poly(num_poly)(z) / acb_poly(den_poly)(z)
             try:
                 return AlgebraicNumber.from_value(rd._matching_factor(factors, val), val, prec)
             except PrecisionError:
@@ -450,17 +445,16 @@ def reciprocal_decomposition(p: fmpz_poly):
     if n % 2 or n < 4:
         return None
     m = n // 2
-    Q = sp.Poly(sympy_poly(p), X).monic()
-    c0 = Q.all_coeffs()[-1]
+    Q = fmpq_poly(p) / p.leading_coefficient()
+    c0 = Q[0]
     for c in _rational_roots(Fraction(int(c0.p), int(c0.q)), m):
-        cs = sp.Rational(c.numerator, c.denominator)
-        rem, P = Q.as_expr(), 0
+        cs = fmpq(c.numerator, c.denominator)
+        rem, P = fmpq_poly(Q), fmpq_poly()
         for k in range(m, -1, -1):
-            cf = sp.Poly(rem, X).coeff_monomial(X ** (m + k)) if rem != 0 else 0
-            P += cf * X ** k
-            rem = sp.expand(rem - cf * X ** m * (X + cs / X) ** k)
-        if rem == 0:
-            return cs, P
+            P[k] = rem[m + k]
+            rem -= P[k] * (fmpq_poly([cs, 0, 1]) ** k).left_shift(m - k)
+        if not rem:
+            return sp.Rational(cs), sympy_poly(P)
     return None
 
 
@@ -606,13 +600,10 @@ def _descend(gd, a: AlgebraicNumber, primes: list, st: _State):
     steps = prime_series(gd.mult_table, gd.identity, H)
     # basis of Q(zeta_m): monomials prod zeta_q^e_q, 0 <= e_q <= q-2, as symbols and as coordinate vectors
     one = [fmpq(1)] + [fmpq(0)] * (order - 1)
-    base_basis = []
-    for exps in itertools.product(*[range(q - 1) for q in primes]):
-        sym, vec = sp.Integer(1), one
-        for q, e in zip(primes, exps):
-            sym *= zeta_sym[q] ** e
-            vec = _iterate(zeta_mult[q], vec, e)[-1]
-        base_basis.append((sym, vec))
+    base_basis = [(sp.Integer(1), one)]
+    for q in primes:
+        base_basis = [(sym * zeta_sym[q] ** e, w) for sym, v in base_basis
+                      for e, w in enumerate(_iterate(zeta_mult[q], v, q - 2))]
     B = rd._col_matrix([vec for _, vec in base_basis], order)
 
     @_cache_by_coordinates
@@ -628,7 +619,7 @@ def _descend(gd, a: AlgebraicNumber, primes: list, st: _State):
             sol = rd.fmpq_solve(B, v)
             if sol is None:
                 raise DescentError("element not in the base cyclotomic field")
-            return sp.expand(sum(sp.Rational(int(s.p), int(s.q)) * sym for s, (sym, _) in zip(sol, base_basis)))
+            return sp.expand(sum(sp.Rational(s) * sym for s, (sym, _) in zip(sol, base_basis)))
         if _is_zero(v):
             return sp.Integer(0)
         step = steps[level - 1]

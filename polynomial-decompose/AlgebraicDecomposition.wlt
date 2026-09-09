@@ -290,3 +290,15 @@ VerificationTest[Module[{h = x^3 + Sqrt[2] x, p, data, accepted, calls},
     AllTrue[{x, 1, 0., False},
       !VerifyAlgebraicDecompositionData[p, Join[data, <|"Residual" -> #|>], x] &]], True,
   TestID -> "positive residual reuses exact reconstruction but checks supplied residual"]
+VerificationTest[Module[{data, headers, bad},
+  headers = {"Type", "InputDegree", "TestedRightDegrees", "AcceptedRightDegrees", "Indecomposable", "Tests"};
+  And @@ Table[
+    data = AlgebraicDecompositionData[p, x];
+    bad = {"Unknown", True, False, False, "False", False};
+    VerifyAlgebraicDecompositionData[p, Association[Reverse[Normal[data]]], x] &&
+      VerifyAlgebraicDecompositionData[p, Append[data, "Extra" -> True], x] &&
+      And @@ MapThread[!VerifyAlgebraicDecompositionData[p, Join[data, <|#1 -> #2|>], x] &,
+        {headers, bad}] &&
+      AllTrue[headers, !VerifyAlgebraicDecompositionData[p, KeyDrop[data, #], x] &],
+    {p, {0, 7, 3 x + 1, x^12, x^12 + x}}]], True,
+  TestID -> "exhaustive headers preserve exact types required keys and key order independence"]

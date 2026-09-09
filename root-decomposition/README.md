@@ -228,6 +228,13 @@ translation preserve the Python root ordering, while negative scaling still
 identifies the transformed branch through certified root matching. Scaling
 by zero returns the rational number zero directly.
 
+Root isolation, Galois construction, field-element reconstruction and
+composed-polynomial arithmetic share the Python precision-retry helper.
+It preserves six attempts with doubling precision, restores the caller's
+Arb context on success or failure, and catches only the exceptions allowed
+by each operation. Wolfram likewise shares its four-attempt retry loop and
+input-field target attachment between additive and multiplicative searches.
+
 ## Main mathematical results
 
 - Both examples have globally optimal maximum degree 3.
