@@ -288,6 +288,16 @@ VerificationTest[Module[{vectors, product, size},
       AlgebraicDecomposition`Private`trim[RootReduce /@ Take[product, UpTo[size]]],
     {a, vectors}, {b, vectors}, {d, {1, 2, 5, Infinity}}]]], True,
   TestID -> "exact convolution matches symbolic polynomial products"]
+VerificationTest[Module[{bases, digitSets},
+  bases = {{0, 1}, {0, 0, 1}, {0, 0, 0, 1}, {0, 0, 2}, {1}, {0}, {0, Sqrt[2], 1}};
+  digitSets = {{}, {{0}}, {{1}}, {{1}, {2}, {3}}, {{Sqrt[2], 1}, {I, 2}, {3}},
+    {{1, 2, 3, 4}, {0, Sqrt[3]}, {2}}, {{Root[#^5 - # - 1 &, 1], 1}, {2}}};
+  And @@ Flatten[Table[
+    AlgebraicDecomposition`Private`digitCompose[digits, h] ===
+      AlgebraicDecomposition`Private`trim[RootReduce /@ CoefficientList[Expand[Sum[
+        FromDigits[Reverse[digits[[j]]], x] If[j === 1, 1, FromDigits[Reverse[h], x]^(j - 1)],
+        {j, Length[digits]}]], x]], {h, bases}, {digits, digitSets}]]], True,
+  TestID -> "monomial digit blocks and Horner fallbacks match independent exact arithmetic"]
 VerificationTest[Module[{p, data, calls},
   And @@ Flatten[Table[
     p = (2 + a) x^24 + tail + a;

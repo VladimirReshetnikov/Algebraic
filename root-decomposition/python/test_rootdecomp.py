@@ -77,6 +77,21 @@ class ArticleExamples(unittest.TestCase):
 
 
 class CorrectnessRegressions(unittest.TestCase):
+    def test_rational_solve_preserves_free_variables_and_rhs_contracts(self):
+        matrix = rd.fmpq_mat([[0, 1, 2, 0, 3], [0, 0, 0, 1, 4], [0, 0, 0, 0, 0]])
+        for rhs in ([4, 8, 0], (4, 8, 0), iter([4, 8, 0]), [4, 8, 0, 99]):
+            self.assertEqual(rd.fmpq_solve(matrix, rhs), [0, 4, 0, 8, 0])
+        self.assertIsNone(rd.fmpq_solve(matrix, [4, 8, 1]))
+        with self.assertRaises(ValueError):
+            rd.fmpq_solve(matrix, [4, 8])
+        self.assertEqual(rd.fmpq_solve(rd.fmpq_mat(0, 2), []), [0, 0])
+        self.assertEqual(rd.fmpq_solve(rd.fmpq_mat(2, 0), [0, 0]), [])
+        self.assertIsNone(rd.fmpq_solve(rd.fmpq_mat(2, 0), [0, 1]))
+        invertible = rd.fmpq_mat([[1, 2], [3, 4]])
+        self.assertEqual(rd._solve_square(invertible, [5, 11]), [1, 2])
+        with self.assertRaises(ZeroDivisionError):
+            rd._solve_square(rd.fmpq_mat([[1, 2], [2, 4]]), [3, 6])
+
     def test_sum_space_search_preserves_order_caps_and_full_span_fallback(self):
         spaces = [dict(index=1, basis=[[fmpq(i == j) for j in range(4)]]) for i in range(4)]
         for count in range(4):

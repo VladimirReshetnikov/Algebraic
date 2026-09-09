@@ -91,8 +91,12 @@ multiply[a_List, b_List, limit_: Infinity] := Module[{size},
   trim[red /@ Take[ListConvolve[
     Take[a, UpTo[size]], Take[b, UpTo[size]], {1, -1}, 0], size]]
 ];
-digitCompose[digits_List, h_List] :=
-  Fold[add[multiply[#1, h], #2] &, {0}, Reverse[digits]];
+digitCompose[digits_List, h_List] := Module[{d = Length[h] - 1},
+  If[d > 0 && Last[h] === 1 && AllTrue[Most[h], # === 0 &] &&
+      AllTrue[digits, Length[#] <= d &],
+    trim[red /@ Flatten[PadRight[#, d] & /@ digits]],
+    Fold[add[multiply[#1, h], #2] &, {0}, Reverse[digits]]]
+];
 compose[a_List, b_List] := digitCompose[List /@ a, b];
 composeChain[parts_List] := Fold[compose[#2, #1] &, {0, 1}, Reverse[parts]];
 

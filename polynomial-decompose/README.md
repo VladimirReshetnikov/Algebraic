@@ -62,14 +62,16 @@ For a positive certificate, full digit reconstruction already proves a zero
 residual; the verifier still checks the supplied residual, without composing
 the outer polynomial again.
 A truncated binary power checks the congruence without constructing all of
-\(h^m\). Composition and certificate reconstruction share Horner arithmetic;
-Python also uses FLINT's native polynomial composition over the rationals
+\(h^m\). Composition and certificate reconstruction share exact arithmetic.
+Wolfram reconstructs nonoverlapping digits in base \(x^d\) by padding and joining
+their coefficient blocks, and uses Horner arithmetic for other bases or overlapping
+digits. Python also uses FLINT's native polynomial composition over the rationals
 when available, with the same exact-domain fallback used by the tests.
 Wolfram coefficient products use exact zero-padded convolution. Existing
 Python `Poly` inputs reuse their coefficient field and coefficient vectors;
 mixed-input verification reads their coefficients directly. Expression inputs
 try coefficient collection without expansion first and expand only when needed.
-the independent verifier shares exact conversions across its degree tests.
+The independent verifier shares exact conversions across its degree tests.
 Scalar certificate digits skip polynomial parsing while retaining exact field
 validation. Exhaustive Wolfram records share a metadata formatter only after
 the verifier has independently checked all required degree tests.
@@ -219,7 +221,7 @@ The unchanged archived native suites were independently executed with
 Wolfram 15.0.1: report 1 passed **55/107**, report 2 **39/53**, and report 3
 **60/60**. These results concern the original reports, whose historical
 metadata remains unchanged. The unified project has its own regression
-suites: **88/88 native tests** and **24 Python test methods** passed. The
+suites: **89/89 native tests** and **24 Python test methods** passed. The
 Python methods include 12 generated affine-normalization cases across exact
 fields and degree pairs, in addition to boundary, enumeration, and certificate
 tampering checks. They also exercise truncated congruences, early rejection,
@@ -228,6 +230,9 @@ without native acceleration. Typed certificate caches keep approximate and
 Boolean values distinct from equal exact coefficients.
 The native APIs and certificate verifier share an exact proper-degree check;
 pattern-valued certificate degrees are rejected without running their predicates.
+Native digit reconstruction matches independent symbolic arithmetic in 49 cases,
+including empty digits, zero and constant bases, overlapping digits, and exact
+algebraic coefficients.
 Enumeration tests check that symbolic conversion caches release their field
 engines and keep each call's polynomial variable separate.
 All **15 cross-language corpus cases** passed as well.

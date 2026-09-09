@@ -145,16 +145,20 @@ def fmpq_solve(A: fmpq_mat, b: list[fmpq]):
     # augmented rref
     aug = fmpq_mat(rows, cols + 1, [x for row, value in zip(A.tolist(), b) for x in row + [value]])
     R, rank = aug.rref()
-    # check consistency: a pivot in the last column means inconsistent
+    # RREF pivots strictly increase; a pivot in the last column is inconsistent.
     x = [fmpq(0)] * cols
+    piv = -1
     for i in range(rank):
-        piv = next((j for j in range(cols + 1) if R[i, j] != 0), None)
-        if piv is None:
-            continue
+        piv = next(j for j in range(piv + 1, cols + 1) if R[i, j])
         if piv == cols:
             return None
         x[piv] = R[i, cols]
     return x
+
+
+def _solve_square(A: fmpq_mat, b):
+    """Solve a square system over Q."""
+    return A.solve(_col_matrix([b], A.nrows())).entries()
 
 
 def rowspace_basis(vectors: list[list[fmpq]], ncols: int) -> list[list[fmpq]]:
@@ -800,7 +804,7 @@ def power_divider(gd: GaloisData, denominator):
                     pass
             if matrix is None:
                 matrix = multiplication_matrix_of(gd, denominator)
-            return fmpq_solve(matrix ** exponent, numerator)
+            return _solve_square(matrix ** exponent, numerator[:gd.order])
 
     return divide
 
@@ -1332,11 +1336,11 @@ def _try_pair(fd, E, F, Mt, t, a, d):
     q = nice_scale(u_alg.poly)
     qu = scale_algebraic(u_alg, q, fd.prec)
     b = root_of_algebraic(qu, t, fd.prec)
-    # c^t = a^t / (q u)
+    # c^t = a^t / (q u); the nonzero intersection vector makes q u invertible.
     # Both bases start with 1, so the first column of Mt already contains a^t.
     at = [Mt[i, 0] for i in range(ord_)]
     Mqu = fd_mult_matrix(fd, [fmpq(q.numerator, q.denominator) * ui for ui in u])
-    z = fmpq_solve(Mqu, at)
+    z = _solve_square(Mqu, at)
     ct_alg = fd_to_algebraic(fd, z)
     cc = quotient_algebraic(a, b, ct_alg.poly, t, fd.prec)
     if max(b.degree, cc.degree) <= d:
@@ -1446,7 +1450,7 @@ def tensor_test(gd, fam, va, cache):
     # The family degrees multiply to ord_: invertibility proves that the products
     # form a basis. A single exact solve tests this and obtains the coordinates.
     try:
-        coords = current.solve(_col_matrix([va], ord_)).entries()
+        coords = _solve_square(current, va)
     except ZeroDivisionError:
         return None
     idx = list(itertools.product(*[range(k) for k in dims]))
