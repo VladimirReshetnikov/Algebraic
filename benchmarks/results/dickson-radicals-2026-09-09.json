@@ -1,0 +1,42 @@
+{
+  "baseline": "e004333f2e1f4e236c25a4459836c226704c1c94",
+  "python": "3.14.4 (tags/v3.14.4:23116f9, Apr  7 2026, 14:10:54) [MSC v.1944 64 bit (AMD64)]",
+  "sympy": "1.14.0",
+  "current_head": "f2ce84c6fc494fdc29915a923584db78ce53ffe5",
+  "python_flint": "0.8.0",
+  "samples": 7,
+  "cold_sympy_cache": false,
+  "current_source_sha256": {
+    "rootdecomp": "dd287c3899dd2ca16fe9c96375c111ea5883a5e53469e0fc2c9546a17a15e550",
+    "algebraic_decompose": "2563a6c85f34663b829458e4fe4f4845d927f2e4802ba72342a10921f3884d57",
+    "roottoradicals": "6a7cb2074b3f73c8037a2054b832940f16021888f9e19a0e611c2d3906ebf906"
+  },
+  "workloads": {
+    "quintic radical expression": {
+      "exact_output_match": true,
+      "baseline_seconds": 0.000618500002019573,
+      "current_seconds": 0.00031090000265976414,
+      "ratio": 1.9893856440279074,
+      "samples_seconds": {
+        "baseline": [
+          0.0006597000028705224,
+          0.0005990999998175539,
+          0.0006348999959300272,
+          0.000599899998633191,
+          0.000589400005992502,
+          0.000618500002019573,
+          0.0006412000002455898
+        ],
+        "current": [
+          0.00033599999733269215,
+          0.00031090000265976414,
+          0.0002905000001192093,
+          0.0003169999981764704,
+          0.00030789999436819926,
+          0.00031209999724524096,
+          0.00030229999538278207
+        ]
+      }
+    }
+  }
+}

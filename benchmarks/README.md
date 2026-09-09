@@ -214,3 +214,37 @@ The product search batches multiplication and negation of the second field basis
 in exact FLINT arithmetic, preserving column order. These measurements concern
 certificate verification and the specified root search; generic polynomial-chain
 enumeration remained approximately unchanged in the separate prototype comparison.
+
+## Input-field construction and Dickson conversion (9 September 2026)
+
+The [input-field construction snapshot](results/input-field-construction-2026-09-09.json)
+and [Dickson conversion snapshot](results/dickson-radicals-2026-09-09.json) compare
+solver revision `f2ce84c` against `e004333`. Each records seven alternating samples,
+with complete output comparisons after warm-up and every timed call.
+
+| Workload | Baseline (seconds) | Refined (seconds) | Baseline / refined |
+| --- | ---: | ---: | ---: |
+| Input-field S4 construction | 0.008262 | 0.006369 | 1.30x |
+| Quintic radical expression | 0.000619 | 0.000311 | 1.99x |
+
+Both measurements retain warmed SymPy caches. The construction row clears each
+revision's solver field cache inside the timed call; it measures uncached field
+construction and that cache clearing. Reusing the field generator's existing
+exact coefficient representation avoids a redundant algebraic-field conversion.
+The radical row includes the complete public conversion, branch selection and
+verification, with the same current root dependency in both module revisions.
+Its Dickson recognizer checks an exact rational differential identity instead
+of reconstructing the symbolic polynomial recurrence.
+
+Reproduce these comparisons with:
+
+```console
+python benchmarks/compare_solvers.py --baseline e004333 --match "input-field S4 construction" --samples 7
+python benchmarks/compare_solvers.py --baseline e004333 --match "quintic radical expression" --samples 7
+```
+
+These are Python/FLINT workload measurements. The submillisecond radical timings
+are sensitive to system load; all raw samples remain in the snapshot. The separate
+31-sample prototype comparison also improved the complete quintic conversion by
+1.99x, while the cyclic-quintic fallback control remained unchanged. This does
+not establish a general descent or Wolfram performance improvement.
