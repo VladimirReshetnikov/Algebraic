@@ -248,3 +248,16 @@ VerificationTest[With[{p = Expand[(x^3 + Sqrt[2] x)^8 + 2 (x^3 + Sqrt[2] x)^4 + 
   VerifyAlgebraicDecomposition[p, AlgebraicDecompose[p, x], x,
     "RequireComplete" -> True, "RequireNormalized" -> True]], True,
   TestID -> "sparse high degree chain with algebraic coefficients"]
+
+VerificationTest[Module[{h = x^4 + 2 x^3 + 3 x^2 + 5 x, p, data},
+  p = Expand[h^8 + 7 h + 1]; data = AlgebraicDecompositionData[p, x, 4];
+  VerifyAlgebraicDecompositionData[p, data, x] &&
+    AllTrue[Range[0, 4], !VerifyAlgebraicDecompositionData[p,
+      Join[data, <|"Inner" -> h + x^#|>], x] &]], True,
+  TestID -> "truncated congruence checks every inner coefficient"]
+VerificationTest[And @@ Flatten[Table[
+  With[{a = {1, 2, 0, -3, 1}},
+    AlgebraicDecomposition`Private`truncatedPower[a, m, d] ===
+      PadRight[Take[CoefficientList[(1 + 2 x - 3 x^3 + x^4)^m, x], UpTo[d]], d]],
+  {m, {1, 2, 3, 8, 17}}, {d, {1, 2, 4, 9}}]], True,
+  TestID -> "truncated binary powers match full polynomial arithmetic"]

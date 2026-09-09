@@ -61,12 +61,13 @@ import sys
 import time
 from dataclasses import dataclass
 from fractions import Fraction
+from functools import cache
 from typing import Callable, Optional
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "root-decomposition", "python"))
 
 import sympy as sp
-from flint import acb, arb, ctx, fmpq, fmpq_mat, fmpz_poly, nmod_poly
+from flint import acb, arb, ctx, fmpq, fmpq_mat, fmpz_poly
 
 import rootdecomp as rd
 from rootdecomp import AlgebraicNumber, PrecisionError
@@ -231,13 +232,14 @@ def algebraic_of_rational_function(num, den, a: AlgebraicNumber, prec_bits: int 
     a resultant gives an annihilating polynomial, whose factor vanishing at the value is identified."""
     num, den = sp.sympify(num), sp.sympify(den)
     r = fmpz_poly_of(sp.resultant(sympy_poly(a.poly, T), sp.expand(X * den.subs(X, T) - num.subs(X, T)), T))
+    factors = r.factor()[1]
 
     def attempt(prec):
         with ctx.workprec(prec):
             z = a.value(prec)
             val = _eval_rational_poly(num, z) / _eval_rational_poly(den, z)
             try:
-                return AlgebraicNumber.from_value(rd._matching_factor(r.factor()[1], val), val, prec)
+                return AlgebraicNumber.from_value(rd._matching_factor(factors, val), val, prec)
             except PrecisionError:
                 return None
     return _escalate(attempt, prec_bits, attempts=6, what="algebraic value")
@@ -269,15 +271,8 @@ def _single_prime_cycle(degs: list, n: int) -> bool:
 
 
 def frobenius_cycle_types(p: fmpz_poly, max_primes: int):
-    """Cycle types of Frobenius elements at the first max_primes good primes."""
-    d = int(p.resultant(p.derivative())) * int(p.leading_coefficient())
-    q, count = 2, 0
-    while count < max_primes:
-        q = int(sp.nextprime(q))
-        if d % q:
-            count += 1
-            f = nmod_poly([int(c) for c in p.coeffs()], q).factor()
-            yield sorted(g.degree() for g, _ in f[1] if g.degree() > 0)
+    """Cycle types at the first max_primes good odd primes."""
+    yield from rd.frobenius_cycle_types(p, max_primes, start_prime=3)
 
 
 def frobenius_nonsolvable(p: fmpz_poly, max_primes: int = 60) -> bool:
@@ -318,17 +313,7 @@ def _galois_data(p: fmpz_poly, prec_bits: int, maxorder: int):
 # ---------------------------------------------------------------------------
 
 def closure(mt, ident: int, gens) -> list:
-    elems, frontier = {ident}, [ident]
-    while frontier:
-        nxt = []
-        for e in frontier:
-            for g in gens:
-                h = mt[e][g]
-                if h not in elems:
-                    elems.add(h)
-                    nxt.append(h)
-        frontier = nxt
-    return sorted(elems)
+    return sorted(rd.group_closure(mt, ident, gens))
 
 
 def commutator_subgroup(mt, ident: int, H) -> list:
@@ -438,13 +423,11 @@ def structural_decompose(a: AlgebraicNumber, st: _State, depth: int):
     comp = sp.decompose(sympy_poly(a.poly))          # outer piece first
     if len(comp) < 2:
         return None
-    vals = []                                        # vals[i] = (g_{i+1} o ... o g_k)(a) exactly; vals[-1] = a
-    for i in range(len(comp) - 1):
-        h = X
-        for g in reversed(comp[i + 1:]):
-            h = g.subs(X, h)
-        vals.append(algebraic_of_rational_function(sp.expand(h), 1, a, st.prec_bits))
-    vals.append(a)
+    vals, h = [a], X                                 # build each composition suffix once, from the inside
+    for g in reversed(comp[1:]):
+        h = sp.expand(g.subs(X, h))
+        vals.append(algebraic_of_rational_function(h, 1, a, st.prec_bits))
+    vals.reverse()
     rad = st.sub(vals[0], depth - 1)
     for i in range(1, len(comp)):
         cands = solve_with_radical_rhs(comp[i], rad, vals[i - 1], st.prec_bits)
@@ -544,8 +527,7 @@ def _structural(a: AlgebraicNumber, st: _State, depth: int):
 # general Galois-Kummer descent
 # ---------------------------------------------------------------------------
 
-def _apply(M: fmpq_mat, v):
-    return rd.apply_matrix(M, v)
+_apply = rd.apply_matrix
 
 
 def _iterate(M: fmpq_mat, v, times: int) -> list:
@@ -568,9 +550,19 @@ def _value_at_identity(gd, v) -> Callable[[int], acb]:
     """prec -> ball of the element with coordinates v at the identity embedding"""
     def fn(prec):
         with ctx.workprec(prec):
-            vals = rd.conj_vector(gd, v) if prec <= gd.prec else rd._conj_vector_at(gd, v, prec)
-            return vals[gd.identity]
+            if prec > gd.prec:
+                return rd._conj_vector_at(gd, v, prec)[gd.identity]
+            return sum((gd.values[gd.identity, j] * rd._fmpq_to_acb(fmpq(q))
+                        for j, q in enumerate(v) if q), acb(0))
     return fn
+
+
+def _cache_by_coordinates(fn):
+    """Memoize a local field computation, treating coordinate lists and tuples alike."""
+    @cache
+    def cached(v, *args):
+        return fn(list(v), *args)
+    return lambda v, *args: cached(tuple(v), *args)
 
 
 def _conjugation_automorphism(gd) -> Optional[int]:
@@ -622,25 +614,17 @@ def _descend(gd, a: AlgebraicNumber, primes: list, st: _State):
             sym *= zeta_sym[q] ** e
             vec = _iterate(zeta_mult[q], vec, e)[-1]
         base_basis.append((sym, vec))
-    B = fmpq_mat(order, len(base_basis))
-    for j, (_, vec) in enumerate(base_basis):
-        for i in range(order):
-            B[i, j] = vec[i]
-    memo = {}
+    B = rd._col_matrix([vec for _, vec in base_basis], order)
 
-    def rad(v, level):
-        key = (tuple(v), level)
-        if key not in memo:
-            memo[key] = rad_compute(v, level)
-        return memo[key]
-
+    @_cache_by_coordinates
     def branch(Rk, q, level):
         """the q-th root of Rk^q (one level down) with the branch equal to Rk"""
         Qk = _iterate(rd.multiplication_matrix_of(gd, Rk), Rk, q - 1)[-1]
         root = principal_root(rad(Qk, level - 1), q, _negative_real_element(gd, conj, Qk))
         return select_candidate([zeta_sym[q] ** e * root for e in range(q)], _value_at_identity(gd, Rk), gd.prec)
 
-    def rad_compute(v, level):
+    @_cache_by_coordinates
+    def rad(v, level):
         if level == 0:                                   # the element lies in Q(zeta_m)
             sol = rd.fmpq_solve(B, v)
             if sol is None:

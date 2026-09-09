@@ -182,8 +182,31 @@ class CertificateTests(unittest.TestCase):
         data = ad.decomposition_data(p, x)
         with patch.object(ad._Engine, "candidate", side_effect=AssertionError("recurrence used")), \
              patch.object(ad._Engine, "divide_monic", side_effect=AssertionError("division used")), \
+             patch.object(ad._Engine, "base_digits", side_effect=AssertionError("digit search used")), \
              patch.object(ad._Engine, "attempt", side_effect=AssertionError("search used")):
             self.assertTrue(ad.verify_decomposition_data(p, data, x))
+
+    def test_short_circuit_and_portable_arithmetic(self):
+        p = (x**4 + x)**2
+        expected = ad.decomposition_data(p, x)
+        # Exercise the exact-domain arithmetic even when FLINT is installed.
+        with patch.object(ad, "fmpq", None):
+            self.assertEqual(ad.decomposition_data(p, x), expected)
+            self.assertTrue(ad.verify_decomposition_data(p, expected, x))
+            self.assertEqual(ad.decompose(p, x), [x**2, x**4 + x])
+        engine, (c,) = ad._prepare([x**120 + x], x)
+        with patch.object(engine, "divide_monic", wraps=engine.divide_monic) as divide:
+            self.assertIsNone(engine.attempt(c, 2))
+            self.assertEqual(divide.call_count, 1)
+        certificate = engine.certificate(c, 2, x)
+        self.assertEqual(len(certificate["digits"]), 61)
+        self.assertTrue(ad.verify_decomposition_data(x**120 + x, certificate, x))
+
+    def test_fixed_degree_does_not_enumerate_divisors(self):
+        with patch.object(ad, "_degrees", side_effect=AssertionError("divisors enumerated")):
+            self.assertEqual(ad.right_decompose(x**12, x, 4), (x**3, x**4))
+            data = ad.decomposition_data(x**12, x, 4)
+            self.assertTrue(ad.verify_decomposition_data(x**12, data, x))
 
     def test_tampered_fixed_degree_certificates(self):
         p = (x**4+x)**2

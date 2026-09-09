@@ -237,36 +237,40 @@ galoisGroupNumerically[roots_List, nums_List, prec_, maxOrder_, maxTries_] :=
       {i, Length[perms]}, {j, Length[perms]}];
     <|"Permutations" -> perms, "Order" -> Length[perms], "Tower" -> tower, "PrimitiveElement" -> thetaExact|>];
 
+(* Shared with RootToRadicals: queue-based closure with constant-time membership. *)
+groupClosure[mt_, idElem_, gs_] := Module[{seen = ConstantArray[False, Length[mt]], queue = {idElem}, pos = 1, h},
+  seen[[idElem]] = True;
+  While[pos <= Length[queue],
+    Do[h = mt[[queue[[pos]], g]];
+      If[! seen[[h]], seen[[h]] = True; AppendTo[queue, h]], {g, gs}];
+    pos++];
+  Sort[queue]];
+
 (* Subgroup lattice from the multiplication table. *)
-subgroupLattice[mt_, idElem_] := Module[{ord = Length[mt], closure, seen, queue, H, J, g},
-  closure[gs_] := Module[{elems = {idElem}, frontier = {idElem}, next, h},
-    While[frontier =!= {},
-      next = {};
-      Do[h = mt[[e, gg]]; If[! MemberQ[elems, h], AppendTo[elems, h]; AppendTo[next, h]], {e, frontier}, {gg, gs}];
-      frontier = next];
-    Sort[elems]];
+subgroupLattice[mt_, idElem_] := Module[{ord = Length[mt], seen, queue, H, J, g, pos = 1},
   seen = <|{idElem} -> {}|>;
-  Do[J = closure[{g}]; If[! KeyExistsQ[seen, J], seen[J] = {g}], {g, ord}];
+  Do[J = groupClosure[mt, idElem, {g}]; If[! KeyExistsQ[seen, J], seen[J] = {g}], {g, ord}];
   queue = Keys[seen];
-  While[queue =!= {},
-    H = First[queue]; queue = Rest[queue];
+  While[pos <= Length[queue],
+    H = queue[[pos++]];
     Do[
       If[! MemberQ[H, g],
-        J = closure[Join[seen[H], {g}]];
+        J = groupClosure[mt, idElem, Append[seen[H], g]];
         If[! KeyExistsQ[seen, J], seen[J] = Join[seen[H], {g}]; AppendTo[queue, J]]],
       {g, ord}]];
   Table[<|"Elements" -> k, "Generators" -> seen[k], "Order" -> Length[k], "Index" -> ord/Length[k]|>, {k, Keys[seen]}]];
 
 elementOrder[mt_, g_, idElem_] := Module[{h = g, k = 1}, While[h != idElem, h = mt[[h, g]]; k++]; k];
 
-buildGaloisData[poly_, prec0_, maxOrder_, maxTries_] := Module[{prec = prec0, result, attempt = 0},
-  While[True,
-    attempt++;
-    result = Catch[Catch[buildGaloisDataAtPrecision[poly, prec, maxOrder, maxTries], precTag], failTag];
-    If[result === "precision",
-      If[attempt >= 4, Return[failure["Precision", "Precision escalation failed"]]];
-      Message[RootDecomposition::prec, prec]; prec = 2 prec; Continue[]];
-    Return[result]]];
+retryPrecision[compute_, prec0_] := Module[{prec = prec0, result, attempt = 0},
+  While[attempt++ < 4,
+    result = Catch[compute[prec], precTag];
+    If[result =!= "precision", Return[result]];
+    If[attempt < 4, Message[RootDecomposition::prec, prec]; prec *= 2]];
+  failure["Precision", "Precision escalation failed"]];
+
+buildGaloisData[poly_, prec0_, maxOrder_, maxTries_] :=
+  retryPrecision[Function[prec, Catch[buildGaloisDataAtPrecision[poly, prec, maxOrder, maxTries], failTag]], prec0];
 
 buildGaloisDataAtPrecision[poly_, prec_, maxOrder_, maxTries_] := Module[
   {roots, nums, n, gg, perms, ord, tower, gens, expo, basisExp, pw, val, gram, gramInv, set, mt, idElem,
@@ -502,12 +506,15 @@ Options[RootSumDecomposition] = {
 };
 
 (* maximal fields of degree <= d (contained in the target's field when stab is given) *)
-candidateFields[gd_, d_, stab_: None] := Module[{subs},
-  subs = Select[gd["Subgroups"], #["Index"] <= d &];
-  If[stab =!= None, subs = Select[subs, SubsetQ[#["Elements"], stab] &]];
-  Select[subs, Function[H, ! AnyTrue[subs, #["Index"] > H["Index"] && fieldContainsQ[#["FixedField"], H["FixedField"]] &]]]];
+eligibleFields[fd_, d_, stab_: None] :=
+  Select[fd["Subgroups"], #["Index"] <= d && (stab === None || SubsetQ[#["Elements"], stab]) &];
 
-rowSpaceBasis[rows_] := DeleteCases[RowReduce[rows], {0 ..}];
+candidateFields[gd_, d_, stab_: None] := Module[{subs = eligibleFields[gd, d, stab]},
+  Select[subs, Function[H, ! AnyTrue[subs, #["Index"] > H["Index"] &&
+    If[gd["Type"] === "Galois", SubsetQ[H["Elements"], #["Elements"]],
+      fieldContainsQ[#["FixedField"], H["FixedField"]]] &]]]];
+
+rowSpaceBasis[rows_] := canonicalRows[rows];
 
 (* Solve v in the sum of the given spaces (each an association with a "Basis" of rows);
    returns the list of {space, contribution vector} or $Failed. *)
@@ -530,7 +537,7 @@ findSumRepresentation[spaces_, v_, maxTerms_] := Module[{limit, res},
 RootSumDecomposition[a_, opts : OptionsPattern[]] := RootSumDecomposition[a, Automatic, opts];
 
 RootSumDecomposition[a_, dmax_, OptionsPattern[]] := Module[
-  {in, n, lb, scope = OptionValue["Scope"], coeffs = OptionValue["Coefficients"], trivial, prec, res, attempt = 0, gaussian},
+  {in, n, lb, scope = OptionValue["Scope"], coeffs = OptionValue["Coefficients"], trivial, gaussian},
   If[! degreeLimitQ[dmax] || ! componentLimitQ[OptionValue["MaxTerms"]] ||
       ! MemberQ[{"Rationals", "GaussianRationals"}, coeffs] ||
       ! engineOptionsQ[scope, OptionValue["Engine"], OptionValue["WorkingPrecision"], OptionValue["MaxGroupOrder"], OptionValue["MaxTries"]],
@@ -555,15 +562,8 @@ RootSumDecomposition[a_, dmax_, OptionsPattern[]] := Module[
   If[n == 1, Return[trivial]];
   If[dmax =!= Automatic && dmax >= n, Return[trivial]];
   If[lb == n, Return[trivial]];
-  prec = OptionValue["WorkingPrecision"];
-  While[True,
-    attempt++;
-    res = Catch[sumDecompositionCore[a, in, dmax, lb, scope, gaussian, OptionValue["MaxTerms"], prec,
-        OptionValue["MaxGroupOrder"], OptionValue["MaxTries"], OptionValue["Engine"]], precTag];
-    If[res === "precision",
-      If[attempt >= 4, Return[failure["Precision", "Precision escalation failed"]]];
-      Message[RootDecomposition::prec, prec]; prec = 2 prec; Continue[]];
-    Return[res]]];
+  retryPrecision[Function[prec, sumDecompositionCore[a, in, dmax, lb, scope, gaussian, OptionValue["MaxTerms"], prec,
+    OptionValue["MaxGroupOrder"], OptionValue["MaxTries"], OptionValue["Engine"]]], OptionValue["WorkingPrecision"]]];
 
 sumDecompositionCore[a_, in_, dmax_, lb0_, scope_, gaussian_, maxTerms_, prec_, maxOrder_, maxTries_, engine_] := Module[
   {n = in["Degree"], lb = lb0, poly, gd, va, stab, res = $Failed, fd},
@@ -714,13 +714,11 @@ niceScale[u_] := Module[{f, d, best = 1, h, hb = {Infinity, 0, 0}, g, q0},
 
 principalRoot[u_, t_Integer] := If[t == 1, u, RootReduce[Power[u, 1/t]]];
 
-twoFactorSearch[fd_, va_, a_, n_, d_, stab_, scope_] := Module[{tmax, subs, pairs, mt, ma},
+twoFactorSearch[fd_, va_, a_, n_, d_, stab_, scope_, ma_] := Module[{tmax, subs, pairs, mt},
   tmax = If[scope === "Global" && stab === None && (fd["Type"] === "Galois" || fd["Galois"]), Min[d, Floor[d^2/n]], 1];
-  ma = multMatrix[fd, va];
   Catch[
     Do[
-      subs = Select[fd["Subgroups"], t #["Index"] <= d &];
-      If[stab =!= None, subs = Select[subs, SubsetQ[#["Elements"], stab] &]];
+      subs = eligibleFields[fd, d/t, stab];
       If[subs === {}, Continue[]];
       mt = MatrixPower[ma, t];
       pairs = Select[Join @@ Table[{subs[[i]], subs[[j]]}, {i, Length[subs]}, {j, i, Length[subs]}],
@@ -738,7 +736,7 @@ twoFactorSearch[fd_, va_, a_, n_, d_, stab_, scope_] := Module[{tmax, subs, pair
 shortestVector[ns_, len_] := Module[{ints, red},
   ints = Map[# LCM @@ Denominator[#] &, ns];
   red = If[Length[ints] > 1, LatticeReduce[ints], ints];
-  First[SortBy[red, Norm[Take[#, len]] &]]];
+  First[MinimalBy[red, Norm[Take[#, len]] &]]];
 
 tryPair[fd_, pr_, mt_, t_, a_, d_] := Module[{EE = pr[[1]]["FixedField"], FF = pr[[2]]["FixedField"], ns, u, uExact, q, b, cc, degs},
   ns = NullSpace[Join[Transpose[EE], -mt . Transpose[FF], 2]];
@@ -766,9 +764,7 @@ familiesWithProduct[subs_, target_, minSize_] := Module[{rec},
 $multCache = <||>;
 
 tensorSearch[gd_, va_, d_, stab_, maxFactors_] := Module[{subs, ord = gd["Order"], fams, count = 0},
-  subs = Select[gd["Subgroups"], 1 < #["Index"] <= d &];
-  If[stab =!= None, subs = Select[subs, SubsetQ[#["Elements"], stab] &]];
-  subs = SortBy[subs, #["Index"] &];
+  subs = SortBy[Select[eligibleFields[gd, d, stab], #["Index"] > 1 &], #["Index"] &];
   fams = Select[familiesWithProduct[subs, ord, 3], Length[#] <= maxFactors &];
   $multCache = <||>;
   Catch[
@@ -810,7 +806,7 @@ cleanProductTerms[terms_, maxFactors_: Infinity] := Module[{rat, rest, q},
 RootProductDecomposition[a_, opts : OptionsPattern[]] := RootProductDecomposition[a, Automatic, opts];
 
 RootProductDecomposition[a_, dmax_, OptionsPattern[]] := Module[
-  {in, n, lb, scope = OptionValue["Scope"], trivial, prec, res, attempt = 0, bd = OptionValue["BoundedSearch"]},
+  {in, n, lb, scope = OptionValue["Scope"], trivial, bd = OptionValue["BoundedSearch"]},
   If[! degreeLimitQ[dmax] || ! componentLimitQ[OptionValue["MaxFactors"]] ||
       ! IntegerQ[OptionValue["RecursionDepth"]] || OptionValue["RecursionDepth"] < 0 ||
       ! MemberQ[{True, False}, OptionValue["TensorTest"]] ||
@@ -833,15 +829,9 @@ RootProductDecomposition[a_, dmax_, OptionsPattern[]] := Module[
   If[n == 1, Return[trivial]];
   If[dmax =!= Automatic && dmax >= n, Return[trivial]];
   If[lb == n, Return[trivial]];
-  prec = OptionValue["WorkingPrecision"];
-  While[True,
-    attempt++;
-    res = Catch[productDecompositionCore[a, in, dmax, lb, scope, OptionValue["MaxFactors"], OptionValue["RecursionDepth"],
-        OptionValue["TensorTest"], prec, OptionValue["MaxGroupOrder"], OptionValue["MaxTries"], OptionValue["Engine"], bd], precTag];
-    If[res === "precision",
-      If[attempt >= 4, Return[failure["Precision", "Precision escalation failed"]]];
-      Message[RootDecomposition::prec, prec]; prec = 2 prec; Continue[]];
-    Return[res]]];
+  retryPrecision[Function[prec, productDecompositionCore[a, in, dmax, lb, scope, OptionValue["MaxFactors"], OptionValue["RecursionDepth"],
+    OptionValue["TensorTest"], prec, OptionValue["MaxGroupOrder"], OptionValue["MaxTries"], OptionValue["Engine"], bd]],
+    OptionValue["WorkingPrecision"]]];
 
 productDecompositionCore[a_, in_, dmax_, lb0_, scope_, maxFactors_, depth_, tensorQ_, prec_, maxOrder_, maxTries_, engine_, bounded_] := Module[
   {n = in["Degree"], lb = lb0, gd, fd, res = $Failed},
@@ -869,13 +859,14 @@ productDecompositionCore[a_, in_, dmax_, lb0_, scope_, maxFactors_, depth_, tens
     productSearch[gd, a, va, stab, n, lb, dmax, scope, maxFactors, depth, tensorQ, prec, maxOrder, maxTries, engine, True, bounded]]];
 
 productSearch[fd_, a_, va_, stab_, n_, lb_, dmax_, scope_, maxFactors_, depth_, tensorQ_, prec_, maxOrder_, maxTries_, engine_, completeQ_, bounded_] := Module[
-  {dlist, twoDegrees, d, two, best, terms, degs, res, tens, sub, extra, remaining, f, parts},
+  {dlist, twoDegrees, d, two, best, terms, degs, res, tens, sub, extra, remaining, f, parts, ma},
   extra = If[fd["Type"] === "InputField", <|"AmbientDegree" -> fd["Degree"], "AmbientGalois" -> fd["Galois"]|>, <|"GroupOrder" -> fd["Order"]|>];
   dlist = If[dmax === Automatic, Range[lb, n - 1], {dmax}];
   twoDegrees = Select[dlist, #^2 >= n &];
   (* 1. two-factor algorithm (norm-intersection criterion; complete when the ambient field is Galois) *)
   two = $Failed;
-  Do[two = twoFactorSearch[fd, va, a, n, d, stab, scope]; If[two =!= $Failed, Break[]], {d, twoDegrees}];
+  If[twoDegrees =!= {}, ma = multMatrix[fd, va]];
+  Do[two = twoFactorSearch[fd, va, a, n, d, stab, scope, ma]; If[two =!= $Failed, Break[]], {d, twoDegrees}];
   If[two === $Failed && dmax === Automatic, two = <|"Terms" -> {RootReduce[a]}, "Exponent" -> 1, "FieldDegrees" -> {n}|>];
   best = If[two === $Failed, $Failed,
     makeResult[a, Times, two["Terms"], lb, scope,

@@ -95,6 +95,20 @@ class Examples(unittest.TestCase):
         with self.assertRaises(rt.NotFound):
             rt.root_to_radicals(C5, method="structural")
 
+    def test_decomposition_with_three_components(self):
+        # All branches of ((x^2)^2)^2 - 2 exercise the shared composition suffixes.
+        for k in range(1, 9):
+            run(f"three-component decomposition conjugate {k}", f"Root[-2 + #^8 &, {k}]", "Decompose")
+
+    def test_identity_embedding_precision(self):
+        gd = rd.galois_data(fmpz_poly([-2, 0, 0, 1]), 200, 20)
+        v = [a + b / 3 for a, b in zip(gd.root_coords[0], gd.root_coords[1])]
+        value = rt._value_at_identity(gd, v)
+        for prec in (gd.prec, 2 * gd.prec):
+            with rt.ctx.workprec(prec):
+                expected = (rd.conj_vector(gd, v) if prec == gd.prec else rd._conj_vector_at(gd, v, prec))[gd.identity]
+                self.assertTrue(value(prec).overlaps(expected))
+
 
 class Negative(unittest.TestCase):
     def test_not_solvable(self):

@@ -74,6 +74,7 @@ multiplicationMatrixOfElement = RootDecomposition`Private`multiplicationMatrixOf
 rationalQ = RootDecomposition`Private`rationalQ;
 precTag = RootDecomposition`Private`precTag;
 frobeniusExponentMultiple = RootDecomposition`Private`frobeniusExponentMultiple;
+groupClosure = RootDecomposition`Private`groupClosure;
 
 okQ[r_] := r =!= $Failed && ! FailureQ[r];      (* a usable result of a recursive step *)
 
@@ -208,6 +209,9 @@ solveWithRadicalRHS[g_, v_] := Module[{n = Exponent[g, x], cl = CoefficientList[
 solveAndSelect[g_, v_, target_] := With[{cands = solveWithRadicalRHS[g, v]},
   If[cands === $Failed, $Failed, selectCandidate[cands, target]]];
 
+factorAt[p_, a_, extension_] :=
+  SelectFirst[First /@ Quiet[FactorList[p, Extension -> extension]], vanishesAtQ[#, a] &, $Failed];
+
 (* 0. user-supplied subfield generators ("Extension" option): factor p over Q(gens) cumulatively (the
    factor containing a over a larger field divides the one over a smaller field, and factoring a small
    polynomial over a large field is much cheaper than factoring p over it); solve the factor containing
@@ -219,7 +223,7 @@ structuralExtension[a_, p_, depth_] := Module[{gens, fac = p, rads, sel},
   If[$extension === None, Return[$Failed]];
   gens = Flatten[{$extension}];
   Do[
-    fac = SelectFirst[First /@ Quiet[FactorList[fac, Extension -> gens[[;; i]]]], vanishesAtQ[#, a] &, $Failed];
+    fac = factorAt[fac, a, gens[[;; i]]];
     If[fac === $Failed, Return[$Failed, Module]],
     {i, Length[gens]}];
   If[! formulaSolvableQ[fac], Return[$Failed]];
@@ -235,7 +239,7 @@ structuralExtension[a_, p_, depth_] := Module[{gens, fac = p, rads, sel},
 structuralDecompose[a_, p_, depth_] := Module[{comp = Decompose[p, x], k, vals, rad},
   k = Length[comp];
   If[k < 2, Return[$Failed]];
-  vals = Append[Table[RootReduce[Fold[#2 /. x -> #1 &, a, Reverse[comp[[i + 1 ;;]]]]], {i, k - 1}], a];
+  vals = Reverse[FoldList[RootReduce[#2 /. x -> #1] &, a, Reverse[Rest[comp]]]];
   rad = sub[vals[[1]], depth - 1];
   Do[
     If[rad === $Failed, Return[$Failed, Module]];
@@ -296,7 +300,7 @@ structuralPairSum[a_, p_, depth_] := Module[{n = Exponent[p, x], r2, facs, na, n
   Do[
     y0 = rootObject[g, j];
     If[Min[Abs[N[y0, 40] - na - nroots]] > 10^-15, Continue[]];   (* y0 = a + a' for a conjugate a' *)
-    fac = SelectFirst[First /@ FactorList[p, Extension -> y0], vanishesAtQ[#, a] &, $Failed];
+    fac = factorAt[p, a, y0];
     If[fac === $Failed || Exponent[fac, x] > 4, Continue[]];
     yrad = sub[y0, depth - 1];
     If[yrad === $Failed, Continue[]];
@@ -326,13 +330,6 @@ structural[a_, p_, depth_] := Module[{r},
 (* ------------------------------------------------------------------ *)
 (* Group theory on the multiplication table                            *)
 (* ------------------------------------------------------------------ *)
-
-groupClosure[mt_, idElem_, gens_] := Module[{elems = {idElem}, frontier = {idElem}, next, h},
-  While[frontier =!= {},
-    next = {};
-    Do[h = mt[[e, g]]; If[! MemberQ[elems, h], AppendTo[elems, h]; AppendTo[next, h]], {e, frontier}, {g, gens}];
-    frontier = next];
-  Sort[elems]];
 
 commutatorSubgroup[mt_, idElem_, H_] := Module[{inv = Association @@ Table[g -> First[FirstPosition[mt[[g]], idElem]], {g, H}]},
   groupClosure[mt, idElem, DeleteDuplicates[Flatten[Table[mt[[mt[[inv[g], inv[h]]], mt[[g, h]]]], {g, H}, {h, H}]]]]];
@@ -365,7 +362,7 @@ fixedByQ[gd_, v_, elems_] := AllTrue[elems, gd["Automorphisms"][[#]] . v == v &]
 
 (* the descent proper, for Galois data gd of p(x) Prod Phi_q(x); may throw "precision" *)
 descend[gd_, a_, primes_, resolventForm_] := Module[
-  {ord = gd["Order"], c = gd["Scale"], target, va, zetaIdx, zetaMult, zeta, H, steps, baseBasis, memo, rad, radCompute, branch},
+  {ord = gd["Order"], c = gd["Scale"], target, va, zetaIdx, zetaMult, zeta, H, steps, baseBasis, rad, radCompute, branch},
   target = locateTarget[gd, a];
   If[target === $Failed, Return[failure["RootIndex", "Could not locate the input among the roots"]]];
   va = gd["RootCoordinates"][[target]]/c;
@@ -382,14 +379,13 @@ descend[gd_, a_, primes_, resolventForm_] := Module[
   baseBasis = Table[{Times @@ MapThread[zeta[#1]^#2 &, {primes, e}],
       Fold[Function[{vec, qe}, Nest[zetaMult[qe[[1]]] . # &, vec, qe[[2]]]], UnitVector[ord, 1], MapThread[List, {primes, e}]]},
     {e, Tuples[Range[0, # - 2] & /@ primes]}];
-  memo = <||>;
-  rad[v_, level_] := If[KeyExistsQ[memo, {v, level}], memo[{v, level}], memo[{v, level}] = radCompute[v, level]];
+  rad[v_, level_] := rad[v, level] = radCompute[v, level];
   (* level 0: the element lies in Q(zeta_m) *)
   radCompute[v_, 0] := With[{sol = Quiet[Check[LinearSolve[Transpose[baseBasis[[All, 2]]], v], $Failed]]},
     If[sol === $Failed, Throw[failure["Descent", "Element not in the base cyclotomic field"], radTag]];
     Expand[sol . baseBasis[[All, 1]]]];
   (* branch[Rk, q, level]: the q-th root of Rk^q (one level down) with the branch equal to Rk *)
-  branch[Rk_, q_, level_] := Module[{qrad, sel},
+  branch[Rk_, q_, level_] := branch[Rk, q, level] = Module[{qrad, sel},
     qrad = rad[With[{Mk = multiplicationMatrixOfElement[gd, Rk]}, Nest[Mk . # &, Rk, q - 1]], level - 1];
     sel = selectCandidate[Table[zeta[q]^e qrad^(1/q), {e, 0, q - 1}], conjugates[gd, Rk][[gd["Identity"]]]];
     If[sel === $Failed, Throw[failure["Branch", "Could not identify the radical branch"], radTag]];

@@ -66,9 +66,7 @@ def _fmpz_list(coeffs):
 def primitive(p: fmpz_poly) -> fmpz_poly:
     """Primitive integer polynomial with positive leading coefficient."""
     c = _fmpz_list(p.coeffs())
-    g = 0
-    for a in c:
-        g = math.gcd(g, abs(a))
+    g = math.gcd(*c)
     if g == 0:
         return fmpz_poly([0])
     c = [a // g for a in c]
@@ -80,10 +78,15 @@ def primitive(p: fmpz_poly) -> fmpz_poly:
 def poly_from_fractions(coeffs) -> fmpz_poly:
     """Integer polynomial proportional to the rational polynomial with the given coefficients."""
     coeffs = [Fraction(c) for c in coeffs]
-    den = 1
-    for c in coeffs:
-        den = den * c.denominator // math.gcd(den, c.denominator)
+    den = math.lcm(*(c.denominator for c in coeffs))
     return primitive(fmpz_poly([int(c * den) for c in coeffs]))
+
+
+def _clear_denominators(values):
+    """Return an integer vector and its common positive denominator."""
+    values = [fmpq(v) for v in values]
+    den = math.lcm(*(int(v.q) for v in values))
+    return [int(v * den) for v in values], den
 
 
 def height(p: fmpz_poly) -> int:
@@ -113,41 +116,24 @@ def fmpq_nullspace(m: fmpq_mat) -> list[list[fmpq]]:
     """Basis (list of vectors) of the right nullspace of a rational matrix."""
     rows = m.nrows()
     cols = m.ncols()
-    # clear denominators row-wise
-    introws = []
-    for i in range(rows):
-        den = 1
-        for j in range(cols):
-            den = den * int(m[i, j].q) // math.gcd(den, int(m[i, j].q))
-        introws.append([int(m[i, j] * den) for j in range(cols)])
     if rows == 0:
         return [[fmpq(1) if k == j else fmpq(0) for k in range(cols)] for j in range(cols)]
+    introws = [_clear_denominators(row)[0] for row in m.tolist()]
     M = fmpz_mat(introws)
     ns, nullity = M.nullspace()
-    vecs = []
-    for j in range(nullity):
-        vecs.append([fmpq(int(ns[i, j])) for i in range(cols)])
-    return vecs
+    return [[fmpq(ns[i, j]) for i in range(cols)] for j in range(nullity)]
 
 
 def fmpq_solve(A: fmpq_mat, b: list[fmpq]):
     """Solve A x = b over Q (A may be non-square); returns list or None."""
     rows, cols = A.nrows(), A.ncols()
     # augmented rref
-    aug = fmpq_mat(rows, cols + 1)
-    for i in range(rows):
-        for j in range(cols):
-            aug[i, j] = A[i, j]
-        aug[i, cols] = b[i]
+    aug = fmpq_mat(rows, cols + 1, [x for row, value in zip(A.tolist(), b) for x in row + [value]])
     R, rank = aug.rref()
     # check consistency: a pivot in the last column means inconsistent
     x = [fmpq(0)] * cols
     for i in range(rank):
-        piv = None
-        for j in range(cols + 1):
-            if R[i, j] != 0:
-                piv = j
-                break
+        piv = next((j for j in range(cols + 1) if R[i, j] != 0), None)
         if piv is None:
             continue
         if piv == cols:
@@ -405,32 +391,27 @@ def exponent_bound(e: int) -> int:
     return max(int(p) ** int(k) for p, k in fmpz(e).factor())
 
 
-def frobenius_exponent_multiple(p: fmpz_poly, max_primes: int = 40) -> int:
+def frobenius_cycle_types(p: fmpz_poly, max_primes: int = 40, start_prime: int = 2):
+    """Yield sorted factor degrees at unramified primes, starting at start_prime."""
+    from sympy import nextprime
+
     disc = int(fmpz_poly(p).resultant(p.derivative()))
     if p.degree() < 1 or disc == 0:
         raise ValueError("Frobenius cycle types require a nonconstant squarefree polynomial")
-    lc = int(p.leading_coefficient())
-    e = 1
-    q = 2
+    bad_primes = disc * int(p.leading_coefficient())
+    coeffs = _fmpz_list(p.coeffs())
+    q = int(nextprime(start_prime - 1))
     count = 0
-
-    def next_prime(m):
-        m += 1
-        while True:
-            if all(m % r for r in range(2, math.isqrt(m) + 1)):
-                return m
-            m += 1
     while count < max_primes:
-        if (disc * lc) % q != 0:
-            f = nmod_poly(_fmpz_list(p.coeffs()), q).factor()
-            degs = [g.degree() for g, _ in f[1] if g.degree() > 0]
-            o = 1
-            for d in degs:
-                o = o * d // math.gcd(o, d)
-            e = e * o // math.gcd(e, o)
+        if bad_primes % q != 0:
+            factors = nmod_poly(coeffs, q).factor()[1]
+            yield sorted(g.degree() for g, _ in factors if g.degree() > 0)
             count += 1
-        q = next_prime(q)
-    return e
+        q = int(nextprime(q))
+
+
+def frobenius_exponent_multiple(p: fmpz_poly, max_primes: int = 40) -> int:
+    return math.lcm(*(math.lcm(*degrees) for degrees in frobenius_cycle_types(p, max_primes)))
 
 
 def lower_bound(p: fmpz_poly) -> int:
@@ -560,33 +541,31 @@ def galois_group(roots: list[acb], maxorder: int, rng: random.Random):
     return perms, tower
 
 
-def _subgroup_lattice(mt, ident, order):
-    def closure(gens):
-        elems = {ident}
-        frontier = [ident]
-        while frontier:
-            nxt = []
-            for e in frontier:
-                for g in gens:
-                    h = mt[e][g]
-                    if h not in elems:
-                        elems.add(h)
-                        nxt.append(h)
-            frontier = nxt
-        return frozenset(elems)
+def group_closure(mt, ident, gens):
+    """Subgroup generated by gens in the multiplication table mt."""
+    elems = {ident}
+    queue = [ident]
+    for e in queue:
+        for g in gens:
+            h = mt[e][g]
+            if h not in elems:
+                elems.add(h)
+                queue.append(h)
+    return frozenset(elems)
 
+
+def _subgroup_lattice(mt, ident, order):
     seen = {frozenset([ident]): []}
     for g in range(order):
-        J = closure([g])
+        J = group_closure(mt, ident, [g])
         if J not in seen:
             seen[J] = [g]
     queue = list(seen)
-    while queue:
-        H = queue.pop(0)
+    for H in queue:
         for g in range(order):
             if g in H:
                 continue
-            J = closure(seen[H] + [g])
+            J = group_closure(mt, ident, seen[H] + [g])
             if J not in seen:
                 seen[J] = seen[H] + [g]
                 queue.append(J)
@@ -753,20 +732,12 @@ def multiplication_matrix(gd: GaloisData, yv: list[acb]) -> fmpq_mat:
 
 
 def multiplication_matrix_of(gd: GaloisData, v) -> fmpq_mat:
-    den = 1
-    for q in v:
-        den = den * int(fmpq(q).q) // math.gcd(den, int(fmpq(q).q))
-    yv = conj_vector(gd, [fmpq(q) * den for q in v])
-    return multiplication_matrix(gd, yv) / den
+    integers, den = _clear_denominators(v)
+    return multiplication_matrix(gd, conj_vector(gd, integers)) / den
 
 
 def apply_matrix(M: fmpq_mat, v):
-    col = fmpq_mat(M.ncols(), 1)
-    for c in range(M.ncols()):
-        if v[c] != 0:
-            col[c, 0] = v[c]
-    r = M * col
-    return [r[i, 0] for i in range(M.nrows())]
+    return (M * fmpq_mat(M.ncols(), 1, v)).entries()
 
 
 def element_degree(gd: GaloisData, v) -> int:
@@ -787,10 +758,7 @@ def element_to_algebraic(gd: GaloisData, v) -> AlgebraicNumber:
     d = element_degree(gd, v)
     if d == 1:
         return AlgebraicNumber.from_rational(Fraction(int(v[0].p), int(v[0].q)))
-    den = 1
-    for q in v:
-        den = den * int(q.q) // math.gcd(den, int(q.q))
-    w = [q * den for q in v]
+    w, den = _clear_denominators(v)
     # distinct conjugates: orbit of the coordinate vector
     seen = set()
     reps = []
@@ -870,11 +838,7 @@ class InputFieldData:
             if top != 0:
                 nxt = [nxt[i] - top * coeffs[i] for i in range(n)]
             cur = nxt
-        M = fmpq_mat(n, n)
-        for j, col in enumerate(cols):
-            for i in range(n):
-                M[i, j] = col[i]
-        return M
+        return _col_matrix(cols, n)
 
     def mean_trace(self, v) -> fmpq:
         return sum((fmpq(v[j]) * int(self.traces[j]) for j in range(self.n)), fmpq(0)) / self.n
@@ -887,10 +851,7 @@ class InputFieldData:
             return AlgebraicNumber.from_rational(Fraction(int(v[0].p), int(v[0].q)))
         M = self.mult_matrix(v)
         cp = M.charpoly()                       # fmpq_poly, = minpoly^(n/d)
-        den = 1
-        for c in cp.coeffs():
-            den = den * int(c.q) // math.gcd(den, int(c.q))
-        ip = fmpz_poly([int(c * den) for c in cp.coeffs()])
+        ip = fmpz_poly(_clear_denominators(cp.coeffs())[0])
         with ctx.workprec(self.prec):
             th = self.theta.value(self.prec)
             val = acb(0)
@@ -1082,14 +1043,8 @@ def candidate_fields(gd, d: int, stab=None):
 def solve_in_spaces(spaces, v):
     if not spaces:
         return None
-    cols = []
-    for sp in spaces:
-        cols.extend(sp["basis"])
     n = len(v)
-    A = fmpq_mat(n, len(cols))
-    for j, c in enumerate(cols):
-        for i in range(n):
-            A[i, j] = c[i]
+    A = _col_matrix([col for sp in spaces for col in sp["basis"]], n)
     sol = fmpq_solve(A, _vec_fmpq(v))
     if sol is None:
         return None
@@ -1346,31 +1301,18 @@ def two_factor_search(fd, va, a: AlgebraicNumber, n: int, d: int, stab,
 
 def shortest_vector(ns, length):
     """LLL-reduce the integer nullspace basis and return the vector with the shortest E-part."""
-    rows = []
-    for v in ns:
-        den = 1
-        for q in v:
-            den = den * int(q.q) // math.gcd(den, int(q.q))
-        rows.append([int(q * den) for q in v])
+    rows = [_clear_denominators(v)[0] for v in ns]
     if len(rows) > 1:
         red = fmpz_mat(rows).lll()
         rows = [[int(red[i, j]) for j in range(red.ncols())] for i in range(red.nrows())]
-    rows.sort(key=lambda r: sum(x * x for x in r[:length]))
-    return [fmpq(x) for x in rows[0]]
+    return _vec_fmpq(min(rows, key=lambda r: sum(x * x for x in r[:length])))
 
 
 def _try_pair(fd, E, F, Mt, Ma, t, a, d, va):
     ord_ = fd.order
     BE, BF = E["fixed"], F["fixed"]
-    cols = len(BE) + len(BF)
-    M = fmpq_mat(ord_, cols)
-    for j, e in enumerate(BE):
-        for i in range(ord_):
-            M[i, j] = e[i]
     MF = [apply_matrix(Mt, f) for f in BF]
-    for j, f in enumerate(MF):
-        for i in range(ord_):
-            M[i, len(BE) + j] = -f[i]
+    M = _col_matrix(BE + [[-x for x in f] for f in MF], ord_)
     ns = fmpq_nullspace(M)
     if not ns:
         return None
@@ -1433,30 +1375,21 @@ def tensor_search(gd, va, d, stab, max_factors=None, cache=None):
 
 
 def _col_matrix(vectors, nrows):
-    M = fmpq_mat(nrows, len(vectors))
-    for j, v in enumerate(vectors):
-        for i in range(nrows):
-            if v[i] != 0:
-                M[i, j] = v[i]
-    return M
+    return fmpq_mat(vectors).transpose() if vectors else fmpq_mat(nrows, 0)
 
 
 def _hstack(mats, nrows):
-    cols = sum(m.ncols() for m in mats)
-    out = fmpq_mat(nrows, cols)
-    c = 0
-    for m in mats:
-        for j in range(m.ncols()):
-            for i in range(nrows):
-                out[i, c + j] = m[i, j]
-        c += m.ncols()
-    return out
+    columns = [col for m in mats for col in m.transpose().tolist()]
+    return _col_matrix(columns, nrows)
 
 
 def tensor_test(gd, fam, va, cache):
+    """Test a product basis whose factor dimensions multiply to the ambient degree."""
     ord_ = gd.order
     bases = [H["fixed"] for H in fam]
     dims = [len(B) for B in bases]
+    if math.prod(dims) != ord_:
+        return None
     mats = []
     for B in bases:
         row = []
@@ -1466,31 +1399,19 @@ def tensor_test(gd, fam, va, cache):
                 cache[key] = fd_mult_matrix(gd, b)
             row.append(cache[key])
         mats.append(row)
-    # product basis: columns ordered lexicographically by (i_1, ..., i_r)
+    # Each new factor contributes the outer blocks, so the first index varies fastest.
     current = _col_matrix([[fmpq(1)] + [fmpq(0)] * (ord_ - 1)], ord_)
-    for j in range(len(fam)):
-        current = _hstack([mats[j][i] * current for i in range(dims[j])], ord_)
-    # columns are in order i_1-major with the FIRST factor varying slowest? we built (i_j outer, previous inner)
-    # so column index = i_1 * (prod of later dims) ... reconstruct by recomputing the order:
+    for matrices in mats:
+        current = _hstack([matrix * current for matrix in matrices], ord_)
+    # The family degrees multiply to ord_: invertibility proves that the products
+    # form a basis. A single exact solve tests this and obtains the coordinates.
+    try:
+        coords = current.solve(_col_matrix([va], ord_)).entries()
+    except ZeroDivisionError:
+        return None
     idx = list(itertools.product(*[range(k) for k in dims]))
-    # current columns: for field j applied last, the outer loop is over i_j... rebuild mapping explicitly
-    P = current
-    if P.rank() < ord_:
-        return None
-    coords = fmpq_solve(P, _vec_fmpq(va))
-    if coords is None:
-        return None
-    # column c corresponds to tuple: the hstack at stage j puts blocks by i_j with inner index from previous stage,
-    # hence the LAST field index is the most significant digit.
-    def col_of(tup):
-        # compute explicitly: after stage j, column = i_j * (size before stage) + previous column
-        col = 0
-        size = 1
-        for j in range(len(fam)):
-            col = tup[j] * size + col
-            size *= dims[j]
-        return col
-    tensor = {t: coords[col_of(t)] for t in idx}
+    columns = (tuple(reversed(t)) for t in itertools.product(*[range(k) for k in reversed(dims)]))
+    tensor = dict(zip(columns, coords))
     piv_pos = next((i for i in idx if tensor[i] != 0), None)
     if piv_pos is None:
         return None

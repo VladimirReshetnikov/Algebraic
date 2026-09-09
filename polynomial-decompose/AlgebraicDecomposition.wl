@@ -84,19 +84,30 @@ add[a_List, b_List] := trim[red /@
   (PadRight[a, Max[Length[a], Length[b]]] +
    PadRight[b, Max[Length[a], Length[b]]])];
 subtract[a_List, b_List] := add[a, -b];
-multiply[a_List, b_List] := Module[{r, i, j},
+multiply[a_List, b_List, limit_: Infinity] := Module[{r, i, j, size},
   If[zeroQ[a] || zeroQ[b], Return[{0}]];
-  r = ConstantArray[0, Length[a] + Length[b] - 1];
+  size = Min[Length[a] + Length[b] - 1, limit];
+  r = ConstantArray[0, size];
   Do[If[a[[i]] =!= 0,
     Do[If[b[[j]] =!= 0,
       r[[i + j - 1]] = r[[i + j - 1]] + a[[i]] b[[j]]],
-      {j, Length[b]}]], {i, Length[a]}];
+      {j, Min[Length[b], size - i + 1]}]], {i, Min[Length[a], size]}];
   trim[red /@ r]
 ];
-compose[a_List, b_List] := Fold[add[multiply[#1, b], {#2}] &,
-  {0}, Reverse[a]];
 digitCompose[digits_List, h_List] :=
   Fold[add[multiply[#1, h], #2] &, {0}, Reverse[digits]];
+compose[a_List, b_List] := digitCompose[List /@ a, b];
+composeChain[parts_List] := Fold[compose[#2, #1] &, {0, 1}, Reverse[parts]];
+
+(* Only coefficients below t^limit are needed for certificate congruences. *)
+truncatedPower[a_List, exponent_Integer, limit_Integer] :=
+  Module[{result = {1}, base = Take[a, UpTo[limit]], k = exponent},
+    While[k > 0,
+      If[OddQ[k], result = multiply[result, base, limit]];
+      k = Quotient[k, 2];
+      If[k > 0, base = multiply[base, base, limit]]];
+    PadRight[result, limit]
+  ];
 
 (* Coefficients u_k of (1+s_1 t+...)^(1/m), truncated before t^d.
    m S U' = U S' gives the O(d^2) recurrence used here. *)
@@ -139,54 +150,41 @@ baseDigits[c_List, h_List, full_: True] := Module[{q = c, qr, out = {}},
 ];
 
 (* Obstruction indices are mathematical, zero-based digit/power indices. *)
-obstruction[digits_List] := Module[{j, k, tag},
-  (* Tagged Throw leaves both loops; Return would leave only the inner Do. *)
-  Catch[
-    Do[Do[If[digits[[j, k]] =!= 0,
-        Throw[<|"DigitIndex" -> j - 1, "Power" -> k - 1,
-          "Coefficient" -> digits[[j, k]]|>, tag]],
-        {k, 2, Length[digits[[j]]]}], {j, Length[digits]}];
-    None, tag]
+obstruction[digits_List] := Module[{position},
+  position = FirstPosition[Rest /@ digits, Except[0], None, {2}, Heads -> False];
+  If[position === None, None,
+    With[{j = position[[1]], k = position[[2]]},
+      <|"DigitIndex" -> j - 1, "Power" -> k, "Coefficient" -> digits[[j, k + 1]]|>]]
 ];
 
-(* Internal records keep vectors, not expressions in a public variable. *)
-testDegree[c_List, d_Integer, full_: False] := Module[{h, digits, obs},
-  h = rightCandidate[c, d]; digits = baseDigits[c, h, full];
+degreeTrial[c_List, d_Integer, full_: False] := Module[{h = rightCandidate[c, d]},
+  {h, baseDigits[c, h, full]}
+];
+rightPair[c_List, d_Integer] := Module[{h, digits},
+  {h, digits} = degreeTrial[c, d];
+  If[AllTrue[digits, Length[#] === 1 &], {First /@ digits, h}, None]
+];
+publicTest[c_List, d_Integer, x_] := Module[{h, digits, outer, obs},
+  {h, digits} = degreeTrial[c, d, True]; outer = First /@ digits;
   obs = obstruction[digits];
-  <|"RightDegree" -> d, "OuterDegree" -> Quotient[Length[c] - 1, d],
-    "InnerVector" -> h, "OuterVector" -> (First /@ digits),
-    "DigitVectors" -> digits, "Decomposable" -> (obs === None),
-    "Obstruction" -> obs|>
+  <|"Type" -> "DegreeTest", "RightDegree" -> d,
+    "OuterDegree" -> Quotient[Length[c] - 1, d],
+    "Inner" -> expression[h, x], "OuterCandidate" -> expression[outer, x],
+    "Digits" -> (expression[#, x] & /@ digits),
+    "Decomposable" -> (obs === None), "Obstruction" -> obs,
+    "Residual" -> expression[subtract[c, compose[outer, h]], x]|>
 ];
-
-publicTest[c_List, t_Association, x_] := <|
-  "Type" -> "DegreeTest", "RightDegree" -> t["RightDegree"],
-  "OuterDegree" -> t["OuterDegree"],
-  "Inner" -> expression[t["InnerVector"], x],
-  "OuterCandidate" -> expression[t["OuterVector"], x],
-  "Digits" -> (expression[#, x] & /@ t["DigitVectors"]),
-  "Decomposable" -> t["Decomposable"], "Obstruction" -> t["Obstruction"],
-  "Residual" -> expression[subtract[c,
-    compose[t["OuterVector"], t["InnerVector"]]], x]|>;
 
 checkDegree[c_List, d_] := If[!IntegerQ[d] || d < 2 ||
     d >= Length[c] - 1 || Mod[Length[c] - 1, d] =!= 0,
   fail["InvalidRightDegree", "The right degree must be a proper divisor d of the polynomial degree with 1<d<n."]];
 
-firstPair[c_List] := Module[{t, d, result = None},
-  Do[t = testDegree[c, d];
-    If[TrueQ[t["Decomposable"]],
-      result = {t["OuterVector"], t["InnerVector"]}; Break[]],
+firstPair[c_List] := Module[{pair = None, d},
+  Do[pair = rightPair[c, d]; If[pair =!= None, Break[]],
     {d, properDegrees[Length[c] - 1]}];
-  result
+  pair
 ];
-allPairs[c_List] := Module[{out = {}, t, d},
-  Do[t = testDegree[c, d];
-    If[TrueQ[t["Decomposable"]],
-      AppendTo[out, {t["OuterVector"], t["InnerVector"]}]],
-    {d, properDegrees[Length[c] - 1]}];
-  out
-];
+allPairs[c_List] := DeleteCases[rightPair[c, #] & /@ properDegrees[Length[c] - 1], None];
 
 oneChain[c_List] := Module[{v = c, out = {}, pair},
   pair = firstPair[v];
@@ -203,7 +201,7 @@ allChains[c_List, limit_] := Module[{pairs, atomic, walk, out = {}, capTag = Uni
   walk[v_List, suffix_List] := Module[{ps = pairs[v], chain},
     If[ps === {},
       chain = Prepend[suffix, v];
-      If[!zeroQ[subtract[c, Fold[compose, {0, 1}, chain]]],
+      If[!zeroQ[subtract[c, composeChain[chain]]],
         fail["InternalVerification", "An enumerated chain failed exact recomposition."]];
       AppendTo[out, chain];
       If[limit =!= Infinity && Length[out] > limit, Throw[Null, capTag]],
@@ -214,7 +212,7 @@ allChains[c_List, limit_] := Module[{pairs, atomic, walk, out = {}, capTag = Uni
 
 AlgebraicDecompose[p_, x_Symbol] := Catch[Module[{c = prepare[p, x], chain},
   chain = oneChain[c];
-  If[!zeroQ[subtract[c, Fold[compose, {0, 1}, chain]]],
+  If[!zeroQ[subtract[c, composeChain[chain]]],
     fail["InternalVerification", "The complete chain failed exact recomposition."]];
   expression[#, x] & /@ chain], $failureTag];
 AlgebraicDecompositions[p_, x_Symbol, opts : OptionsPattern[]] := Catch[
@@ -231,18 +229,16 @@ AlgebraicDecompositions[p_, x_Symbol, opts : OptionsPattern[]] := Catch[
     Map[expression[#, x] &, chains, {2}]], $failureTag];
 AlgebraicDecompositionPairs[p_, x_Symbol] := Catch[
   Map[expression[#, x] &, allPairs[prepare[p, x]], {2}], $failureTag];
-AlgebraicRightDecompose[p_, x_Symbol, d_] := Catch[Module[{c, t},
-  c = prepare[p, x]; checkDegree[c, d]; t = testDegree[c, d];
-  If[TrueQ[t["Decomposable"]],
-    {expression[t["OuterVector"], x], expression[t["InnerVector"], x]},
-    Missing["NotDecomposable", d]]], $failureTag];
+AlgebraicRightDecompose[p_, x_Symbol, d_] := Catch[Module[{c, pair},
+  c = prepare[p, x]; checkDegree[c, d]; pair = rightPair[c, d];
+  If[pair === None, Missing["NotDecomposable", d], expression[#, x] & /@ pair]], $failureTag];
 
 AlgebraicDecompositionData[p_, x_Symbol, d_] := Catch[Module[{c},
-  c = prepare[p, x]; checkDegree[c, d]; publicTest[c, testDegree[c, d, True], x]],
+  c = prepare[p, x]; checkDegree[c, d]; publicTest[c, d, x]],
   $failureTag];
 AlgebraicDecompositionData[p_, x_Symbol] := Catch[Module[{c, ds, ts, good},
   c = prepare[p, x]; ds = properDegrees[Length[c] - 1];
-  ts = publicTest[c, testDegree[c, #, True], x] & /@ ds;
+  ts = publicTest[c, #, x] & /@ ds;
   good = (#["RightDegree"] & /@ Select[ts, TrueQ[#["Decomposable"]] &]);
   <|"Type" -> "AllDegreeTests", "InputDegree" -> vectorDegree[c],
     "TestedRightDegrees" -> ds, "AcceptedRightDegrees" -> good,
@@ -253,7 +249,7 @@ AlgebraicDecompositionData[p_, x_Symbol] := Catch[Module[{c, ds, ts, good},
 ComposeDecomposition[parts_List, x_Symbol] := Catch[Module[{vs},
   If[NumericQ[x], fail["InvalidVariable", "The polynomial variable must be an unassigned nonnumeric symbol."]];
   vs = prepare[#, x] & /@ parts;
-  expression[Fold[compose[#2, #1] &, {0, 1}, Reverse[vs]], x]], $failureTag];
+  expression[composeChain[vs], x]], $failureTag];
 VerifyAlgebraicDecomposition[p_, parts_List, x_Symbol, opts : OptionsPattern[]] := Catch[
   Module[{c, vs, v, complete, normalized},
     checkOptions[VerifyAlgebraicDecomposition, {opts}];
@@ -261,7 +257,7 @@ VerifyAlgebraicDecomposition[p_, parts_List, x_Symbol, opts : OptionsPattern[]] 
     If[!MemberQ[{True, False}, complete] || !MemberQ[{True, False}, normalized],
       fail["InvalidOption", "Verification options must be True or False."]];
     c = prepare[p, x]; vs = prepare[#, x] & /@ parts;
-    v = Fold[compose[#2, #1] &, {0, 1}, Reverse[vs]];
+    v = composeChain[vs];
     If[!zeroQ[subtract[c, v]], Return[False]];
     If[normalized && Length[vs] > 1 && !AllTrue[Rest[vs], Length[#] >= 2 && First[#] === 0 && Last[#] === 1 &], Return[False]];
     If[complete,
@@ -272,7 +268,7 @@ VerifyAlgebraicDecomposition[p_, parts_List, x_Symbol, opts : OptionsPattern[]] 
 (* A deliberately different checker: no rightCandidate, monicDivide,
    baseDigits, firstPair, or allPairs call occurs below. *)
 verifyTest[c_List, t_, x_] := Module[
-  {keys, d, n, m, h, f, digits, obs, hm, k, res},
+  {keys, d, n, m, h, f, digits, obs, top, res},
   If[!AssociationQ[t], Return[False]];
   keys = {"Type", "RightDegree", "OuterDegree", "Inner", "OuterCandidate",
     "Digits", "Decomposable", "Obstruction", "Residual"};
@@ -288,10 +284,8 @@ verifyTest[c_List, t_, x_] := Module[
   If[Length[h] =!= d + 1 || First[h] =!= 0 || Last[h] =!= 1,
     Return[False]];
   If[!(And @@ (Length[#] <= d & /@ digits)), Return[False]];
-  hm = Nest[multiply[#, h] &, {1}, m];
-  If[!(And @@ Table[
-      red[c[[n - k + 1]]/Last[c] - hm[[n - k + 1]]] === 0,
-      {k, 1, d - 1}]), Return[False]];
+  top = truncatedPower[Reverse[h], m, d];
+  If[!AllTrue[red /@ (Take[Reverse[c], d] - Last[c] top), # === 0 &], Return[False]];
   If[!zeroQ[subtract[c, digitCompose[digits, h]]], Return[False]];
   If[!zeroQ[subtract[f, trim[First /@ digits]]], Return[False]];
   obs = obstruction[digits];

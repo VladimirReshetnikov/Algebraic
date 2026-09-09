@@ -39,8 +39,12 @@ class EnumerationLimitError(RuntimeError):
         super().__init__(f"more than {limit} complete chains exist; partial_chains contains the first {limit}")
 
 
+def _is_integer(value):
+    return not isinstance(value, bool) and isinstance(value, (int, sp.Integer))
+
+
 def _integer(value, name, minimum=1):
-    if isinstance(value, bool) or not isinstance(value, (int, sp.Integer)) or value < minimum:
+    if not _is_integer(value) or value < minimum:
         raise ValueError(f"{name} must be an integer >= {minimum}")
     return int(value)
 
@@ -52,6 +56,16 @@ def _degrees(n):
         if n % d == 0:
             ds.update((d, n // d))
     return sorted(ds)
+
+
+def _proper_degree(n, d):
+    return _is_integer(d) and 1 < d < n and n % d == 0
+
+
+def _obstruction(digits):
+    """First nonconstant base digit, with zero-based digit and power indices."""
+    return next(((j, k, value) for j, digit in enumerate(digits)
+                 for k, value in enumerate(digit[1:], 1) if value), None)
 
 
 def _raw_coefficients(expression, x):
@@ -101,16 +115,14 @@ def _prepare(expressions, x):
     # all coefficients, instead of rebuilding a primitive element.
     for expression in expressions:
         if isinstance(expression, sp.Poly) and expression.domain.is_AlgebraicField:
-            engine = _Engine(expression.domain)
             try:
-                converted = [engine.scalar(c) for c in coefficients]
+                engine, converted = _convert_coefficients(expression.domain, coefficients)
             except (CoercionFailed, ValueError, NotImplementedError):
                 continue
             return engine, _split_vectors(engine, converted, sizes)
 
-    if not coefficients or all(c.is_Rational for c in coefficients):
-        domain = sp.QQ
-        converted = [domain.convert(c) for c in coefficients]
+    if all(c.is_Rational for c in coefficients):
+        engine, converted = _convert_coefficients(sp.QQ, coefficients)
     else:
         # Explicit root atoms are useful generators even when a whole
         # coefficient cancels by a minimal-polynomial identity. Constructing
@@ -127,30 +139,30 @@ def _prepare(expressions, x):
             if not generators:
                 raise CoercionFailed("infer the coefficient field")
             domain = sp.QQ.algebraic_field(*sorted(generators, key=sp.default_sort_key))
-            converter = _Engine(domain)
-            converted = [converter.scalar(c) for c in coefficients]
+            engine, converted = _convert_coefficients(domain, coefficients)
         except (CoercionFailed, ValueError, NotImplementedError):
             try:
                 domain, converted = construct_domain(coefficients, extension=True)
                 if domain in (sp.ZZ, sp.QQ):
-                    domain = sp.QQ
-                    converted = [domain.convert(c) for c in coefficients]
+                    engine, converted = _convert_coefficients(sp.QQ, coefficients)
                 elif not domain.is_AlgebraicField:
                     domain = sp.QQ.algebraic_field(*[c for c in coefficients if not c.is_Rational])
-                    converter = _Engine(domain)
-                    converted = [converter.scalar(c) for c in coefficients]
+                    engine, converted = _convert_coefficients(domain, coefficients)
+                else:
+                    engine = _Engine(domain)
             except (CoercionFailed, ValueError, NotImplementedError, sp.polys.polyerrors.NotAlgebraic) as exc:
                 raise ValueError("coefficients could not be represented in an exact algebraic number field") from exc
-    engine = _Engine(domain)
     return engine, _split_vectors(engine, converted, sizes)
 
 
+def _convert_coefficients(domain, coefficients):
+    engine = _Engine(domain)
+    return engine, list(map(engine.scalar, coefficients))
+
+
 def _split_vectors(engine, converted, sizes):
-    vectors, offset = [], 0
-    for size in sizes:
-        vectors.append(engine.trim(converted[offset:offset + size]))
-        offset += size
-    return vectors
+    coefficients = iter(converted)
+    return [engine.trim(itertools.islice(coefficients, size)) for size in sizes]
 
 
 class _Engine:
@@ -206,9 +218,7 @@ class _Engine:
         return expression.xreplace({atom: atom.as_expr() for atom in expression.atoms(sp.AlgebraicNumber)})
 
     def add(self, a, b):
-        return self.trim((a[i] if i < len(a) else self.zero) +
-                         (b[i] if i < len(b) else self.zero)
-                         for i in range(max(len(a), len(b))))
+        return self.trim(c + d for c, d in itertools.zip_longest(a, b, fillvalue=self.zero))
 
     def subtract(self, a, b):
         return self.add(a, [-c for c in b])
@@ -242,11 +252,16 @@ class _Engine:
                 a = self.multiply(a, a, truncate)
         return result
 
-    def compose(self, outer, inner):
+    def compose_digits(self, digits, inner):
         result = (self.zero,)
-        for coefficient in reversed(outer):
-            result = self.add(self.multiply(result, inner), (coefficient,))
+        for digit in reversed(digits):
+            result = self.add(self.multiply(result, inner), digit)
         return result
+
+    def compose(self, outer, inner):
+        if self.native:
+            return self.trim(fmpq_poly(list(outer))(fmpq_poly(list(inner))).coeffs())
+        return self.compose_digits([(coefficient,) for coefficient in outer], inner)
 
     def compose_chain(self, parts):
         result = (self.zero, self.one)
@@ -290,12 +305,17 @@ class _Engine:
             remainder[k + d] = self.zero
         return self.trim(quotient), self.trim(remainder[:d])
 
+    def base_digits(self, c, h):
+        """Yield successive remainders; searches can stop at the first obstruction."""
+        while c != (self.zero,):
+            c, remainder = self.divide_monic(c, h)
+            yield remainder
+
     def attempt(self, c, d):
         key = c, d
         if key not in self._trials:
-            h, q, digits = self.candidate(c, d), c, []
-            while q != (self.zero,):
-                q, remainder = self.divide_monic(q, h)
+            h, digits = self.candidate(c, d), []
+            for remainder in self.base_digits(c, h):
                 if len(remainder) > 1:
                     self._trials[key] = None
                     break
@@ -304,18 +324,18 @@ class _Engine:
                 self._trials[key] = (self.trim(digits), h)
         return self._trials[key]
 
+    def iter_pairs(self, c):
+        for d in _degrees(len(c) - 1):
+            if (pair := self.attempt(c, d)) is not None:
+                yield pair
+
     def pairs(self, c):
         if c not in self._pairs:
-            self._pairs[c] = tuple(pair for d in _degrees(len(c) - 1)
-                                   if (pair := self.attempt(c, d)) is not None)
+            self._pairs[c] = tuple(self.iter_pairs(c))
         return self._pairs[c]
 
     def first_pair(self, c):
-        for d in _degrees(len(c) - 1):
-            pair = self.attempt(c, d)
-            if pair is not None:
-                return pair
-        return None
+        return next(self.iter_pairs(c), None)
 
     def one_chain(self, c):
         suffix = []
@@ -334,19 +354,12 @@ class _Engine:
                     yield from self.chains(outer, (inner,) + suffix)
 
     def certificate(self, c, d, x):
-        h, q, digits = self.candidate(c, d), c, []
-        while q != (self.zero,):
-            q, remainder = self.divide_monic(q, h)
-            digits.append(remainder)
+        h = self.candidate(c, d)
+        digits = list(self.base_digits(c, h))
         outer = self.trim(digit[0] for digit in digits)
-        obstruction = None
-        for j, digit in enumerate(digits):
-            for k in range(1, len(digit)):
-                if digit[k]:
-                    obstruction = {"digit_index": j, "power": k, "coefficient": self.symbolic(digit[k])}
-                    break
-            if obstruction is not None:
-                break
+        witness = _obstruction(digits)
+        obstruction = None if witness is None else {
+            "digit_index": witness[0], "power": witness[1], "coefficient": self.symbolic(witness[2])}
         return {"type": "DegreeTest", "right_degree": d, "outer_degree": (len(c) - 1) // d,
                 "inner": self.expression(h, x), "outer_candidate": self.expression(outer, x),
                 "digits": [self.expression(r, x) for r in digits],
@@ -398,7 +411,7 @@ def right_decompose(p, x, d):
     """
     d = _integer(d, "d", 2)
     engine, (c,) = _prepare([p], x)
-    if d not in _degrees(len(c) - 1):
+    if not _proper_degree(len(c) - 1, d):
         raise ValueError("d must be a proper divisor of the input degree")
     pair = engine.attempt(c, d)
     return None if pair is None else tuple(engine.expression(v, x) for v in pair)
@@ -408,12 +421,12 @@ def decomposition_data(p, x, d=None):
     """Produce a full fixed-degree certificate, or exhaustive degree tests."""
     engine, (c,) = _prepare([p], x)
     n = len(c) - 1
-    degrees = _degrees(n)
     if d is not None:
         d = _integer(d, "d", 2)
-        if d not in degrees:
+        if not _proper_degree(n, d):
             raise ValueError("d must be a proper divisor of the input degree")
         return engine.certificate(c, d, x)
+    degrees = _degrees(n)
     tests = [engine.certificate(c, d, x) for d in degrees]
     accepted = [test["right_degree"] for test in tests if test["decomposable"]]
     return {"type": "AllDegreeTests", "input_degree": -sp.oo if c == (engine.zero,) else n,
@@ -460,11 +473,11 @@ def _verify_degree_data(c, test, engine, x):
     if not isinstance(test, dict) or not required <= test.keys() or test["type"] != "DegreeTest":
         return False
     n, d = len(c) - 1, test["right_degree"]
-    if isinstance(d, bool) or not isinstance(d, (int, sp.Integer)) or d not in _degrees(n):
+    if not _proper_degree(n, d):
         return False
     m = n // d
-    if (type(test["decomposable"]) is not bool or isinstance(test["outer_degree"], bool)
-            or not isinstance(test["outer_degree"], (int, sp.Integer)) or test["outer_degree"] != m):
+    if (type(test["decomposable"]) is not bool or not _is_integer(test["outer_degree"])
+            or test["outer_degree"] != m):
         return False
     if not isinstance(test["digits"], list) or len(test["digits"]) != m + 1:
         return False
@@ -485,13 +498,10 @@ def _verify_degree_data(c, test, engine, x):
         coefficient = top[k] if k < len(top) else engine.zero
         if coefficient * c[-1] != c[n - k]:
             return False
-    reconstructed = (engine.zero,)
-    for digit in reversed(digits):
-        reconstructed = engine.add(engine.multiply(reconstructed, h), digit)
+    reconstructed = engine.compose_digits(digits, h)
     if reconstructed != c or outer != engine.trim(r[0] for r in digits):
         return False
-    witness = next(((j, k, value) for j, digit in enumerate(digits)
-                    for k, value in enumerate(digit[1:], 1) if value), None)
+    witness = _obstruction(digits)
     if test["decomposable"] != (witness is None):
         return False
     obstruction = test["obstruction"]
@@ -502,9 +512,7 @@ def _verify_degree_data(c, test, engine, x):
         if not isinstance(obstruction, dict) or not {"digit_index", "power", "coefficient"} <= obstruction.keys():
             return False
         j, k, coefficient = witness
-        if (isinstance(obstruction["digit_index"], bool) or isinstance(obstruction["power"], bool)
-                or not isinstance(obstruction["digit_index"], (int, sp.Integer))
-                or not isinstance(obstruction["power"], (int, sp.Integer))
+        if (not _is_integer(obstruction["digit_index"]) or not _is_integer(obstruction["power"])
                 or obstruction["digit_index"] != j or obstruction["power"] != k
                 or vector(obstruction["coefficient"]) != (coefficient,)):
             return False
@@ -532,12 +540,10 @@ def verify_decomposition_data(p, data, x):
         degrees = _degrees(n)
         if data["input_degree"] != (-sp.oo if c == (engine.zero,) else n):
             return False
-        if c != (engine.zero,) and (isinstance(data["input_degree"], bool)
-                                   or not isinstance(data["input_degree"], (int, sp.Integer))):
+        if c != (engine.zero,) and not _is_integer(data["input_degree"]):
             return False
         for key in ("tested_right_degrees", "accepted_right_degrees"):
-            if not isinstance(data[key], list) or any(isinstance(d, bool) or not isinstance(d, (int, sp.Integer))
-                                                      for d in data[key]):
+            if not isinstance(data[key], list) or not all(map(_is_integer, data[key])):
                 return False
         if (data["tested_right_degrees"] != degrees or not isinstance(data["tests"], list)
                 or len(data["tests"]) != len(degrees)):

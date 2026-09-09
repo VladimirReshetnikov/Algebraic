@@ -56,6 +56,10 @@ Ordinary searches stop at the first nonconstant digit; certificate generation
 retains every digit. The independent checker verifies the leading-coefficient
 congruence that forces \(h\), the full digit reconstruction, and the stated
 obstruction. It does not rerun candidate construction or polynomial division.
+A truncated binary power checks the congruence without constructing all of
+\(h^m\). Composition and certificate reconstruction share Horner arithmetic;
+Python also uses FLINT's native polynomial composition over the rationals
+when available, with the same exact-domain fallback used by the tests.
 A full indecomposability certificate must cover every proper divisor, including
 the rejected ones.
 
@@ -202,10 +206,12 @@ The unchanged archived native suites were independently executed with
 Wolfram 15.0.1: report 1 passed **55/107**, report 2 **39/53**, and report 3
 **60/60**. These results concern the original reports, whose historical
 metadata remains unchanged. The unified project has its own regression
-suites: **80/80 native tests** and **16 Python test methods** passed. The
+suites: **82/82 native tests** and **18 Python test methods** passed. The
 Python methods include 12 generated affine-normalization cases across exact
 fields and degree pairs, in addition to boundary, enumeration, and certificate
-tampering checks. All **15 cross-language corpus cases** passed as well.
+tampering checks. They also exercise truncated congruences, early rejection,
+full certificate digits, and the Python fallback without native acceleration.
+All **15 cross-language corpus cases** passed as well.
 Reproduce these checks with:
 
 ```powershell

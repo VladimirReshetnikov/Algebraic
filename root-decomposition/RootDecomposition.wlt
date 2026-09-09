@@ -143,4 +143,15 @@ VerificationTest[RootSumDecomposition[10^100 + Sqrt[2]]["Verified"], True,
 VerificationTest[RootBoundedDecomposition[Sqrt[2] + Sqrt[3], Plus, 4, 3, 2]["ScopeOptimal"], False,
   TestID -> "bounded feasibility shortcut does not certify minimal degree"];
 
+VerificationTest[RootDecomposition`Private`groupClosure[Table[Mod[i + j - 2, 4] + 1, {i, 4}, {j, 4}], 1, {3}],
+  {1, 3}, TestID -> "shared subgroup closure generates the order two subgroup"];
+VerificationTest[Module[{attempts = {}, result},
+  result = Quiet[RootDecomposition`Private`retryPrecision[Function[p, AppendTo[attempts, p];
+    If[p < 40, Throw["precision", RootDecomposition`Private`precTag], p]], 10], RootDecomposition::prec];
+  {result, attempts}], {40, {10, 20, 40}}, TestID -> "shared precision retry doubles until success"];
+VerificationTest[Module[{attempts = {}, result},
+  result = Quiet[RootDecomposition`Private`retryPrecision[Function[p, AppendTo[attempts, p];
+    Throw["precision", RootDecomposition`Private`precTag]], 10], RootDecomposition::prec];
+  {FailureQ[result], attempts}], {True, {10, 20, 40, 80}}, TestID -> "shared precision retry preserves four attempt limit"];
+
 EndTestSection[];

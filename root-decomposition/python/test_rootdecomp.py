@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import patch
 from fractions import Fraction
 
-from flint import acb, arb, ctx, fmpz_poly
+from flint import acb, arb, ctx, fmpq, fmpz_poly
 
 import rootdecomp as rd
 
@@ -76,6 +76,20 @@ class ArticleExamples(unittest.TestCase):
 
 
 class CorrectnessRegressions(unittest.TestCase):
+    def test_shared_group_and_frobenius_helpers(self):
+        cyclic_four = [[(i + j) % 4 for j in range(4)] for i in range(4)]
+        self.assertEqual(rd.group_closure(cyclic_four, 0, []), frozenset({0}))
+        self.assertEqual(rd.group_closure(cyclic_four, 0, [2]), frozenset({0, 2}))
+        self.assertEqual(rd.group_closure(cyclic_four, 0, [1]), frozenset(range(4)))
+        self.assertEqual(len(rd._subgroup_lattice(cyclic_four, 0, 4)), 3)
+        golden_ratio = fmpz_poly([-1, -1, 1])
+        self.assertEqual(list(rd.frobenius_cycle_types(golden_ratio, 4)), [[2], [2], [2], [1, 1]])
+        self.assertEqual(list(rd.frobenius_cycle_types(golden_ratio, 2, start_prime=7)), [[2], [1, 1]])
+        self.assertEqual(rd.frobenius_exponent_multiple(golden_ratio), 2)
+        self.assertEqual(list(rd.frobenius_cycle_types(golden_ratio, 0)), [])
+        with self.assertRaises(ValueError):
+            list(rd.frobenius_cycle_types(fmpz_poly([1, -2, 1])))
+
     def test_degree_bounds_and_single_component(self):
         for fn, name in ((rd.sum_decomposition, "max_terms"), (rd.product_decomposition, "max_factors")):
             with self.subTest(operation=fn.__name__):
@@ -120,6 +134,26 @@ class CorrectnessRegressions(unittest.TestCase):
                      dmax=2, max_factors=3, depth=0)
         self.assertEqual(len(result.terms), 3)
         self.assertIsNone(rd.product_decomposition(eta, dmax=2, max_factors=2))
+
+    def test_tensor_mixed_degrees_and_singular_basis(self):
+        target = rd.AlgebraicNumber(fmpz_poly([-72, 0, 0, 0, 0, 0, 1]), 2)
+        fd = rd.input_field_data(target.poly, target)
+        fields = [next(h for h in fd.subgroups if h["index"] == d) for d in (2, 3)]
+        va = [fmpq(0), fmpq(1)] + [fmpq(0)] * 4
+        for family in (fields, fields[::-1]):
+            factors = rd.tensor_test(fd, family, va, {})
+            self.assertIsNotNone(factors)
+            product = [fmpq(1)] + [fmpq(0)] * 5
+            for factor in factors:
+                product = rd.apply_matrix(fd.mult_matrix(factor), product)
+            self.assertEqual(product, va)
+            self.assertIsNone(rd.tensor_test(fd, family, [fmpq(1)] + va[1:], {}))
+        self.assertIsNone(rd.tensor_test(fd, [fields[0]] * 2, va, {}))
+        # Three quadratic fields have the right product of dimensions, but
+        # a repeated field spans only a proper subspace of the degree-eight field.
+        fd8 = rd.input_field_data(eta.poly, eta)
+        quadratic = next(h for h in fd8.subgroups if h["index"] == 2)
+        self.assertIsNone(rd.tensor_test(fd8, [quadratic] * 3, [fmpq(0), fmpq(1)] + [fmpq(0)] * 6, {}))
 
     def test_bounded_fallback_with_explicit_bound(self):
         result = run("bounded fallback with explicit bound", rd.product_decomposition, w, 2,

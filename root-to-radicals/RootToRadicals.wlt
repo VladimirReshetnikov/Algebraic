@@ -77,6 +77,11 @@ VerificationTest[{rg5["GaloisGroupOrder"], rg5["ExtendedGroupOrder"]}, {20, 40},
 rd10 = RootRadicalReport[Root[#^10 + #^8 - 4 #^6 - 3 #^4 + 3 #^2 + 1 &, 5]];   (* c5's polynomial composed with x^2 *)
 VerificationTest[rd10["Verified"], True, TestID -> "decomposition verified"];
 VerificationTest[rd10["Method"], "Decompose", TestID -> "decomposition method"];
+VerificationTest[
+  And @@ Table[With[{a = Root[#^8 - 2 &, k]},
+    RootReduce[RootToRadicals`Private`structuralDecompose[a,
+      RootToRadicals`Private`x^8 - 2, 6] - a] === 0], {k, 8}],
+  True, TestID -> "three-component decomposition all conjugates"];
 rd7 = RootRadicalReport[Root[#^7 - 7 #^5 + 14 #^3 - 7 # - 3 &, 1]];             (* D_7(x, 1) - 3 *)
 VerificationTest[rd7["Verified"], True, TestID -> "Dickson verified"];
 VerificationTest[rd7["Method"], "Dickson", TestID -> "Dickson method"];
