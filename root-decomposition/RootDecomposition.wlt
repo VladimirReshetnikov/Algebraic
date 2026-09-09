@@ -232,4 +232,17 @@ VerificationTest[And @@ Table[Module[{xx = RootDecomposition`Private`x, n, matri
   {p, {2 - 3 x + x^2, x^3 - 2, 1 + x + x^2 + x^3 + x^4}}], True,
   TestID -> "Newton sums match exact companion matrix traces for real and complex roots"];
 
+VerificationTest[Module[{spaces = Table[<|"Basis" -> {UnitVector[4, i]}|>, {i, 4}]},
+  And @@ Table[RootDecomposition`Private`findSumRepresentation[Take[spaces, count], UnitVector[4, 4], Infinity] === $Failed,
+    {count, 0, 3}] &&
+  RootDecomposition`Private`findSumRepresentation[spaces, {1, 1, 0, 0}, Infinity] ===
+    Table[{spaces[[i]], UnitVector[4, i]}, {i, 2}]], True,
+  TestID -> "sum span search preserves empty failures and first successful subset order"];
+VerificationTest[Module[{spaces = Table[<|"Basis" -> {UnitVector[4, i]}|>, {i, 4}], expected},
+  expected = Table[{spaces[[i]], UnitVector[4, i]}, {i, 4}];
+  RootDecomposition`Private`findSumRepresentation[spaces, {1, 1, 1, 1}, Infinity] === expected &&
+    RootDecomposition`Private`findSumRepresentation[spaces, {1, 1, 1, 1}, 3] === $Failed &&
+    RootDecomposition`Private`findSumRepresentation[spaces, {1, 1, 1, 1}, 4] === expected], True,
+  TestID -> "sum span search retains full space fallback and finite term caps"];
+
 EndTestSection[];

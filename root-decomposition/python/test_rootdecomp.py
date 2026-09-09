@@ -77,6 +77,45 @@ class ArticleExamples(unittest.TestCase):
 
 
 class CorrectnessRegressions(unittest.TestCase):
+    def test_sum_space_search_preserves_order_caps_and_full_span_fallback(self):
+        spaces = [dict(index=1, basis=[[fmpq(i == j) for j in range(4)]]) for i in range(4)]
+        for count in range(4):
+            with patch.object(rd, "solve_in_spaces", wraps=rd.solve_in_spaces) as solve:
+                self.assertIsNone(rd.find_sum_representation(spaces[:count], [0, 0, 0, 1], None))
+                self.assertEqual(solve.call_count, 2 ** count - 1)
+        with patch.object(rd, "solve_in_spaces", wraps=rd.solve_in_spaces) as solve:
+            result = rd.find_sum_representation(spaces, [1, 1, 0, 0], None)
+            self.assertEqual([entry[0] for entry in result], spaces[:2])
+            self.assertEqual(solve.call_count, 5)
+        for cap, calls in ((None, 15), (3, 14), (4, 15)):
+            with patch.object(rd, "solve_in_spaces", wraps=rd.solve_in_spaces) as solve:
+                result = rd.find_sum_representation(spaces, [1, 1, 1, 1], cap)
+                self.assertEqual(solve.call_count, calls)
+            if cap == 3:
+                self.assertIsNone(result)
+            else:
+                self.assertEqual(result, [(space, space["basis"][0]) for space in spaces])
+
+    def test_matrix_power_first_column_preserves_scaled_root_coordinates(self):
+        for polynomial in (fmpz_poly([-1, 0, 0, 2]), fmpz_poly([1, 0, 2])):
+            gd = rd.galois_data(polynomial, 300)
+            for index in range(1, polynomial.degree() + 1):
+                target = rd.AlgebraicNumber(polynomial, index)
+                data = rd.input_field_data(polynomial, target, 300)
+                vectors = ([fmpq(0), fmpq(1, data.scale)] + [fmpq(0)] * (data.n - 2),
+                           [q / gd.scale for q in gd.root_coords[rd.locate_target(gd, target)]])
+                for fd, v in zip((data, gd), vectors):
+                    matrix = rd.fd_mult_matrix(fd, v)
+                    for exponent in (1, 2, 3, 5):
+                        power = matrix ** exponent
+                        first_column = [power[i, 0] for i in range(fd.order)]
+                        if fd is data:
+                            expected = (rd.fmpq_poly(v) ** exponent % rd.fmpq_poly(data.poly)).coeffs()
+                            expected += [fmpq(0)] * (data.n - len(expected))
+                        else:
+                            expected = rd.power_coordinates(gd, v, exponent)
+                        self.assertEqual(first_column, expected)
+
     def test_element_reconstruction_preserves_exact_orbits_and_branches(self):
         gd = rd.galois_data(fmpz_poly([-2, 0, 0, 1]))
         one = [fmpq(i == 0) for i in range(gd.order)]

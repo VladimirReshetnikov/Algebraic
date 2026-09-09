@@ -560,7 +560,7 @@ findSumRepresentation[spaces_, v_, maxTerms_] := Module[{limit, res},
   res = Catch[
     Do[Do[With[{r = solveInSpaces[s, v]}, If[r =!= $Failed, Throw[r, foundTag]]], {s, Subsets[spaces, {k}]}], {k, 1, limit}];
     $Failed, foundTag];
-  If[res === $Failed && maxTerms === Infinity, solveInSpaces[spaces, v], res]];
+  If[res === $Failed && maxTerms === Infinity && Length[spaces] > limit, solveInSpaces[spaces, v], res]];
 
 RootSumDecomposition[a_, opts : OptionsPattern[]] := RootSumDecomposition[a, Automatic, opts];
 
@@ -627,7 +627,7 @@ sumSearch[fd_, a_, va_, stab_, n_, lb_, dmax_, scope_, maxTerms_, method_, compl
   dlist = If[dmax === Automatic, Range[lb, n - 1], {dmax}];
   res = Catch[
     Do[
-      Module[{cf, spaces, rep, rational = 0, terms = {}, mean, term},
+      Module[{cf, spaces, rep, rational = 0, terms = {}, mean, term, atLowerBound},
         cf = candidateFields[fd, d, stab];
         spaces = Table[<|"Index" -> H["Index"], "Field" -> H["FixedField"], "Basis" -> H["FixedField"]|>, {H, cf}];
         rep = findSumRepresentation[spaces, va, maxTerms];
@@ -641,9 +641,10 @@ sumSearch[fd_, a_, va_, stab_, n_, lb_, dmax_, scope_, maxTerms_, method_, compl
             If[maxTerms =!= Infinity && Length[terms] >= maxTerms,
               terms[[1]] = RootReduce[terms[[1]] + rational], AppendTo[terms, rational]]];
           If[terms === {}, terms = {0}];
+          atLowerBound = Max[termDegrees[terms]] == lb;
           Throw[makeResult[a, Plus, terms, lb, scope, method,
-            Max[termDegrees[terms]] == lb || ((dmax === Automatic) && completeQ && maxTerms === Infinity),
-            (dmax === Automatic && (completeQ || scope === "InputField")) || Max[termDegrees[terms]] == lb, extra], foundTag]]],
+            atLowerBound || ((dmax === Automatic) && completeQ && maxTerms === Infinity),
+            (dmax === Automatic && (completeQ || scope === "InputField")) || atLowerBound, extra], foundTag]]],
       {d, dlist}];
     $Failed, foundTag];
   If[res =!= $Failed, Return[res]];
@@ -881,7 +882,7 @@ productDecompositionCore[a_, in_, dmax_, lb0_, scope_, maxFactors_, depth_, tens
     productSearch[gd, a, va, stab, n, lb, dmax, scope, maxFactors, depth, tensorQ, prec, maxOrder, maxTries, engine, True, bounded]]];
 
 productSearch[fd_, a_, va_, stab_, n_, lb_, dmax_, scope_, maxFactors_, depth_, tensorQ_, prec_, maxOrder_, maxTries_, engine_, completeQ_, bounded_] := Module[
-  {dlist, twoDegrees, d, two, best, terms, degs, res, tens, sub, extra, remaining, f, parts, ma},
+  {dlist, twoDegrees, d, two, best, terms, degs, res, tens, sub, extra, remaining, f, parts, ma, atLowerBound},
   extra = If[fd["Type"] === "InputField", <|"AmbientDegree" -> fd["Degree"], "AmbientGalois" -> fd["Galois"]|>, <|"GroupOrder" -> fd["Order"]|>];
   dlist = If[dmax === Automatic, Range[lb, n - 1], {dmax}];
   twoDegrees = Select[dlist, #^2 >= n &];
@@ -891,11 +892,11 @@ productSearch[fd_, a_, va_, stab_, n_, lb_, dmax_, scope_, maxFactors_, depth_, 
   Do[two = twoFactorSearch[fd, va, a, n, d, stab, scope, ma]; If[two =!= $Failed, Break[]], {d, twoDegrees}];
   If[two === $Failed && dmax === Automatic, two = <|"Terms" -> {RootReduce[a]}, "Exponent" -> 1, "FieldDegrees" -> {n}|>];
   best = If[two === $Failed, $Failed,
+    atLowerBound = Max[termDegrees[two["Terms"]]] == lb;
     makeResult[a, Times, two["Terms"], lb, scope,
-      If[Length[two["Terms"]] == 1, "CompleteTwoFactorSearch", "NormIntersection"],
-      Max[termDegrees[two["Terms"]]] == lb,
-      Max[termDegrees[two["Terms"]]] == lb || (maxFactors === 2 && dmax === Automatic && completeQ),
-      Join[<|"TwoFactorOptimal" -> (Max[termDegrees[two["Terms"]]] == lb || ((dmax === Automatic) && completeQ)),
+      If[Length[two["Terms"]] == 1, "CompleteTwoFactorSearch", "NormIntersection"], atLowerBound,
+      atLowerBound || (maxFactors === 2 && dmax === Automatic && completeQ),
+      Join[<|"TwoFactorOptimal" -> (atLowerBound || ((dmax === Automatic) && completeQ)),
         "NormExponent" -> two["Exponent"]|>, extra]]];
   If[maxFactors === 2,
     Return[If[best === $Failed, failure["NotFound", "No two-factor representation with the requested maximum degree", <|"MaximumDegree" -> dmax|>], best]]];
@@ -907,7 +908,8 @@ productSearch[fd_, a_, va_, stab_, n_, lb_, dmax_, scope_, maxFactors_, depth_, 
       tens = tensorSearch[fd, va, d, stab, maxFactors];
       If[tens =!= $Failed,
         terms = cleanProductTerms[toExact[fd, #] & /@ tens, maxFactors];
-        res = makeResult[a, Times, terms, lb, scope, "TensorRankOne", Max[termDegrees[terms]] == lb, Max[termDegrees[terms]] == lb,
+        atLowerBound = Max[termDegrees[terms]] == lb;
+        res = makeResult[a, Times, terms, lb, scope, "TensorRankOne", atLowerBound, atLowerBound,
           Join[<|"TwoFactorOptimal" -> False, "NormExponent" -> 1|>, extra]];
         If[res["Verified"] && (best === $Failed || res["MaximumDegree"] < best["MaximumDegree"]), best = res; Break[]]],
       {d, dlist}]];

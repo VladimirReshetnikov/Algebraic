@@ -1068,7 +1068,7 @@ def find_sum_representation(spaces, v, max_terms):
             r = solve_in_spaces(list(s), v)
             if r is not None:
                 return r
-    if max_terms is None:
+    if max_terms is None and len(spaces) > limit:
         return solve_in_spaces(spaces, v)
     return None
 
@@ -1290,7 +1290,7 @@ def two_factor_search(fd, va, a: AlgebraicNumber, n: int, d: int, stab,
             key = (t, id(E), id(F))
             if key in cache["failed_pairs"]:
                 continue
-            res = _try_pair(fd, E, F, Mt, Ma, t, a, d, va)
+            res = _try_pair(fd, E, F, Mt, t, a, d)
             if res is not None:
                 return res
             cache["failed_pairs"].add(key)
@@ -1306,7 +1306,7 @@ def shortest_vector(ns, length):
     return _vec_fmpq(min(rows, key=lambda r: sum(x * x for x in r[:length])))
 
 
-def _try_pair(fd, E, F, Mt, Ma, t, a, d, va):
+def _try_pair(fd, E, F, Mt, t, a, d):
     ord_ = fd.order
     BE, BF = E["fixed"], F["fixed"]
     MF = [apply_matrix(Mt, f) for f in BF]
@@ -1321,9 +1321,8 @@ def _try_pair(fd, E, F, Mt, Ma, t, a, d, va):
     qu = scale_algebraic(u_alg, q, fd.prec)
     b = root_of_algebraic(qu, t, fd.prec)
     # c^t = a^t / (q u)
-    at = va
-    for _ in range(t - 1):
-        at = apply_matrix(Ma, at)
+    # Both bases start with 1, so the first column of Mt already contains a^t.
+    at = [Mt[i, 0] for i in range(ord_)]
     Mqu = fd_mult_matrix(fd, [fmpq(q.numerator, q.denominator) * ui for ui in u])
     z = fmpq_solve(Mqu, at)
     ct_alg = fd_to_algebraic(fd, z)
