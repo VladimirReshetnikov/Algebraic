@@ -1,0 +1,1603 @@
+{
+  "kind": "Independent exact mathematics and lexical/source checks; not native Wolfram tests",
+  "python": "3.13.5",
+  "sympy": "1.14.0",
+  "native_wolfram_executed": false,
+  "passed": 396,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "baseline_git_blob",
+      "passed": true,
+      "bytes": 41416
+    },
+    {
+      "name": "Honsbeek_quartic_identity",
+      "passed": true
+    },
+    {
+      "name": "Dickson_identity_q2",
+      "passed": true
+    },
+    {
+      "name": "Dickson_identity_q3",
+      "passed": true
+    },
+    {
+      "name": "Dickson_identity_q4",
+      "passed": true
+    },
+    {
+      "name": "Dickson_identity_q5",
+      "passed": true
+    },
+    {
+      "name": "Dickson_identity_q6",
+      "passed": true
+    },
+    {
+      "name": "Dickson_identity_q7",
+      "passed": true
+    },
+    {
+      "name": "Dickson_identity_q8",
+      "passed": true
+    },
+    {
+      "name": "Dickson_identity_q9",
+      "passed": true
+    },
+    {
+      "name": "Dickson_identity_q10",
+      "passed": true
+    },
+    {
+      "name": "Dickson_identity_q11",
+      "passed": true
+    },
+    {
+      "name": "odd_reconstruction_3_2_1_2",
+      "passed": true
+    },
+    {
+      "name": "odd_reconstruction_3_3_-1_2",
+      "passed": true
+    },
+    {
+      "name": "odd_reconstruction_3_1_2_3",
+      "passed": true
+    },
+    {
+      "name": "odd_reconstruction_3_-2_1_5",
+      "passed": true
+    },
+    {
+      "name": "odd_reconstruction_3_3/2_1/3_7",
+      "passed": true
+    },
+    {
+      "name": "odd_reconstruction_5_2_1_2",
+      "passed": true
+    },
+    {
+      "name": "odd_reconstruction_5_3_-1_2",
+      "passed": true
+    },
+    {
+      "name": "odd_reconstruction_5_1_2_3",
+      "passed": true
+    },
+    {
+      "name": "odd_reconstruction_5_-2_1_5",
+      "passed": true
+    },
+    {
+      "name": "odd_reconstruction_5_3/2_1/3_7",
+      "passed": true
+    },
+    {
+      "name": "odd_reconstruction_7_2_1_2",
+      "passed": true
+    },
+    {
+      "name": "odd_reconstruction_7_3_-1_2",
+      "passed": true
+    },
+    {
+      "name": "odd_reconstruction_7_1_2_3",
+      "passed": true
+    },
+    {
+      "name": "odd_reconstruction_7_-2_1_5",
+      "passed": true
+    },
+    {
+      "name": "odd_reconstruction_7_3/2_1/3_7",
+      "passed": true
+    },
+    {
+      "name": "odd_reconstruction_9_2_1_2",
+      "passed": true
+    },
+    {
+      "name": "odd_reconstruction_9_3_-1_2",
+      "passed": true
+    },
+    {
+      "name": "odd_reconstruction_9_1_2_3",
+      "passed": true
+    },
+    {
+      "name": "odd_reconstruction_9_-2_1_5",
+      "passed": true
+    },
+    {
+      "name": "odd_reconstruction_9_3/2_1/3_7",
+      "passed": true
+    },
+    {
+      "name": "Horner_inverse_degree_1",
+      "passed": true
+    },
+    {
+      "name": "Horner_inverse_degree_2",
+      "passed": true
+    },
+    {
+      "name": "Horner_inverse_degree_3",
+      "passed": true
+    },
+    {
+      "name": "Horner_inverse_degree_4",
+      "passed": true
+    },
+    {
+      "name": "Horner_inverse_degree_5",
+      "passed": true
+    },
+    {
+      "name": "Horner_inverse_degree_6",
+      "passed": true
+    },
+    {
+      "name": "Horner_inverse_degree_7",
+      "passed": true
+    },
+    {
+      "name": "Horner_inverse_degree_8",
+      "passed": true
+    },
+    {
+      "name": "Horner_inverse_degree_9",
+      "passed": true
+    },
+    {
+      "name": "Horner_inverse_degree_10",
+      "passed": true
+    },
+    {
+      "name": "Horner_inverse_degree_11",
+      "passed": true
+    },
+    {
+      "name": "Horner_inverse_degree_12",
+      "passed": true
+    },
+    {
+      "name": "sparse_ansatz_counterexample_square",
+      "passed": true
+    },
+    {
+      "name": "sparse_ansatz_support_exclusion",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_orthogonality",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_counterexample_reconstruction",
+      "passed": true,
+      "signs": [
+        1,
+        1,
+        1,
+        -1
+      ]
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_0",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_1",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_2",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_3",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_4",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_5",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_6",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_7",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_8",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_9",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_10",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_11",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_12",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_13",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_14",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_15",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_16",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_17",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_18",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_19",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_20",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_21",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_22",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_23",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_24",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_25",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_26",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_27",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_28",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_29",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_30",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_31",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_32",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_33",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_34",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_35",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_36",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_37",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_38",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_39",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_40",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_41",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_42",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_43",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_44",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_45",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_46",
+      "passed": true
+    },
+    {
+      "name": "Hadamard_rank2_coset_case_47",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q2_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q2_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q2_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q2_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q2_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q2_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q2_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q2_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q2_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q3_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q3_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q3_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q3_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q3_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q3_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q3_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q3_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q3_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q4_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q4_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q4_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q4_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q4_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q4_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q4_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q4_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q4_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q5_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q5_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q5_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q5_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q5_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q5_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q5_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q5_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q5_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q6_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q6_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q6_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q6_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q6_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q6_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q6_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q6_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q6_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q7_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q7_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q7_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q7_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q7_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q7_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q7_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q7_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q7_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q8_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q8_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q8_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q8_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q8_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q8_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q8_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q8_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q8_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q9_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q9_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q9_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q9_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q9_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q9_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q9_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q9_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q9_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q10_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q10_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q10_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q10_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q10_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q10_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q10_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q10_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q10_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q11_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q11_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q11_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q11_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q11_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q11_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q11_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q11_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q11_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q12_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q12_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q12_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q12_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q12_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q12_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q12_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q12_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q12_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q13_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q13_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q13_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q13_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q13_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q13_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q13_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q13_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q13_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q14_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q14_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q14_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q14_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q14_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q14_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q14_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q14_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q14_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q15_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q15_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q15_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q15_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q15_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q15_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q15_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q15_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q15_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q16_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q16_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q16_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q16_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q16_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q16_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q16_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q16_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q16_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q17_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q17_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q17_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q17_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q17_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q17_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q17_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q17_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q17_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q18_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q18_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q18_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q18_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q18_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q18_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q18_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q18_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q18_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q19_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q19_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q19_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q19_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q19_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q19_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q19_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q19_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q19_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q20_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q20_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q20_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q20_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q20_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q20_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q20_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q20_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q20_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q21_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q21_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q21_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q21_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q21_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q21_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q21_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q21_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q21_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q22_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q22_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q22_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q22_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q22_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q22_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q22_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q22_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q22_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q23_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q23_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q23_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q23_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q23_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q23_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q23_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q23_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q23_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q24_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q24_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q24_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q24_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q24_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q24_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q24_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q24_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q24_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q25_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q25_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q25_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q25_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q25_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q25_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q25_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q25_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q25_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q26_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q26_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q26_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q26_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q26_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q26_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q26_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q26_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q26_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q27_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q27_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q27_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q27_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q27_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q27_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q27_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q27_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q27_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q28_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q28_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q28_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q28_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q28_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q28_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q28_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q28_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q28_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q29_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q29_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q29_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q29_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q29_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q29_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q29_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q29_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q29_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q30_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q30_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q30_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q30_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q30_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q30_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q30_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q30_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q30_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q31_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q31_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q31_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q31_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q31_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q31_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q31_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q31_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q31_primes8",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q32_primes0",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q32_primes1",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q32_primes2",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q32_primes3",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q32_primes4",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q32_primes5",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q32_primes6",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q32_primes7",
+      "passed": true
+    },
+    {
+      "name": "batch_model_q32_primes8",
+      "passed": true
+    },
+    {
+      "name": "old_batch_maximum_46",
+      "passed": true,
+      "maximum": 46,
+      "root_index": 24
+    },
+    {
+      "name": "global_admission_cap_0",
+      "passed": true
+    },
+    {
+      "name": "global_admission_cap_1",
+      "passed": true
+    },
+    {
+      "name": "global_admission_cap_2",
+      "passed": true
+    },
+    {
+      "name": "global_admission_cap_7",
+      "passed": true
+    },
+    {
+      "name": "global_admission_cap_24",
+      "passed": true
+    },
+    {
+      "name": "global_admission_cap_25",
+      "passed": true
+    },
+    {
+      "name": "global_admission_cap_100",
+      "passed": true
+    },
+    {
+      "name": "partial_denesting_polynomial_identity",
+      "passed": true
+    },
+    {
+      "name": "index_reduction_identity",
+      "passed": true
+    },
+    {
+      "name": "quadratic_square_obstruction_norm",
+      "passed": true
+    },
+    {
+      "name": "lexical_balance_StradFixed2.original.wl",
+      "passed": true
+    },
+    {
+      "name": "lexical_balance_StradFixed3.wl",
+      "passed": true
+    },
+    {
+      "name": "lexical_balance_revision_definitions.wl",
+      "passed": true
+    },
+    {
+      "name": "lexical_balance_StradFixed3Tests.wlt",
+      "passed": true
+    },
+    {
+      "name": "lexical_balance_run_tests.wls",
+      "passed": true
+    },
+    {
+      "name": "no_unconditional_negative_cache",
+      "passed": true
+    },
+    {
+      "name": "incumbent_threading_negative",
+      "passed": true
+    },
+    {
+      "name": "incumbent_threading_Kummer",
+      "passed": true
+    },
+    {
+      "name": "direct_index_reduction_gate",
+      "passed": true
+    },
+    {
+      "name": "no_heuristic_Different_return",
+      "passed": true
+    }
+  ]
+}

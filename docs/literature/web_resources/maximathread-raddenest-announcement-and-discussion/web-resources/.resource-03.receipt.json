@@ -1,0 +1,31 @@
+{
+  "record_id": "maximathread",
+  "title": "raddenest announcement and discussion",
+  "asset_id": "resource-03",
+  "version": "web-resources",
+  "kind": "web",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://sourceforge.net/p/maxima/mailman/maxima-discuss/thread/slrno8nek9.2pg.robert.dodier@freekbox.fglan/",
+    "resolved_url": "https://sourceforge.net/p/maxima/mailman/maxima-discuss/thread/slrno8nek9.2pg.robert.dodier@freekbox.fglan/",
+    "retrieved_at": "2026-09-05T20:28:09+00:00",
+    "http_status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "content_encoding": "",
+    "bytes": 126040,
+    "sha256": "c7705fe248dc5510ab89f8b1f82504a0911ec1082c8385717a8fcffeff0827e6"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "cited_web_resource",
+  "note": "URL cited in an input report. Not all web pages have been independently reopened. HTML is saved as HTML; software code is not labelled as article TeX.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "web_resources/maximathread-raddenest-announcement-and-discussion/web-resources/resource-03.html",
+      "role": "web",
+      "bytes": 126040,
+      "sha256": "c7705fe248dc5510ab89f8b1f82504a0911ec1082c8385717a8fcffeff0827e6"
+    }
+  ],
+  "prior_candidate_errors": []
+}

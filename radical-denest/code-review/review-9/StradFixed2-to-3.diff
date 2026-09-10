@@ -1,0 +1,695 @@
+--- StradFixed2.original.wl
++++ StradFixed3.wl
+@@ -1,34 +1,17 @@
+ (* ::Package:: *)
+ 
+-(* StradFixed2.wl -- second corrected version of src/original/Strad.wl.
+-
+-   Successor of StradFixed.wl (RadicalDenest`). It answers the three reviews of
+-   the first corrected version (src/code-review/review-4, review-5, review-6)
+-   and the probing session recorded in KNOWN_GAPS.md. The report in
+-   src/code-review/unified-B explains every change.
+-
+-   Contract (for an exact algebraic input E and every exact algebraic island of
+-   a symbolic host):
+-     * every replaced island is certified equal to the island it replaces by
+-       exact algebra, whatever produced the candidate (fast path, multiplier
+-       search, ToRadicals, Simplify, Factor, or a user "Solver");
+-     * an accepted replacement is strictly cheaper under RadicalCost, or the
+-       island is returned unchanged;
+-     * the whole call runs inside one TimeConstrained/MemoryConstrained region
+-       ("TimeBudget", "MemoryBudget") whose deadline is shared by all islands,
+-       list elements, passes and recursive sub-problems; every expensive kernel
+-       operation runs inside its own bounded region; "MaxTrials" bounds the
+-       multiplier trials spent on any one island;
+-     * symbolic hosts are never simplified; ambient $Assumptions are ignored;
+-     * invalid or unknown options produce a Failure, never a silent default.
+-   There is no completeness or minimum-depth guarantee: an unchanged result
+-   means that the enabled bounded methods found nothing cheaper.
+-
+-   Context: RadicalDenest2`. The package can be loaded next to RadicalDenest`
+-   (StradFixed.wl) for differential testing. Author: analysis session of
+-   5 September 2026. *)
+-
+-BeginPackage["RadicalDenest2`"];
++(* StradFixed3.wl -- proposed research revision, September 2026.
++   Baseline: Git blob 0bdeded347385a55a044fdd35883006d053685dc.
++   See README.md and the accompanying review for scope and validation status.
++   Every accepted proposal must be a cheaper explicit radical and pass exact
++   algebraic equality against its original target. Root admission is deliberately
++   conservative. Resource limits are cooperative kernel limits, not process-level
++   wall-clock/RSS guarantees. Input evaluation and option resolution precede them.
++   No completeness, minimum-depth, or native-regression-pass claim is made.
++   The original algorithm is retained; changes are reproducibly applied by
++   build_revision.py plus revision_definitions.wl. Context: RadicalDenest3`. *)
++
++BeginPackage["RadicalDenest3`"];
+ 
+ Strad::usage = "Strad[expr, opts] denests the exact algebraic radicals occurring in expr and returns an expression certified equal to expr. Strad[expr, True, opts] also processes inner nesting levels and repeats passes while they improve the result.";
+ DenestRadicals::usage = "DenestRadicals[expr, opts] is the option-driven form of Strad with its own option defaults.";
+@@ -50,7 +33,9 @@
+    "CertifyTime" -> 20, "MemoryBudget" -> 1073741824,
+    "MultiplierCap" -> 1000, "MaxRootIndex" -> 32, "MaxDegree" -> 64,
+    "MaxSolveDegree" -> 4, "MaxLeafCount" -> 20000, "MaxPasses" -> 4,
+-   "MaxRecursion" -> 3, "Patience" -> 25, "NumericPrefilter" -> True, "MaxTraceEntries" -> 200};
++   "MaxRecursion" -> 3, "Patience" -> 25, "NumericPrefilter" -> False, "MaxTraceEntries" -> 200,
++   "MaxCharacterRank" -> 2, "MaxCharacterPatterns" -> 8,
++   "MaxOddIndex" -> 7, "DiscriminantBatchCap" -> 24};
+ Options[DenestRadicals] = Options[Strad];
+ Options[DenestCore] = Options[Strad];
+ Options[DenestReport] = Options[Strad];
+@@ -66,7 +51,7 @@
+ $deadline = Infinity;
+ $stats = <||>; $limits = <||>; $trace = {}; $records = {}; $memo = <||>;
+ $recursion = 0;
+-$x = Unique["RadicalDenest2`Private`x"];
++$x = Unique["RadicalDenest3`Private`x"];
+ 
+ newStats[] := <|"Islands" -> 0, "Trials" -> 0, "Operations" -> 0,
+    "OperationTimeouts" -> 0, "OperationFailures" -> 0,
+@@ -81,7 +66,7 @@
+ remaining[] := $deadline - AbsoluteTime[];
+ expiredQ[] := If[remaining[] <= 0, limitHit["TimeBudget"]; True, False];
+ 
+-log[args___] := If[TrueQ[$cfg["Verbose"]], Print["[RadicalDenest2] ", args]];
++log[args___] := If[TrueQ[$cfg["Verbose"]], Print["[RadicalDenest3] ", args]];
+ trace[tag_String, data_: <||>] := If[TrueQ[$cfg["Trace"]] &&
+     Length[$trace] < $cfg["MaxTraceEntries"],
+    AppendTo[$trace, <|"Event" -> tag, "Data" -> data|>]];
+@@ -128,12 +113,14 @@
+    cfg = Association[Table[With[{name = key}, name -> OptionValue[head, rules, name]], {key, names}]];
+    bad = Join[
+      Select[{"AllLevels", "Verbose", "Trace", "Factor", "NumericPrefilter"}, ! booleanQ[cfg[#]] &],
+-     Select[{"MaxTrials", "MultiplierCap", "MaxTraceEntries", "MaxRecursion", "Patience"}, ! nonnegativeIntegerQ[cfg[#]] &],
+-     Select[{"MemoryBudget", "MaxRootIndex", "MaxDegree", "MaxSolveDegree", "MaxLeafCount", "MaxPasses"}, ! positiveIntegerQ[cfg[#]] &],
++     Select[{"MaxTrials", "MultiplierCap", "MaxTraceEntries", "MaxRecursion", "Patience",
++       "MaxCharacterRank", "MaxCharacterPatterns", "DiscriminantBatchCap"}, ! nonnegativeIntegerQ[cfg[#]] &],
++     Select[{"MemoryBudget", "MaxRootIndex", "MaxDegree", "MaxSolveDegree", "MaxLeafCount", "MaxPasses", "MaxOddIndex"}, ! positiveIntegerQ[cfg[#]] &],
+      Select[{"TimeBudget", "OperationTime", "CertifyTime"}, ! finiteNonnegativeQ[cfg[#]] &]];
+    If[! (cfg["Multipliers"] === Automatic || ListQ[cfg["Multipliers"]]), AppendTo[bad, "Multipliers"]];
+    If[! (cfg["Solver"] === Automatic || MatchQ[cfg["Solver"], _Function | _Symbol]), AppendTo[bad, "Solver"]];
+    If[cfg["MaxSolveDegree"] > 4, AppendTo[bad, "MaxSolveDegree"]];
++   If[cfg["MaxCharacterRank"] > 4, AppendTo[bad, "MaxCharacterRank"]];
+    If[bad =!= {},
+     Return[Failure["InvalidOption", <|"MessageTemplate" -> "Invalid value(s) for `Keys`; limits must be finite and of the documented type.", "Keys" -> bad|>]]];
+    cfg];
+@@ -153,14 +140,6 @@
+    Head[e] === Power && Length[e] === 2, rationalQ[e[[2]]] && RadicalExpressionQ[e[[1]]],
+    True, False];
+ 
+-algebraicFormQ[e_] := Which[
+-   gaussianQ[e], True,
+-   opaqueQ[e], TrueQ[Precision[e] === Infinity] && FreeQ[e, _Real],
+-   AtomQ[e], False,
+-   MemberQ[{Plus, Times}, Head[e]], AllTrue[List @@ e, algebraicFormQ],
+-   Head[e] === Power && Length[e] === 2, rationalQ[e[[2]]] && algebraicFormQ[e[[1]]],
+-   True, False];
+-
+ (* exactness is decided by the grammar (algebraic by construction) *)
+ ExactAlgebraicQ[e_] := algebraicFormQ[e] && FreeQ[e, Indeterminate | ComplexInfinity | _DirectedInfinity];
+ exactQ[e_] := ExactAlgebraicQ[e];
+@@ -170,14 +149,6 @@
+    MatchQ[e, Power[_, _Rational]], 1 + RadicalDepth[First[e]],
+    True, Max[Prepend[RadicalDepth /@ (List @@ e), 0]]];
+ 
+-radicalNodes[e_] := If[opaqueQ[e], 0, Count[e, Power[_, _Rational], {0, Infinity}] -
+-    Total[Cases[e, r : (_Root | _AlgebraicNumber) :> Count[r, Power[_, _Rational], {0, Infinity}], {0, Infinity}]]];
+-
+-bitSize[e_] := Total[Cases[e, n_Integer :> 1 + IntegerLength[Abs[n], 2], {0, Infinity}, Heads -> False]] +
+-   Total[Cases[e, r_Rational :> 2 + IntegerLength[Abs[Numerator[r]], 2] + IntegerLength[Denominator[r], 2], {0, Infinity}, Heads -> False]];
+-
+-RadicalCost[e_] := {Count[e, _Root | _AlgebraicNumber, {0, Infinity}], RadicalDepth[e],
+-   radicalNodes[e], LeafCount[e], bitSize[e]};
+ cheaperQ[new_, old_] := Order[RadicalCost[new], RadicalCost[old]] === 1;
+ pickCheapest[list_List] := First[SortBy[list, RadicalCost]];
+ smallQ[e_] := If[LeafCount[e] > $cfg["MaxLeafCount"], limitHit["MaxLeafCount"]; False, True];
+@@ -186,35 +157,10 @@
+ (* exact certification                                                *)
+ (* ------------------------------------------------------------------ *)
+ 
+-canonicalNonzeroQ[e_] := e =!= 0 && MatchQ[e, _Integer | _Rational | _Complex | _Root | _AlgebraicNumber] &&
+-   TrueQ[Precision[e] === Infinity];
+-
+-(* heuristic pre-rejection by significance arithmetic; never accepts *)
+-numericallyDifferentQ[d_] := Module[{num},
+-   If[! TrueQ[$cfg["NumericPrefilter"]], Return[False]];
+-   num = bounded[N[d, 40]];
+-   TrueQ[NumberQ[num] && Accuracy[num] >= 25 && Abs[num] > 10^-20]];
+-
+-certify[a_, b_] := Module[{d, r},
+-   bump["Certificates"];
+-   If[! exactQ[a] || ! exactQ[b], bump["CertificatesUnknown"]; Return["Unknown"]];
+-   If[a === b, bump["CertificatesEqual"]; Return["Equal"]];
+-   d = a - b;
+-   If[numericallyDifferentQ[d], bump["NumericRejections"]; bump["CertificatesDifferent"]; Return["Different"]];
+-   r = bounded[RootReduce[d], "Certificate"];
+-   Which[
+-    r === 0, bump["CertificatesEqual"]; Return["Equal"],
+-    canonicalNonzeroQ[r], bump["CertificatesDifferent"]; Return["Different"]];
+-   r = bounded[PossibleZeroQ[d, Method -> "ExactAlgebraics"], "Certificate"];
+-   Which[
+-    r === True, bump["CertificatesEqual"]; "Equal",
+-    r === False, bump["CertificatesDifferent"]; "Different",
+-    True, bump["CertificatesUnknown"]; "Unknown"]];
+-
+ SetAttributes[standalone, HoldAll];
+ standalone[body_, failure_] := If[TrueQ[$active], body,
+    Block[{$active = True, $cfg = Association[Options[Strad]], $deadline = AbsoluteTime[] + 20,
+-     $stats = newStats[], $limits = <||>, $trace = {}, $records = {}, $memo = <||>, $recursion = 0, $Assumptions = True},
++     $stats = newStats[], $limits = <||>, $trace = {}, $records = {}, $memo = <||>, $recursion = 0, $inProgress = <||>, $lastCertificateMethod = "None", $Assumptions = True},
+     Quiet[Check[TimeConstrained[MemoryConstrained[body, 1073741824, failure], 20, failure], failure]]]];
+ 
+ EqualityStatus[a_, b_] := standalone[certify[a, b], "Unknown"];
+@@ -229,7 +175,7 @@
+    If[certify[candidate, target] === "Equal",
+     bump["CandidatesAccepted"];
+     If[Length[$records] < $cfg["MaxTraceEntries"],
+-     AppendTo[$records, <|"Before" -> target, "After" -> candidate, "Method" -> method|>]];
++     AppendTo[$records, <|"Before" -> target, "After" -> candidate, "Method" -> method, "EqualityMethod" -> $lastCertificateMethod|>]];
+     log[method, ": ", target, " -> ", candidate];
+     trace["Accepted", <|"Method" -> method, "Cost" -> RadicalCost[candidate]|>];
+     candidate,
+@@ -237,7 +183,7 @@
+ 
+ (* variants of a candidate that may print more cheaply; each is re-gated *)
+ acceptWithPolish[candidate_, target_, incumbent_, method_String] := Module[{best = incumbent, v},
+-   If[candidate === $Failed || ! exactQ[candidate], Return[best]];
++   If[candidate === $Failed || ! smallQ[candidate] || ! exactQ[candidate], Return[best]];
+    best = accept[candidate, target, best, method];
+    v = bounded[Simplify[candidate, Assumptions -> True, TimeConstraint -> 5]];
+    best = accept[v, target, best, method <> "/Simplify"];
+@@ -354,14 +300,16 @@
+    If[Length[surds] < 2 || Length[surds] > 15, Return[{}]];
+    If[! AllTrue[If[Head[e] === Plus, List @@ e, {e}],
+       MatchQ[#, _?rationalQ | Power[_Integer, Rational[1, 2]] | Times[_?rationalQ, Power[_Integer, Rational[1, 2]]]] &], Return[{}]];
+-   primes = Union @@ (First /@ FactorInteger[#] & /@ surds);
++   primes = bounded[Union @@ (First /@ FactorInteger[#] & /@ surds)];
++   If[primes === $Failed, Return[{}]];
+    unknownSets = DeleteDuplicates[{Union[{1}, primes], Union[{1}, primes, surds]}];
+    ratpart[ex_] := ex /. Power[_Integer, Rational[1, 2]] -> 0;
+    Do[
+     If[Length[U] > 16, Continue[]];
+-    vars = Array[cvar, Length[U]];
++    vars = Table[Unique["surdCoefficient"], {Length[U]}];
+     cand = vars . Sqrt[U];
+-    sq = Expand[cand^2];
++    sq = bounded[Expand[cand^2]];
++    If[sq === $Failed, Continue[]];
+     basis = Union[surds, DeleteDuplicates[Cases[sq, Power[n_Integer, Rational[1, 2]] :> n, {0, Infinity}]]];
+     eqs = Prepend[Table[Coefficient[sq, Sqrt[bb]] == Coefficient[e, Sqrt[bb]], {bb, basis}], ratpart[sq] == ratpart[e]];
+     sol = bounded[Solve[eqs, vars, Rationals]];
+@@ -380,22 +328,6 @@
+ unity[k_Integer, q_Integer] := (-1)^(Mod[2 k, 2 q]/q);
+ 
+ (* candidates for rho^(1/q), rho exact, produced by the shape-specific recipes *)
+-rootCandidates[rho_, q_Integer] := Module[{parts, out = {}, sign = 1, r = rho, neg},
+-   If[q === 2 && Head[rho] === Complex, Return[gaussianSquareRoots[rho]]];
+-   neg = TrueQ[bounded[rho < 0, "Certificate"]];
+-   If[neg, r = -rho];
+-   Which[
+-    q === 2,
+-     parts = quadraticParts[r];
+-     If[parts =!= $Failed, out = quadraticSquareRoots[parts]];
+-     out = Join[out, honsbeekSquareRoots[r], multiSurdSquareRoots[r]];
+-     If[neg, out = I out],
+-    q === 3,
+-     parts = quadraticParts[r];
+-     If[parts =!= $Failed, out = cubicInQuadratic[parts]];
+-     If[neg, out = (-1)^(1/3) out]];
+-   out];
+-
+ (* ------------------------------------------------------------------ *)
+ (* Kummer-linear factors and index reduction                          *)
+ (* ------------------------------------------------------------------ *)
+@@ -423,7 +355,7 @@
+     fl = bounded[FactorList[$x^k - rho, Extension -> Automatic]]];
+    If[fl === $Failed || ! ListQ[fl], Return[{}]];
+    roots = Cases[fl, {f_, _Integer} /; PolynomialQ[f, $x] && Exponent[f, $x] === 1 :>
+-      Together[-Coefficient[f, $x, 0]/Coefficient[f, $x, 1]]];
++      bounded[Together[-Coefficient[f, $x, 0]/Coefficient[f, $x, 1]]]];
+    DeleteDuplicates[Select[Flatten[radicalForms /@ roots], exactQ]]];
+ 
+ (* denest a sub-problem recursively under the shared budget *)
+@@ -432,34 +364,6 @@
+     improveNumber[sub]]];
+ 
+ (* candidates for target == rho^(p/q) from linear factors of x^k - rho, k | q *)
+-kummerCandidates[target_, rho_, p_Integer, q_Integer] := Module[{best = target, gammas, k, rest, sub, den},
+-   Do[
+-    If[expiredQ[], Break[]];
+-    gammas = linearRoots[rho, k];
+-    rest = q/k;
+-    Do[
+-     If[expiredQ[], Break[]];
+-     If[rest === 1,
+-      Do[best = acceptWithPolish[bounded[Expand[(gamma unity[l, q])^p]], target, best, "LinearFactor"], {l, 0, q - 1}],
+-      (* rho = gamma^k, so target = (gamma zeta_k^j)^(p/rest) zeta_rest^l for some j, l *)
+-      Do[
+-       den = bounded[Expand[gamma unity[j, k]]];
+-       If[den === $Failed, Continue[]];
+-       sub = recurse[den^(1/rest)];
+-       If[sub =!= den^(1/rest) && RadicalDepth[sub] < RadicalDepth[target],
+-        Do[best = acceptWithPolish[bounded[Expand[(sub unity[l, rest])^p]], target, best, "IndexReduction"], {l, 0, rest - 1}]],
+-       {j, 0, k - 1}]],
+-     {gamma, gammas}];
+-    If[RadicalDepth[best] < RadicalDepth[target], Break[]],
+-    {k, Reverse[Rest[Divisors[q]]]}];
+-   best];
+-
+-(* negative real radicand: rho^(p/q) = (-1)^(p/q) (-rho)^(p/q) *)
+-negativeRadicandCandidate[target_, rho_, p_Integer, q_Integer] := Module[{sub},
+-   If[! TrueQ[bounded[rho < 0, "Certificate"]], Return[target]];
+-   sub = recurse[(-rho)^(p/q)];
+-   If[sub === (-rho)^(p/q), target, accept[bounded[Expand[(-1)^(p/q) sub]], target, target, "NegativeRadicand"]]];
+-
+ (* ------------------------------------------------------------------ *)
+ (* the multiplier search (bounded FIFO queue, single admission gate)  *)
+ (* ------------------------------------------------------------------ *)
+@@ -561,12 +465,15 @@
+     If[! ListQ[$cfg["Multipliers"]] && degree <= bestDegree && admitted < cap && proposed < proposalCap && ! expiredQ[],
+      disc = bounded[Discriminant[p, $x]];
+      If[IntegerQ[disc] && disc =!= 0,
+-      primes = Take[Select[First /@ FactorInteger[Abs[disc]], PrimeQ], UpTo[8]];
++      primes = bounded[Take[Select[First /@ FactorInteger[Abs[disc]], PrimeQ], UpTo[8]]];
++      If[primes === $Failed, primes = {}];
+       batch = 0;
+-      Do[If[admitted >= cap || proposed >= proposalCap || batch >= 24 || expiredQ[], Break[]];
+-       Do[batch++; admit[m prime^e], {e, 1, q - 1}], {prime, primes}];
++      Do[If[admitted >= cap || proposed >= proposalCap || batch >= $cfg["DiscriminantBatchCap"] || expiredQ[], Break[]];
++       Do[If[admitted >= cap || proposed >= proposalCap ||
++          batch >= $cfg["DiscriminantBatchCap"] || expiredQ[], Break[]];
++        batch++; admit[m prime^e], {e, 1, q - 1}], {prime, primes}];
+       j = 1;
+-      While[primes =!= {} && j < q^Length[primes] && batch < 24 && admitted < cap && proposed < proposalCap && ! expiredQ[],
++      While[primes =!= {} && j < q^Length[primes] && batch < $cfg["DiscriminantBatchCap"] && admitted < cap && proposed < proposalCap && ! expiredQ[],
+        digits = IntegerDigits[j, q, Length[primes]]; j++; batch++;
+        admit[m Times @@ MapThread[Power, {primes, digits}]]]]]];
+    If[admitted >= cap, limitHit["MultiplierCap"]];
+@@ -597,27 +504,6 @@
+    best];
+ 
+ (* fast paths for a single rational-power node *)
+-powerProposals[target_, incumbent_] := Module[{best = incumbent, rho, p, q, root, cands},
+-   If[! MatchQ[target, Power[_, _Rational]], Return[best]];
+-   rho = First[target]; p = Numerator[Last[target]]; q = Denominator[Last[target]];
+-   If[q > $cfg["MaxRootIndex"], limitHit["MaxRootIndex"]; Return[best]];
+-   (* shape-specific recipes for the q-th root, then the integer power p *)
+-   cands = rootCandidates[rho, q];
+-   Do[best = acceptWithPolish[bounded[Expand[c^p]], target, best, "FastPath"], {c, cands}];
+-   If[RadicalDepth[best] <= 1, bump["FastPathAccepted"]; Return[best]];
+-   (* negative real radicand: separate the phase, denest the modulus *)
+-   best = negativeRadicandCandidate[target, rho, p, q];
+-   If[RadicalDepth[best] <= 1, Return[best]];
+-   (* roots of rho inside Q(rho), and index reduction through divisors of q *)
+-   best = kummerCandidates[target, rho, p, q];
+-   (* an even index with a quadratic recipe available for the square root *)
+-   If[RadicalDepth[best] >= 2 && EvenQ[q] && q > 2,
+-    root = recurse[rho^(1/2)];
+-    If[root =!= rho^(1/2) && RadicalDepth[root] < RadicalDepth[target],
+-     root = recurse[root^(2/q)];
+-     best = acceptWithPolish[bounded[Expand[root^p]], target, best, "EvenIndexSplit"]]];
+-   best];
+-
+ (* the multiplier search is meant for a radical node or a product of radical
+    nodes; a sum island gets the whole-island proposals only *)
+ searchableQ[e_] := MatchQ[e, Power[_, _Rational]] ||
+@@ -625,19 +511,6 @@
+ 
+ (* results for one island are memoized within the session: the same sub-problem
+    recurs through roots of unity, index reduction and repeated passes *)
+-improveNumber[target_] := Module[{best = target, key},
+-   If[expiredQ[] || ! exactQ[target] || ! smallQ[target], Return[target]];
+-   If[RadicalDepth[target] < 2 && FreeQ[target, _Root | _AlgebraicNumber], Return[target]];
+-   key = target;
+-   If[KeyExistsQ[$memo, key], Return[$memo[key]]];
+-   bump["Islands"];
+-   best = powerProposals[target, best];
+-   If[RadicalDepth[best] >= 2 || ! FreeQ[best, _Root | _AlgebraicNumber], best = genericProposals[target, best]];
+-   If[RadicalDepth[best] >= 2 && $cfg["Solver"] === Automatic && searchableQ[target] && ! expiredQ[],
+-    best = multiplierSearch[target, best]];
+-   If[! expiredQ[], AssociateTo[$memo, key -> best]];
+-   best];
+-
+ (* an exact algebraic island: children first (all levels) or outermost
+    radical nodes first (default), then the island as a whole *)
+ (* recombination of an island whose components were rewritten: the proposals
+@@ -689,57 +562,314 @@
+ (* the session                                                        *)
+ (* ------------------------------------------------------------------ *)
+ 
+-run[e_, cfg_Association, coreOnly_: False] :=
+-  Block[{$active = True, $cfg = cfg, $deadline = AbsoluteTime[] + cfg["TimeBudget"],
+-    $stats = newStats[], $limits = <||>, $trace = {}, $records = {}, $memo = <||>, $recursion = 0, $Assumptions = True},
+-   Module[{snapshot = e, candidate, outcome = Null, started = AbsoluteTime[], passes, status, committed},
+-    passes = If[TrueQ[cfg["AllLevels"]] && ! coreOnly, cfg["MaxPasses"], 1];
+-    Which[
+-     TrueQ[cfg["TimeBudget"] == 0], limitHit["TimeBudget"],
+-     ! FreeQ[e, _Real | _Complex?InexactNumberQ], limitHit["InexactInput"],
+-     coreOnly && ! exactQ[e], limitHit["NotExactAlgebraic"],
+-     True,
+-     outcome = TimeConstrained[
+-       MemoryConstrained[
+-        Do[
+-         If[expiredQ[], Break[]];
+-         candidate = If[coreOnly, improveNumber[snapshot], walk[snapshot]];
+-         bump["PassesCompleted"];
+-         If[candidate === snapshot || ! cheaperQ[candidate, snapshot], Break[]];
+-         (* whole-input certificate when the whole input is a number; hosts rely on congruence *)
+-         If[exactQ[e] && certify[candidate, e] =!= "Equal", Break[]];
+-         snapshot = candidate;
+-         If[pass === passes && passes > 1, limitHit["MaxPasses"]],
+-         {pass, passes}],
+-        cfg["MemoryBudget"], memoryStopped],
+-       cfg["TimeBudget"], timeStopped];
+-     If[outcome === memoryStopped, limitHit["MemoryBudget"]];
+-     If[outcome === timeStopped, limitHit["TimeBudget"]]];
+-    status = Which[
+-      outcome === timeStopped, "Timeout",
+-      outcome === memoryStopped, "MemoryLimit",
+-      TrueQ[cfg["TimeBudget"] == 0], "Disabled",
+-      snapshot === e, "Unchanged",
+-      True, "Improved"];
+-    <|"Result" -> snapshot, "Status" -> status, "Limits" -> Keys[$limits],
+-     "InitialCost" -> RadicalCost[e], "FinalCost" -> RadicalCost[snapshot],
+-     "Statistics" -> $stats, "Certificates" -> $records,
+-     "ElapsedSeconds" -> AbsoluteTime[] - started, "Options" -> cfg,
+-     "Trace" -> $trace, "CompletenessClaim" -> False|>]];
+-
+ invoke[e_, head_Symbol, rules_List, report_, core_] := Module[{cfg, result},
+    cfg = resolveOptions[head, rules];
+    If[FailureQ[cfg], Return[cfg]];
+    result = run[e, cfg, core];
+    If[TrueQ[report], result, result["Result"]]];
+ 
+-Strad[e_, all : (True | False), opts : OptionsPattern[]] := invoke[e, Strad, {"AllLevels" -> all, opts}, False, False];
+-Strad[e_, opts : OptionsPattern[]] := invoke[e, Strad, {opts}, False, False];
+-DenestRadicals[e_, all : (True | False), opts : OptionsPattern[]] := invoke[e, DenestRadicals, {"AllLevels" -> all, opts}, False, False];
+-DenestRadicals[e_, opts : OptionsPattern[]] := invoke[e, DenestRadicals, {opts}, False, False];
+-DenestCore[e_, opts : OptionsPattern[]] := invoke[e, DenestCore, {opts}, False, True];
+-DenestReport[e_, all : (True | False), opts : OptionsPattern[]] := invoke[e, DenestReport, {"AllLevels" -> all, opts}, True, False];
+-DenestReport[e_, opts : OptionsPattern[]] := invoke[e, DenestReport, {opts}, True, False];
++Strad[e_, all : (True | False), opts___] := invoke[e, Strad, {"AllLevels" -> all, opts}, False, False];
++Strad[e_, opts___] := invoke[e, Strad, {opts}, False, False];
++DenestRadicals[e_, all : (True | False), opts___] := invoke[e, DenestRadicals, {"AllLevels" -> all, opts}, False, False];
++DenestRadicals[e_, opts___] := invoke[e, DenestRadicals, {opts}, False, False];
++DenestCore[e_, opts___] := invoke[e, DenestCore, {opts}, False, True];
++DenestReport[e_, all : (True | False), opts___] := invoke[e, DenestReport, {"AllLevels" -> all, opts}, True, False];
++DenestReport[e_, opts___] := invoke[e, DenestReport, {opts}, True, False];
++
++(* === Replacement definitions and new bounded proposal kernels === *)
++
++ExactAlgebraicQ::usage = "ExactAlgebraicQ[e] accepts the explicit radical grammar, indexed univariate Root objects with rational polynomial coefficients, and AlgebraicNumber objects with an admitted generator and Gaussian-rational coefficient list. Other exact representations are conservatively rejected.";
++RadicalCost::usage = "RadicalCost[e] is {opaque nodes, radical depth, rational-power nodes, LeafCount, coefficient bit size}. Opaque node counts and radical counts prune Root/AlgebraicNumber bodies; bit size includes their payloads and Gaussian-rational components.";
++$inProgress = <||>;
++$lastCertificateMethod = "None";
++
++(* Only indexed roots of a univariate rational polynomial are admitted.
++   This is a sufficient grammar, not a decision procedure for algebraicity. *)
++rationalPolynomialRootQ[e_] := Module[{f, p, x = Unique["rootVariable"], n},
++   If[Head[e] =!= Root || ! MemberQ[{2, 3}, Length[e]], Return[False]];
++   If[! IntegerQ[e[[2]]] || e[[2]] < 1, Return[False]];
++   If[Length[e] === 3 && ! MemberQ[{0, 1}, e[[3]]], Return[False]];
++   f = e[[1]];
++   If[Head[f] =!= Function, Return[False]];
++   p = Quiet[Check[f[x], $Failed]];
++   If[p === $Failed || ! TrueQ[PolynomialQ[p, x]], Return[False]];
++   n = Exponent[p, x];
++   IntegerQ[n] && 1 <= e[[2]] <= n &&
++    AllTrue[CoefficientList[p, x], rationalQ]];
++
++algebraicFormQ[e_] := Which[
++   gaussianQ[e], True,
++   Head[e] === Root, rationalPolynomialRootQ[e],
++   Head[e] === AlgebraicNumber,
++    Length[e] === 2 && ListQ[e[[2]]] &&
++     AllTrue[e[[2]], gaussianQ] && algebraicFormQ[e[[1]]],
++   AtomQ[e], False,
++   MemberQ[{Plus, Times}, Head[e]], AllTrue[List @@ e, algebraicFormQ],
++   Head[e] === Power && Length[e] === 2,
++    rationalQ[e[[2]]] && algebraicFormQ[e[[1]]],
++   True, False];
++
++radicalNodes[e_] := Which[
++   AtomQ[e] || opaqueQ[e], 0,
++   True, Boole[MatchQ[e, Power[_, _Rational]]] +
++    Total[radicalNodes /@ (List @@ e)]];
++opaqueCount[e_] := Which[opaqueQ[e], 1, AtomQ[e], 0,
++   True, Total[opaqueCount /@ (List @@ e)]];
++bitSize[e_] := Which[
++   IntegerQ[e], 1 + IntegerLength[Abs[e], 2],
++   Head[e] === Rational, 2 + IntegerLength[Abs[Numerator[e]], 2] +
++    IntegerLength[Denominator[e], 2],
++   Head[e] === Complex, bitSize[Re[e]] + bitSize[Im[e]],
++   AtomQ[e], 0,
++   True, Total[bitSize /@ (List @@ e)]];
++RadicalCost[e_] := {opaqueCount[e], RadicalDepth[e], radicalNodes[e],
++   LeafCount[e], bitSize[e]};
++
++(* A nonzero constant coefficient excludes zero from every root of p. *)
++canonicalNonzeroQ[e_] := If[gaussianQ[e], e =!= 0,
++   rationalPolynomialRootQ[e] && TrueQ[e[[1]][0] =!= 0]];
++
++(* Optional numerical information is diagnostic only. Never promote it to
++   Different, and never suppress a subsequent exact equality check. *)
++numericallyDifferentQ[d_] := Module[{num},
++   If[! TrueQ[$cfg["NumericPrefilter"]], Return[False]];
++   num = bounded[N[d, 40]];
++   TrueQ[NumberQ[num] && Accuracy[num] >= 25 && Abs[num] > 10^-20]];
++certify[a_, b_] := Module[{d, r},
++   bump["Certificates"]; $lastCertificateMethod = "None";
++   If[! exactQ[a] || ! exactQ[b], bump["CertificatesUnknown"]; Return["Unknown"]];
++   If[a === b, $lastCertificateMethod = "SameQ";
++    bump["CertificatesEqual"]; Return["Equal"]];
++   d = a - b;
++   If[numericallyDifferentQ[d], bump["NumericDiagnostics"]];
++   r = bounded[RootReduce[d], "Certificate"];
++   Which[
++    r === 0, $lastCertificateMethod = "RootReduceZero";
++     bump["CertificatesEqual"]; Return["Equal"],
++    canonicalNonzeroQ[r], $lastCertificateMethod = "ExactNonzeroNormalForm";
++     bump["CertificatesDifferent"]; Return["Different"]];
++   r = bounded[PossibleZeroQ[d, Method -> "ExactAlgebraics"], "Certificate"];
++   Which[
++    r === True, $lastCertificateMethod = "PossibleZeroQ/ExactAlgebraics";
++     bump["CertificatesEqual"]; "Equal",
++    r === False, $lastCertificateMethod = "PossibleZeroQ/ExactAlgebraics";
++     bump["CertificatesDifferent"]; "Different",
++    True, bump["CertificatesUnknown"]; "Unknown"]];
++
++(* Real odd roots in a quadratic field: Dickson/Lucas recurrences. *)
++oddInQuadratic[{a_, b_, c_}, q_Integer] := Module[
++   {norm, n, d0 = 2, d1 = $x, s0 = 0, s1 = 1,
++    dn, sn, roots, den, beta, out = {}},
++   If[! OddQ[q] || q < 3 || q > $cfg["MaxOddIndex"], Return[{}]];
++   norm = a^2 - b^2 c; n = Sign[norm] Abs[norm]^(1/q);
++   If[! rationalQ[n], Return[{}]];
++   Do[
++    dn = bounded[Expand[$x d1 - n d0]];
++    sn = bounded[Expand[$x s1 - n s0]];
++    If[dn === $Failed || sn === $Failed, Return[{}]];
++    {d0, d1} = {d1, dn}; {s0, s1} = {s1, sn}, {q - 1}];
++   roots = rationalRoots[d1 - 2 a];
++   Do[den = s1 /. $x -> t;
++    If[den =!= 0,
++     beta = t/2 + b Sqrt[c]/den;
++     If[certify[beta^q, a + b Sqrt[c]] === "Equal", AppendTo[out, beta]]],
++    {t, roots}]; out];
++
++(* Hadamard reconstruction. No integer factorization is needed to build the
++   square-class basis. The finite sign search is explicitly capped. *)
++characterSquareRoots[rho_] := Module[
++   {e, terms, surds, coeffs, a, products = {1}, rank = 0,
++    positions, pos, m, chars, conjugates, lambdas, signs, fourier,
++    squares, pieces, z, v, candidate, maxPatterns, out = {}},
++   If[$cfg["MaxCharacterRank"] === 0 || $cfg["MaxCharacterPatterns"] === 0,
++    Return[{}]];
++   e = bounded[Expand[rho]]; If[e === $Failed, Return[{}]];
++   terms = If[Head[e] === Plus, List @@ e, {e}];
++   If[! AllTrue[terms,
++      MatchQ[#, _?rationalQ | Power[_Integer, Rational[1, 2]] |
++        Times[_?rationalQ, Power[_Integer, Rational[1, 2]]]] &], Return[{}]];
++   surds = DeleteDuplicates[Cases[e,
++      Power[n_Integer, Rational[1, 2]] /; n > 1 :> n, {0, Infinity}]];
++   If[Length[surds] < 2, Return[{}]];
++   coeffs = Coefficient[e, Sqrt[#]] & /@ surds;
++   a = e /. Power[_Integer, Rational[1, 2]] -> 0;
++   If[! rationalQ[a] || ! AllTrue[coeffs, rationalQ], Return[{}]];
++   Do[
++    If[! AnyTrue[products, rationalQ[Sqrt[d/#]] &],
++     If[rank >= $cfg["MaxCharacterRank"],
++      limitHit["MaxCharacterRank"]; Return[{}]];
++     products = Join[products, d products]; rank++], {d, surds}];
++   m = Length[products];
++   positions = Table[SelectFirst[Range[m],
++      rationalQ[Sqrt[d/products[[#]]]] &, $Failed], {d, surds}];
++   If[MemberQ[positions, $Failed], Return[{}]];
++   chars = Table[(-1)^DigitCount[BitAnd[i, j], 2, 1],
++     {i, 0, m - 1}, {j, 0, m - 1}];
++   conjugates = Table[a + Total[coeffs Sqrt[surds] chars[[i, positions]]],
++     {i, m}];
++   lambdas = Sqrt /@ conjugates;
++   maxPatterns = Min[2^(m - 1), $cfg["MaxCharacterPatterns"]];
++   Do[
++    If[expiredQ[], Break[]];
++    bump["CharacterPatterns"];
++    signs = Prepend[1 - 2 IntegerDigits[pattern, 2, m - 1], 1];
++    fourier = bounded[(chars . (signs lambdas))/m];
++    If[fourier === $Failed, Continue[]];
++    squares = Table[bounded[RootReduce[v^2], "Certificate"], {v, fourier}];
++    If[! AllTrue[squares, rationalQ], Continue[]];
++    pieces = {}; candidate = $Failed;
++    Do[
++     z = Sqrt[squares[[i]]]; v = fourier[[i]];
++     Which[
++      certify[v, z] === "Equal", AppendTo[pieces, z],
++      certify[v, -z] === "Equal", AppendTo[pieces, -z],
++      True, Break[]], {i, m}];
++    If[Length[pieces] === m,
++     candidate = Total[pieces];
++     If[certify[candidate, Sqrt[rho]] === "Equal",
++      out = {candidate}; Break[]]],
++    {pattern, 0, maxPatterns - 1}];
++   If[out === {} && maxPatterns < 2^(m - 1), limitHit["MaxCharacterPatterns"]];
++   out];
++
++rootCandidates[rho_, q_Integer] := Module[{parts, out = {}, r = rho, neg},
++   If[q === 2 && Head[rho] === Complex, Return[gaussianSquareRoots[rho]]];
++   neg = TrueQ[bounded[rho < 0, "Certificate"]]; If[neg, r = -rho];
++   Which[
++    q === 2,
++     parts = quadraticParts[r];
++     If[parts =!= $Failed, out = quadraticSquareRoots[parts]];
++     If[out === {}, out = honsbeekSquareRoots[r]];
++     If[out === {}, out = characterSquareRoots[r]];
++     If[out === {}, out = multiSurdSquareRoots[r]];
++     If[neg, out = I out],
++    q === 3 || (OddQ[q] && q <= $cfg["MaxOddIndex"]),
++     parts = quadraticParts[r];
++     If[parts =!= $Failed,
++      out = If[q === 3, cubicInQuadratic[parts], oddInQuadratic[parts, q]]];
++     If[neg, out = (-1)^(1/q) out]];
++   out];
++
++kummerCandidates[target_, rho_, p_Integer, q_Integer, incumbent_: Automatic] :=
++ Module[{best = If[incumbent === Automatic, target, incumbent],
++   gammas, rest, sub, den, reduced},
++  Do[
++   If[expiredQ[], Break[]]; gammas = linearRoots[rho, k]; rest = q/k;
++   Do[
++    If[expiredQ[], Break[]];
++    If[rest === 1,
++     Do[best = acceptWithPolish[bounded[Expand[(gamma unity[l, q])^p]],
++       target, best, "LinearFactor"], {l, 0, q - 1}],
++     Do[
++      den = bounded[Expand[gamma unity[j, k]]];
++      If[den === $Failed, Continue[]];
++      reduced = den^(1/rest);
++      (* Already-useful index reduction must not depend on recursive progress. *)
++      Do[best = acceptWithPolish[bounded[Expand[(reduced unity[l, rest])^p]],
++        target, best, "IndexReduction/Direct"], {l, 0, rest - 1}];
++      sub = recurse[reduced];
++      If[sub =!= reduced,
++       Do[best = acceptWithPolish[bounded[Expand[(sub unity[l, rest])^p]],
++         target, best, "IndexReduction/Recursive"], {l, 0, rest - 1}]],
++      {j, 0, k - 1}]], {gamma, gammas}];
++   If[RadicalDepth[best] <= 1, Break[]],
++   {k, Reverse[Rest[Divisors[q]]]}]; best];
++
++negativeRadicandCandidate[target_, rho_, p_Integer, q_Integer,
++   incumbent_: Automatic] := Module[{best, sub},
++   best = If[incumbent === Automatic, target, incumbent];
++   If[! TrueQ[bounded[rho < 0, "Certificate"]], Return[best]];
++   sub = recurse[(-rho)^(p/q)];
++   accept[bounded[Expand[(-1)^(p/q) sub]], target, best, "NegativeRadicand"]];
++
++powerProposals[target_, incumbent_] := Module[
++   {best = incumbent, rho, p, q, root, cands},
++   If[! MatchQ[target, Power[_, _Rational]], Return[best]];
++   rho = First[target]; p = Numerator[Last[target]]; q = Denominator[Last[target]];
++   If[q > $cfg["MaxRootIndex"], limitHit["MaxRootIndex"]; Return[best]];
++   cands = bounded[rootCandidates[rho, q]];
++   If[! ListQ[cands], cands = {}];
++   Do[best = acceptWithPolish[bounded[Expand[c^p]], target, best, "FastPath"],
++    {c, cands}];
++   If[RadicalDepth[best] <= 1, bump["FastPathAccepted"]; Return[best]];
++   best = negativeRadicandCandidate[target, rho, p, q, best];
++   If[RadicalDepth[best] <= 1, Return[best]];
++   best = kummerCandidates[target, rho, p, q, best];
++   If[RadicalDepth[best] >= 2 && EvenQ[q] && q > 2,
++    root = recurse[rho^(1/2)];
++    If[root =!= rho^(1/2),
++     root = recurse[root^(2/q)];
++     best = acceptWithPolish[bounded[Expand[root^p]], target, best, "EvenIndexSplit"]]];
++   best];
++
++(* Memoized successes are incumbents, not certificates of search exhaustion.
++   A path-local in-progress set breaks recursive cycles without negative caching. *)
++improveNumber[target_] := Module[{best = target, key = target},
++   If[expiredQ[] || ! exactQ[target] || ! smallQ[target], Return[target]];
++   If[RadicalDepth[target] < 2 && FreeQ[target, _Root | _AlgebraicNumber], Return[target]];
++   If[KeyExistsQ[$memo, key], best = $memo[key]];
++   If[KeyExistsQ[$inProgress, key], Return[best]];
++   bump["Islands"];
++   Block[{$inProgress = Append[$inProgress, key -> True]},
++    best = powerProposals[target, best];
++    If[RadicalDepth[best] >= 2 || ! FreeQ[best, _Root | _AlgebraicNumber],
++     best = genericProposals[target, best]];
++    If[RadicalDepth[best] >= 2 && $cfg["Solver"] === Automatic &&
++      searchableQ[target] && ! expiredQ[], best = multiplierSearch[target, best]]];
++   If[best =!= target, AssociateTo[$memo, key -> best]];
++   best];
++
++(* Input scans and costs are inside the common outer budget. Cached report costs
++   are never recomputed after exhaustion. Ordinary WL argument evaluation and
++   option resolution are necessarily outside this routine. *)
++run[e_, cfg_Association, coreOnly_: False] :=
++ Block[{$active = True, $cfg = cfg, $deadline = AbsoluteTime[] + cfg["TimeBudget"],
++   $stats = newStats[], $limits = <||>, $trace = {}, $records = {},
++   $memo = <||>, $inProgress = <||>, $recursion = 0,
++   $lastCertificateMethod = "None", $Assumptions = True},
++  Module[{snapshot = e, candidate, outcome = Null, started = AbsoluteTime[],
++    passes, status, numericInput = False,
++    initialCost = Missing["NotComputed"], finalCost = Missing["NotComputed"],
++    candidateCost},
++   passes = If[TrueQ[cfg["AllLevels"]] && ! coreOnly, cfg["MaxPasses"], 1];
++   If[TrueQ[cfg["TimeBudget"] == 0], limitHit["TimeBudget"],
++    outcome = Quiet[Check[TimeConstrained[MemoryConstrained[
++       Which[
++        ! FreeQ[e, _Real | _Complex?InexactNumberQ], limitHit["InexactInput"],
++        coreOnly && ! exactQ[e], limitHit["NotExactAlgebraic"],
++        True,
++        numericInput = exactQ[e];
++        initialCost = bounded[RadicalCost[e]];
++        If[initialCost === $Failed, initialCost = Missing["NotComputed"]];
++        finalCost = initialCost;
++        Do[
++         If[expiredQ[], Break[]];
++         candidate = If[coreOnly, improveNumber[snapshot], walk[snapshot]];
++         bump["PassesCompleted"];
++         If[candidate === snapshot, Break[]];
++         candidateCost = bounded[RadicalCost[candidate]];
++         If[candidateCost === $Failed || ! ListQ[finalCost] ||
++           Order[candidateCost, finalCost] =!= 1, Break[]];
++         If[numericInput && certify[candidate, e] =!= "Equal", Break[]];
++         (* Publish a complete pass and its already-computed cost together. *)
++         {snapshot, finalCost} = {candidate, candidateCost};
++         If[pass === passes && passes > 1, limitHit["MaxPasses"]],
++         {pass, passes}]], cfg["MemoryBudget"], memoryStopped],
++       cfg["TimeBudget"], timeStopped], operationFailed]];
++    If[outcome === memoryStopped, limitHit["MemoryBudget"]];
++    If[outcome === timeStopped, limitHit["TimeBudget"]];
++    If[outcome === operationFailed, limitHit["SessionFailure"]]];
++   status = Which[
++     outcome === timeStopped, "Timeout", outcome === memoryStopped, "MemoryLimit",
++     outcome === operationFailed, "Failure", TrueQ[cfg["TimeBudget"] == 0], "Disabled",
++     snapshot === e, "Unchanged", True, "Improved"];
++   <|"Result" -> snapshot, "Status" -> status, "Limits" -> Keys[$limits],
++    "InitialCost" -> initialCost, "FinalCost" -> finalCost,
++    "Statistics" -> $stats, "Certificates" -> $records,
++    "CertificateScope" -> "Bounded sample of accepted proposals, not a committed proof DAG",
++    "ElapsedSeconds" -> AbsoluteTime[] - started, "Options" -> cfg,
++    "Trace" -> $trace, "CompletenessClaim" -> False,
++    "BudgetModel" -> "Cooperative kernel limits; no hard process wall-clock/RSS guarantee"|>]];
+ 
+ End[];
+ EndPackage[];

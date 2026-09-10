@@ -1,0 +1,46 @@
+{
+  "record_id": "zippelthesis",
+  "title": "Simplification of Radicals with Applications to Solving Polynomial Equations",
+  "asset_id": "pdf-from-landing",
+  "version": "cited-work",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://dspace.mit.edu/bitstreams/1c92e9a9-bf80-46b8-a0a6-aa9fc82f2391/download",
+    "resolved_url": "https://cf003.cdn.4science.cloud/4s-assetstore-prod--mit--dspace/156691816665879550430948245216022190567?response-content-type=application%2Fpdf&response-content-disposition=attachment%3B+filename%3D%2204731425-MIT.pdf%22&Expires=1788640316&Signature=Kf7pzwCWxgKuUT4Ta~B51f9Ifw~UwWFg3PwsTHXVLT3MfLBX7JwwOuZqZ3APGawA9GCHCnzrYXkmqaNMm1UYkhWVGbTv~urjha2U1ViDLALz56G-DyNvyGF-dqwaGiARKlbhglbF~a~Rvh77m9N0VZTKkL6CZnm9BD1e2P1VgiPQwpXfdVu-MdYplwrHQ0Tzj7cE~06YAtvPeUT6hxGL03qN47AOxWUOQiP6tLevm4TlTCK7waWOchIb0sGuzRyi7WvpELhyLblcr~dozNZUEd1P29C3LG198oQFET4aeqk0k8upDOso82Z7vsalm2v-PrIpsKKXRMrFO4iCkMHeQA__&Key-Pair-Id=K1M0LPFHJMTXJX",
+    "retrieved_at": "2026-09-05T20:29:57+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36",
+    "content_encoding": "",
+    "bytes": 6870113,
+    "sha256": "804bd718ebd1f25a0a72f3bcad54642becc86d3e53e26070e3574a0c0a6d3672",
+    "tls_verification": "SKIPPED by --insecure"
+  },
+  "resolution": {
+    "landing_page": {
+      "requested_url": "https://dspace.mit.edu/entities/publication/8c890e97-f123-4c57-9278-9c85915cf15c",
+      "resolved_url": "https://dspace.mit.edu/entities/publication/8c890e97-f123-4c57-9278-9c85915cf15c",
+      "retrieved_at": "2026-09-05T20:29:54+00:00",
+      "http_status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36",
+      "content_encoding": "",
+      "bytes": 554542,
+      "sha256": "18981c852632ef8070183d7b20853d829a823090cf9bd6eabdf6f9140b4144a7",
+      "tls_verification": "SKIPPED by --insecure"
+    }
+  },
+  "catalog_evidence_level": "download_link_listed",
+  "note": "Official MIT record advertises 04731425-MIT.pdf. Resolver needs a citation_pdf_url or direct PDF link; JavaScript-only pages can require manual retrieval.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/zippelthesis-Simplification-of-Radicals-with-Applications-to-Solving-Polynomia/cited-work/pdf-from-landing.pdf",
+      "role": "pdf",
+      "bytes": 6870113,
+      "sha256": "804bd718ebd1f25a0a72f3bcad54642becc86d3e53e26070e3574a0c0a6d3672"
+    }
+  ],
+  "prior_candidate_errors": []
+}

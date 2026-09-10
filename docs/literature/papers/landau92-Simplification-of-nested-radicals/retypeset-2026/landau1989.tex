@@ -1,0 +1,315 @@
+% Corrected re-typesetting of the PDF supplied in articles.zip.
+% See CORRECTIONS.md for transcription repairs and substantive editorial notes.
+% Compile twice with: pdflatex -interaction=nonstopmode -halt-on-error landau1989.tex
+\documentclass[11pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=0.88in,headheight=15pt,headsep=18pt]{geometry}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{microtype}
+\usepackage{graphicx,booktabs,array,longtable}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{xurl}
+\usepackage[hidelinks,unicode,pdfencoding=auto]{hyperref}
+\usepackage{fancyhdr}
+\usepackage{needspace}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+\urlstyle{same}
+\setlength{\emergencystretch}{2em}
+\setlength{\parskip}{2pt}
+\setlength{\parindent}{1.2em}
+\linespread{1.025}
+\allowdisplaybreaks[1]
+\setlist{itemsep=3pt,topsep=6pt,parsep=1pt}
+\lstset{basicstyle=\ttfamily\small,columns=fullflexible,keepspaces=true,
+  breaklines=true,breakatwhitespace=true,showstringspaces=false,
+  aboveskip=9pt,belowskip=9pt,xleftmargin=0.6em}
+\newcommand{\editorialnote}[1]{\begin{quote}\small\noindent
+  \textbf{Editorial note.} #1\end{quote}}
+\newcommand{\transcriptionnote}{\par\smallskip\noindent{\footnotesize
+  Corrected re-typesetting. Original numbering retained; pagination reset.
+  Substantive editorial changes are identified in the accompanying correction log.}\par\medskip}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\Gal}{Gal}
+\DeclareUnicodeCharacter{27F8}{\ensuremath{\Longleftarrow}}
+\DeclareUnicodeCharacter{27F9}{\ensuremath{\Longrightarrow}}
+\DeclareUnicodeCharacter{21D2}{\ensuremath{\Rightarrow}}
+\DeclareUnicodeCharacter{21D4}{\ensuremath{\Leftrightarrow}}
+\DeclareUnicodeCharacter{25A1}{\ensuremath{\square}}
+\DeclareUnicodeCharacter{2264}{\ensuremath{\leq}}
+\DeclareUnicodeCharacter{2265}{\ensuremath{\geq}}
+\DeclareUnicodeCharacter{2212}{\ensuremath{-}}
+\DeclareUnicodeCharacter{00B1}{\ensuremath{\pm}}
+\DeclareUnicodeCharacter{00D7}{\ensuremath{\times}}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\itshape Landau: Simplification of Nested Radicals}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\small\thepage}\renewcommand{\headrulewidth}{0pt}}
+\hypersetup{pdftitle={Simplification of Nested Radicals},pdfauthor={Susan Landau},pdfsubject={Corrected re-typesetting of the supplied article}}
+\title{Simplification of Nested Radicals}
+\author{Susan Landau\thanks{Supported by NSF grants DMS-8807202, and CCR-8802835. Part of this work was done while the author was visiting the Yale University Math Department. Author's present address: COINS, Univ. of Massachusetts, Amherst, MA 01003}\\{\small Mathematics Department, Wesleyan University}}
+\date{\small Extended abstract, 30th Annual Symposium on Foundations of Computer Science (1989), pp.\ 314--319.}
+
+\begin{document}
+\maketitle
+\transcriptionnote
+
+\begin{abstract}
+Radical simplification is a fundamental mathematical question as well as an important part of symbolic computation systems. The general denesting problem had not been known to be decidable. We give necessary and sufficient conditions for a radical $\alpha$ over a field $k$ to be denested. We give the first algorithm to decide if the expression can be denested. With the roots-of-unity hypothesis specified below, this algorithm computes an equivalent expression of minimum nesting depth. The field-theoretic computations have running time polynomial in the explicit splitting-field representation used by the algorithm; the required cyclotomic enlargement must also be included in that representation.
+\end{abstract}
+
+\editorialnote{The unrestricted minimum-depth assertions in the 1989 extended abstract require a substantive qualification, not merely an OCR repair. The exact structural statements below are stated under the sufficient hypothesis that the base field contains all roots of unity. For a general number field, adjoining roots of unity changes the base and cannot simply be treated as free. The final paper, \emph{SIAM J. Comput.} 21 (1992), 85--110, DOI \href{https://doi.org/10.1137/0221009}{10.1137/0221009}, distinguishes the roots-of-unity case from a general-base construction within one of optimal after adjoining one root of unity. The number-field algorithm below is therefore explicitly presented as a construction in a chosen cyclotomic splitting field, not as a proof of unrestricted optimality over the original field. Historical running-time bounds and open-question comments are those of the original paper.}
+
+\section*{Introduction}
+In his magic way, Ramanujan observed a number of striking relationships between certain nested radicals:
+
+
+\begin{align*}
+\sqrt[3]{\sqrt[3]{2}-1} & =\sqrt[3]{1 / 9}-\sqrt[3]{2 / 9}+\sqrt[3]{4 / 9}  \tag{1}\label{eq:1}\\
+\sqrt{\sqrt[3]{5}-\sqrt[3]{4}} & =1 / 3(\sqrt[3]{2}+\sqrt[3]{20}-\sqrt[3]{25})  \tag{2}\label{eq:2}\\
+\sqrt[6]{7 \sqrt[3]{20}-19} & =\sqrt[3]{5 / 3}-\sqrt[3]{2 / 3} \tag{3}\label{eq:3}
+\end{align*}
+
+
+These remained innocent curiosities for decades. Then symbolic computation came of age, and such manipulations assumed greater importance. The equation:
+
+\[
+\sqrt{5+2 \sqrt{6}}=\sqrt{2}+\sqrt{3}
+\]
+
+means that $\{1, \sqrt{2}, \sqrt{3}, \sqrt{6}\}$ is a basis for $Q(\sqrt{5+2 \sqrt{6}})$ over $Q$. It is much simpler to manipulate than the basis consisting of powers of $\sqrt{5+2 \sqrt{6}}$. Simplification of nested radicals is important for computations in dynamical systems. Thus the "denesting" of radicals - a term which will be precisely defined in the next section - is quite important for symbolic computation systems as well as being of fundamental mathematical interest.
+
+In 1984, Borodin, Fagin, Hopcroft and Tompa [3] gave an efficient algorithm for decreasing the nesting depth of a class of expressions involving square roots. Zippel [17] gave some conditions under which a radical could denest. The general case remained open.
+
+Under the roots-of-unity hypothesis, a radical can be denested iff the denesting occurs within its splitting field. That is, for such a base field, a radical $\alpha$ can be denested over $k$ iff the denesting occurs with each term of the denesting lying within the splitting field of the minimal polynomial of $\alpha$ over $k$. Thus the problem is decidable, in marked contrast to the simplification problem for expressions involving trigonometric and exponential functions [11]. Following the measure of the size of univariate polynomials in the factoring problem, we define the size of the denesting problem to be the minimal polynomial for $\alpha$ over $k$. (See §3 for details.) The construction reduces denesting to explicit splitting-field computations, with the base-field and cyclotomic qualifications stated above. In worst case the splitting field can be exponentially large.
+
+Our paper is organized as follows: §1: Background, §2 Algebraic Structure, §3 The Algorithm and Running Time Analysis, and §4 Conclusions. We omit proofs in this extended abstract.
+
+\section*{1 Background}
+We begin with a brief review of some algebraic concepts. Let $k$ be a field. Throughout this paper we assume that $k$ is of characteristic 0 . An element $\alpha$ is algebraic over $k$ iff $\alpha$ satisfies a polynomial with coefficients in $k$. The degree of $\alpha$ is the degree of the minimal irreducible polynomial of $\alpha$ over $k$. If $L$ has finite dimension $[L: k]$ over a subfield $k$, then $L=k(\theta)$ for some $\theta$ in $L$, where the degree of $\theta$ over $k$ equals $[L: k]$.
+
+An extension field $L$ is algebraic over a field $k$ iff every element of $L$ is algebraic over $k$. It is well known that every finite extension of a field is algebraic; the finite extensions of $Q$ are called the algebraic number fields. If $k$ is an algebraic number field, it contains a set of elements which satisfy integer monic polynomials over $Z$; this is called the ring of integers of $k$, and is frequently denoted $O_{k}$.
+
+In 1982, Lenstra, Lenstra and Lovász [9] showed that $f(x)$ in $Q[x]$ can be factored in polynomial time. If $f(x)$ is a polynomial in $O_{k}[x]$, where $k=Q[t] / g(t)$ is a number field, then there are polynomial time algorithms for factoring $f(x)$ over $O_{k}$ [6], [8].
+
+Following [3], a formula over a field $k$ and its depth of nesting are defined as follows:\\
+(1) an element of $k$ is a formula of depth 0 over $k$,\\
+(2) an arithmetic combination $(\mathrm{A}+\mathrm{B}, \mathrm{A} \times \mathrm{B}, \mathrm{A} / \mathrm{B})$ of formulas A and B (with $B\ne0$ for division) is a formula whose depth over $k$ is $\max (\operatorname{depth}(\mathrm{A}), \operatorname{depth}(\mathrm{B}))$, and\\
+(3) a root $\sqrt[n]{A}$ of a formula A is a formula whose depth over $k$ is $1+\operatorname{depth}(\mathrm{A})$.
+
+We will say the formula $A$ can be denested over the field $k$ if there is a formula $B$ of lower depth than $A$ such that $\operatorname{value}(\mathrm{A})=\operatorname{value}(\mathrm{B})$. For any $\alpha$, we define the depth of $\alpha$ over $k$ to be minimum\{depth $(A) \mid \operatorname{value}(A)=\alpha\}$. We will write a primitive $n^{\text {th }}$ root of unity as a special symbol $\xi_{n}$, rather than as a nested radical.
+
+We return to the examples mentioned earlier. At first they seem mysterious. In fact, each equation is a result of a complex algebraic structure. Consider:
+
+\[
+\sqrt[3]{\sqrt[3]{2}-1}=\sqrt[3]{1 / 9}-\sqrt[3]{2 / 9}+\sqrt[3]{4 / 9}
+\]
+
+A natural question to ask is: What is the relationship between $\sqrt[3]{2}$ and $\sqrt[3]{9}$ ? There is no obvious one. But there is a relationship between $\sqrt[3]{\sqrt[3]{2}-1}$ and $\sqrt[3]{9} ; \sqrt[3]{9}$ is an element of the field $Q(\sqrt[3]{\sqrt[3]{2}-1})$. This fact is unexpected.
+
+Equations 2 and 3 give similar results. A natural question arises: In which field do denestings occur?
+
+Let $k$ be an algebraic number field, and let $f(x)$ be an irreducible polynomial of degree $n$ with coefficients in $k$, and roots $\alpha_{1}, \ldots, \alpha_{n}$. Then $k\left(\alpha_{i}\right) \simeq k[x] / f(x) \simeq$ $k\left(\alpha_{j}\right)$, but in general $k\left(\alpha_{i}\right) \neq k\left(\alpha_{j}\right)$. The field $L=$ $k\left(\alpha_{1}, \ldots, \alpha_{n}\right)$ is called the splitting field of $f(x)$ over $k$. This is the smallest field containing $k\left(\alpha_{1}\right)$ that is Galois over $k$.\footnote{We say a field $F \supseteq k$ is Galois over $k$ if every irreducible polynomial $p(x)$ in $k[x]$ that has a root in $F$ splits completely in $F$.} We consider the set of automorphisms of $L$ which leave $k$ fixed. These form a group, called the Galois group of $L$ over $k$. As we can think of these automorphisms as permutations of the $\alpha_{i}$, this group is sometimes called the Galois group of $f(x)$ over $k$. If $f(x)$ is irreducible over $k$, the Galois group is transitive on $\left\{\alpha_{1}, \ldots, \alpha_{n}\right\}$, that is, for each pair of elements $\alpha_{i}, \alpha_{j}$, there is an element $\sigma$ in $G$, with $\sigma\left(\alpha_{i}\right)=\alpha_{j}$. With remarkable insight, Galois discovered a relationship between the subgroups of $G$ and the subfields of $L$ containing $k$.
+
+Let $H$ be a subgroup of $G$. We denote by $L^{H}$ the set of elements of $L$ which are fixed pointwise by each element of $H$. This set forms a field. Furthermore, $H$ fixes $k$, so that we have:
+
+\[
+k \subseteq L^{H} \subseteq L .
+\]
+
+Conversely suppose that $J=k\left(\beta_{1}, \ldots, \beta_{r}\right)$ is a field such that $k \subset J \subset L$. Then the $\beta_{i}$ can be written as polynomials in $\alpha_{1}, \ldots, \alpha_{n}$, and $H$, the subgroup of $G$ which fixes $J$, consists of those elements of $G$ which fix the $\beta_{i}$ pointwise. The relationship between the fields and the groups can be formally stated as:
+
+\noindent\textbf{Theorem 1.1.} Fundamental Theorem of Galois Theory: Let $k$ be a field of characteristic zero, and let $f(x)$ in $k[x]$ be a polynomial of degree $n$, with roots $\alpha_{1}, \ldots, \alpha_{n}$. Let $L$ be its splitting field and $G=\Gal(L/k)$. Then:
+
+\begin{itemize}
+  \item[1.] Every intermediate field $J$, with $k \subset J \subset L$ defines a subgroup $H$ of the Galois group $G$, namely the set of automorphisms of $L$ which leave $J$ fixed. Furthermore, $L$ is Galois over $J$.
+  \item[2.] The field $J$ is uniquely determined by $H$, for $J$ is the set of elements of $L$ which are invariant under the action of $H$.
+  \item[3.] The subgroup $H$ is normal iff $J$ over $k$ is a Galois extension. In that case the Galois group of $J$ over $k$ is $G / H$.
+  \item[4.] $|G|=[L: k]$, and $|H|=[L: J]$.
+\end{itemize}
+
+We are now ready to state our main result:
+
+\noindent\textbf{Theorem 2.6.} Suppose $\alpha$ is a nested radical over $k$, where $k$ is a field of characteristic zero containing all roots of unity. If $\alpha$ can be denested over $k$, then there is a denesting of $\alpha$ such that each of its terms lies in the splitting field of the minimal polynomial of $\alpha$ over $k$.
+
+\section*{2 Algebraic Structure}
+In this section we discuss the algebraic structure surrounding nested radicals. For the corrected denesting statements, assume that $k$ contains all roots of unity. Essentially a denesting of $\alpha$ of depth $l$ means that there is a tower of fields over $k$ which are abelian extensions, that is to say, each extension is Galois, and each resulting Galois group is abelian. Thus we have:
+
+\noindent\textbf{Lemma 2.1.} Let $\alpha$ be a nested radical, and suppose $\alpha$ can be denested in a field $L \supseteq k$. Suppose that the denested expression has nesting depth $l$. Let $\tilde{L}$ be the splitting field\footnote{This is usually called the normal closure of $L$ over $k$, i.e. the minimal field $\tilde{L}$ containing $L$ in which every polynomial in $k[x]$ which has a root in $L$ splits completely in $\tilde{L}$.} of $L$ over $k$, with Galois group $G$, and assume that $k$ contains all roots of unity. Then there are subgroups $H_{1}, \ldots, H_{l}$ of $G$, with $G=H_{0} \triangleright H_{1} \triangleright \ldots \triangleright H_{l}$ and $H_{i} / H_{i+1}$ abelian for $i=0, \ldots l-1$, with $H \supseteq H_{l}$, where $H$ is the subgroup of $G$ associated with $k(\alpha)$. Conversely, if there is such a sequence of subgroups, then $\alpha$ has nesting depth at most $l$.
+
+We are now ready to proceed with:
+
+\noindent\textbf{Theorem 2.2.} Suppose $\alpha$ is a nested radical over $k$, a field of characteristic 0, and suppose further that $k$ contains all roots of unity. If $\alpha$ can be denested over $k$, then there is a denesting of $\alpha$ such that each of its terms lies in the splitting field of the minimal polynomial of $\alpha$ over $k$.
+
+There are two pieces left in the puzzle: (1) we must find a minimal length chain of subgroups $H_{i}$ satisfying the conditions of Lemma 2.1, and (2) we must figure out how to eliminate the requirement that the roots of unity lie in the base field. The first has a direct group-theoretic solution; the second requires the qualification discussed below.
+
+We call the subgroup $G^{\prime}=\left\langle g h g^{-1} h^{-1} \mid g, h \in G\right\rangle$ the commutator subgroup of $G$. The following is well-known:
+
+\noindent\textbf{Theorem 2.3.} Let $G$ be a group with subgroup $H$. If $H_{1}, \ldots, H_{l}$ satisfy $G=H_{0} \triangleright H_{1} \triangleright \ldots \triangleright H_{l}$, with $H_{i} / H_{i+1}$ abelian, and $H_{l} \subset H$, then it is also true that $G=G^{(0)} \triangleright$ $G^{(1)} \triangleright \ldots \triangleright G^{(l)}$, and $G^{(l)} \subseteq H$ with $G^{(i)} / G^{(i+1)}$ abelian, where $G^{(i+1)}=G^{(i) \prime}$.
+
+The following observation locates roots of unity already present in the splitting field.\\
+\noindent\textbf{Lemma 2.4.} Let $L$ be a Galois extension of $k$, with group $G$, and suppose $\xi_{s}$ is in $L$. If $H=G^{\prime}$ is the commutator subgroup of $G$, then $L^{H} \supseteq k\left(\xi_{s}\right)$.
+
+\noindent\textbf{Lemma 2.4.} does not by itself remove the roots-of-unity hypothesis: it locates roots already in $L$, not every root required to realize a cyclic extension by a pure radical. With the sufficient hypothesis that $k$ contains all roots of unity, the commutator criterion is as follows:
+
+\noindent\textbf{Theorem 2.5.} Suppose $k$ contains all roots of unity and $\alpha$, a nested radical over $k$, has minimal depth $l\geq1$. Let $L$ be the splitting field of the minimal polynomial of $\alpha$ over $k$ with Galois group $G$, and let $H$ be the subgroup of $G$ fixing $k(\alpha)$. Then $H \supseteq G^{(l)}$, but $H \nsupseteq G^{(l-1)}$.
+
+\editorialnote{Without the added hypothesis, Theorem 2.5 is false. Take $k=\Q$ and $\alpha=\sqrt[3]{2}$. Its radical depth is one, but its splitting field has Galois group $S_3$, whose commutator subgroup is $A_3$. The subgroup fixing $\Q(\sqrt[3]{2})$ has order two and does not contain $A_3$. Thus adjoining the necessary roots of unity cannot be hidden in the first depth layer without further analysis. For depth zero the separate condition is $\alpha\in k$, equivalently $H=G$.}
+
+
+\noindent\textbf{Theorem 2.6.} Suppose $\alpha$ is a nested radical over $k$, where $k$ is a field of characteristic zero containing all roots of unity. If $\alpha$ can be denested over $k$, then there is a denesting of $\alpha$ such that each of its terms lies in the splitting field of the minimal polynomial of $\alpha$ over $k$.
+
+\section*{3 The Algorithm and Running Time Analysis}
+\editorialnote{For the number-field construction, first form the original splitting field $L_0/k$, put $r_0=[L_0:k]$, choose $K=k(\xi_{r_0})$, and set $L=L_0K$. Then $\Gal(L/K)$ is a subgroup of $\Gal(L_0/k)$, so the orders of its cyclic subquotients divide $r_0$ and the necessary roots of unity lie in $K$. The discussion of fixed fields applies to this enlarged field as well. The least number of abelian layers \emph{within this chosen $L/K$} is measured by the derived series. This is not automatically the minimum radical depth over the original number field $k$. Where the original argument speaks of ``minimal depth'' in this section, this restricted, corrected interpretation applies.}
+In order to find a denesting of $\alpha$ over $k$, we begin by constructing the splitting field of the minimal polynomial of $\alpha$ over $k$. Using the standard techniques of Galois theory, we transform a question about polynomials to a question about groups. In Theorem 2.3 we have characterized the chain of subgroups which leads to a denesting of minimal depth. What we do now is show how to construct the appropriate field, given the subgroup. Finally we show how to realize that field as a radical extension. If $H_{1}, \ldots, H_{l}$ is the chain of subgroups associated with a denesting of $\alpha$, and $L$ is the splitting field of $\alpha$ over $k$, then $k(\alpha) \subseteq L^{H_{l}}$, and the field $L^{H_{l}}$ contains a denesting of $\alpha$ which is of minimal depth $l$.
+
+We first show how to construct the splitting field $L$ of $k(\alpha)$ over $k$. Following Artin, we construct a polynomial $s(x)$ whose roots $\theta_{1}, \ldots, \theta_{r}$ form a "normal" basis for $L$ over $k$; that is, degree $s(x)=[L: k]$, and $\theta_{1}, \ldots, \theta_{\mathrm{r}}$ are linearly independent over $k$. This enables us to easily construct the fixed fields of $L$ corresponding to subgroups of the Galois group $G$ : if $L^{H}=k\left(\beta_{1}, \ldots, \beta_{k}\right)$, then the $\beta_{j}$ are linear combinations of the $\theta_{i}$. By Lemma 2.4, all the roots of unity appearing in $L$ appear in $K=L^{G^{\prime}}$, the field fixed by the commutator subgroup of $G$. This locates the roots of unity already in $L$; it does not justify adding arbitrary roots of unity without changing the depth problem.
+
+From a sequence of subgroups $H_{i}$ with $G=H_{0} \triangleright H_{1} \triangleright$ $\ldots \triangleright H_{f}, H_{i} / H_{i+1}$ cyclic, and $H_{f} \subseteq H$, where $H$ is the subgroup of $G$ belonging to $k(\alpha)$, we use Hilbert's Theorem 90 to construct a tower of fields $K \subset K\left(\beta_{1}\right) \subset$ $\ldots \subset K\left(\beta_{1}, \ldots, \beta_{f}\right)$, where each extension is cyclic, and the expression for $\alpha$ in $K\left(\beta_{1}, \ldots, \beta_{f}\right)$ is of minimal nesting depth $l$. In our construction we will actually have two descriptions of the fields $K\left(\beta_{1}, \ldots, \beta_{i}\right)$, namely $K\left(\beta_{1}, \ldots, \beta_{i}\right)$ and $K[x] / g_{i}(x)$, where $g_{i}(x)$ is irreducible. We will do computations using the latter representation.
+
+From an algebraic point of view, a sensible measure of the size of the denesting problem is the size of the minimal polynomial of $\alpha$. In the full paper we show how to go from an expression of $\alpha$ of the form:
+
+\[
+\begin{aligned}
+\alpha_{1} & =\sqrt[n_1]{\tilde{p}_{1}}, \tilde{p}_{1} \in k \\
+\alpha_{2} & =\sqrt[n_2]{\tilde{p}_{2}\left(\alpha_{1}\right)} \\
+\alpha_{3} & =\sqrt[n_{3}]{\tilde{p}_{3}\left(\alpha_{1}, \alpha_{2}\right)}
+\end{aligned}
+\]
+
+\[
+\begin{gathered}
+\vdots \\
+\alpha=\alpha_{m}=\tilde{q}\left(\alpha_{1}, \ldots, \alpha_{m-1}\right)+\sqrt[n_m]{\tilde{p}_{m}\left(\alpha_{1}, \ldots, \alpha_{m-1}\right)},
+\end{gathered}
+\]
+
+to the minimal polynomial of $\alpha=\alpha_{m}$ over $k$. This polynomial is polynomial size in $n=\prod_{i=1}^{m} n_i,\left\|\alpha_{i}\right\|$, $\left\|\tilde{q}\left(x_{1}, \ldots, x_{m-1}\right)\right\|$ and $\left\|\tilde{p}_{i}\left(x_{1}, \ldots, x_{i-1}\right)\right\|$. Whether or not the minimal polynomial is polynomial in the length of the expression for $\alpha$ is an open question.
+
+Next we show that all the computations described above can be carried out in time polynomial in the size of the splitting field of the minimal polynomial of $\alpha$ over $k$. Our bounds are chosen for the relative simplicity of presentation, and are not necessarily the tightest possible. We will restrict our attention to $k=Q$ for the present.
+
+In [6], it was observed that the splitting field and Galois group $G$ can be computed in time polynomial in $r=|G|=[L: k]$ and $\log |f(x)|$. More precisely:
+
+\noindent\textbf{Theorem 3.1.} Let $f(x)$, an irreducible polynomial of degree $m$ over $k$, be the minimal polynomial of $\alpha$, a nested radical over $k$. The Galois group of $f(x)$ over $k$ can be computed in $O\left(r^{15+\epsilon} m^{7+\epsilon} \log ^{4+\epsilon}(r|f(y)|)\right)$ steps.
+
+Thus in time polynomial in the degree of the splitting field, and the size of the minimal polynomial of $\alpha$ over $k$, we can compute the Galois group. It has long been known how to compute commutator subgroups quickly from a group table; recently Babai, Luks and Seress [2] showed how to do so in $O\left(r^{4} \log ^{c} r\right)$ steps, for a permutation group on $r$ elements. This allows us to quickly compute the group $H_{l}$ such that $L^{H_{l}} \supset k(\alpha)$ with $\alpha$ having an expression of minimal nesting depth in $L^{H_l}$. It now remains to compute the appropriate fields.
+
+We say a polynomial $g(x)$ over a field $k$ is normal iff it is irreducible and $k[x] / g(x)$ is a Galois extension of $k$ (equivalently $g(y)$ splits completely in $k[x] / g(x)$ ). It is not hard to go from such a polynomial to one whose roots form a normal basis. Artin gave an effective method for calculating such a polynomial. His algorithm does so in $O\left(r^{7} \log ^{2+\epsilon}|f(y)|\right)$ steps.
+
+We are now in a position to compute fixed fields. Without loss of generality, suppose $\left\{\sigma_{1}, \ldots, \sigma_{l}\right\}$ are the elements of $H$. Let $\beta=\Sigma a_{j} \theta_{j}$, with $a_{j}$ in $k$, be an arbitrary element of $L^{H}$. For each $\sigma_{i}$ in $H$, we have
+
+
+\begin{equation*}
+\Sigma a_{j} \theta_{j}=\sigma_{i}\left(\Sigma a_{j} \theta_{j}\right)=\Sigma a_{j} \sigma_{i}\left(\theta_{j}\right) . \tag{4}\label{eq:4}
+\end{equation*}
+
+
+Since the Galois group sends roots of $s(x)$ to roots of $s(x)$, we have $\sigma_{i}\left(\theta_{j}\right)=\theta_{l}$ for some $l$. Because the $\theta_{j}$ are linearly independent over $k$, the only way equation 4 can be satisfied is if $a_{j}=a_{l}$. Every element in $H$ gives rise to equalities amongst the $a_{i}$, which leads to a series of relationships amongst the $\theta_{i}$. That is, if $a_{j}=a_{l}$, then in $L^{H}$ any expression containing $\theta_j$ must have $\theta_{l}$ appearing with the same coefficient. Computing all such relationships gives us exactly the fixed field associated with $H$. The full paper gives the algorithm.
+
+Next we need to transform our extensions into extensions by radicals. We transform our tower of groups into one in which each extension is cyclic. This is of course easy. If $H_{1}, \ldots H_{l}$ is a series of subgroups of $G=H_{0}$ satisfying $H_{i} \triangleright H_{i+1}$ and $H_{i} / H_{i+1}$ is abelian, then all we need to do is for each $i, i=0, \ldots, l-1$, find subgroups $H_{i 1}, \ldots, H_{i j_{i}}$, with $H_{i} / H_{i 1}$ cyclic, and $H_{i,k} / H_{i,k+1}$ cyclic for $k=1, \ldots, j_i-1$, ending at $H_{i,j_i}=H_{i+1}$. This can be done in time $O\left(r^{4} \log ^{c} r\right)$ steps [2].
+
+We have shown how to compute $K_{i}=L^{H_{i}}$. We wish to show how to write $K_{i}$ as a cyclic extension of $K$. Let us renumber the $H_{i}$ so that $G=H_{0} \triangleright H_{1} \triangleright \ldots \triangleright H_{f}$, with $H_{i} / H_{i+1}$ cyclic for $i=0, \ldots, f-1$.
+
+Suppose $\left[K_{1}: K\right]=l_{1}$; then we know that $\xi_{l_{1}}$ is in $K$. Thus the hypotheses of Hilbert's Theorem 90 are satisfied. Let $\sigma$ generate $\Gal(K_1/K)\cong H_0/H_1$. We seek a nonzero element $\beta\in K_1$ such that $\xi=\sigma(\beta)/\beta$, where $\xi=\xi_{l_1}$ is primitive. If $K_{1}=$ $K\left(\beta_{1}, \ldots, \beta_{n}\right)$, then $\beta=\Sigma b_{i} \beta_{i}$, with the $b_{i}$ in $K$. We know that
+
+\[
+\xi=\frac{\sum b_i\sigma(\beta_i)}{\sum b_i\beta_i} .
+\]
+
+We can solve for the $b_{i}$ using linear algebra. (There may be more than one $\beta$, but that does not present a problem.) Once we have found a $\beta$, we observe that $\sigma^{i}(\beta)=\xi^{i} \beta$ for $i=1, \ldots, l_{1}$. Since the elements $\xi^{i} \beta$ are distinct, we know that $[K(\beta): K] \geq l_{1}$. Thus $K_{1}=$ $K(\beta)$. Finally we know that
+
+\[
+\sigma\left(\beta^{l_{1}}\right)=(\sigma(\beta))^{l_1}=(\xi \beta)^{l_{1}}=\xi^{l_{1}} \beta^{l_{1}}=\beta^{l_{1}} .
+\]
+
+This implies that $\beta^{l_{1}}$ is in $K$. Let $b=\beta^{l_{1}}$; then $\beta$ satisfies $x^{l_{1}}-b$.\\
+There was nothing special about the fact that the extension was over $K$. The same construction will work over $K_{1}$, or any other field containing the appropriate roots of unity. Since all the needed roots of unity appear in $K$, that is not a problem.
+
+\noindent\textbf{Theorem 3.2.} (corrected scope). With the field and roots-of-unity assumptions above, the fixed-field and cyclic-extension computations construct a radical expression for $\alpha$ in the chosen extension. The least number of abelian layers in that extension is the least $l$ for which $G^{(l)}\subseteq H$. The original unrestricted minimum-depth assertion over an arbitrary $k$ does not follow from this construction.
+
+\subsection*{Algorithm: Compute Denesting}
+\noindent\textbf{Input.} The minimal polynomial $f(x)\in k[x]$ of a specified root $\alpha$, with $\alpha$ solvable by radicals.
+
+\noindent\textbf{Output.} A radical representation of $\alpha$ over the chosen cyclotomic base $K_0$ in a fixed-field tower. The root $\alpha$ must be identified, for example by an isolating region and compatible embeddings; a polynomial alone does not distinguish conjugates.
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+\item Compute the splitting field $L_0$ of $f$, set $r_0=[L_0:k]$, $K_0=k(\xi_{r_0})$, and $L=L_0K_0$.
+\item Compute $G=\Gal(L/K_0)$ and $H=\Gal(L/K_0(\alpha))$. Set $H_0=G$ and $i=0$.
+\item While $H_i\not\subseteq H$, set $H_{i+1}=H_i'$ and increment $i$. For the stipulated radical input the group is solvable, so this process terminates. Set $l=i$.
+\item Refine $H_0\triangleright\cdots\triangleright H_l$ to
+\[
+ J_0=G\triangleright J_1\triangleright\cdots\triangleright J_f=H_l
+\]
+with cyclic factors. Retain the boundaries of the original abelian layers.
+\item For $j=1,\ldots,f$, compute $K_j=L^{J_j}$ as an extension of $K_{j-1}$ and put $l_j=[K_j:K_{j-1}]$. Choose a generator $\sigma_j$ of
+$\Gal(K_j/K_{j-1})\cong J_{j-1}/J_j$.
+\item In a $K_{j-1}$-basis $\beta_1,\ldots,\beta_{l_j}$ of $K_j$, solve
+\[
+ \sum_t b_t\sigma_j(\beta_t)=\xi_{l_j}\sum_t b_t\beta_t
+\]
+for a nonzero $\beta=\sum_t b_t\beta_t$. Then $\beta^{l_j}\in K_{j-1}$ and $K_j=K_{j-1}(\beta)$.
+\item Express $\alpha\in K_f$ in the resulting generators. To preserve the original abelian-layer depth, realize each abelian layer by simultaneous Kummer generators over its lower field, rather than counting each cyclic refinement as a separate radical layer.
+\end{enumerate}
+
+\editorialnote{The algorithm block has been reconstructed from the original display, with its mathematical indexing repaired. In particular, the loop tests $H_i\not\subseteq H$, not $H_i\not\supseteq H$; the stabilizer is taken over the same base as $G$; cyclic generators belong to quotient groups; the initial field is $K_0$; and the terminal fixed field need not be all of $L$. Choosing a cyclotomic base is explicit. This construction is not a replacement proof of the unrestricted optimality assertion in the original abstract.}
+
+We have presented our algorithm as an algorithm over $Q$. The only reason for that is simplicity. The only requirement for the base field is that one needs to be able to factor polynomials over $k$. We can generalize Algorithm Compute Polynomial to compute a minimal polynomial for $\alpha$ over $k$. Of course, we can generalize Theorem 3.1 , and Algorithms Compute Fixed Field and Compute Denesting.
+
+\section*{4 Conclusions}
+In one sense, we have settled the question of denesting radicals, in another, we have not. We have given a structure theorem for the roots-of-unity setting and an algorithmic construction of radical representations, with the qualifications explained above for a general base.
+
+Our main algorithm is not fast. Thus we see the most important issue in this problem is speed. To this we have several comments:
+
+\begin{itemize}
+  \item[1.] Is there a way to perform these computations via a straightline program? The encoding in the straightline version would avoid the problem of coefficient blow-up. The main difficulty seems to be in computing the Galois group. We do not see how to determine the group without determining both $f(x)$, the minimal polynomial of $\alpha$ over $k$, and the splitting field of $f(x)$ over $k$. If a way could be found around these problems, then the entire algorithm could be sped up. We do not think this will be easy. In particular, it is likely that any technique which works here will also work to determine the Galois group in the solvable case. No polynomial time algorithms are presently known, and this would be a surprising and exciting breakthrough.
+  \item[2.] It is important to remember that the bounds given here are really upper bounds. The explicit splitting-field method has an exponential-size field representation when the splitting-field degree is exponential; the quoted bounds are upper bounds, not matching complexity lower bounds. If the degree of the splitting field is polynomially bounded, then so is the running time of the algorithm. Recall also that nearly all of the bounds follow from the factoring bound given in [9], and that bound is almost certainly not optimal. Any improvement in that bound will lead to great improvements in our bounds. Perhaps even more important to remember is that what is theoretically slow may be practically fast, and vice versa.
+  \item[3.] Our algorithm does not specifically examine the issue of determining if the expression equals zero. (We answer it, of course, in computing the minimal polynomial for $\alpha$ over $k$, but not efficiently.) Examining it leads to some interesting open questions on linear combinations of nested radicals. The case of nested square roots was treated by Borodin et al [3].
+\end{itemize}
+
+Acknowledgements: Warm thanks to Tsuneo Tamagawa, whose insights into Galois theory sped this paper along.
+
+\begin{thebibliography}{99}
+\bibitem{ref1} E. Artin, Galois Theory, University of Notre Dame Press, 1942.
+
+\bibitem{ref2} L. Babai, E. Luks and Á. Seress, Fast Management of Permutation Groups, Proceedings of the 29th Annual Symposium on Foundations of Computer Science (1988), pp. 272-282.
+
+\bibitem{ref3} A. Borodin, R. Fagin, J. Hopcroft and M. Tompa, Decreasing the Nesting Depth of Expressions Involving Square Roots, J. Symb. Comput., 1 (1985), pp. 169-188.
+
+\bibitem{ref4} B. Caviness and R. Fateman, Simplification of Radical Expressions, Proc. 1976 ACM Symposium on Symbolic and Algebraic Computation.
+
+\bibitem{ref5} D. Knuth, The Art of Computer Programming, Volume 2: Seminumerical Algorithms, Addison-Wesley, Reading, Mass. 1969.
+
+\bibitem{ref6} S. Landau, Factoring Polynomials over Algebraic Number Fields, SIAM J. of Comput., 14, No. 1 (1985), pp. 184-195.
+
+\bibitem{ref7} S. Lang, Algebra, Addison-Wesley, Reading, Mass., 1971.
+
+\bibitem{ref8} A.K. Lenstra, Factoring Polynomials over Algebraic Number Fields, Proceedings Eurocal (1983), Springer Verlag Lecture Notes in Computer Science, pp. 458-465.
+
+\bibitem{ref9} A.K. Lenstra, H. W. Lenstra, Jr., and L. Lovász, Factoring Polynomials with Rational Coefficients, Mathematische Annalen, 261 (1982), pp. 515--534.
+
+\bibitem{ref10} M. Mignotte, Some Inequalities about Univariate Polynomials, Proceedings of the 1981 ACM Symposium on Algebraic and Symbolic Computation, pp. 195-199.
+
+\bibitem{ref11} D. Richardson, Some Unsolved Problems Involving Elementary Functions of a Real Variable, J. Symbolic Logic, 33 (1968), pp. 514-520.
+
+\bibitem{ref12} J. Rotman, The Theory of Groups, Allyn and Bacon, Boston, Mass. (1973).
+
+\bibitem{ref13} P. Samuel, Algebraic Theory of Numbers, Hermann, Paris (1972).
+
+\bibitem{ref14} B. Trager, Algebraic Factoring and Rational Function Integration, Proceedings of the 1976 ACM Symposium on Symbolic and Algebraic Computations, pp. 219-226.
+
+\bibitem{ref15} P. Weinberger, and L. Rothschild, Factoring Polynomials over Algebraic Number Fields, ACM Transactions on Mathematical Software 2 (1976), pp. 335--350.
+
+\bibitem{ref16} H. Weyl, Algebraic Theory of Numbers, Princeton University Press (1940).
+
+\bibitem{ref17} R. Zippel, Simplification of Expressions Involving Radicals, J. Symbolic Computation, 1 (1985), pp. 189-210.
+\end{thebibliography}
+
+\end{document}

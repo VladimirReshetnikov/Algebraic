@@ -1,0 +1,3573 @@
+
+<!DOCTYPE html>
+<!-- Server: sfs-forge-2 -->
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html lang="en" class="no-js">
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type"/>
+    <title>Thread: [Maxima-discuss] Denesting radical expressions (package raddenest) | Maxima -- GPL CAS based on DOE-MACSYMA</title>
+    
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+
+<link rel="icon" sizes="180x180" href="https://a.fsdn.com/con/img/sandiego/logo-180x180.png" type="image/png">
+<link rel="icon" sizes="any" href="https://a.fsdn.com/con/img/sandiego/svg/originals/sf-icon-orange-no_sf.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" sizes="180x180" href="https://a.fsdn.com/con/img/sandiego/logo-180x180.png">
+<link rel="mask-icon" href="https://a.fsdn.com/con/img/sandiego/svg/originals/sf-icon-orange-no_sf.svg" color="#FF6600">
+
+
+<script src="https://a.fsdn.com/allura/nf/1788550315/_ew_/theme/sftheme/js/sftheme/cmp2.js"></script>
+
+
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    <link rel="stylesheet" href="https://a.fsdn.com/con/css/lato.css?1788550315">
+
+
+<script>
+if (!window.SF) { window.SF = {}; }
+SF.sandiego = false;
+SF.sandiego_chrome = true;
+SF.cdn = "https://a.fsdn.com/con";
+SF.fpid = '46a17776-e1de-45b5-8e7c-a52357d022d7';
+SF.comm_billboard_route = '/software/product/$slug/';
+SF.floatingSitewideOrigin = 'https://sourceforge.net';
+</script>
+    
+        <!-- ew:head_css -->
+
+    
+        <link rel="stylesheet"
+                type="text/css"
+                href="https://a.fsdn.com/allura/nf/1788550315/_ew_/_slim/css?href=tool%2Fmailman%2Fcss%2Fmailman.css%3Ballura%2Fcss%2Fforge%2Fhilite.css%3Ballura%2Fcss%2Fforge%2Ftooltipster.css"
+                >
+    
+        <link rel="stylesheet"
+                type="text/css"
+                href="https://a.fsdn.com/allura/nf/1788550315/_ew_/allura/css/font-awesome.min.css"
+                >
+    
+        <link rel="stylesheet"
+                type="text/css"
+                href="https://a.fsdn.com/allura/nf/1788550315/_ew_/theme/sftheme/css/forge.css"
+                >
+    
+        <link rel="stylesheet"
+                type="text/css"
+                href="https://a.fsdn.com/allura/nf/1788550315/_ew_/_slim/css?href=css%2Fpage_list.css"
+                >
+    
+        
+<!-- /ew:head_css -->
+
+    
+    
+        <!-- ew:head_js -->
+
+    
+        <script type="text/javascript" src="https://a.fsdn.com/allura/nf/1788550315/_ew_/_slim/js?href=allura%2Fjs%2Fjquery-3.6.0.min.js%3Ballura%2Fjs%2Fjquery.cookie-1.4.1.js%3Btheme%2Fsftheme%2Fjs%2Fsftheme%2Fshared_head.js%3Btheme%2Fsftheme%2Fjs%2Fsftheme%2Ftypescript%2Fcompliance.js"></script>
+    
+        
+<!-- /ew:head_js -->
+
+    
+
+    
+        <style type="text/css">
+            /* make URL &amp; Project custom fields in support tickets not get hidden as much */
+.project-forge.mountpoint-site-support .view_holder .grid-4:nth-child(5),
+.project-forge.mountpoint-site-support .view_holder .grid-4:nth-child(6) {
+  overflow: visible;
+  font-size: 22px;
+  width: 340px;
+  line-height: 1;
+  margin-bottom: 5px;
+}
+.project-forge.mountpoint-site-support .view_holder .grid-4:nth-child(5) label, .project-forge.mountpoint-site-support .view_holder .grid-4:nth-child(6) label {
+  font-size: 14px;
+}
+        </style>
+    
+    
+    <style>.XwUpVKAwpPCmrDvUuwMfwofDiHMXwowAOg {
+        display: none
+    }</style>
+
+    
+  
+    <link rel="canonical" href="https://sourceforge.net/p/maxima/mailman/maxima-discuss/thread/o6lan6$h4r$1@blaine.gmane.org/" ><link rel="next" href="https://sourceforge.net/p/maxima/mailman/maxima-discuss/thread/o6lan6$h4r$1@blaine.gmane.org/?page=1" >
+    
+
+<script>
+    bizx.uids.gatherAndClean({hem: null });
+</script>
+
+
+
+
+<script>
+    function initPiwik(){
+      var _paq = window._paq = window._paq || [];
+      _paq.push(['trackPageView', document.title, {
+            dimension1: 'maxima',
+            dimension2: 'mailman'
+      }]);
+      _paq.push(['enableLinkTracking']);
+      
+          _paq.push(['enableHeartBeatTimer']);
+      
+      (function() {
+        var u="//analytics.slashdotmedia.com/";
+        _paq.push(['setTrackerUrl', u+'sf.php']);
+        _paq.push(['setSiteId', 39]);
+        
+        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+        g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'sf.js'; s.parentNode.insertBefore(g,s);
+      })();
+    }
+    bizx.cmp.ifConsent({ purposes: ['storage', 'measurement'], vendors: 'sdm'}, initPiwik);
+</script>
+
+
+
+
+
+
+<!-- Hubspot tracking -->
+
+
+
+
+
+
+ <script>
+    $(function() {
+        bizx.cmp.ifConsent({ purposes: 'all' , vendors: 'narrative'}, function() {
+            var current_time = (new Date()).getTime();
+            let imageUrl = "https://io.narrative.io/?companyId=2440&id=first_party%3A46a17776-e1de-45b5-8e7c-a52357d022d7&id=site_name%3Asourceforge.net&id=url%3A%2Fp%2Fmaxima%2Fmailman%2Fmaxima-discuss%2Fthread%2Fo6lan6%24h4r%241%40blaine.gmane.org%2F&id=pagetitle%3A%24PAGE_TITLE&id=vertical%3AOpen+Source+Software&id=product%3AMaxima+--+GPL+CAS+based+on+DOE-MACSYMA";
+            imageUrl = imageUrl.replace(encodeURIComponent("$PAGE_TITLE"), document.title);  
+
+            imageUrl = URL.parse(imageUrl);
+            let hem = bizx.uids.getHem();
+            if (hem) {
+                imageUrl.searchParams.append('id', 'hem:' + hem);
+            }
+            imageUrl.searchParams.append('rand', current_time);
+
+            var image = new Image();
+            image.src = imageUrl.toString();
+            image.style.display = "none";
+            image.style.height = 0;
+            image.style.width = 0;
+            document.body.appendChild(image);
+        });
+    });
+</script>
+
+
+
+</head>
+
+<body class="
+body_class sandiego_chrome  sandiego  
+" id="forge">
+
+    
+        <!-- ew:body_top_js -->
+
+    
+        
+<!-- /ew:body_top_js -->
+
+    
+
+
+
+
+
+<div class="off-canvas position-right" id="offCanvas" data-off-canvas>
+    <!-- Menu -->
+    <ul class="header-nav-menulist">
+        <li class="highlight search">
+            
+                
+            
+            
+    <form method="get" action="/directory/" class="m-search-form">
+    
+        <input type="text" placeholder="Search for software or solutions" autocomplete="off" name="q" >
+        
+        <label >
+            <input type="submit" class="bt" value="">
+            
+
+
+<svg  data-name="search" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1216 832q0-185-131.5-316.5t-316.5-131.5-316.5 131.5-131.5 316.5 131.5 316.5 316.5 131.5 316.5-131.5 131.5-316.5zm512 832q0 52-38 90t-90 38q-54 0-90-38l-343-342q-179 124-399 124-143 0-273.5-55.5t-225-150-150-225-55.5-273.5 55.5-273.5 150-225 225-150 273.5-55.5 273.5 55.5 225 150 150 225 55.5 273.5q0 220-124 399l343 343q37 37 37 90z"/></svg>
+        </label>
+    </form>
+    
+        </li>
+        
+        <li class="highlight"><a href="/auth/">Join/Login</a></li>
+        
+        <li><a href="/software/">Business Software</a></li>
+        <li><a href="/directory/">Open Source Software</a></li>
+        <li><a  href="/software/vendors/" title="For Vendors">For Vendors</a></li>
+        <li><a href="/blog/" title="Blog">Blog</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a id="header-nav-more" data-toggle="header-nav-more header-nav-more-content" data-toggler=".toggled">More</a></li>
+        <li>
+            <ul id="header-nav-more-content" class="toggled" data-toggler=".toggled">
+                
+    
+
+    
+    
+        <li><a href="/articles/">Articles</a></li>
+    
+    
+
+    
+ 
+                
+                <li><a href="/create">Create</a></li>
+                
+                <li><a href="https://sourceforge.net/articles/category/sourceforge-podcast/">SourceForge Podcast</a></li>
+                
+                    <li><a href="https://sourceforge.net/p/forge/documentation/Docs%20Home/">Site Documentation</a></li>
+                
+                <li><a href="/user/newsletters">Subscribe to our Newsletter</a></li>
+                <li><a href="/support">Support Request</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+<div class="off-canvas-content" data-off-canvas-content>
+
+    
+
+  
+<script>SF.adblock = true; SF.ubo = true;</script>  
+<script src="https://a.fsdn.com/con/js/admanager.js?1788550315"></script>
+
+<script src="https://a.fsdn.com/con/js/asg_embed.js?1788550315"></script>
+
+
+
+
+
+
+<script>
+    SF.linkout_icon = '<svg  data-name="sf-linkout-icon" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 300 300" style="enable-background:new 0 0 300 300;" xml:space="preserve"><polygon class="st0" points="243.2,243.2 56.8,243.2 56.8,56.8 123,56.8 123,9 9,9 9,291 291,291 291,179.4 243.2,179 "/><polygon class="st0" points="128.5,213 155,186.5 176,165.5 206.7,196.3 235.5,132.5 248.9,102.6 290.6,9.8 291,9 290.6,9.2 197.4,51.1 169.1,63.8 103.7,93.3 137,126.5 115.9,147.5 89.5,174 "/></svg>';
+</script>
+
+
+<div class="l-header-nav sticky sandiego">
+
+    <section class="sandiego l-header-nav-top show-for-large">
+        <div class="row">
+            <a href="/" title="Home" class="sf-logo">
+                
+    
+    <img src="https://a.fsdn.com/con/images/sandiego/sf-logo-full.svg"  alt="SourceForge logo" class="sf-logo-full"/>
+            </a>
+            <nav class="links">
+                
+                    <a href="/user/newsletters" title="Subscribe to our newsletter"><span class="newsletter-icon">
+
+
+<svg  data-name="mmSF_11mail" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 42 42" enable-background="new 0 0 42 42" xml:space="preserve"><path fill="#FFFFFF" d="M0,6v30h42V6H0z M24.2,21.2c-0.8,0.8-2.3,2-3.2,2c-0.9,0-2.4-1.2-3.2-2L5.8,9.7h30.3L24.2,21.2z M13.7,21l-9.9,9.4V11.6L13.7,21z M15.7,23L15.7,23c0.5,0.5,2.9,2.9,5.3,2.9c2.4,0,4.8-2.4,5.2-2.8l0.1-0.1l9.8,9.4H5.8L15.7,23z M28.3,21l9.9-9.5v18.9L28.3,21z"/></svg></span></a>
+                
+                <a href="/software/vendors/" title="For Vendors">For Vendors</a>
+                
+                
+                    <a href="/support" title="Help">Help</a>
+                    <a href="/create/" title="Create">Create</a>
+                
+
+                
+                <a href="/user/registration" title="Join" >Join</a>
+                <a href="/auth/" title="Login">Login</a>
+                
+            </nav>
+        </div>
+    </section>
+
+    <section class="sandiego l-header-nav-top hide-for-large">
+        <div class="row">
+            <a href="/" title="Home" class="sf-logo">
+                
+    
+    <img src="https://a.fsdn.com/con/images/sandiego/sf-logo-full.svg"  alt="SourceForge logo" class="sf-logo-full"/>
+            </a>
+            <div class="title-bar-right">
+                <button type="button" aria-label="Toggle Main Menu" class="menu-icon" data-toggle="offCanvas"></button>
+            </div>
+        </div>
+    </section>
+    <section class="sandiego l-header-nav-bottom">
+        <nav class="row">
+            <a href="/" title="Home" class="sf-logo">
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 653 102.6" style="enable-background:new 0 0 653 102.6;" xml:space="preserve"><path class="st0" d="M66.9,54.5c0-19.1-6.8-27.8-10.4-31.1c-0.7-0.6-1.8-0.1-1.7,0.9c0.7,10.8-12.9,13.5-12.9,30.4h0    c0,0,0,0.1,0,0.1c0,10.3,7.8,18.7,17.4,18.7c9.6,0,17.4-8.4,17.4-18.7c0,0,0-0.1,0-0.1h0c0-4.8-1.8-9.4-3.6-12.8    c-0.4-0.7-1.4-0.4-1.3,0.2C75.1,56.7,66.9,65.7,66.9,54.5z"></path><g>    <path class="st0" d="M46.2,94.8c-0.4,0-0.9-0.2-1.2-0.5L0.5,49.8c-0.6-0.6-0.6-1.7,0-2.4l47-47C47.8,0.2,48.2,0,48.6,0h13.5        c0.8,0,1.3,0.5,1.5,1c0.2,0.5,0.2,1.2-0.4,1.8L19.1,47c-0.9,0.9-0.9,2.3,0,3.2L54,85.2c0.6,0.6,0.6,1.7,0,2.4l-6.7,6.8        C47,94.6,46.6,94.8,46.2,94.8z"></path></g><g>    <path class="st0" d="M55.1,102.6c-0.8,0-1.3-0.5-1.5-1c-0.2-0.5-0.2-1.2,0.4-1.8l44.2-44.2c0.4-0.4,0.7-1,0.7-1.6        c0-0.6-0.2-1.2-0.7-1.6L63.2,17.4c-0.6-0.6-0.6-1.7,0-2.4l6.8-6.8c0.3-0.3,0.7-0.5,1.2-0.5S72,8,72.3,8.3l44.4,44.5        c0.3,0.3,0.5,0.7,0.5,1.2s-0.2,0.9-0.5,1.2l-47,47c-0.3,0.3-0.7,0.5-1.2,0.5H55.1z"></path></g><g>    <g>        <path class="st1" d="M167.2,32c-0.2,0.4-0.5,0.6-1,0.6c-0.3,0-0.7-0.2-1.2-0.7c-0.5-0.5-1.2-1-2-1.5c-0.9-0.6-1.9-1.1-3.2-1.5            c-1.3-0.5-2.9-0.7-4.8-0.7c-1.9,0-3.5,0.3-5,0.8c-1.4,0.5-2.6,1.3-3.6,2.2s-1.7,2-2.2,3.2c-0.5,1.2-0.8,2.5-0.8,3.8            c0,1.8,0.4,3.2,1.1,4.4c0.7,1.1,1.7,2.1,3,2.9c1.2,0.8,2.6,1.5,4.2,2c1.6,0.6,3.2,1.1,4.8,1.6c1.6,0.5,3.2,1.1,4.8,1.8            c1.6,0.6,2.9,1.5,4.2,2.4s2.2,2.2,3,3.6c0.7,1.4,1.1,3.2,1.1,5.3c0,2.2-0.4,4.2-1.1,6.1c-0.7,1.9-1.8,3.6-3.2,5            c-1.4,1.4-3.2,2.5-5.2,3.4c-2.1,0.8-4.4,1.2-7,1.2c-3.4,0-6.4-0.6-8.8-1.8c-2.5-1.2-4.6-2.9-6.5-5l1-1.6c0.3-0.4,0.6-0.5,1-0.5            c0.2,0,0.5,0.1,0.8,0.4c0.3,0.3,0.8,0.7,1.2,1.1c0.5,0.4,1.1,0.9,1.8,1.4c0.7,0.5,1.5,1,2.4,1.4c0.9,0.4,1.9,0.8,3.1,1.1            c1.2,0.3,2.5,0.4,4,0.4c2.1,0,3.9-0.3,5.5-0.9c1.6-0.6,3-1.5,4.1-2.5s2-2.4,2.6-3.8c0.6-1.5,0.9-3.1,0.9-4.7            c0-1.8-0.4-3.3-1.1-4.5c-0.7-1.2-1.7-2.2-3-3c-1.2-0.8-2.6-1.5-4.2-2c-1.6-0.5-3.2-1.1-4.8-1.6c-1.6-0.5-3.2-1.1-4.8-1.7            c-1.6-0.6-2.9-1.4-4.2-2.4c-1.2-1-2.2-2.2-3-3.7c-0.7-1.5-1.1-3.3-1.1-5.6c0-1.7,0.3-3.4,1-5c0.7-1.6,1.6-3,2.9-4.3            c1.3-1.2,2.8-2.2,4.7-3c1.9-0.7,4-1.1,6.4-1.1c2.7,0,5.1,0.4,7.3,1.3c2.1,0.9,4.1,2.2,5.9,3.9L167.2,32z"></path>        <path class="st2" d="M152.9,78.8c-3.5,0-6.6-0.6-9.1-1.9c-2.5-1.2-4.8-3-6.7-5.1l-0.3-0.3l1.3-2c0.6-0.7,1.1-0.8,1.5-0.8            c0.4,0,0.8,0.2,1.2,0.6c0.3,0.3,0.8,0.7,1.3,1.1c0.5,0.4,1.1,0.9,1.7,1.4c0.7,0.5,1.4,0.9,2.3,1.3c0.9,0.4,1.9,0.8,3,1            c1.1,0.3,2.4,0.4,3.9,0.4c2,0,3.8-0.3,5.3-0.9c1.5-0.6,2.8-1.4,3.9-2.4c1-1,1.9-2.2,2.4-3.6c0.6-1.4,0.8-2.9,0.8-4.5            c0-1.7-0.3-3.1-1-4.2c-0.7-1.1-1.6-2-2.8-2.8c-1.2-0.8-2.5-1.4-4-1.9c-1.5-0.5-3.1-1.1-4.8-1.6c-1.7-0.5-3.3-1.1-4.8-1.7            c-1.6-0.7-3.1-1.5-4.3-2.5c-1.3-1-2.3-2.4-3.1-3.9c-0.8-1.6-1.2-3.5-1.2-5.8c0-1.8,0.3-3.6,1-5.3c0.7-1.7,1.7-3.2,3-4.5            c1.3-1.3,3-2.3,4.9-3.1c1.9-0.8,4.2-1.2,6.6-1.2c2.8,0,5.3,0.4,7.5,1.3c2.2,0.9,4.2,2.3,6.1,4.1l0.3,0.3l-1.1,2.1            c-0.6,1.1-1.7,1.4-3.1,0.1c-0.5-0.4-1.1-0.9-2-1.4c-0.8-0.5-1.9-1-3.1-1.5c-1.2-0.4-2.7-0.7-4.6-0.7c-1.8,0-3.4,0.3-4.8,0.8            c-1.3,0.5-2.5,1.2-3.4,2.1c-0.9,0.9-1.6,1.9-2.1,3c-0.5,1.1-0.7,2.4-0.7,3.6c0,1.6,0.3,3,1,4c0.7,1.1,1.6,2,2.8,2.8            c1.2,0.8,2.5,1.4,4,2c1.5,0.5,3.1,1.1,4.8,1.6c1.6,0.5,3.3,1.1,4.8,1.8c1.6,0.7,3.1,1.5,4.3,2.5c1.3,1,2.3,2.3,3.1,3.8            c0.8,1.5,1.2,3.4,1.2,5.6c0,2.2-0.4,4.4-1.2,6.4c-0.8,2-1.9,3.7-3.4,5.2c-1.5,1.5-3.3,2.6-5.4,3.5            C158.1,78.3,155.6,78.8,152.9,78.8z M138.4,71.3c1.7,1.9,3.7,3.4,6,4.5c2.4,1.2,5.3,1.8,8.6,1.8c2.5,0,4.8-0.4,6.8-1.2            c2-0.8,3.6-1.9,5-3.2c1.3-1.3,2.4-3,3.1-4.8c0.7-1.8,1.1-3.8,1.1-5.9c0-2-0.4-3.7-1-5.1c-0.7-1.3-1.6-2.5-2.8-3.4            c-1.2-0.9-2.5-1.7-4-2.4c-1.5-0.6-3.1-1.2-4.7-1.8c-1.6-0.5-3.2-1.1-4.8-1.6c-1.6-0.6-3-1.3-4.3-2.1c-1.3-0.8-2.3-1.9-3.1-3.1            c-0.8-1.2-1.2-2.8-1.2-4.7c0-1.4,0.3-2.8,0.8-4.1c0.5-1.3,1.3-2.5,2.3-3.4c1-1,2.3-1.8,3.8-2.3c1.5-0.6,3.3-0.8,5.2-0.8            c1.9,0,3.6,0.2,5,0.7c1.3,0.5,2.5,1,3.3,1.6c0.9,0.6,1.6,1.1,2.1,1.6c0.6,0.5,0.8,0.5,0.8,0.5c0.1,0,0.3,0,0.4-0.3l0.7-1.3            c-1.6-1.5-3.4-2.7-5.3-3.5c-2.1-0.8-4.4-1.2-7-1.2c-2.3,0-4.4,0.4-6.2,1.1c-1.8,0.7-3.3,1.7-4.5,2.8c-1.2,1.2-2.1,2.5-2.8,4.1            c-0.6,1.5-0.9,3.1-0.9,4.8c0,2.1,0.4,3.9,1.1,5.3c0.7,1.4,1.6,2.6,2.8,3.5c1.2,0.9,2.5,1.7,4,2.3c1.5,0.6,3.1,1.2,4.7,1.7            c1.6,0.5,3.2,1,4.8,1.6c1.6,0.6,3,1.2,4.3,2.1c1.3,0.8,2.4,1.9,3.1,3.2c0.8,1.3,1.2,2.9,1.2,4.9c0,1.8-0.3,3.4-0.9,5            c-0.6,1.6-1.5,2.9-2.7,4c-1.2,1.1-2.6,2-4.3,2.7c-1.7,0.6-3.6,1-5.7,1c-1.5,0-2.9-0.2-4.2-0.5c-1.2-0.3-2.3-0.7-3.2-1.1            c-0.9-0.4-1.8-0.9-2.5-1.5c-0.7-0.5-1.3-1-1.8-1.4c-0.5-0.4-0.9-0.8-1.2-1.1c-0.3-0.3-0.5-0.3-0.5-0.3c-0.1,0-0.3,0-0.5,0.3            L138.4,71.3z"></path>    </g>    <g>        <path class="st1" d="M226.7,51.6c0,4-0.6,7.6-1.8,10.9c-1.2,3.3-2.9,6.1-5.1,8.4c-2.2,2.3-4.8,4.1-7.8,5.4            c-3,1.3-6.4,1.9-10.1,1.9c-3.6,0-7-0.6-10-1.9c-3-1.3-5.6-3-7.8-5.4c-2.2-2.3-3.9-5.1-5.1-8.4c-1.2-3.3-1.8-6.9-1.8-10.9            c0-4,0.6-7.6,1.8-10.9c1.2-3.3,2.9-6.1,5.1-8.4c2.2-2.3,4.8-4.1,7.8-5.4c3-1.3,6.4-1.9,10-1.9c3.7,0,7.1,0.6,10.1,1.9            c3,1.3,5.6,3,7.8,5.4c2.2,2.3,3.9,5.1,5.1,8.4C226.1,44,226.7,47.6,226.7,51.6z M222.8,51.6c0-3.6-0.5-6.9-1.5-9.8            c-1-2.9-2.4-5.3-4.2-7.3c-1.8-2-4-3.5-6.6-4.6c-2.6-1.1-5.4-1.6-8.5-1.6c-3.1,0-5.9,0.5-8.5,1.6c-2.6,1.1-4.8,2.6-6.6,4.6            c-1.8,2-3.3,4.4-4.3,7.3c-1,2.9-1.5,6.1-1.5,9.8c0,3.6,0.5,6.9,1.5,9.8c1,2.9,2.4,5.3,4.3,7.3c1.8,2,4,3.5,6.6,4.6            c2.6,1.1,5.4,1.6,8.5,1.6c3.1,0,6-0.5,8.5-1.6c2.6-1,4.8-2.6,6.6-4.6c1.8-2,3.2-4.4,4.2-7.3C222.3,58.5,222.8,55.3,222.8,51.6z"></path>        <path class="st2" d="M202,78.7c-3.7,0-7.2-0.7-10.2-1.9c-3.1-1.3-5.8-3.1-8-5.5c-2.2-2.4-4-5.2-5.2-8.6c-1.2-3.3-1.9-7.1-1.9-11.1            c0-4,0.6-7.8,1.9-11.1c1.2-3.3,3-6.2,5.2-8.6c2.2-2.4,4.9-4.2,8-5.5c3.1-1.3,6.5-2,10.2-2c3.8,0,7.2,0.7,10.3,1.9            c3.1,1.3,5.8,3.1,8,5.5c2.2,2.4,4,5.3,5.2,8.6c1.2,3.3,1.8,7,1.8,11.1c0,4.1-0.6,7.8-1.8,11.1c-1.2,3.3-3,6.2-5.2,8.6            c-2.2,2.4-4.9,4.2-8,5.5C209.2,78.1,205.7,78.7,202,78.7z M202,25.7c-3.5,0-6.8,0.6-9.8,1.9c-2.9,1.2-5.5,3-7.6,5.2            c-2.1,2.2-3.8,5-4.9,8.2c-1.2,3.2-1.8,6.8-1.8,10.7c0,3.9,0.6,7.5,1.8,10.7c1.2,3.2,2.8,5.9,4.9,8.2c2.1,2.2,4.7,4,7.6,5.2            c2.9,1.2,6.2,1.8,9.8,1.8c3.6,0,6.9-0.6,9.8-1.8c2.9-1.2,5.5-3,7.6-5.2c2.1-2.2,3.8-5,4.9-8.1c1.2-3.2,1.8-6.8,1.8-10.7            c0-3.9-0.6-7.5-1.8-10.7c-1.2-3.2-2.8-5.9-4.9-8.2c-2.1-2.2-4.7-4-7.6-5.2C208.9,26.3,205.6,25.7,202,25.7z"></path>    </g>    <g>        <path class="st1" d="M256.4,74.9c2.5,0,4.7-0.4,6.7-1.3c2-0.9,3.6-2.1,5-3.6c1.4-1.5,2.4-3.4,3.1-5.4c0.7-2.1,1.1-4.3,1.1-6.8            V25.7h3.7v32.1c0,2.9-0.5,5.5-1.4,8c-0.9,2.5-2.2,4.6-3.9,6.5c-1.7,1.8-3.8,3.3-6.2,4.3c-2.4,1-5.2,1.6-8.2,1.6            c-3,0-5.8-0.5-8.2-1.6c-2.4-1.1-4.5-2.5-6.2-4.3c-1.7-1.8-3-4-3.9-6.5c-0.9-2.5-1.4-5.2-1.4-8V25.7h3.8v32c0,2.4,0.4,4.7,1.1,6.8            c0.7,2.1,1.8,3.9,3.1,5.4c1.4,1.5,3,2.7,5,3.6C251.6,74.5,253.9,74.9,256.4,74.9z"></path>        <path class="st2" d="M256.4,78.8c-3.1,0-5.9-0.5-8.4-1.6c-2.5-1.1-4.7-2.6-6.4-4.5c-1.7-1.9-3.1-4.2-4-6.7            c-0.9-2.5-1.4-5.3-1.4-8.2V25.1h5v32.7c0,2.3,0.4,4.5,1,6.6c0.7,2,1.7,3.8,3,5.2c1.3,1.5,2.9,2.6,4.8,3.5c1.9,0.8,4,1.3,6.4,1.3            c2.4,0,4.6-0.4,6.4-1.2c1.9-0.8,3.5-2,4.8-3.5c1.3-1.5,2.3-3.2,3-5.2c0.7-2,1-4.2,1-6.6V25.1h5v32.7c0,2.9-0.5,5.7-1.4,8.2            c-0.9,2.5-2.3,4.8-4,6.7c-1.7,1.9-3.9,3.4-6.4,4.5C262.3,78.3,259.5,78.8,256.4,78.8z M237.3,26.3v31.5c0,2.8,0.4,5.4,1.3,7.8            c0.9,2.4,2.1,4.5,3.8,6.3c1.6,1.8,3.6,3.2,6,4.2c2.3,1,5,1.5,8,1.5c2.9,0,5.6-0.5,8-1.5c2.3-1,4.4-2.4,6-4.2            c1.6-1.8,2.9-3.9,3.8-6.3c0.9-2.4,1.3-5,1.3-7.8V26.3h-2.5v31.5c0,2.5-0.4,4.8-1.1,7c-0.7,2.2-1.8,4.1-3.3,5.7            c-1.4,1.6-3.2,2.9-5.2,3.8c-2,0.9-4.4,1.4-6.9,1.4c-2.6,0-4.9-0.5-6.9-1.4c-2-0.9-3.8-2.2-5.2-3.8c-1.4-1.6-2.5-3.5-3.2-5.7            c-0.7-2.1-1.1-4.5-1.1-7V26.3H237.3z"></path>    </g>    <g>        <path class="st1" d="M297.5,51.3c1,0,0.9,0,0.9,0l2.2,0c2.3,0,4.4-0.3,6.2-0.8c1.8-0.6,3.4-1.3,4.6-2.4c1.3-1,2.2-2.3,2.9-3.7            c0.7-1.4,1-3.1,1-4.9c0-3.7-1.2-6.4-3.6-8.2c-2.4-1.8-5.9-2.7-10.6-2.7h-9.5v22.7v2.8v23.5h-3.7V25.7h13.2c6,0,10.5,1.2,13.4,3.5            c3,2.3,4.4,5.7,4.4,10.2c0,2-0.3,3.8-1,5.4c-0.7,1.6-1.7,3.1-3,4.3c-1.3,1.2-2.8,2.3-4.6,3c-1.8,0.8-3.9,1.3-6.1,1.6            c0.6,0.4,1.1,0.9,1.6,1.5l17.9,22.4h-3.3c-0.4,0-0.7-0.1-1-0.2c-0.3-0.1-0.6-0.4-0.8-0.7l-16.6-21c-0.4-0.5-0.9-0.9-1.3-1.1            c-0.5-0.2-3.4-0.3-4.4-0.3C296.3,51.6,296.7,51.3,297.5,51.3z"></path>        <path class="st2" d="M325,78.2h-4.5c-0.5,0-0.9-0.1-1.3-0.3c-0.4-0.2-0.7-0.5-1-0.9l-16.6-21c-0.4-0.5-0.7-0.8-1.1-1            c-0.4-0.1-2.8-0.3-4.1-0.3h-0.6v-2.6c0-0.9,0.2-1.4,1.8-1.4c0.9,0,1,0,1,0l2.2,0c2.2,0,4.2-0.3,6-0.8c1.7-0.5,3.2-1.3,4.4-2.3            c1.2-1,2.1-2.1,2.7-3.5c0.6-1.4,0.9-2.9,0.9-4.6c0-3.5-1.1-6-3.4-7.7c-2.3-1.7-5.7-2.6-10.2-2.6h-8.9v48.9h-5V25.1h13.9            c6.1,0,10.7,1.2,13.8,3.6c3.1,2.4,4.7,6,4.7,10.7c0,2.1-0.4,4-1.1,5.7c-0.7,1.7-1.8,3.2-3.1,4.5c-1.3,1.3-3,2.3-4.8,3.2            c-1.5,0.6-3.1,1.1-4.9,1.4c0.2,0.2,0.4,0.4,0.6,0.7L325,78.2z M296.9,53.5c1.1,0,3.4,0.1,4,0.4c0.6,0.3,1.1,0.7,1.6,1.3l16.6,21            c0.2,0.3,0.4,0.5,0.6,0.6c0.2,0.1,0.4,0.2,0.7,0.2h2l-17.1-21.4c-0.4-0.6-0.9-1-1.4-1.3l-1.5-0.9l1.8-0.2c2.2-0.2,4.2-0.7,5.9-1.5            c1.7-0.8,3.2-1.7,4.5-2.9c1.2-1.2,2.2-2.5,2.8-4.1c0.6-1.6,1-3.3,1-5.2c0-4.3-1.4-7.5-4.2-9.7c-2.8-2.2-7.2-3.3-13-3.3h-12.6V77            h2.5V28h10.1c4.7,0,8.4,0.9,10.9,2.8c2.6,1.9,3.9,4.8,3.9,8.7c0,1.9-0.4,3.6-1,5.1c-0.7,1.5-1.7,2.8-3.1,3.9            c-1.3,1.1-2.9,1.9-4.8,2.5c-1.9,0.6-4,0.9-6.4,0.9l-2.2,0c-0.1,0-0.2,0-0.9,0C297.3,51.9,297,51.9,296.9,53.5z"></path>    </g>    <g>        <path class="st1" d="M367.6,68.8c0.2,0,0.5,0.1,0.6,0.3l1.5,1.6c-1.1,1.1-2.2,2.2-3.5,3.1c-1.3,0.9-2.7,1.7-4.2,2.3            c-1.5,0.6-3.2,1.1-4.9,1.5c-1.8,0.4-3.8,0.5-5.9,0.5c-3.6,0-6.9-0.6-9.9-1.9c-3-1.3-5.6-3-7.7-5.4c-2.1-2.3-3.8-5.1-5-8.4            c-1.2-3.3-1.8-6.9-1.8-10.9c0-3.9,0.6-7.5,1.9-10.8c1.2-3.3,3-6,5.2-8.4c2.2-2.3,4.9-4.1,8-5.4c3.1-1.3,6.6-1.9,10.3-1.9            c1.9,0,3.6,0.1,5.2,0.4c1.6,0.3,3,0.7,4.4,1.2c1.4,0.5,2.6,1.2,3.8,2c1.2,0.8,2.4,1.7,3.5,2.7l-1.1,1.6c-0.2,0.3-0.5,0.4-0.9,0.4            c-0.2,0-0.5-0.1-0.8-0.4c-0.3-0.3-0.8-0.6-1.3-1c-0.5-0.4-1.2-0.8-1.9-1.2c-0.7-0.5-1.6-0.9-2.7-1.2c-1-0.4-2.2-0.7-3.6-1            c-1.3-0.3-2.9-0.4-4.6-0.4c-3.2,0-6.1,0.5-8.7,1.6c-2.6,1.1-4.9,2.6-6.8,4.7c-1.9,2-3.4,4.5-4.5,7.3s-1.6,6.1-1.6,9.7            c0,3.7,0.5,6.9,1.6,9.8c1.1,2.9,2.5,5.3,4.4,7.3c1.9,2,4.1,3.5,6.6,4.6c2.5,1.1,5.3,1.6,8.2,1.6c1.9,0,3.5-0.1,5-0.4            c1.5-0.2,2.8-0.6,4-1.1c1.2-0.5,2.4-1.1,3.4-1.8c1.1-0.7,2.1-1.5,3.1-2.5c0.1-0.1,0.2-0.2,0.3-0.2            C367.3,68.9,367.5,68.8,367.6,68.8z"></path>        <path class="st2" d="M351.1,78.8c-3.7,0-7.1-0.7-10.1-1.9c-3.1-1.3-5.7-3.1-7.9-5.5c-2.2-2.4-3.9-5.2-5.1-8.6            c-1.2-3.3-1.8-7.1-1.8-11.1c0-4,0.6-7.7,1.9-11c1.3-3.3,3.1-6.2,5.3-8.6c2.3-2.4,5.1-4.3,8.2-5.6c3.2-1.3,6.7-2,10.6-2            c1.9,0,3.7,0.1,5.3,0.4c1.6,0.3,3.1,0.7,4.5,1.2c1.4,0.5,2.7,1.2,3.9,2c1.2,0.8,2.4,1.7,3.6,2.8l0.4,0.4l-1.4,2.1            c-0.2,0.3-0.6,0.7-1.4,0.7c-0.4,0-0.7-0.2-1.2-0.5c-0.3-0.3-0.8-0.6-1.3-0.9c-0.5-0.4-1.1-0.8-1.9-1.2c-0.7-0.4-1.6-0.8-2.6-1.2            c-1-0.4-2.2-0.7-3.5-0.9c-1.3-0.2-2.8-0.4-4.5-0.4c-3.1,0-5.9,0.5-8.5,1.6c-2.5,1.1-4.8,2.6-6.6,4.5c-1.8,1.9-3.3,4.3-4.3,7.1            c-1,2.8-1.6,6-1.6,9.4c0,3.6,0.5,6.8,1.5,9.6c1,2.8,2.4,5.2,4.2,7.1c1.8,1.9,3.9,3.4,6.4,4.4c2.4,1,5.1,1.5,8,1.5            c1.8,0,3.5-0.1,4.9-0.4c1.4-0.2,2.7-0.6,3.9-1.1c1.2-0.5,2.3-1.1,3.3-1.7c1-0.7,2-1.5,3-2.4c0.2-0.2,0.3-0.2,0.5-0.3            c0.5-0.3,1.3-0.2,1.7,0.3l1.9,2l-0.4,0.4c-1.1,1.2-2.3,2.2-3.6,3.2c-1.3,0.9-2.7,1.8-4.3,2.4c-1.5,0.7-3.2,1.2-5.1,1.5            C355.3,78.6,353.3,78.8,351.1,78.8z M352.2,25.7c-3.7,0-7.1,0.6-10.1,1.9c-3,1.2-5.7,3-7.8,5.3c-2.2,2.3-3.9,5-5.1,8.2            c-1.2,3.2-1.8,6.7-1.8,10.6c0,3.9,0.6,7.5,1.8,10.7c1.2,3.2,2.8,5.9,4.9,8.2c2.1,2.2,4.6,4,7.5,5.2c2.9,1.2,6.1,1.8,9.6,1.8            c2.1,0,4-0.2,5.8-0.5c1.7-0.3,3.4-0.8,4.8-1.5c1.5-0.6,2.8-1.4,4-2.3c1.1-0.8,2.1-1.7,3-2.6l-1.1-1.2c-0.1-0.1-0.2-0.1-0.3,0            c-0.1,0-0.2,0.1-0.3,0.2c-1,0.9-2.1,1.8-3.2,2.5c-1.1,0.7-2.3,1.4-3.5,1.9c-1.3,0.5-2.7,0.9-4.1,1.1c-1.5,0.2-3.2,0.4-5.1,0.4            c-3,0-5.9-0.6-8.5-1.6c-2.6-1.1-4.9-2.7-6.8-4.7c-1.9-2-3.4-4.6-4.5-7.5c-1.1-2.9-1.6-6.3-1.6-10c0-3.6,0.5-6.9,1.6-9.9            c1.1-2.9,2.6-5.5,4.6-7.5c2-2.1,4.3-3.7,7-4.8c2.7-1.1,5.7-1.7,8.9-1.7c1.7,0,3.3,0.1,4.7,0.4c1.4,0.3,2.6,0.6,3.7,1            c1.1,0.4,2,0.8,2.8,1.3c0.8,0.5,1.4,0.9,1.9,1.3c0.5,0.4,1,0.7,1.3,1c0.3,0.3,0.5,0.3,0.5,0.3c0.3,0,0.4-0.1,0.4-0.2l0.8-1.2            c-1-0.9-2-1.6-3-2.3c-1.2-0.8-2.4-1.4-3.7-1.9c-1.3-0.5-2.8-0.9-4.3-1.2C355.7,25.9,354,25.7,352.2,25.7z"></path>    </g>    <g>        <path class="st1" d="M410.3,25.7v3.1H383v21h22.7v3H383v21.6h27.3v3.1h-31.1V25.7H410.3z"></path>        <path class="st2" d="M410.9,78.2h-32.3V25.1h32.3v4.3h-27.3v19.7h22.7v4.3h-22.7v20.4h27.3V78.2z M379.8,77h29.9v-1.9h-27.3V52.2            h22.7v-1.8h-22.7V28.2h27.3v-1.9h-29.9V77z"></path>    </g>    <g>        <path class="st1" d="M456.8,25.1V33h-23.5v15.7h19.8v7.9h-19.8v21.6h-9.9v-53H456.8z"></path>    </g>    <g>        <path class="st1" d="M514.3,51.6c0,3.9-0.6,7.5-1.9,10.8c-1.3,3.3-3.1,6.2-5.5,8.6c-2.3,2.4-5.2,4.3-8.5,5.7c-3.3,1.4-7,2-11,2            c-4,0-7.7-0.7-11-2c-3.3-1.4-6.1-3.2-8.5-5.7c-2.4-2.4-4.2-5.3-5.5-8.6s-1.9-6.9-1.9-10.8s0.6-7.5,1.9-10.8            c1.3-3.3,3.1-6.2,5.5-8.6c2.4-2.4,5.2-4.3,8.5-5.7c3.3-1.4,7-2,11-2c4,0,7.7,0.7,11,2.1c3.3,1.4,6.1,3.3,8.5,5.7            c2.3,2.4,4.2,5.3,5.5,8.6C513.6,44.1,514.3,47.7,514.3,51.6z M504.2,51.6c0-2.9-0.4-5.5-1.2-7.8c-0.8-2.3-1.9-4.3-3.3-5.9            c-1.4-1.6-3.2-2.8-5.3-3.7c-2.1-0.9-4.4-1.3-7-1.3c-2.6,0-4.9,0.4-7,1.3c-2.1,0.9-3.8,2.1-5.3,3.7c-1.5,1.6-2.6,3.6-3.4,5.9            c-0.8,2.3-1.2,4.9-1.2,7.8s0.4,5.5,1.2,7.8c0.8,2.3,1.9,4.3,3.4,5.9c1.5,1.6,3.2,2.8,5.3,3.7c2.1,0.9,4.4,1.3,7,1.3            c2.6,0,4.9-0.4,7-1.3c2.1-0.9,3.8-2.1,5.3-3.7c1.4-1.6,2.5-3.6,3.3-5.9C503.8,57.1,504.2,54.5,504.2,51.6z"></path>    </g>    <g>        <path class="st1" d="M534.9,50.4l2.3,0c1.9,0,3.5-0.2,4.9-0.7c1.4-0.5,2.5-1.1,3.4-1.9c0.9-0.8,1.6-1.8,2-2.9            c0.4-1.1,0.7-2.4,0.7-3.7c0-2.7-0.9-4.8-2.7-6.2c-1.8-1.4-4.5-2.2-8.1-2.2H531v17.6v7.1v20.7h-9.9v-53h16.2c3.6,0,6.7,0.4,9.3,1.1            c2.6,0.7,4.7,1.8,6.3,3.1c1.6,1.3,2.9,3,3.6,4.8c0.8,1.9,1.2,3.9,1.2,6.2c0,1.8-0.3,3.5-0.8,5.1c-0.5,1.6-1.3,3-2.3,4.3            c-1,1.3-2.2,2.4-3.7,3.4c-1.5,1-3.1,1.8-5,2.3c1.2,0.7,2.3,1.7,3.2,3l13.3,19.6h-8.9c-0.9,0-1.6-0.2-2.2-0.5            c-0.6-0.3-1.1-0.8-1.5-1.5c0,0-11.1-17-11.1-17c-0.3-0.4-0.9-1.3-1.5-1.4c-1.2,0-2.4,0-3.5,0c0,0,0-6,0-6.4            C533.8,50.4,534.9,50.4,534.9,50.4z"></path>    </g>    <g>        <path class="st1" d="M591.4,70.9c2.2,0,4.2-0.2,5.8-0.6c1.6-0.4,3.2-1,4.7-1.7v-12h-6.6c-0.6,0-1.1-0.2-1.5-0.5            c-0.4-0.4-0.6-0.8-0.6-1.3v-5.6h17.6V73c-1.3,1-2.7,1.8-4.2,2.5c-1.5,0.7-3,1.3-4.7,1.8c-1.7,0.5-3.4,0.8-5.3,1            c-1.9,0.2-3.9,0.3-6.1,0.3c-3.9,0-7.4-0.7-10.7-2c-3.3-1.3-6.1-3.2-8.4-5.6c-2.4-2.4-4.2-5.3-5.6-8.6c-1.3-3.3-2-7-2-10.9            c0-4,0.6-7.6,1.9-11c1.3-3.3,3.1-6.2,5.5-8.6c2.4-2.4,5.3-4.3,8.7-5.6c3.4-1.3,7.2-2,11.4-2c4.3,0,8.1,0.6,11.2,1.9            c3.2,1.3,5.8,3,8,5l-2.9,4.5c-0.6,0.9-1.3,1.4-2.2,1.4c-0.6,0-1.2-0.2-1.8-0.6c-0.8-0.5-1.6-0.9-2.4-1.4c-0.8-0.5-1.7-0.9-2.7-1.2            c-1-0.3-2.1-0.6-3.3-0.8c-1.2-0.2-2.7-0.3-4.3-0.3c-2.6,0-5,0.4-7.1,1.3c-2.1,0.9-3.9,2.1-5.4,3.8c-1.5,1.6-2.6,3.6-3.4,5.9            c-0.8,2.3-1.2,4.9-1.2,7.7c0,3.1,0.4,5.8,1.3,8.2c0.9,2.4,2.1,4.4,3.6,6s3.4,2.9,5.5,3.8S588.9,70.9,591.4,70.9z"></path>    </g>    <g>        <path class="st1" d="M645.7,56.8h-16.1v13.4H653v7.9h-33.4v-53H653V33h-23.5v16.3H648v5.8C648,55.1,647.9,56.8,645.7,56.8z"></path>    </g></g></svg>
+            </a>
+            <div class="links">
+                
+    
+        <div class="nav-dropdown">
+            <a href="/software/">Business Software</a>
+            
+        </div>
+        <div class="nav-dropdown">
+            <a href="/directory/" title="Browse">Open Source Software</a>
+            
+        </div>
+        <div class="nav-dropdown">
+            <a href="https://sourceforge.net/articles/category/sourceforge-podcast/">SourceForge Podcast</a>
+        </div>
+        <div class="nav-dropdown">
+            <a>Resources</a>
+            <ul class="nav-dropdown-menu">
+                  <li><a href="/articles/">Articles</a></li>
+                  
+                  <li><a href="/software/case-studies/">Case Studies</a></li>
+                  
+                  <li><a href="/blog/">Blog</a></li>
+            </ul>
+        </div>
+    
+
+                <div class="dev-menu-when-stuck">
+                    Menu
+                    <ul class="dev-menu-dropdown header-nav-menulist">
+                        <li><a href="/support">Help</a></li>
+                        <li><a href="/create">Create</a></li>
+                        <li><a href="/user/registration/" title="Join" >Join</a></li>
+                        <li><a href="/auth/" title="Login">Login</a></li>
+                    </ul>
+                </div>
+                <div class="search-toggle-when-stuck">
+                    <a class="search-toggle">
+                        
+
+
+<svg  data-name="search" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1216 832q0-185-131.5-316.5t-316.5-131.5-316.5 131.5-131.5 316.5 131.5 316.5 316.5 131.5 316.5-131.5 131.5-316.5zm512 832q0 52-38 90t-90 38q-54 0-90-38l-343-342q-179 124-399 124-143 0-273.5-55.5t-225-150-150-225-55.5-273.5 55.5-273.5 150-225 225-150 273.5-55.5 273.5 55.5 225 150 150 225 55.5 273.5q0 220-124 399l343 343q37 37 37 90z"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="search">
+                
+                    
+
+                
+                
+                    
+                
+                
+                
+                
+    <form method="get" action="/directory/" class="m-search-form">
+    
+    <div class="typeahead__container">
+      <div class="typeahead__field">
+        <div class="typeahead__query">
+        
+        <input type="text" placeholder="Search for software or solutions" autocomplete="off" name="q" >
+        
+        </div>
+        
+        <label >
+            <input type="submit" class="bt" value="">
+            
+
+
+<svg  data-name="search" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1216 832q0-185-131.5-316.5t-316.5-131.5-316.5 131.5-131.5 316.5 131.5 316.5 316.5 131.5 316.5-131.5 131.5-316.5zm512 832q0 52-38 90t-90 38q-54 0-90-38l-343-342q-179 124-399 124-143 0-273.5-55.5t-225-150-150-225-55.5-273.5 55.5-273.5 150-225 225-150 273.5-55.5 273.5 55.5 225 150 150 225 55.5 273.5q0 220-124 399l343 343q37 37 37 90z"/></svg>
+        </label>
+      </div>
+    </div>
+    
+    </form>
+    
+                
+            </div>
+        </nav>
+        
+    </section>
+
+    
+</div>
+
+
+
+
+    
+    
+    <div class="notification-on-project-page">
+    
+        
+    
+    
+    
+    </div>
+    
+    
+
+
+    <section id="page-body" class=" neighborhood-Projects project-maxima mountpoint-mailman 
+
+">
+        <div id="nav_menu_holder">
+            
+                
+                    
+    <div class="sandiego"> 
+            
+            
+            
+            
+<section class="project-masthead"> 
+    
+    
+
+    
+<div class="backdrop" style="box-sizing: content-box; padding-bottom: 24px"></div>
+
+    <div class="content">
+    
+        
+    <nav id="breadcrumbs" class="breadcrumbs rtl">
+        <ul itemscope itemtype="http://schema.org/BreadcrumbList">
+            <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                <a itemprop="item" href="/"><span itemprop="name">Home</span></a>
+                <meta itemprop="position" content="1"/>
+            </li>
+            <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                <a itemprop="item" href="/directory/"><span itemprop="name">Browse</span></a>
+                <meta itemprop="position" content="2"/>
+            </li>
+            
+            
+                
+                
+            
+            
+                
+            
+            
+                <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                    <a itemprop="item" href="/p/maxima/"><span itemprop="name">Maxima -- GPL CAS based on DOE-MACSYMA</span></a>
+                <meta itemprop="position" content="3"/>
+                </li>
+            
+                <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                    <span itemprop="name">Mailing Lists</span>
+                <meta itemprop="position" content="4"/>
+                </li>
+            
+        </ul>
+    </nav>
+    
+    
+    
+        
+                
+                
+<div class="overview">
+    
+        
+    
+
+
+<div class="project-icon   " >
+    
+    
+    <img itemprop="image" alt="Maxima -- GPL CAS based on DOE-MACSYMA" title="Maxima -- GPL CAS based on DOE-MACSYMA" 
+    
+    
+    src="https://a.fsdn.com/allura/p/maxima/icon?1513635564&amp;w=90"
+    srcset="https://a.fsdn.com/allura/p/maxima/icon?w=135&amp;1513635564 1.5x
+        "/></div>
+
+
+    
+    <div class="title long-title"> 
+
+        <meta itemprop="name" content="Maxima -- GPL CAS based on DOE-MACSYMA"/>
+        <h1 class="long-title" >Thread: [Maxima-discuss] Denesting radical expressions (package raddenest)
+            
+        </h1>
+        
+        <h2 class="as-h3 summary">
+            Computer Algebra System written in Common Lisp
+        </h2>
+        
+            
+            
+          
+        
+            
+            
+            <div class="as-h3 brought-by">
+                
+                Brought to you by:
+                
+                    <a href="/u/kjak/profile/">kjak</a>,
+                    
+                
+                    <a href="/u/l_butler/profile/">l_butler</a>,
+                    
+                
+                    <a href="/u/macrakis/profile/">macrakis</a>,
+                    
+                
+                    <a href="/u/robert_dodier/profile/">robert_dodier</a>,
+                    
+                
+                    
+                        and <a href="/p/maxima/_members/">2 others</a>
+                    
+                
+            </div>
+            
+        
+
+        
+
+        
+    </div>
+
+
+    
+
+</div>
+
+                
+                
+    
+  
+            
+            
+        
+    </div>
+</section>
+
+        </div>
+    
+
+                
+            
+        </div>
+        <div id="top_nav" class="">
+            
+                
+<div id="top_nav_admin">
+<ul class="dropdown">
+  
+  
+    <li class="">
+        <a href="/projects/maxima/" class="tool-summary-32" >
+            Summary
+        </a>
+        
+        
+    </li>
+  
+    <li class="">
+        <a href="/projects/maxima/files/" class="tool-files-sf-32" >
+            Files
+        </a>
+        
+        
+    </li>
+  
+    <li class="">
+        <a href="/projects/maxima/reviews/" class="tool-reviews-32" >
+            Reviews
+        </a>
+        
+        
+    </li>
+  
+    <li class="">
+        <a href="/projects/maxima/support" class="tool-support-32" >
+            Support
+        </a>
+        
+        
+    </li>
+  
+    <li class="">
+        <a href="/p/maxima/wiki/" class="tool-wiki-32" >
+            Wiki
+        </a>
+        
+        
+    </li>
+  
+    <li class="selected">
+        <a href="/p/maxima/mailman/" class="tool-mailman-32" >
+            Mailing Lists
+        </a>
+        
+        
+    </li>
+  
+    <li class="">
+        <a href="/p/maxima/_list/tickets" class="tool-tickets-32" >
+            Tickets ▾
+        </a>
+        
+        
+            <ul>
+                
+                    <li class=""><a href="/p/maxima/feature-requests/" >Feature Requests</a></li>
+                
+                    <li class=""><a href="/p/maxima/patches/" >Patches</a></li>
+                
+                    <li class=""><a href="/p/maxima/bugs/" >Bugs</a></li>
+                
+            </ul>
+        
+    </li>
+  
+    <li class="">
+        <a href="/p/maxima/news/" class="tool-blog-32" >
+            News
+        </a>
+        
+        
+    </li>
+  
+    <li class="">
+        <a href="/p/maxima/discussion/" class="tool-discussion-32" >
+            Discussion
+        </a>
+        
+        
+    </li>
+  
+    <li class="">
+        <a href="/p/maxima/_list/git" class="tool-git-32" >
+            Git ▾
+        </a>
+        
+        
+            <ul>
+                
+                    <li class=""><a href="/p/maxima/code/" >Code</a></li>
+                
+                    <li class=""><a href="/p/maxima/website/" >Website</a></li>
+                
+                    <li class=""><a href="/p/maxima/site-xml/" >Site Xml</a></li>
+                
+            </ul>
+        
+    </li>
+  
+  
+</ul>
+</div>
+
+
+            
+        </div>
+        <div id="content_base">
+            
+
+    
+                
+                    
+<a id="sidebar-activate" href="#">
+    <span class="btn-label">Menu</span>
+    <span class="btn-arrow-down">▾</span>
+    <span class="btn-arrow-up">▴</span>
+</a>
+
+                        
+
+
+<div id="sidebar">
+  
+    <form id="search" method="GET" action="/p/maxima/mailman/search/">
+      <input name="q" type="text" title="Search Mailing Lists" placeholder="Search Mailing Lists">
+      <label>
+        <input type="submit" style="display:none">
+        <b class="fa fa-search" title="Submit"></b>
+      </label>
+    </form>
+  
+    
+    
+      
+      
+        
+    
+      <ul class="sidebarmenu">
+      
+    
+  <li>
+      
+        <a href="/p/maxima/mailman/maxima-bugs/"  >
+      
+      <span>maxima-bugs</span>
+      </a>
+  </li>
+  
+      
+        
+    
+  <li>
+      
+        <a href="/p/maxima/mailman/maxima-commits/"  >
+      
+      <span>maxima-commits</span>
+      </a>
+  </li>
+  
+      
+        
+    
+  <li>
+      
+        <a href="/p/maxima/mailman/maxima-discuss/"  >
+      
+      <span>maxima-discuss</span>
+      </a>
+  </li>
+  
+      
+        
+    
+  <li>
+      
+        <a href="/p/maxima/mailman/maxima-lang-es/"  >
+      
+      <span>maxima-lang-es</span>
+      </a>
+  </li>
+  
+      
+        
+    
+  <li>
+      
+        <a href="/p/maxima/mailman/maxima-lang-fr/"  >
+      
+      <span>maxima-lang-fr</span>
+      </a>
+  </li>
+  
+      
+        
+    
+  <li>
+      
+        <a href="/p/maxima/mailman/maxima-lang-ru/"  >
+      
+      <span>maxima-lang-ru</span>
+      </a>
+  </li>
+  
+      
+    
+    
+      </ul>
+      
+    
+    
+</div>
+
+
+
+<script>
+$('#sidebar-admin-header').on('click', function(e){
+    $("#sidebar-admin-menu").toggleClass("hidden");
+    $(this).toggleClass("expanded");
+    e.preventDefault();
+});
+</script>
+
+                    
+
+                    
+                
+                
+                    
+                
+                <div class="grid-20 pad">
+                    <h2 class="dark title">
+                        <span>maxima-discuss</span>
+                        <!-- actions -->
+                        <small>
+                            
+                        </small>
+                        <!-- /actions -->
+                    </h2>
+                    
+                    <div>
+                        
+                        
+  
+    
+
+  
+<div class="thread-message" style="margin-left: 0px">
+  
+
+
+<table id="msg35627017">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35627017/">[Maxima-discuss] Denesting radical expressions (package raddenest)</a></b></div>
+      
+      <small>From: Gilles S. &lt;gsc...@gm...&gt; - 2017-01-25 23:09:30</small>
+      <div class="attachments">
+        <small>
+          
+            <b>Attachments:</b>
+            <a href="/p/maxima/mailman/attachment/7cb102bd-08c9-6aba-2e26-52867f4400c2%40gmail.com/1/">raddenest.dem</a>
+          
+            
+            <a href="/p/maxima/mailman/attachment/7cb102bd-08c9-6aba-2e26-52867f4400c2%40gmail.com/2/">rtest_raddenest.mac</a>
+          
+            
+            <a href="/p/maxima/mailman/attachment/7cb102bd-08c9-6aba-2e26-52867f4400c2%40gmail.com/3/">raddenest.mac</a>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>Dear all,
+
+I'm new here, so first of all I'd like to thank the developers for all
+the hard work they've put into Maxima!
+
+I'd also like to propose a contribution in return. I've ported Sympy's
+code for denesting square roots to Maxima. I hope it turns out to be
+useful. (see attachments)
+
+Since it's my first Maxima package I'm not so sure either that I'm
+always using the most appropriate functions, that I'm handling the local
+and global variables (e.g. domain...) as I should, etc.
+Any feedback will be appreciated.
+
+Most of the code is a rather direct port of Sympy's functionality, but
+there are some extensions to it that apply to cube roots or n-th roots.
+There's also an extensive test suite. (BTW, for two problems maxima
+detects an erroneous result when in fact the shown result is identical
+to the expected one!? That's with maxima 5.37.2.)
+
+The main algorithms are those of Borodin et al.: "Decreasing the Nesting
+Depth of Expressions Involving Square Roots"
+<a href="http://researcher.watson.ibm.com/researcher/files/us-fagin/symb85.pdf" rel="nofollow">http://researcher.watson.ibm.com/researcher/files/us-fagin/symb85.pdf</a>
+
+Other references are in the code comments.
+
+I'm aware that there are more general approaches (e.g. by Landau,
+Blömer) but I haven't tried (yet?) to implement those.
+
+Below you'll find the output of the included demo file.
+
+Kind regards,
+
+Gilles Schintgen
+
+
+(%i5) demo(raddenest);
+read and interpret file: #p/home/gilles/.maxima/raddenest.dem
+At the '_' prompt, type ';' and &lt;enter&gt; to get next demonstration.
+(%i6) raddenest(sqrt(5+2*sqrt(6)))
+(%o6)                          sqrt(3) + sqrt(2)
+_;
+(%i7) sqrt(3+sqrt(5+2*sqrt(7)))
+(%o7)                    sqrt(sqrt(2 sqrt(7) + 5) + 3)
+_;
+(%i8) raddenest(%)
+                                                         1/4
+              sqrt(6 sqrt(7) + 12)      3 (5 + 2 sqrt(7))
+(%o8)         -------------------- + ---------------------------
+                               1/4   sqrt(2) sqrt(3 sqrt(7) + 6)
+              2 (5 + 2 sqrt(7))
+_;
+(%i9) sqrt(sqrt((-2*sqrt(29))+2*sqrt(55-10*sqrt(29))+16)-sqrt(5))
+(%o9) sqrt(sqrt((- 2 sqrt(29)) + 2 sqrt(55 - 10 sqrt(29)) + 16) - sqrt(5))
+_;
+(%i10) raddenest(%)
+                                              1/4
+(%o10)                       (11 - 2 sqrt(29))
+_;
+(%i11) sqrt((6*sqrt(2))/11+(2*sqrt(22))/11+(6*sqrt(11))/11+2)
+                                                   3/2
+                        2 sqrt(22)      6       3 2
+(%o11)             sqrt(---------- + -------- + ------ + 2)
+                            11       sqrt(11)     11
+_;
+(%i12) raddenest(%)
+                               2          3
+(%o12)                      -------- + -------- + 1
+                            sqrt(22)   sqrt(11)
+_;
+(%i13) sqrt(1/(7+4*sqrt(3))+1)
+                                       1
+(%o13)                      sqrt(------------- + 1)
+                                 4 sqrt(3) + 7
+_;
+(%i14) raddenest(%)
+(%o14)                         sqrt(6) - sqrt(2)
+_;
+(%i15) sqrt(expand((1+sqrt(sqrt(2+x)+3))^2))
+(%o15)          sqrt(2 sqrt(sqrt(x + 2) + 3) + sqrt(x + 2) + 4)
+_;
+(%i16) raddenest(%)
+(%o16)                     sqrt(sqrt(x + 2) + 3) + 1
+_;
+(%i17) raddenest(sqrt(5^(1/3)-4^(1/3)))
+                              1/3     1/3     1/3
+                             2    + 20    - 25
+(%o17)                       --------------------
+                                      3
+_;
+(%i18) raddenest((41-29*sqrt(2))^(1/5))
+(%o18)                            1 - sqrt(2)
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 20px">
+  
+
+
+<table id="msg35628323">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35628323/">Re: [Maxima-discuss] Denesting radical expressions (package
+	raddenest)</a></b></div>
+      
+      <small>From: Michel T. &lt;ta...@lp...&gt; - 2017-01-26 15:23:38</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>Le 26/01/2017 à 00:09, Gilles Schintgen a écrit :
+&gt; I'd also like to propose a contribution in return. I've ported Sympy's
+&gt; code for denesting square roots to Maxima. I hope it turns out to be
+&gt; useful. (see attachments)
+
+
+Fantastic! Having myself studied sympy's denesting program, and spent a 
+lot of time reading the papers you mention, i appreciate fully the 
+amount of hard work you have put in this port. Moreover you have added
+more recent algorithms , and above all an extensive test suite which 
+runs quickly and show no problem. This is without any doubt an extremely 
+valuable addition to maxima's capabilities. Just a little comment. You 
+have added load(raddest) at the beginning of the test suite. But in 
+general, maxima will not find raddest, while it would find
+"raddest.mac". Second, for the uninitiated (like me) it would have been 
+helpful to put a comment like, run
+batch("rtest_raddenest.mac",test)
+to run the test suite. Finally, it appears when reading the references 
+that some of the algorithms are of dubious generality, as you mention
+at various places. However the denesting capabilities of your program
+are infinitely more powerful than those previously in maxima, as is 
+easily shown by the test suite. I hope that the maxima committers will
+include it soon. For example maple automatically denests expressions as
+soon as you enter them.
+
+
+
+
+-- 
+Michel Talon
+
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 40px">
+  
+
+
+<table id="msg35629097">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35629097/">Re: [Maxima-discuss] Denesting radical expressions (package
+ raddenest)</a></b></div>
+      
+      <small>From: Gilles S. &lt;gsc...@gm...&gt; - 2017-01-26 22:09:43</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>On 26/01/17 16:22, Michel Talon wrote:
+&gt; Fantastic! Having myself studied sympy's denesting program, and spent a 
+&gt; lot of time reading the papers you mention, i appreciate fully the 
+&gt; amount of hard work you have put in this port. Moreover you have added
+&gt; more recent algorithms , and above all an extensive test suite which 
+&gt; runs quickly and show no problem. This is without any doubt an extremely 
+&gt; valuable addition to maxima's capabilities.
+
+Thanks for your kind remarks!
+
+&gt; Just a little comment. You 
+&gt; have added load(raddest) at the beginning of the test suite. But in 
+&gt; general, maxima will not find raddest, while it would find
+&gt; "raddest.mac". Second, for the uninitiated (like me) it would have been 
+&gt; helpful to put a comment like, run
+&gt; batch("rtest_raddenest.mac",test)
+&gt; to run the test suite. 
+
+You're right. Here's what I did. (Linux).
+
+I checked Maxima's files_search_* variables:
+
+(%i1) file_search_tests;
+(%o1)      [/usr/share/maxima/5.37.2/tests/$$$.{o,lisp,lsp,mac,mc}]
+(%i2) file_search_demo;
+(%o2) [/usr/share/maxima/5.37.2/share/$$$.{dem,dm1,dm2,dm3,dmt},
+/usr/share/ [.....]  ,
+/usr/share/maxima/5.37.2/demo/$$$.{dem,dm1,dm2,dm3,dmt}]
+
+... which I then redefined:
+
+(%i3) file_search_tests: ["/home/gilles/.maxima/$$$.mac"];
+(%o3)                   [/home/gilles/.maxima/$$$.mac]
+(%i4) file_search_demo: ["/home/gilles/.maxima/$$$.dem"];
+(%o4)                   [/home/gilles/.maxima/$$$.dem]
+
+~/.maxima is automatically searched for packages, the above commands do
+the same for demos and tests. (Well, it would have been better to append
+the new paths but I didn't bother since I didn't need other demos...)
+So that's where I put all 3 files: /home/gilles/.maxima
+
+The demo can then be called by issuing the command demo(raddenest) and
+here's for the testsuite:
+
+(%i5) testsuite_files:["rtest_raddenest.mac"];
+(%o5)                        [rtest_raddenest.mac]
+(%i6) run_testsuite(display_all=false, tests=["rtest_raddenest.mac"]);
+
+Regards,
+
+Gilles Schintgen
+
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 20px">
+  
+
+
+<table id="msg35628410">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35628410/">Re: [Maxima-discuss] Denesting radical expressions (package
+	raddenest)</a></b></div>
+      
+      <small>From: Michel T. &lt;ta...@lp...&gt; - 2017-01-26 15:57:09</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>Le 26/01/2017 à 00:09, Gilles Schintgen a écrit :
+&gt; I'm not so sure either that I'm
+&gt; always using the most appropriate functions, that I'm handling the local
+&gt; and global variables (e.g. domain...) as I should, etc.
+
+Trying to compile your program with compile_file i have seen one runs 
+into an error:
+; caught ERROR:
+;   The variable $G2 occurs more than once in the lambda list.
+Apparently, it is the line in _split_surds
+
+ 
+[inflag:false,ar,coeff_muls,surds:[],g,b1,b2,g2,g1,b1n:[],g2,c,s,s1,a1v:[],a2v:[],a,b],
+
+in which g2 occurs twice.
+
+If i edit it like this
+
+ 
+[inflag:false,ar,coeff_muls,surds:[],g,b1,b2,g2,g1,b1n:[],c,s,s1,a1v:[],a2v:[],a,b],
+
+After that i can compile correctly and run the test loading the binary
+raddenest.fasl
+
+The uncompiled version produces this:
+
+117/119 tests passed
+
+The following 2 problems failed: (43 119)
+Evaluation took 3.2840 seconds (3.2970 elapsed) using 286.381 MB.
+
+while the compiled version produces this
+
+116/119 tests passed
+
+The following 3 problems failed: (43 102 119)
+Evaluation took 1.1880 seconds (1.1950 elapsed) using 88.900 MB.
+(%o10)                [rtest_raddenest.mac, 43, 102, 119]
+
+
+You can see a difference in test 102. This is a true difference between 
+the compiled and uncompiled calculation which should be investigated.
+In the test 43 i cannot see why an error is displayed. In test 119 it is 
+just a trivial difference in the ordering of terms.
+
+-- 
+Michel Talon
+
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 40px">
+  
+
+
+<table id="msg35630767">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35630767/">Re: [Maxima-discuss] Denesting radical expressions (package
+	raddenest)</a></b></div>
+      
+      <small>From: Michel T. &lt;ta...@lp...&gt; - 2017-01-27 19:01:40</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>Le 26/01/2017 à 16:56, Michel Talon a écrit :
+&gt; You can see a difference in test 102. This is a true difference between
+&gt; the compiled and uncompiled calculation
+
+After various tracings, i think the difference first occurs in function
+_sqrtdenest1
+
+Using the z defined in test 102 i get :
+
+in the compiled version
+
+(%i26) _sqrtdenest1(z,true);
+
+(%o26) sqrt(64*sqrt(3)+128)+9/2^(3/2)
+
+while in the interpreted version i get:
+
+(%i20) _sqrtdenest1(z,true);
+
+(%o20) sqrt(4*sqrt(sqrt(3)+1)*3^(3/2)*sqrt(3^(3/2)+3)
+              +20*sqrt(sqrt(3)+1)*sqrt(3^(3/2)+3)+64*sqrt(3)+112)
+
+Note that the interpreted version calls _sqrt_biquadratic_denest but
+the compiled version doesn't.
+
+Tracing _sqrt_match in the compiled version, i get:
+
+(%i33) _sqrtdenest1(z,true);
+
+1 Enter _sqrt_match
+[4*sqrt(sqrt(3)+1)*3^(3/2)*sqrt(3^(3/2)+3)
+   +20*sqrt(sqrt(3)+1)*sqrt(3^(3/2)+3)+64*sqrt(3)+112]
+1 Exit  _sqrt_match
+[20*sqrt(sqrt(3)+1)*sqrt(3^(3/2)+3)+64*sqrt(3)+112,4*3^(3/2),
+  (sqrt(3)+1)*(3^(3/2)+3)]
+1 Enter _sqrt_match [(sqrt(3)+1)*(3^(3/2)+3)]
+1 Exit  _sqrt_match [12,6,3]
+(%o33) sqrt(64*sqrt(3)+128)+9/2^(3/2)
+
+
+while in the interpreted version i get:
+
+(%i25) _sqrtdenest1(z,true);
+
+1 Enter _sqrt_match
+[4*sqrt(sqrt(3)+1)*3^(3/2)*sqrt(3^(3/2)+3)
+   +20*sqrt(sqrt(3)+1)*sqrt(3^(3/2)+3)+64*sqrt(3)+112]
+1 Exit  _sqrt_match
+[20*sqrt(sqrt(3)+1)*sqrt(3^(3/2)+3)+64*sqrt(3)+112,4*3^(3/2),
+  (sqrt(3)+1)*(3^(3/2)+3)]
+1 Enter _sqrt_match [(sqrt(3)+1)*(3^(3/2)+3)]
+1 Exit  _sqrt_match [12,6,3]
+1 Enter _sqrt_match
+[2560*sqrt(2*3^(5/2)+36)+4480*sqrt(2*3^(3/2)+12)+14144*sqrt(3)+24448]
+1 Exit  _sqrt_match
+[2560*sqrt(2*3^(5/2)+36)+14144*sqrt(3)+24448,4480,2*3^(3/2)+12]
+1 Enter _sqrt_match [(sqrt(3)+1)*(3^(3/2)+3)]
+1 Exit  _sqrt_match [12,6,3]
+(%o25) sqrt(4*sqrt(sqrt(3)+1)*3^(3/2)*sqrt(3^(3/2)+3)
+              +20*sqrt(sqrt(3)+1)*sqrt(3^(3/2)+3)+64*sqrt(3)+112)
+
+The beginning is the same, but the 2560* ... occurs only in the 
+interpreted version. In fact this term appears in
+1 Enter _sqrt_biquadratic_denest
+  [sqrt(4*sqrt(sqrt(3)+1)*3^(3/2)*sqrt(3^(3/2)+3)
+         +20*sqrt(sqrt(3)+1)*sqrt(3^(3/2)+3)+64*sqrt(3)+112),
+   20*sqrt(sqrt(3)+1)*sqrt(3^(3/2)+3)+64*sqrt(3)+112,4*3^(3/2),
+   (sqrt(3)+1)*(3^(3/2)+3),
+   2560*sqrt(2*3^(5/2)+36)+4480*sqrt(2*3^(3/2)+12)+14144*sqrt(3)+24448]
+which ends by
+1 Exit  _sqrt_biquadratic_denest false
+which never occurs in the compiled version.
+
+I hope this helps debugging the problem.
+
+
+-- 
+Michel Talon
+
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 20px">
+  
+
+
+<table id="msg35628971">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35628971/">Re: [Maxima-discuss] Denesting radical expressions (package
+	raddenest)</a></b></div>
+      
+      <small>From: Robert D. &lt;rob...@gm...&gt; - 2017-01-26 20:42:39</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>On 2017-01-26, Michel Talon &lt;ta...@lp...&gt; wrote:
+
+&gt; The uncompiled version produces this:
+&gt;
+&gt; 117/119 tests passed
+&gt;
+&gt; The following 2 problems failed: (43 119)
+&gt; Evaluation took 3.2840 seconds (3.2970 elapsed) using 286.381 MB.
+&gt;
+&gt; while the compiled version produces this
+&gt;
+&gt; 116/119 tests passed
+&gt;
+&gt; The following 3 problems failed: (43 102 119)
+&gt; Evaluation took 1.1880 seconds (1.1950 elapsed) using 88.900 MB.
+&gt; (%o10)                [rtest_raddenest.mac, 43, 102, 119]
+&gt;
+&gt;
+&gt; You can see a difference in test 102. This is a true difference between 
+&gt; the compiled and uncompiled calculation which should be investigated.
+
+I get the same results. You can try trace(all) to see all of the
+function outputs along the way. I guess one would have to do that for
+both cases and compare the results to see where they diverge.
+
+Incidentally I see that translating the code shows that x is used as a
+variable in _rad_denest_cardano -- maybe that should be a gensym or at
+least 'x in case x has a value.
+
+&gt; In the test 43 i cannot see why an error is displayed. In test 119 it is 
+&gt; just a trivial difference in the ordering of terms.
+
+The expected result in a Maxima test script is not simplified -- this
+causes a distinction without a difference, as they say. One can cause
+simplification (and evaluation, but that makes no difference for these
+expressions because they contain no variables or functions calls) of
+the expected result by writing it as ''(whatever);
+Does that make the errors go away? 
+
+best
+
+Robert Dodier
+
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 40px">
+  
+
+
+<table id="msg35631716">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35631716/">Re: [Maxima-discuss] Denesting radical expressions (package
+ raddenest)</a></b></div>
+      
+      <small>From: Gilles S. &lt;gsc...@gm...&gt; - 2017-01-28 10:33:19</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>On 26/01/17 21:41, Robert Dodier wrote:
+
+&gt; Incidentally I see that translating the code shows that x is used as a
+&gt; variable in _rad_denest_cardano -- maybe that should be a gensym or at
+&gt; least 'x in case x has a value.
+
+Oops, I missed that one. Indeed, _rad_denest_cardano fails if x has a
+value. Simply adding x to its local variables list fixes it, but of
+course I also need to change all occurrences of 'x to x in
+_cardano_poly. In my working copy _cardano_poly now returns a polynomial
+even if x has a value.
+
+&gt;&gt; In the test 43 i cannot see why an error is displayed. In test 119 it is 
+&gt;&gt; just a trivial difference in the ordering of terms.
+&gt; 
+&gt; The expected result in a Maxima test script is not simplified -- this
+&gt; causes a distinction without a difference, as they say. One can cause
+&gt; simplification (and evaluation, but that makes no difference for these
+&gt; expressions because they contain no variables or functions calls) of
+&gt; the expected result by writing it as ''(whatever);
+&gt; Does that make the errors go away? 
+
+Thanks for pointing this out.
+
+Adding ''() to the expected output doesn't help, probably because at
+that time domain:real whereas in the tested expression (for both 44 and
+120) domain is set to complex.
+
+However adding ''() to the actual result (instead of the expected one)
+"fixes" the test. But IMO that may be due to a bug or at least an
+unexpected behaviour of the double quote operator. See the following
+generic maxima session:
+
+(%i1) domain;
+(%o1)                                real
+(%i2) sqrt(z^2);
+(%o2)                               abs(z)
+(%i3) domain:complex$
+
+(%i4) sqrt(z^2);
+                                         2
+(%o4)                              sqrt(z )
+(%i5) ''(sqrt(z^2));
+                                         2
+(%o5)                              sqrt(z )
+(%i6) domain:real$
+
+(%i7) block([domain:complex],sqrt(z^2));
+                                         2
+(%o7)                              sqrt(z )
+(%i8) block([domain:complex],''(sqrt(z^2)));
+(%o8)                               abs(z)
+(%i9)
+
+
+Somehow, in a block, the double quote operator seems to ignore the
+domain variable.
+
+Regards,
+
+Gilles Schintgen
+
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 20px">
+  
+
+
+<table id="msg35629072">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35629072/">Re: [Maxima-discuss] Denesting radical expressions (package
+ raddenest)</a></b></div>
+      
+      <small>From: Gilles S. &lt;gsc...@gm...&gt; - 2017-01-26 21:53:39</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>On 26/01/17 04:14, Richard Fateman wrote:
+&gt; Wow.  I looked at the code and tried a few things.
+
+Thanks for your feedback!
+
+&gt; subsets(4)  doesn't work.  Is it supposed to?
+
+Yes and it does for me (at least with the leading underscore), so that's
+strange.
+
+&gt; I think this function   does what you want subsets to do.
+&gt; 
+&gt;  ss(n):= if n=1 then [[0],[1]] else
+&gt;    block([r:ss(n-1)],
+&gt;       apply(append, map(lambda([z], [cons(0,z),cons(1,z)]),r)));
+&gt; 
+&gt; subsets(n):=rest(ss(n));
+
+Great, thanks, that's so much more concise. I replaced _subsets in my
+working copy.
+
+&gt; some of this maniputation
+&gt; may be handled more effectively by using CRE representation  ... rat(...)
+&gt; which decomposes expressions into non-rational pieces, though maybe not
+&gt; recursively enough for you.   radcan does some of that,
+&gt; but maybe not. 
+&gt; 
+&gt; for example,
+&gt; 
+&gt; algebraic:true;
+&gt; rat(   sqrt(2)/(7*sqrt(27));
+&gt; 
+&gt; returns  sqrt(2)*sqrt(3)/63.
+&gt; 
+&gt; I see you set algebraic:true in one place.
+
+I wasn't sure if CREs were the right tool for the job, since all of the
+expressions are in fact irrational. Is it ok (good practice? efficient?)
+to have frequent changes between CRE and non-CRE?
+
+If I remember correctly I tried rat with algebraic:true, but wasn't so
+enthusiastic about it because it still needed rootscontract afterwards.
+I'll look into it again.
+
+
+&gt; The code   if subst(s,x,eq)  then .... 
+&gt; looks very suspicious;  rat(float (...))  also looks suspicious.
+&gt; setting ratepsilon to 2e-10 -- why?
+
+You're right about that part looking suspicious and I kind of agree. At
+the very least I should probably determine the rational roots of the
+polynomial first and then check (to a much higher precision) if one of
+them is numerically equal to the radical sum 's'.
+
+Still, this is the fundamental weakness of the approach outlined in
+Osler's article (or I misread it...): a denesting provably exists if
+there's a rational root of a specific polynomial that equals the sum of
+the given radical expression and its "conjugate". But since that sum is
+by definition a sum of two nested radicals, this check is problematic in
+that it involves the radical we're trying to denest... Hence the
+numerics. (If I remember correctly those polynomials can have multiple
+rational roots, so the check with the radical sum is necessary.)
+
+The current code takes quite a shortcut in that it determines a
+"plausible" rational approximation of s and then checks (symbolically)
+that this rational is in fact an exact root of the polynomial.
+
+In some way it's an elaborate heuristic. (This includes the rather large
+ratepsilon without which rat fails to "identify" even some of the
+simplest rationals.)
+
+&gt; There  is also a function sqrtdenest()  which does some things.
+
+Yes and I'm rather confident that raddenest can denest all the
+expressions that sqrtdenest denests. (This specifically includes the
+case where a fourth root is first denested to a square root which then
+denests again.)
+
+
+&gt; I hope that the root structure for the denested radicals is the same ..
+&gt; for example,   sqrt(2) +sqrt(3)   has 4 values, because sqrt(2) is
+&gt; +-,    and so is sqrt(3).
+
+I wouldn't bet on it, most of the algorithms assume the real-branch
+definitions/interpretations of the various radical expressions. (Just as
+maxima: sign(sqrt(2)) returns pos and not pn.)
+In some parts I tried to be as coherent to maxima's conventions as
+possible, especially regarding the domain variable.
+
+Regards,
+
+Gilles Schintgen
+
+
+
+
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 20px">
+  
+
+
+<table id="msg35629256">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35629256/">Re: [Maxima-discuss] Denesting radical expressions (package
+ raddenest)</a></b></div>
+      
+      <small>From: David B. &lt;dbm...@gm...&gt; - 2017-01-27 00:57:18</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>On 26/01/2017 10:09, Gilles Schintgen wrote:
+
+&gt; Dear all,
+&gt;
+&gt; I'm new here, so first of all I'd like to thank the developers for all
+&gt; the hard work they've put into Maxima!
+&gt;
+&gt; I'd also like to propose a contribution in return. I've ported Sympy's
+&gt; code for denesting square roots to Maxima. I hope it turns out to be
+&gt; useful. (see attachments)
+&gt;
+&gt; Since it's my first Maxima package I'm not so sure either that I'm
+&gt; always using the most appropriate functions, that I'm handling the local
+&gt; and global variables (e.g. domain...) as I should, etc.
+&gt; Any feedback will be appreciated.
+Michel Talon has just beaten me to reply.
+
+Thanks for this contribution.  Maxima is weak in this area.   I had a 
+brief look at denesting square roots a few months ago, while debugging 
+algsys, but didn't produce much that I was prepared to share.  I will 
+beat up on your code and report back.
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 20px">
+  
+
+
+<table id="msg35630991">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35630991/">[Maxima-discuss] incorrectly translated code,
+ was: Denesting radical expressions (package raddenest)</a></b></div>
+      
+      <small>From: Robert D. &lt;rob...@gm...&gt; - 2017-01-27 21:24:59</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>On 2017-01-27, Michel Talon &lt;ta...@lp...&gt; wrote:
+
+&gt; After various tracings, i think the difference first occurs in function
+&gt; _sqrtdenest1
+
+&gt; Note that the interpreted version calls _sqrt_biquadratic_denest but
+&gt; the compiled version doesn't.
+
+Without looking at the translation of _sqrtdenest1, my first guess is
+that problem is that code for conditional expressions is translated
+incorrectly. Here's a prototypical case which is similar to
+_sqrtdenest1.
+
+(%i7) g(x) := block(if x &gt; 0 then return(1), 0) $
+(%i8) [g(1), g(-1), g(u)];
+(%o8)                              [1, 0, 0]
+(%i9) translate(g) $
+(%i10) [g(1), g(-1), g(u)];
+(%o10)                             [1, 0, 1]
+
+Note that the g(u) has changed from 0 to 1.
+
+The problem is that the generated code assumes that Boolean expressions
+evaluate to true or false. I think there's a bug report about this
+already. You can see if non-true-or-false comes into play by setting
+prederror:true and then try the example again.
+
+best
+
+Robert Dodier
+
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 40px">
+  
+
+
+<table id="msg35631093">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35631093/">Re: [Maxima-discuss] incorrectly translated code,
+ was: Denesting radical expressions (package raddenest)</a></b></div>
+      
+      <small>From: Michel T. &lt;ta...@lp...&gt; - 2017-01-27 22:29:46</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>Le 27/01/2017 à 22:24, Robert Dodier a écrit :
+&gt; Without looking at the translation of _sqrtdenest1, my first guess is
+&gt; that problem is that code for conditional expressions is translated
+&gt; incorrectly.
+
+You are right, setting prederror:true, i get in the compiled case:
+
+(%i11) _sqrtdenest1(z,true);
+
+Unable to evaluate predicate false
+  -- an error.  Entering the Maxima debugger.
+Enter ':h' for help.
+
+(dbm:1) :n
+(%o11) sqrt(4*sqrt(sqrt(3)+1)*3^(3/2)*sqrt(3^(3/2)+3)
+              +20*sqrt(sqrt(3)+1)*sqrt(3^(3/2)+3)+64*sqrt(3)+112)
+
+which is the same result as in the interpreted case. So i need to check 
+all the tests in _sqrtdenest1.
+
+
+
+-- 
+Michel Talon
+
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 20px">
+  
+
+
+<table id="msg35631130">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35631130/">Re: [Maxima-discuss] incorrectly translated code,
+ was: Denesting radical expressions (package raddenest)</a></b></div>
+      
+      <small>From: Robert D. &lt;rob...@gm...&gt; - 2017-01-27 23:02:58</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>On 2017-01-27, Michel Talon &lt;ta...@lp...&gt; wrote:
+
+&gt; which is the same result as in the interpreted case. So i need to check 
+&gt; all the tests in _sqrtdenest1.
+
+A workaround would be to write
+
+  if is(...) = true then ...
+
+instead of
+
+  if ... then ...
+
+HTH
+
+Robert Dodier
+
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 20px">
+  
+
+
+<table id="msg35631797">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35631797/">Re: [Maxima-discuss] Denesting radical expressions (package
+	raddenest)</a></b></div>
+      
+      <small>From: Gilles S. &lt;gsc...@gm...&gt; - 2017-01-28 11:36:51</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>On 26/01/17 16:56, Michel Talon wrote:
+&gt; Le 26/01/2017 à 00:09, Gilles Schintgen a écrit :
+&gt;&gt; I'm not so sure either that I'm
+&gt;&gt; always using the most appropriate functions, that I'm handling the local
+&gt;&gt; and global variables (e.g. domain...) as I should, etc.
+&gt; 
+&gt; Trying to compile your program with compile_file i have seen one runs
+&gt; into an error:
+&gt; ; caught ERROR:
+&gt; ;   The variable $G2 occurs more than once in the lambda list.
+&gt; Apparently, it is the line in _split_surds
+&gt; 
+&gt; 
+&gt; [inflag:false,ar,coeff_muls,surds:[],g,b1,b2,g2,g1,b1n:[],g2,c,s,s1,a1v:[],a2v:[],a,b],
+&gt; 
+&gt; 
+&gt; in which g2 occurs twice.
+&gt; 
+&gt; If i edit it like this
+&gt; 
+&gt; 
+&gt; [inflag:false,ar,coeff_muls,surds:[],g,b1,b2,g2,g1,b1n:[],c,s,s1,a1v:[],a2v:[],a,b],
+
+
+Thanks for spotting this!
+I fixed it now in my own working copy which I also made available here:
+<a href="https://github.com/gschintgen/raddenest" rel="nofollow">https://github.com/gschintgen/raddenest</a>
+This repository contains all the minor changes I've made since the first
+version that I sent.
+
+As for the mistranslated conditionals (that Robert Dodier pointed out),
+the problematic ones in are those testing a non-constant expression for
+its sign. Most of the other conditionals in raddenest only check op or
+arg or some number predicate (ratnump or similar).
+
+As such, problematic conditionals should only appear in _raddenest0,
+_raddenest1 or _sqrt_symbolic_denest, or in the helper functions
+(_sqrt_match etc.).
+
+I tracked one of them (I don't know if there's more than one) down using
+trace(all) and prederror:true. It's in _sqrt_match, where I didn't
+consider symbolic values as I hadn't yet ported the symbolic denester...
+
+The offending check is da[2]&gt;nmax[2].
+
+/*  to make the process canonical, the argument is included in the tuple
+    so when the max is selected, it will be the largest arg having a
+    given depth */
+    v: makelist([_sqrt_depth(pargs[i]),pargs[i],i], i, 1,length(pargs)),
+        nmax:v[1],
+        for da in v do (
+            if  da[1]&gt;nmax[1]
+                or (da[1]=nmax[1] and da[2]&gt;nmax[2])
+            then nmax:da
+        ),
+
+
+I modified the conditional as follows:
+                or (da[1]=nmax[1] and ordergreatp(da[2],nmax[2]))
+
+I also changed a function call:
+-                sqvad: _sqrtdenest1(sqrt(vad), denester:false),
++                sqvad: _sqrtdenest1(sqrt(vad), false),
+(was that even valid Maxima code? Hm)
+
+I can now compile(all) and the testsuite runs as expected (with 44 and
+120 still being flagged).
+
+Regards,
+
+Gilles Schintgen
+
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 20px">
+  
+
+
+<table id="msg35632909">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35632909/">[Maxima-discuss] quote-quote and domain:complex,
+ was: Denesting radical expressions (package raddenest)</a></b></div>
+      
+      <small>From: Robert D. &lt;rob...@gm...&gt; - 2017-01-29 03:57:50</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>On 2017-01-28, Gilles Schintgen &lt;gsc...@gm...&gt; wrote:
+
+&gt; Adding ''() to the expected output doesn't help, probably because at
+&gt; that time domain:real whereas in the tested expression (for both 44 and
+&gt; 120) domain is set to complex.
+
+Right, domain:complex versus domain:real makes a difference in this
+case. Here's a patch to simplify the expected results in the presence of
+domain:complex. 
+
+--- schintgen_rtest_raddenest.mac-original	2017-01-26 12:04:09.304345651 -0800
++++ schintgen_rtest_raddenest.mac	2017-01-28 19:52:02.578303910 -0800
+@@ -144,7 +144,7 @@
+ w: sqrt(expand((sqrt(1-sqrt(x))-1)^2)),
+ [a,b,r]: _sqrt_match(w^2),
+ _sqrt_symbolic_denest(a,b,r));
+-sqrt((sqrt(1-sqrt(x))-1)^2)$
++''(block([domain:complex], sqrt((sqrt(1-sqrt(x))-1)^2)))$
+ 
+ /* biquadratic denesting with sqrt(a/2 + sqd/2) */
+ (rad: -sqrt(15) - sqrt(2)*sqrt(-sqrt(5) + 5) - sqrt(3) + 8,
+@@ -439,5 +439,5 @@
+ 
+ block([domain:'complex],
+ raddenest(sqrt(-4*log(3)*sqrt(3*x+sqrt(3))+12*x+log(3)^2+4*sqrt(3))));
+-sqrt((sqrt(4*sqrt(3)+12*x)-log(3))^2)$
++''(block([domain:'complex], sqrt((sqrt(4*sqrt(3)+12*x)-log(3))^2)))$
+ 
+With this patch I find that tests 44 and 120 are passed.
+
+&gt; However adding ''() to the actual result (instead of the expected one)
+&gt; "fixes" the test. But IMO that may be due to a bug or at least an
+&gt; unexpected behaviour of the double quote operator. See the following
+&gt; generic maxima session:
+&gt;
+&gt; (%i1) domain;
+&gt; (%o1)                                real
+&gt; (%i2) sqrt(z^2);
+&gt; (%o2)                               abs(z)
+&gt; (%i3) domain:complex$
+&gt;
+&gt; (%i4) sqrt(z^2);
+&gt;                                          2
+&gt; (%o4)                              sqrt(z )
+&gt; (%i5) ''(sqrt(z^2));
+&gt;                                          2
+&gt; (%o5)                              sqrt(z )
+&gt; (%i6) domain:real$
+&gt;
+&gt; (%i7) block([domain:complex],sqrt(z^2));
+&gt;                                          2
+&gt; (%o7)                              sqrt(z )
+&gt; (%i8) block([domain:complex],''(sqrt(z^2)));
+&gt; (%o8)                               abs(z)
+&gt; (%i9)
+&gt;
+&gt;
+&gt; Somehow, in a block, the double quote operator seems to ignore the
+&gt; domain variable.
+
+No, this is the behavior to be expected. Bear in mind that quote-quote
+is not an operator in the ordinary sense. It is actually applied *at the
+time that the expression is parsed*, so when you write
+
+  (%i8) block([domain:complex],''(sqrt(z^2)));
+
+it is actually equivalent to block([domain:complex], abs(z)).
+
+Hope this helps,
+
+Robert Dodier
+
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 40px">
+  
+
+
+<table id="msg35634268">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35634268/">Re: [Maxima-discuss] quote-quote and domain:complex,
+ was: Denesting radical expressions (package raddenest)</a></b></div>
+      
+      <small>From: Richard F. &lt;fa...@be...&gt; - 2017-01-30 01:37:42</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>using ''    (quote quote) has, in my experience, only 2 plausible uses
+
+. Any other use is likely to be based on
+misunderstanding what it means.  It is a read-time insertion of an 
+expression.
+
+Here is use number 1.
+
+You would like to re-execute command  %i31.   You type
+
+''%i31;
+
+Here is use number 2.
+
+You have just computed an expression on line 40, and realize that you 
+would like to make that into the body
+of a function.  for example.
+(%o40)   x^2-y^2
+
+(%i41)    f(x,y):= ''%;
+
+that  is like typing f(x,y):= x^2-y^2;
+
+That's it.   If you use it in any other circumstance you are either 
+doing something fairly sophisticated,
+or something wrong.  Most likely, wrong :(
+
+RJF
+
+
+On 1/28/2017 7:57 PM, Robert Dodier wrote:
+&gt; On 2017-01-28, Gilles Schintgen &lt;gsc...@gm...&gt; wrote:
+&gt;
+&gt;&gt; Adding ''() to the expected output doesn't help, probably because at
+&gt;&gt; that time domain:real whereas in the tested expression (for both 44 and
+&gt;&gt; 120) domain is set to complex.
+&gt; Right, domain:complex versus domain:real makes a difference in this
+&gt; case. Here's a patch to simplify the expected results in the presence of
+&gt; domain:complex.
+&gt;
+&gt; --- schintgen_rtest_raddenest.mac-original	2017-01-26 12:04:09.304345651 -0800
+&gt; +++ schintgen_rtest_raddenest.mac	2017-01-28 19:52:02.578303910 -0800
+&gt; @@ -144,7 +144,7 @@
+&gt;   w: sqrt(expand((sqrt(1-sqrt(x))-1)^2)),
+&gt;   [a,b,r]: _sqrt_match(w^2),
+&gt;   _sqrt_symbolic_denest(a,b,r));
+&gt; -sqrt((sqrt(1-sqrt(x))-1)^2)$
+&gt; +''(block([domain:complex], sqrt((sqrt(1-sqrt(x))-1)^2)))$
+&gt;   
+&gt;   /* biquadratic denesting with sqrt(a/2 + sqd/2) */
+&gt;   (rad: -sqrt(15) - sqrt(2)*sqrt(-sqrt(5) + 5) - sqrt(3) + 8,
+&gt; @@ -439,5 +439,5 @@
+&gt;   
+&gt;   block([domain:'complex],
+&gt;   raddenest(sqrt(-4*log(3)*sqrt(3*x+sqrt(3))+12*x+log(3)^2+4*sqrt(3))));
+&gt; -sqrt((sqrt(4*sqrt(3)+12*x)-log(3))^2)$
+&gt; +''(block([domain:'complex], sqrt((sqrt(4*sqrt(3)+12*x)-log(3))^2)))$
+&gt;   
+&gt; With this patch I find that tests 44 and 120 are passed.
+&gt;
+&gt;&gt; However adding ''() to the actual result (instead of the expected one)
+&gt;&gt; "fixes" the test. But IMO that may be due to a bug or at least an
+&gt;&gt; unexpected behaviour of the double quote operator. See the following
+&gt;&gt; generic maxima session:
+&gt;&gt;
+&gt;&gt; (%i1) domain;
+&gt;&gt; (%o1)                                real
+&gt;&gt; (%i2) sqrt(z^2);
+&gt;&gt; (%o2)                               abs(z)
+&gt;&gt; (%i3) domain:complex$
+&gt;&gt;
+&gt;&gt; (%i4) sqrt(z^2);
+&gt;&gt;                                           2
+&gt;&gt; (%o4)                              sqrt(z )
+&gt;&gt; (%i5) ''(sqrt(z^2));
+&gt;&gt;                                           2
+&gt;&gt; (%o5)                              sqrt(z )
+&gt;&gt; (%i6) domain:real$
+&gt;&gt;
+&gt;&gt; (%i7) block([domain:complex],sqrt(z^2));
+&gt;&gt;                                           2
+&gt;&gt; (%o7)                              sqrt(z )
+&gt;&gt; (%i8) block([domain:complex],''(sqrt(z^2)));
+&gt;&gt; (%o8)                               abs(z)
+&gt;&gt; (%i9)
+&gt;&gt;
+&gt;&gt;
+&gt;&gt; Somehow, in a block, the double quote operator seems to ignore the
+&gt;&gt; domain variable.
+&gt; No, this is the behavior to be expected. Bear in mind that quote-quote
+&gt; is not an operator in the ordinary sense. It is actually applied *at the
+&gt; time that the expression is parsed*, so when you write
+&gt;
+&gt;    (%i8) block([domain:complex],''(sqrt(z^2)));
+&gt;
+&gt; it is actually equivalent to block([domain:complex], abs(z)).
+&gt;
+&gt; Hope this helps,
+&gt;
+&gt; Robert Dodier
+&gt;
+&gt;
+&gt; ------------------------------------------------------------------------------
+&gt; Check out the vibrant tech community on one of the world's most
+&gt; engaging tech sites, <a href="http://SlashDot.org" rel="nofollow">SlashDot.org</a>! <a href="http://sdm.link/slashdot" rel="nofollow">http://sdm.link/slashdot</a>
+&gt; _______________________________________________
+&gt; Maxima-discuss mailing list
+&gt; Max...@li...
+&gt; <a href="https://lists.sourceforge.net/lists/listinfo/maxima-discuss" rel="nofollow">https://lists.sourceforge.net/lists/listinfo/maxima-discuss</a>
+
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 20px">
+  
+
+
+<table id="msg35633256">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35633256/">Re: [Maxima-discuss] Denesting radical expressions (package
+	raddenest)</a></b></div>
+      
+      <small>From: Michel T. &lt;ta...@lp...&gt; - 2017-01-29 11:13:30</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>Le 28/01/2017 à 12:36, Gilles Schintgen a écrit :
+&gt; I fixed it now in my own working copy which I also made available here:
+&gt; <a href="https://github.com/gschintgen/raddenest" rel="nofollow">https://github.com/gschintgen/raddenest</a>
+
+The last version in this git repository works for me, both in the 
+uncompiled and compiled version. There is just a problem in test 43 in
+which i cannot see a difference between the result and the expected 
+result. Of course the compiled version is faster, and could perhaps be
+optimized by some declarations. The uncompiled version takes 3.1990 s.
+while the compiled one takes 0.9520 seconds.
+
+PS. There is still a problem. I had run the compiled version after
+having run the uncompiled one and run kill(all). But this apparently 
+leaves some useful stuff in memory. Because running the compiled version
+straight on fresh maxima fails.
+
+80/119 tests passed
+
+The following 39 problems failed: (38 43 45 54 57 58 59 60 61 62 64 65 
+66 67 68
+                                    69 70 71 75 76 77 78 80 81 82 83 84 
+85 88 89
+                                    90 91 92 93 94 95 96 101 102)
+
+I have run some of these tests by hand, and got this error:
+
+Maxima encountered a Lisp error:
+
+  The function MAXIMA::$SLENGTH is undefined.
+
+Armed with this information,
+(%i242) slength("toto");
+(%o242)                                4
+(%i243) batch("rtest_raddenest.mac",test);
+
+And then the test works OK.
+
+118/119 tests passed
+
+The following 1 problem failed: (43)
+
+I suppose slength is autoloaded in some way when the command is issued, 
+but not in the compiled version of raddenest. I don't know how to fix that.
+
+Note that when rrunning the tests with raddenest.mac there is a rather 
+long pause during the computation. But
+(%i3) slength("toto");
+Evaluation took 1.3470 seconds (1.3490 elapsed) using 162.817 MB.
+
+Which i think explains bothe the pause, and the fact that raddenest 
+works faster at the second run.
+
+
+
+
+
+-- 
+Michel Talon
+
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 20px">
+  
+
+
+<table id="msg35633711">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35633711/">Re: [Maxima-discuss] Denesting radical expressions (package
+	raddenest)</a></b></div>
+      
+      <small>From: Michel T. &lt;ta...@lp...&gt; - 2017-01-29 16:59:42</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>Le 29/01/2017 à 12:12, Michel Talon a écrit :
+&gt; I suppose slength is autoloaded in some way when the command is issued,
+&gt; but not in the compiled version of raddenest. I don't know how to fix that.
+
+It is indeed autoloaded and comes from package stringproc. The function
+slength is in stringproc.lisp, so the fastest fix is to
+load("stringrproc.lisp"). I have checked that putting this at the 
+beginning of raddenest.mac, and compiling it produces a fasl which works.
+
+-- 
+Michel Talon
+
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 20px">
+  
+
+
+<table id="msg35633728">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35633728/">Re: [Maxima-discuss] Denesting radical expressions (package
+ raddenest)</a></b></div>
+      
+      <small>From: Richard F. &lt;fa...@be...&gt; - 2017-01-29 17:07:09</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>Can someone explain  why "string length" is needed for this task?
+RJF
+
+On 1/29/2017 8:59 AM, Michel Talon wrote:
+&gt; Le 29/01/2017 à 12:12, Michel Talon a écrit :
+&gt;&gt; I suppose slength is autoloaded in some way when the command is issued,
+&gt;&gt; but not in the compiled version of raddenest. I don't know how to fix that.
+&gt; It is indeed autoloaded and comes from package stringproc. The function
+&gt; slength is in stringproc.lisp, so the fastest fix is to
+&gt; load("stringrproc.lisp"). I have checked that putting this at the
+&gt; beginning of raddenest.mac, and compiling it produces a fasl which works.
+&gt;
+
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 20px">
+  
+
+
+<table id="msg35633794">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35633794/">Re: [Maxima-discuss] Denesting radical expressions (package
+	raddenest)</a></b></div>
+      
+      <small>From: Michel T. &lt;ta...@lp...&gt; - 2017-01-29 18:02:54</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>Le 29/01/2017 à 18:06, Richard Fateman a écrit :
+&gt; Can someone explain  why "string length" is needed for this task?
+&gt; RJF
+
+The basic algorithm in this game for denesting sqrt(a+b*sqrt(r)) 
+consists in computing a^2-r*b^2, see if it is a square and apply
+simple identities. However when the initial quantity depends on several
+independent square roots, say sqrt(2), sqrt(3), sqrt(5), etc. then
+a, b above already contain radicals. In this case it may well be that 
+the supposedly denested formula is more complicated than the initial 
+one. So people try different strategies, recursively, and you need some
+heuristic to stop the expenses somewhere. Computing the length of the 
+string produced appears to be one of such heuristics.
+
+-- 
+Michel Talon
+
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 20px">
+  
+
+
+<table id="msg35634038">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35634038/">Re: [Maxima-discuss] Denesting radical expressions (package
+ raddenest)</a></b></div>
+      
+      <small>From: Gilles S. &lt;gsc...@gm...&gt; - 2017-01-29 21:45:24</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>On 29/01/17 19:02, Michel Talon wrote:
+&gt; Le 29/01/2017 à 18:06, Richard Fateman a écrit :
+&gt;&gt; Can someone explain  why "string length" is needed for this task?
+&gt;&gt; RJF
+&gt; 
+&gt; The basic algorithm in this game for denesting sqrt(a+b*sqrt(r)) 
+&gt; consists in computing a^2-r*b^2, see if it is a square and apply
+&gt; simple identities. However when the initial quantity depends on several
+&gt; independent square roots, say sqrt(2), sqrt(3), sqrt(5), etc. then
+&gt; a, b above already contain radicals. In this case it may well be that 
+&gt; the supposedly denested formula is more complicated than the initial 
+&gt; one. So people try different strategies, recursively, and you need some
+&gt; heuristic to stop the expenses somewhere. Computing the length of the 
+&gt; string produced appears to be one of such heuristics.
+&gt; 
+
+That's exactly right!
+
+In fact I hesitated while porting the code from Sympy (which uses some
+kind of "count_ops" function) and experimented a bit with this check and
+noticed that without it one of the provided examples cycles between two
+different expressions of the same nesting depth! But since there are
+various algorithms that are tried for more complex expressions, it's
+probably best to allow for the same nesting depth in two successive
+iterations. This implies that some other complexity measure of the
+expression must be strictly decreasing in order to avoid an infinite
+recursion...
+
+Over the next days (as time permits) I'll
+- add the stringproc line (thanks Michel Talon for all the testing!)
+- try an alternate version of the cardano polynomial method (the
+rat(float()) approach with the non-default ratepsilon is not quite to my
+liking; I'll use the rational root theorem just as for the
+ramanujan-type radicals.)
+- fix the remaining tests (thanks Robert Dodier)
+- check the testsuite examples with domain:complex
+- document the interpretation of the radical expressions
+
+Thanks for all the feedback and testing.
+
+Regards,
+
+Gilles Schintgen
+
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 20px">
+  
+
+
+<table id="msg35634179">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35634179/">Re: [Maxima-discuss] Denesting radical expressions (package
+ raddenest)</a></b></div>
+      
+      <small>From: David B. &lt;dbm...@gm...&gt; - 2017-01-29 23:54:55</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>On 30/01/2017 08:45, Gilles Schintgen wrote:
+
+&gt; On 29/01/17 19:02, Michel Talon wrote:
+&gt;&gt; Le 29/01/2017 à 18:06, Richard Fateman a écrit :
+&gt;&gt;&gt; Can someone explain  why "string length" is needed for this task?
+&gt;&gt;&gt; RJF
+&gt;&gt; The basic algorithm in this game for denesting sqrt(a+b*sqrt(r))
+&gt;&gt; consists in computing a^2-r*b^2, see if it is a square and apply
+&gt;&gt; simple identities. However when the initial quantity depends on several
+&gt;&gt; independent square roots, say sqrt(2), sqrt(3), sqrt(5), etc. then
+&gt;&gt; a, b above already contain radicals. In this case it may well be that
+&gt;&gt; the supposedly denested formula is more complicated than the initial
+&gt;&gt; one. So people try different strategies, recursively, and you need some
+&gt;&gt; heuristic to stop the expenses somewhere. Computing the length of the
+&gt;&gt; string produced appears to be one of such heuristics.
+&gt;&gt;
+&gt; That's exactly right!
+Have a look at the algorithm, apparently used by Maple,  in Section 4.7 
+of Jeffrey, David J. and Rich, Albert D. (1999) Simplifying Square Roots 
+of Square Roots by Denesting, in Computer Algebra Systems (Ed. M. J. 
+Wester) &lt;<a href="http://www.cybertester.com/data/denest.pdf" rel="nofollow">http://www.cybertester.com/data/denest.pdf</a>&gt;
+
+You are correct in saying a measure of expression complexity - other 
+than the maximum degree of nesting - is required to prevent 
+flip-flopping between expressions of equal depth.  An example is 
+sqrt(sqrt(2)+1) =&gt; sqrt(1/sqrt(2)+1/2)+sqrt(1/sqrt(2)-1/2) =&gt; 
+sqrt(sqrt(2)+1)
+
+;;; A measure N(e) to control the recursive denesting of radicals in e
+;;; Ref: Jeffrey and Rich (1999), section 4.7
+;;;
+;;; 1) A number x:            N(x) = 1                     (4.7.1)
+;;; 2) The n-th root x^(m/n): N(x^(m.n)) = 1 + N(x)        (4.7.2)
+;;; 3) A product x*y:         N(x*y) = max(N(x)*N(y))      (4.7.3)
+;;; 4) A product x+y:         N(x+y) = N(x) + N(y)         (4.7.4)
+;;;
+;;; Rule (4) for sums gives a bonus for reducing the number of terms.
+;;; e.g it rewards the transformation
+;;;    sqrt(2)+sqrt(8) =&gt; 3*sqrt(2)
+;;; and discourages
+;;;    sqrt(sqrt(2)+1) =&gt; sqrt(1/sqrt(2)+1/2)+sqrt(1/sqrt(2)-1/2)
+;;;
+;;; Example: sqrt(3+2*sqrt(2)) = 1+sqrt(2)
+;;; N(sqrt(3+2*sqrt(2))) = 1+N(3+2*sqrt(2)) = 1+N(3)+N(sqrt(2)) = 4
+;;; N(1+sqrt(2)) = 1 + N(sqrt(2)) = 3
+;;; therefore prefer rhs to lhs.
+
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 20px">
+  
+
+
+<table id="msg35634206">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35634206/">Re: [Maxima-discuss] Denesting radical expressions (package
+ raddenest)</a></b></div>
+      
+      <small>From: Richard F. &lt;fa...@be...&gt; - 2017-01-30 00:22:33</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>On 1/29/2017 3:54 PM, David Billinghurst wrote:
+&gt; On 30/01/2017 08:45, Gilles Schintgen wrote:
+&gt;
+&gt;&gt; On 29/01/17 19:02, Michel Talon wrote:
+&gt;&gt;&gt; Le 29/01/2017 à 18:06, Richard Fateman a écrit :
+&gt;&gt;&gt;&gt; Can someone explain  why "string length" is needed for this task?
+&gt;&gt;&gt;&gt; RJF
+&gt;&gt;&gt; The basic algorithm in this game for denesting sqrt(a+b*sqrt(r))
+&gt;&gt;&gt; consists in computing a^2-r*b^2, see if it is a square and apply
+&gt;&gt;&gt; simple identities. However when the initial quantity depends on several
+&gt;&gt;&gt; independent square roots, say sqrt(2), sqrt(3), sqrt(5), etc. then
+&gt;&gt;&gt; a, b above already contain radicals. In this case it may well be that
+&gt;&gt;&gt; the supposedly denested formula is more complicated than the initial
+&gt;&gt;&gt; one. So people try different strategies, recursively, and you need some
+&gt;&gt;&gt; heuristic to stop the expenses somewhere.
+
+There is a Lisp program in Maxima called great.  It is supposed to be a 
+total order on the complexity of
+expressions.  It is used by the simplifier to  determine for expressions 
+E1 and E2  whether to display
+as E1 + E2    or E2 + E1.    You can use it from Maxima as ?great(E1,E2).
+I suspect that stringlength is not a correct measure of complexity, 
+since two different expressions can
+have the same stringlength.  Also, it is probably many times slower than 
+?great.
+
+Maybe using ?great would be an improvement??
+RJF
+
+&gt;&gt;&gt;   Computing the length of the
+&gt;&gt;&gt; string produced appears to be one of such heuristics.
+&gt;&gt;&gt;
+&gt;&gt; That's exactly right!
+&gt; Have a look at the algorithm, apparently used by Maple,  in Section 4.7
+&gt; of Jeffrey, David J. and Rich, Albert D. (1999) Simplifying Square Roots
+&gt; of Square Roots by Denesting, in Computer Algebra Systems (Ed. M. J.
+&gt; Wester) &lt;<a href="http://www.cybertester.com/data/denest.pdf" rel="nofollow">http://www.cybertester.com/data/denest.pdf</a>&gt;
+&gt;
+&gt; You are correct in saying a measure of expression complexity - other
+&gt; than the maximum degree of nesting - is required to prevent
+&gt; flip-flopping between expressions of equal depth.  An example is
+&gt; sqrt(sqrt(2)+1) =&gt; sqrt(1/sqrt(2)+1/2)+sqrt(1/sqrt(2)-1/2) =&gt;
+&gt; sqrt(sqrt(2)+1)
+&gt;
+&gt; ;;; A measure N(e) to control the recursive denesting of radicals in e
+&gt; ;;; Ref: Jeffrey and Rich (1999), section 4.7
+&gt; ;;;
+&gt; ;;; 1) A number x:            N(x) = 1                     (4.7.1)
+&gt; ;;; 2) The n-th root x^(m/n): N(x^(m.n)) = 1 + N(x)        (4.7.2)
+&gt; ;;; 3) A product x*y:         N(x*y) = max(N(x)*N(y))      (4.7.3)
+&gt; ;;; 4) A product x+y:         N(x+y) = N(x) + N(y)         (4.7.4)
+&gt; ;;;
+&gt; ;;; Rule (4) for sums gives a bonus for reducing the number of terms.
+&gt; ;;; e.g it rewards the transformation
+&gt; ;;;    sqrt(2)+sqrt(8) =&gt; 3*sqrt(2)
+&gt; ;;; and discourages
+&gt; ;;;    sqrt(sqrt(2)+1) =&gt; sqrt(1/sqrt(2)+1/2)+sqrt(1/sqrt(2)-1/2)
+&gt; ;;;
+&gt; ;;; Example: sqrt(3+2*sqrt(2)) = 1+sqrt(2)
+&gt; ;;; N(sqrt(3+2*sqrt(2))) = 1+N(3+2*sqrt(2)) = 1+N(3)+N(sqrt(2)) = 4
+&gt; ;;; N(1+sqrt(2)) = 1 + N(sqrt(2)) = 3
+&gt; ;;; therefore prefer rhs to lhs.
+&gt;
+&gt;
+&gt; ------------------------------------------------------------------------------
+&gt; Check out the vibrant tech community on one of the world's most
+&gt; engaging tech sites, <a href="http://SlashDot.org" rel="nofollow">SlashDot.org</a>! <a href="http://sdm.link/slashdot" rel="nofollow">http://sdm.link/slashdot</a>
+&gt; _______________________________________________
+&gt; Maxima-discuss mailing list
+&gt; Max...@li...
+&gt; <a href="https://lists.sourceforge.net/lists/listinfo/maxima-discuss" rel="nofollow">https://lists.sourceforge.net/lists/listinfo/maxima-discuss</a>
+
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 20px">
+  
+
+
+<table id="msg35638592">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35638592/">Re: [Maxima-discuss] Denesting radical expressions (package
+ raddenest)</a></b></div>
+      
+      <small>From: Gilles S. &lt;gsc...@gm...&gt; - 2017-01-31 20:32:06</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>On 30/01/17 01:22, Richard Fateman wrote:
+&gt; There is a Lisp program in Maxima called great.  It is supposed to be a 
+&gt; total order on the complexity of
+&gt; expressions.  It is used by the simplifier to  determine for expressions 
+&gt; E1 and E2  whether to display
+&gt; as E1 + E2    or E2 + E1.    You can use it from Maxima as ?great(E1,E2).
+&gt; I suspect that stringlength is not a correct measure of complexity, 
+&gt; since two different expressions can
+&gt; have the same stringlength.  Also, it is probably many times slower than 
+&gt; ?great.
+&gt; 
+&gt; Maybe using ?great would be an improvement??
+&gt; RJF
+
+Sounds perfect. But it turns out that it's not well suited for the task
+after all. While tracing some of the now failing tests I found this:
+
+?great(324*sqrt(5)+972,158*sqrt(5)-9*2^(7/2)+498);
+true
+
+That's not what I expected.
+
+As for David Billinghurst's suggestion (thanks!), I'm not sure either:
+
+In the original article it is more or less presented as a main nesting
+depth function, i.e. an alternative to the current _sqrt_depth routine
+(based on Borodin et al.). At various parts of the raddenest code it is
+assumed that _sqrt_depth gives an absolute nesting depth, whereas this
+alternative measure gives equal results for sqrt(2*sqrt(6)+5) and
+sqrt(2)+sqrt(3). So it probably won't work as _sqrt_depth replacement.
+
+It could however work as a secondary complexity measure (and that may
+well be what David had in mind), though it'd be strange to have two
+different nesting depth measures.
+
+I'll implement it anyway (as secondary measure) and also a simplistic
+"count_ops"-type function. I'll see what works best.
+
+Regards,
+
+Gilles Schintgen
+
+
+On 30/01/17 00:54, David Billinghurst wrote:
+&gt;&gt;&gt;&gt;   Computing the length of the
+&gt;&gt;&gt;&gt; string produced appears to be one of such heuristics.
+&gt;&gt;&gt;&gt;
+&gt;&gt;&gt; That's exactly right!
+&gt;&gt; Have a look at the algorithm, apparently used by Maple,  in Section 4.7
+&gt;&gt; of Jeffrey, David J. and Rich, Albert D. (1999) Simplifying Square Roots
+&gt;&gt; of Square Roots by Denesting, in Computer Algebra Systems (Ed. M. J.
+&gt;&gt; Wester) &lt;<a href="http://www.cybertester.com/data/denest.pdf" rel="nofollow">http://www.cybertester.com/data/denest.pdf</a>&gt;
+&gt;&gt;
+&gt;&gt; You are correct in saying a measure of expression complexity - other
+&gt;&gt; than the maximum degree of nesting - is required to prevent
+&gt;&gt; flip-flopping between expressions of equal depth.  An example is
+&gt;&gt; sqrt(sqrt(2)+1) =&gt; sqrt(1/sqrt(2)+1/2)+sqrt(1/sqrt(2)-1/2) =&gt;
+&gt;&gt; sqrt(sqrt(2)+1)
+&gt;&gt;
+&gt;&gt; ;;; A measure N(e) to control the recursive denesting of radicals in e
+&gt;&gt; ;;; Ref: Jeffrey and Rich (1999), section 4.7
+&gt;&gt; ;;;
+&gt;&gt; ;;; 1) A number x:            N(x) = 1                     (4.7.1)
+&gt;&gt; ;;; 2) The n-th root x^(m/n): N(x^(m.n)) = 1 + N(x)        (4.7.2)
+&gt;&gt; ;;; 3) A product x*y:         N(x*y) = max(N(x)*N(y))      (4.7.3)
+&gt;&gt; ;;; 4) A product x+y:         N(x+y) = N(x) + N(y)         (4.7.4)
+&gt;&gt; ;;;
+&gt;&gt; ;;; Rule (4) for sums gives a bonus for reducing the number of terms.
+&gt;&gt; ;;; e.g it rewards the transformation
+&gt;&gt; ;;;    sqrt(2)+sqrt(8) =&gt; 3*sqrt(2)
+&gt;&gt; ;;; and discourages
+&gt;&gt; ;;;    sqrt(sqrt(2)+1) =&gt; sqrt(1/sqrt(2)+1/2)+sqrt(1/sqrt(2)-1/2)
+&gt;&gt; ;;;
+&gt;&gt; ;;; Example: sqrt(3+2*sqrt(2)) = 1+sqrt(2)
+&gt;&gt; ;;; N(sqrt(3+2*sqrt(2))) = 1+N(3+2*sqrt(2)) = 1+N(3)+N(sqrt(2)) = 4
+&gt;&gt; ;;; N(1+sqrt(2)) = 1 + N(sqrt(2)) = 3
+&gt;&gt; ;;; therefore prefer rhs to lhs.
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 20px">
+  
+
+
+<table id="msg35638772">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35638772/">Re: [Maxima-discuss] Denesting radical expressions (package
+ raddenest)</a></b></div>
+      
+      <small>From: Richard F. &lt;fa...@be...&gt; - 2017-01-31 22:29:24</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>It still seems to me that  great()  or a modification of it would be 
+faster and
+(by comparison with string-length), more likely to work.
+
+
+The rules used by great  differ from the measure N(e)  from Jeffrey and 
+Rich, (JR)
+but something like JR could be written to do comparisons of trees in Lisp.
+
+Note that N(e1) and N(e2) can be equal  even though e1 and e2 are different.
+
+Here's a (perhaps significant) point.    great(e1,e2)  is more 
+functional that
+
+g(e1,e2):=  is ( N(e1)&gt;N(e2)).
+
+assume that if e1 and e2 are both sums. Then compare their first terms.
+If one is greater than the other  [more complicated according to 
+recursive calls to great]
+then we have our answer.  Otherwise (if they are equal), look at their 
+next terms.  etc.
+
+similar judgments are made with other operators.   There is a pecking order
+among operators, and  among symbols, and among numeric constants. I 
+think there
+are some peculiarities related to sorting f(A) and g(B) where one can 
+decide which
+is greater by comparing f vs g   or A vs B.
+
+Anyway, I endorse not using string-length, even if it seems to do the 
+right thing at the moment.
+It seems to me to be a bug waiting to happen :(
+
+RJF
+
+
+
+
+I have not checked  but I suspect that On 1/31/2017 12:31 PM, Gilles 
+Schintgen wrote:
+&gt; On 30/01/17 01:22, Richard Fateman wrote:
+&gt;&gt; There is a Lisp program in Maxima called great.  It is supposed to be a
+&gt;&gt; total order on the complexity of
+&gt;&gt; expressions.  It is used by the simplifier to  determine for expressions
+&gt;&gt; E1 and E2  whether to display
+&gt;&gt; as E1 + E2    or E2 + E1.    You can use it from Maxima as ?great(E1,E2).
+&gt;&gt; I suspect that stringlength is not a correct measure of complexity,
+&gt;&gt; since two different expressions can
+&gt;&gt; have the same stringlength.  Also, it is probably many times slower than
+&gt;&gt; ?great.
+&gt;&gt;
+&gt;&gt; Maybe using ?great would be an improvement??
+&gt;&gt; RJF
+&gt; Sounds perfect. But it turns out that it's not well suited for the task
+&gt; after all. While tracing some of the now failing tests I found this:
+&gt;
+&gt; ?great(324*sqrt(5)+972,158*sqrt(5)-9*2^(7/2)+498);
+&gt; true
+&gt;
+&gt; That's not what I expected.
+&gt;
+&gt; As for David Billinghurst's suggestion (thanks!), I'm not sure either:
+&gt;
+&gt; In the original article it is more or less presented as a main nesting
+&gt; depth function, i.e. an alternative to the current _sqrt_depth routine
+&gt; (based on Borodin et al.). At various parts of the raddenest code it is
+&gt; assumed that _sqrt_depth gives an absolute nesting depth, whereas this
+&gt; alternative measure gives equal results for sqrt(2*sqrt(6)+5) and
+&gt; sqrt(2)+sqrt(3). So it probably won't work as _sqrt_depth replacement.
+&gt;
+&gt; It could however work as a secondary complexity measure (and that may
+&gt; well be what David had in mind), though it'd be strange to have two
+&gt; different nesting depth measures.
+&gt;
+&gt; I'll implement it anyway (as secondary measure) and also a simplistic
+&gt; "count_ops"-type function. I'll see what works best.
+&gt;
+&gt; Regards,
+&gt;
+&gt; Gilles Schintgen
+&gt;
+&gt;
+&gt; On 30/01/17 00:54, David Billinghurst wrote:
+&gt;&gt;&gt;&gt;&gt;    Computing the length of the
+&gt;&gt;&gt;&gt;&gt; string produced appears to be one of such heuristics.
+&gt;&gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt; That's exactly right!
+&gt;&gt;&gt; Have a look at the algorithm, apparently used by Maple,  in Section 4.7
+&gt;&gt;&gt; of Jeffrey, David J. and Rich, Albert D. (1999) Simplifying Square Roots
+&gt;&gt;&gt; of Square Roots by Denesting, in Computer Algebra Systems (Ed. M. J.
+&gt;&gt;&gt; Wester) &lt;<a href="http://www.cybertester.com/data/denest.pdf" rel="nofollow">http://www.cybertester.com/data/denest.pdf</a>&gt;
+&gt;&gt;&gt;
+&gt;&gt;&gt; You are correct in saying a measure of expression complexity - other
+&gt;&gt;&gt; than the maximum degree of nesting - is required to prevent
+&gt;&gt;&gt; flip-flopping between expressions of equal depth.  An example is
+&gt;&gt;&gt; sqrt(sqrt(2)+1) =&gt; sqrt(1/sqrt(2)+1/2)+sqrt(1/sqrt(2)-1/2) =&gt;
+&gt;&gt;&gt; sqrt(sqrt(2)+1)
+&gt;&gt;&gt;
+&gt;&gt;&gt; ;;; A measure N(e) to control the recursive denesting of radicals in e
+&gt;&gt;&gt; ;;; Ref: Jeffrey and Rich (1999), section 4.7
+&gt;&gt;&gt; ;;;
+&gt;&gt;&gt; ;;; 1) A number x:            N(x) = 1                     (4.7.1)
+&gt;&gt;&gt; ;;; 2) The n-th root x^(m/n): N(x^(m.n)) = 1 + N(x)        (4.7.2)
+&gt;&gt;&gt; ;;; 3) A product x*y:         N(x*y) = max(N(x)*N(y))      (4.7.3)
+&gt;&gt;&gt; ;;; 4) A product x+y:         N(x+y) = N(x) + N(y)         (4.7.4)
+&gt;&gt;&gt; ;;;
+&gt;&gt;&gt; ;;; Rule (4) for sums gives a bonus for reducing the number of terms.
+&gt;&gt;&gt; ;;; e.g it rewards the transformation
+&gt;&gt;&gt; ;;;    sqrt(2)+sqrt(8) =&gt; 3*sqrt(2)
+&gt;&gt;&gt; ;;; and discourages
+&gt;&gt;&gt; ;;;    sqrt(sqrt(2)+1) =&gt; sqrt(1/sqrt(2)+1/2)+sqrt(1/sqrt(2)-1/2)
+&gt;&gt;&gt; ;;;
+&gt;&gt;&gt; ;;; Example: sqrt(3+2*sqrt(2)) = 1+sqrt(2)
+&gt;&gt;&gt; ;;; N(sqrt(3+2*sqrt(2))) = 1+N(3+2*sqrt(2)) = 1+N(3)+N(sqrt(2)) = 4
+&gt;&gt;&gt; ;;; N(1+sqrt(2)) = 1 + N(sqrt(2)) = 3
+&gt;&gt;&gt; ;;; therefore prefer rhs to lhs.
+&gt; ------------------------------------------------------------------------------
+&gt; Check out the vibrant tech community on one of the world's most
+&gt; engaging tech sites, <a href="http://SlashDot.org" rel="nofollow">SlashDot.org</a>! <a href="http://sdm.link/slashdot" rel="nofollow">http://sdm.link/slashdot</a>
+&gt; _______________________________________________
+&gt; Maxima-discuss mailing list
+&gt; Max...@li...
+&gt; <a href="https://lists.sourceforge.net/lists/listinfo/maxima-discuss" rel="nofollow">https://lists.sourceforge.net/lists/listinfo/maxima-discuss</a>
+
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+<div class="thread-message" style="margin-left: 40px">
+  
+
+
+<table id="msg35638831">
+<tr>
+  <td class="email-header">
+    <div>
+      <div><b><a href="/p/maxima/mailman/message/35638831/">Re: [Maxima-discuss] Denesting radical expressions (package
+ raddenest)</a></b></div>
+      
+      <small>From: Gilles S. &lt;gsc...@gm...&gt; - 2017-01-31 22:57:29</small>
+      <div class="attachments">
+        <small>
+          
+        </small>
+      </div>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="email-body"><pre>On 31/01/17 23:29, Richard Fateman wrote:
+&gt; It still seems to me that  great()  or a modification of it would be 
+&gt; faster and
+&gt; (by comparison with string-length), more likely to work.
+&gt; 
+&gt; 
+&gt; The rules used by great  differ from the measure N(e)  from Jeffrey and 
+&gt; Rich, (JR)
+&gt; but something like JR could be written to do comparisons of trees in Lisp.
+&gt; 
+&gt; Note that N(e1) and N(e2) can be equal  even though e1 and e2 are different.
+&gt; 
+&gt; Here's a (perhaps significant) point.    great(e1,e2)  is more 
+&gt; functional that
+&gt; 
+&gt; g(e1,e2):=  is ( N(e1)&gt;N(e2)).
+&gt; 
+&gt; assume that if e1 and e2 are both sums. Then compare their first terms.
+&gt; If one is greater than the other  [more complicated according to 
+&gt; recursive calls to great]
+&gt; then we have our answer.  Otherwise (if they are equal), look at their 
+&gt; next terms.  etc.
+&gt; 
+&gt; similar judgments are made with other operators.   There is a pecking order
+&gt; among operators, and  among symbols, and among numeric constants. I 
+&gt; think there
+&gt; are some peculiarities related to sorting f(A) and g(B) where one can 
+&gt; decide which
+&gt; is greater by comparing f vs g   or A vs B.
+&gt; 
+&gt; Anyway, I endorse not using string-length, even if it seems to do the 
+&gt; right thing at the moment.
+&gt; It seems to me to be a bug waiting to happen :(
+
+For now I have replaced string-length (which was an ugly kludge anyway)
+by N(e) and am happy to report that there's not a single change in the
+testsuite results. :-)
+
+As for a direct comparison of trees I'm not sure that in this case
+there's an obvious pecking order among operators. After all it's the
+nesting that's most significant. (On the other hand if it's only used as
+a secondary check, the absolute nesting depth is already taken care of.)
+The one thing that's now slightly bothering me is that first absolute
+nesting depth is compared and then an almost identical tree traversal is
+done if the first check reports equality. Still, string length is out
+and that's definitely an improvement.
+
+I'll see how often it comes to this second check for the examples in the
+testsuite. It's quite possible that there are not that many calls to
+N(e) to begin with.
+
+Regards,
+
+Gilles Schintgen
+
+
+
+</pre></td>
+</tr>
+</table>
+
+
+<script>
+$('.show-to-public').each(function (el,index){
+    $(this).on('click', function(e){
+        $(this).parent('form').submit();
+        e.preventDefault();
+    })
+})
+</script>
+
+</div>
+
+  
+
+
+                    </div>
+                    
+                    
+                </div>
+            
+
+
+
+        </div>
+    </section>
+      
+
+    <footer class="sandiego">
+    <div class="as-row">
+        <div class="footer-wrapper">
+            <nav aria-label="Site Links" role="navigation">
+                <section>
+                    <div class="as-h2">SourceForge</div>
+                    <ul>
+                    
+                        <li><a href="/create/" title="Create a Project">Create a Project</a></li>
+                    
+                        <li><a href="/directory/" title="Open Source Software Directory">Open Source Software</a></li>
+                        <li><a href="/software/" title="Business Software Directory">Business Software</a></li>
+                        
+                            
+                            <li><a href="/top" title="Top Open Source Projects">Top Downloaded Projects</a></li>
+                        
+
+                    </ul>
+                </section>
+            </nav>
+            <nav aria-label="Company Links" role="navigation">
+                <section>
+                    <div class="as-h2">Company</div>
+                    <ul>
+                        <li><a href="/about">About</a></li>
+                        <li><a href="/about/leadership" title="Open Source Software Directory">Team</a></li>
+                        <li class="h-card">
+                            <address>
+                                <span class="p-name p-org">SourceForge Headquarters</span><br>
+                                <span class="p-street-address">1320 Columbia Street Suite 310</span><br>
+                                <span class="p-locality">San Diego, CA <span class="p-postal-code">92101</span></span><br>
+                                <span class="p-tel">+1 (858) 422-6466</span><br>
+                            </address>
+                        </li>
+                        <li id="social">
+                            
+<span></span>
+<a href="https://x.com/sourceforge" class="twitter" rel="nofollow" target="_blank" title="SourceForge on X">
+
+
+<svg  class="vertical-icon-fix" data-name="x-logo" viewBox="0 0 1200 1227" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" fill="white"/></svg></a>
+<a href="https://fosstodon.org/@sourceforge" rel="me nofollow" target="_blank" title="SourceForge on Mastodon">
+
+
+<svg  class="vertical-icon-fix" data-name="mastodon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M433 179.11c0-97.2-63.71-125.7-63.71-125.7-62.52-28.7-228.56-28.4-290.48 0 0 0-63.72 28.5-63.72 125.7 0 115.7-6.6 259.4 105.63 289.1 40.51 10.7 75.32 13 103.33 11.4 50.81-2.8 79.32-18.1 79.32-18.1l-1.7-36.9s-36.31 11.4-77.12 10.1c-40.41-1.4-83-4.4-89.63-54a102.54 102.54 0 0 1-.9-13.9c85.63 20.9 158.65 9.1 178.75 6.7 56.12-6.7 105-41.3 111.23-72.9 9.8-49.8 9-121.5 9-121.5zm-75.12 125.2h-46.63v-114.2c0-49.7-64-51.6-64 6.9v62.5h-46.33V197c0-58.5-64-56.6-64-6.9v114.2H90.19c0-122.1-5.2-147.9 18.41-175 25.9-28.9 79.82-30.8 103.83 6.1l11.6 19.5 11.6-19.5c24.11-37.1 78.12-34.8 103.83-6.1 23.71 27.3 18.4 53 18.4 175z"/></svg></a>
+<a href="https://www.facebook.com/sourceforgenet/" class="facebook" rel="nofollow" target="_blank" title="SourceForge on Facebook">
+
+
+<svg  data-name="facebook" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></a>
+<a href="https://www.linkedin.com/company/sourceforge.net" class="linkedin" rel="nofollow" target="_blank" title="SourceForge on LinkedIn">
+
+
+<svg  data-name="linkedin" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></a>
+
+<a href="/user/newsletters" rel=nofollow class="newsletter" title="Subscribe to our newsletter">
+
+
+<svg  class="vertical-icon-fix" data-name="mmSF_11mail" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 42 42" enable-background="new 0 0 42 42" xml:space="preserve"><path fill="#FFFFFF" d="M0,6v30h42V6H0z M24.2,21.2c-0.8,0.8-2.3,2-3.2,2c-0.9,0-2.4-1.2-3.2-2L5.8,9.7h30.3L24.2,21.2z M13.7,21l-9.9,9.4V11.6L13.7,21z M15.7,23L15.7,23c0.5,0.5,2.9,2.9,5.3,2.9c2.4,0,4.8-2.4,5.2-2.8l0.1-0.1l9.8,9.4H5.8L15.7,23z M28.3,21l9.9-9.5v18.9L28.3,21z"/></svg></a>
+
+<span></span>
+                        </li>
+                    </ul>
+                </section>
+            </nav>
+             <nav aria-label="Resources Links" role="navigation">
+                <section>
+                    <div class="as-h2">Resources</div>
+                    <ul>
+                        
+                            <li><a href="/support" title="Support Section">Support</a></li>
+                            <li><a href="/p/forge/documentation/Docs%20Home/" title="Site Documentation">Site Documentation</a></li>
+                        
+                        <li><a href="https://fosstodon.org/@sourceforgestatus" title="Site Status" rel="me nofollow">Site Status</a></li>
+                        <li><a href="/reviews" title="Reviews" rel="me nofollow">SourceForge Reviews</a></li>
+
+                    </ul>
+                </section>
+            </nav>
+            <section class="footer-logo">
+                <a href="/" title="Home" class="sf-logo">
+                    
+    
+    <img src="https://a.fsdn.com/con/images/sandiego/sf-logo-full.svg"  alt="SourceForge logo" class="sf-logo-full"/>
+                </a>
+            </section>
+        </div>
+    </div>
+    <section class="l-nav-bottom">
+        <nav class="row">
+            
+                
+            
+        
+    <div class="columns small-12 large-6 copyright-notice">
+        &copy; 2026 Slashdot Media. All Rights Reserved.
+    </div>
+    <div class="columns large-6 links links-right">
+        
+
+    
+
+    <a href="https://slashdotmedia.com/terms-of-use" target="_blank" title="Terms" rel="nofollow">Terms</a>
+    <a href="https://slashdotmedia.com/privacy-statement/" target="_blank" title="Privacy" rel="nofollow">Privacy</a>
+
+    
+    
+    
+
+    
+        <a href="https://slashdotmedia.com/opt-out-choices/" target="_blank" title="Opt Out" rel="nofollow">Opt Out</a>
+    
+
+    
+        <a href="https://slashdotmedia.com/contact/" target="_blank" title="Advertise" rel="nofollow">Advertise</a>
+    
+    </div>
+        </nav>
+    </section>
+
+    </footer>
+    
+
+
+    
+    
+    
+        
+        
+
+
+
+
+    
+
+
+
+    
+    
+        
+        
+            
+    
+    
+    
+    
+    
+    
+    
+        
+        
+        
+        
+    
+    
+    <link rel="stylesheet" href="https://a.fsdn.com/con/css/high_impact.css?1788550315" />
+    <section id="auth0-el" data-footer-name=mdb data-nosnippet>
+      <div class="sticky-gradient"></div>
+      <button id="mdb-dismiss-btn" class="sticky-dismiss" aria-label="Close">✕</button>
+      <div class="footer-content" style="display: flex; align-items: center;">
+        <div class="sticky-left">
+          <div class="sticky-brand">
+              
+    
+    <img
+      alt="MongoDB Logo"
+      style="width: 50px; height: 50px; object-fit: contain;"
+      src="https://a.fsdn.com/con/img/hi-logo.png"
+    />
+    <img
+      alt="MongoDB"
+      style="height: 28px; width: auto; object-fit: contain; vertical-align: middle; align-self: center; display: block; flex-shrink: 0;"
+      src="https://a.fsdn.com/con/img/hi-text.png"
+    />
+    
+
+          </div>
+        </div>
+        <div class="sticky-content">
+          <div class="sticky-headline"></div>
+          <div class="sticky-desc "></div>
+        </div>
+        <div class="sticky-right">
+          <span class="sticky-cta" data-label="mdb-footer" data-url="/hi2"></span>
+        </div>
+      </div>
+    </section>
+    <script>
+    if (SF.ubo || navigator?.brave?.isBrave()) {
+        document.getElementById('mdb-dismiss-btn').parentNode.remove();
+    }
+    </script>
+    
+    
+
+        
+    
+
+
+
+
+
+
+</div>
+
+
+<div id="messages">
+    
+
+    
+</div>
+
+
+    <!-- ew:body_js -->
+
+
+    <script type="text/javascript" src="https://a.fsdn.com/allura/nf/1788550315/_ew_/_slim/js?href=allura%2Fjs%2Fjquery.notify.js%3Ballura%2Fjs%2Fjquery.tooltipster.js%3Ballura%2Fjs%2Fallura-base.js%3Ballura%2Fjs%2Fchecklist.js%3Ballura%2Fjs%2Fadmin_modal.js%3Bjs%2Fjquery.lightbox_me.js%3Ballura%2Fjs%2Fmemorable.js%3Btheme%2Fsftheme%2Fjs%2Fsftheme%2Fsandiego%2Ffloating-unit.js%3Btheme%2Fsftheme%2Fjs%2Fsftheme%2Fshared.js%3Btheme%2Fsftheme%2Fjs%2Fsftheme%2Fsticky.js%3Btheme%2Fsftheme%2Fjs%2Fsftheme%2Fsandiego%2Fchrome.js%3Btheme%2Fsftheme%2Fjs%2Fsftheme%2Fsandiego%2Futilities.js%3Btheme%2Fsftheme%2Fjs%2Fsftheme%2Fvendor%2Ffoundation6%2Fplugins%2Ffoundation.core.min.js%3Btheme%2Fsftheme%2Fjs%2Fsftheme%2Fvendor%2Ffoundation6%2Fplugins%2Ffoundation.util.mediaQuery.min.js%3Btheme%2Fsftheme%2Fjs%2Fsftheme%2Fvendor%2Ffoundation6%2Fplugins%2Ffoundation.util.keyboard.min.js%3Btheme%2Fsftheme%2Fjs%2Fsftheme%2Fvendor%2Ffoundation6%2Fplugins%2Ffoundation.util.box.min.js%3Btheme%2Fsftheme%2Fjs%2Fsftheme%2Fvendor%2Ffoundation6%2Fplugins%2Ffoundation.util.nest.min.js%3Btheme%2Fsftheme%2Fjs%2Fsftheme%2Fvendor%2Ffoundation6%2Fplugins%2Ffoundation.dropdownMenu.min.js%3Btheme%2Fsftheme%2Fjs%2Fsftheme%2Fvendor%2Ffoundation6%2Fplugins%2Ffoundation.offcanvas.min.js%3Btheme%2Fsftheme%2Fjs%2Fsftheme%2Fvendor%2Ffoundation6%2Fplugins%2Ffoundation.toggler.min.js%3Btheme%2Fsftheme%2Fjs%2Fsftheme%2Fsandiego%2Fproject.js%3Btheme%2Fsftheme%2Fjs%2Fsftheme%2Fvendor%2Fjquery.typeahead.min.js"></script>
+
+    
+<!-- /ew:body_js -->
+
+
+
+    <!-- ew:body_js_tail -->
+
+
+    <script type="text/javascript" src="https://a.fsdn.com/allura/nf/1788550315/_ew_/_slim/js?href=theme%2Fsftheme%2Fjs%2Fsftheme%2Fvendor%2Ffoundation6%2Fplugins%2Ffoundation.util.triggers.min.js%3Btheme%2Fsftheme%2Fjs%2Fsftheme%2Fvendor%2Ffoundation6%2Fplugins%2Ffoundation.reveal.min.js"></script>
+
+    
+<!-- /ew:body_js_tail -->
+
+
+
+
+<script>
+
+bizx.cmp.ifConsent({purposes:'all', vendors:'google-ads'}, function () {
+    $('body').removeClass('no-ads-consent'); 
+},
+function () { 
+    $('body').addClass('no-ads-consent');
+},
+null,
+function () { 
+    $('body').addClass('no-ads-consent');
+});
+</script>
+
+
+    
+
+
+    
+    <noscript><p><img src="https://analytics.slashdotmedia.com/index.php?idsite=39" style="border:0;position:absolute;top:0;" alt="" /></p></noscript>
+    
+    <script>
+        $(document).foundation();
+    </script>
+    
+
+
+
+
+
+
+
+
+    
+
+<script>
+    (function () {
+        function load_bombora() {
+            /*global _ml:true, window */
+            _ml = window._ml || {};
+            
+            _ml.eid = '771';
+            _ml.fp = '46a17776-e1de-45b5-8e7c-a52357d022d7';  
+            var s = document.getElementsByTagName('script')[0], cd = new Date(), mltag = document.createElement('script');
+            mltag.type = 'text/javascript';
+            mltag.async = true;
+            mltag.defer = true;
+            mltag.src = '//ml314.com/tag.aspx?' + cd.getDate() + cd.getMonth() + cd.getFullYear();
+            s.parentNode.insertBefore(mltag, s);
+        }
+        bizx.cmp.ifConsent({ purposes: 'all', vendors: 'bombora'}, load_bombora);
+    })();
+</script>
+
+
+
+
+<script>
+    $(document).ready(function () {
+        $(".tooltip, .m-tooltip").each(function(){
+            let $el = $(this);
+            $el.tooltipster({
+                animation: 'fade',
+                delay: 200,
+                theme: 'tooltipster-light',
+                trigger: 'hover',
+                position: $el.data('position') || 'right',
+                iconCloning: false,
+                maxWidth: 300,
+                contentAsHTML: true,
+                interactive: true
+            }).focus(function () {
+                $(this).tooltipster('show');
+            }).blur(function () {
+                $(this).tooltipster('hide');
+            });
+        });
+    });
+</script>
+
+    
+
+
+
+<script type="text/javascript">
+    bizx.cmp.ifConsent({ purposes: ['storage', 'measurement'], vendors: 'google-analytics'}, function () {
+        /* jshint ignore:start */
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        /* jshint ignore:end */
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ window.dataLayer.push(arguments); }
+        window.gtag = window.gtag || gtag;
+        bizx.cmp.embedScript("https://www.googletagmanager.com/gtag/js");
+        gtag('js', new Date());
+        gtag('set', {
+            'page_location': 'https://sourceforge.net/p/maxima/mailman/maxima-discuss/thread/o6lan6$h4r$1@blaine.gmane.org/',
+        });
+    });
+</script>
+
+
+<script type="text/javascript">
+    /*global ga, gtag */
+
+    
+        
+        bizx.cmp.ifConsent({ purposes: ['storage', 'measurement'], vendors: 'google-analytics'}, function () {
+            gtag('config', 'G-1H226E4E4L', {
+                
+                send_page_view: false,
+                'SF_Page_Type': '', 
+                user_properties: {
+                    'SF_Logged_in': 'Logged Out', 
+                },
+                'devicePixelRatio': SF.devicePixelRatio, 
+            });
+            gtag('event', 'page_view', { send_to: 'G-1H226E4E4L' });
+        });
+    
+    
+    
+        
+</script>
+
+</body>
+</html>

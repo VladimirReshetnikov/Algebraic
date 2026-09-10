@@ -1,0 +1,12 @@
+Get["C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/original/Strad.wl"];
+trace[label_, e_] := (Print["\n########## ", label, " ##########"];
+  Print[AbsoluteTiming[TimeConstrained[e, 300, $TimedOut]]]);
+trace["Sqrt[5+2Sqrt[6]]", DenestRadicals3[Sqrt[5 + 2 Sqrt[6]]]];
+trace["Sqrt[2+Sqrt[3]]", DenestRadicals3[Sqrt[2 + Sqrt[3]]]];
+trace["(2^(1/3)-1)^(1/3)", DenestRadicals3[(2^(1/3) - 1)^(1/3)]];
+trace["Sqrt[2+Sqrt[2]]", DenestRadicals3[Sqrt[2 + Sqrt[2]]]];
+trace["Sqrt[1+Sqrt[2]]", DenestRadicals3[Sqrt[1 + Sqrt[2]]]];
+trace["(-1+2I Sqrt[2])^(3/2)", DenestRadicals3[(-1 + 2 I Sqrt[2])^(3/2)]];
+trace["Sqrt[16-2Sqrt[29]+2Sqrt[55-10Sqrt[29]]] all levels", DenestRadicals3[Sqrt[16 - 2 Sqrt[29] + 2 Sqrt[55 - 10 Sqrt[29]]], True]];
+trace["Sqrt[3+2Sqrt[3+2Sqrt[2]]] single level (nested radicand)", DenestRadicals3[Sqrt[3 + 2 Sqrt[3 + 2 Sqrt[2]]]]];
+Print["\nDONE"];

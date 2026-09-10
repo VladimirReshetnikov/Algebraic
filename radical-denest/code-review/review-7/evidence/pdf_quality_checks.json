@@ -1,0 +1,17 @@
+{
+  "pdf_pages": 21,
+  "renderer": "pdftoppm (Poppler)",
+  "rendering": "All 21 pages rendered; layout contact sheets inspected, then the revised findings page inspected at higher resolution.",
+  "latex_warnings": 0,
+  "overfull_boxes": 0,
+  "underfull_boxes": 0,
+  "text_outside_page_bounds": [],
+  "replacement_character_detected": false,
+  "native_test_ids_unique": true,
+  "native_test_count": 50,
+  "original_wolfram_source_lines": 745,
+  "proposed_wolfram_source_lines": 816,
+  "independent_assertions_passed": 14190,
+  "native_wolfram_executed": false,
+  "note": "PDF layout and static checks are not Wolfram semantic validation."
+}

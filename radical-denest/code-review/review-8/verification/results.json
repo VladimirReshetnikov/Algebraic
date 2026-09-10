@@ -1,0 +1,78 @@
+{
+  "status": "PASS",
+  "python": "3.13.5",
+  "sympy": "1.14.0",
+  "assertions": 3412,
+  "counts": {
+    "Dickson polynomial identities": 5,
+    "Odd-root parameter checks": 1280,
+    "Direct quadratic checks": 144,
+    "Indirect quadratic checks": 270,
+    "Gaussian checks": 80,
+    "Honsbeek checks": 48,
+    "Square-class checks": 9,
+    "Square-class multiplication checks": 1024,
+    "Polynomial inverse checks": 6,
+    "Principal-branch checks": 6,
+    "Root-of-unity arithmetic checks": 527,
+    "Control-flow model checks": 3,
+    "Lexical checks": 5,
+    "Structural checks": 5
+  },
+  "case_counts": {
+    "Odd-root parameter cases": 320,
+    "Direct quadratic cases": 72,
+    "Indirect quadratic cases": 90,
+    "Gaussian cases": 40,
+    "Honsbeek parameter cases": 22,
+    "Polynomial inverse cases": 6
+  },
+  "elapsed_seconds": 0.226,
+  "native_wolfram_execution": "NOT RUN: connector HTTP 404; no local kernel",
+  "scope": "Exact mathematical checks, a stated control-flow model, and lexical/structural checks only.",
+  "package_sha256": "61e10f81f96e7485415b7c3ea40e3a0c1bc127607d2eeab535e816e03a2da9e6",
+  "package_lines": 613,
+  "details": {
+    "odd_indices_tested": [
+      3,
+      5,
+      7,
+      9
+    ],
+    "coset_example": {
+      "primes": [
+        2,
+        3,
+        5,
+        7,
+        11
+      ],
+      "input_square_classes": [
+        1,
+        210,
+        55,
+        462
+      ],
+      "solution_coset": [
+        6,
+        35,
+        77,
+        330
+      ],
+      "coefficients": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "ambient_degree": 32,
+      "input_field_degree": 4,
+      "systems": {
+        "1": "6*x0**2 + 35*x1**2 + 77*x2**2 + 330*x3**2",
+        "55": "12*x0*x3 + 14*x1*x2",
+        "210": "2*x0*x1 + 22*x2*x3",
+        "462": "2*x0*x2 + 10*x1*x3"
+      }
+    }
+  }
+}

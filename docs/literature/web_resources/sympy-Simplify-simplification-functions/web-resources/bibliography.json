@@ -1,0 +1,24 @@
+{
+  "id": "sympy",
+  "title": "Simplify: simplification functions",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "sympydocs",
+      "entry_latex": "SymPy developers, \\emph{Simplify documentation}, entries for \\texttt{sqrtdenest}, \\texttt{nthroot}, \\texttt{radsimp}, and \\texttt{powdenest}.\n\\access{https://docs.sympy.org/latest/modules/simplify/simplify.html}{Official documentation}. \\status{D}\nPublic contracts and examples. The real $n$th-root routine is a significant addition to the coverage in the supplied reports. The local verification run used version 1.14.0."
+    },
+    {
+      "report": "report-2",
+      "key": "sympydocs",
+      "entry_latex": "SymPy development team.\n\\emph{Simplify: simplification functions}, official documentation.\n\\sourceurl{https://docs.sympy.org/latest/modules/simplify/simplify.html}.\n\\textbf{D.} Documents \\texttt{sqrtdenest}, \\texttt{nthroot}, \\texttt{radsimp}, and related routines. Experiments in this report used SymPy 1.14.0; the live documentation URL may track later releases."
+    },
+    {
+      "report": "report-3",
+      "key": "sympy",
+      "entry_latex": "SymPy development team. ``Simplify,'' official documentation, especially \\texttt{sqrtdenest}, \\texttt{radsimp}, and \\texttt{nthroot}. \\url{https://docs.sympy.org/latest/modules/simplify/simplify.html}. \\status{D}\n\\entrynote{Documents the purpose, parameters, examples, and limitations of the public routines. The local experiments used SymPy 1.14.0; a moving ``latest'' page is not a substitute for recording that exact version.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

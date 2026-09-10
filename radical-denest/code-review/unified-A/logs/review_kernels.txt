@@ -1,0 +1,78 @@
+Kernel: 15.0.1 for Microsoft Windows (64-bit) (July 2, 2026)
+
+########## review-1: VerifiedMultiplierTrial[beta, r, m] ##########
+  positive sqrt m=2 -> <|"Status" -> "VerifiedCandidate", "Original" -> Sqrt[5 + 2*Sqrt[6]], "Value" -> (2 + Sqrt[6])/Sqrt[2], "Verified" -> True, "Multiplier" -> 2, "GCDDegree" -> 1, "ContainsRootObjects" -> False|>   (0.36 s)
+     value equals expected: True   equals target: True
+  positive sqrt m=1 (no proper GCD) -> <|"Status" -> "NoProperGCD", "Value" -> Sqrt[5 + 2*Sqrt[6]], "GCDDegree" -> 2|>   (0.01 s)
+  negative target -> <|"Status" -> "VerifiedCandidate", "Original" -> -Sqrt[3 + 2*Sqrt[2]], "Value" -> -1 - Sqrt[2], "Verified" -> True, "Multiplier" -> 1, "GCDDegree" -> 1, "ContainsRootObjects" -> False|>   (0.05 s)
+     value equals expected: True   equals target: True
+  complex 3/2 power -> <|"Status" -> "VerifiedCandidate", "Original" -> (-1 + (2*I)*Sqrt[2])^(3/2), "Value" -> -5 + I*Sqrt[2], "Verified" -> True, "Multiplier" -> 1, "GCDDegree" -> 1, "ContainsRootObjects" -> False|>   (0.07 s)
+     value equals expected: True   equals target: True
+  complex product -> <|"Status" -> "VerifiedCandidate", "Original" -> Sqrt[-1 + (2*I)*Sqrt[2]]*Sqrt[-2 + (2*I)*Sqrt[3]], "Value" -> 1 - Sqrt[6] - I*(-Sqrt[2] - Sqrt[3]), "Verified" -> True, "Multiplier" -> 1, "GCDDegree" -> 1, "ContainsRootObjects" -> False|>   (0.18 s)
+     value equals expected: True   equals target: True
+  cube root m=9 -> <|"Status" -> "VerifiedCandidate", "Original" -> (-1 + 2^(1/3))^(1/3), "Value" -> (1 - 2^(1/3) + 2^(2/3))/3^(2/3), "Verified" -> True, "Multiplier" -> 9, "GCDDegree" -> 1, "ContainsRootObjects" -> False|>   (1.1300000000000001 s)
+     value equals expected: True   equals target: True
+  equal-degree multiplier -> <|"Status" -> "VerifiedCandidate", "Original" -> Sqrt[5 + 2*Sqrt[6]], "Value" -> (1 + Sqrt[2] + Sqrt[3])/Sqrt[6 - 2*Sqrt[2] + 2*Sqrt[3] - 2*Sqrt[6]], "Verified" -> True, "Multiplier" -> 6 - 2*Sqrt[2] + 2*Sqrt[3] - 2*Sqrt[6], "GCDDegree" -> 1, "ContainsRootObjects" -> False|>   (0.11 s)
+     value equals expected: True   equals target: True
+  zero multiplier -> Failure["ZeroMultiplier", <||>]   (0. s)
+  inexact multiplier -> Failure["ExactAlgebraicInputsRequired", <||>]   (0. s)
+  root order 1 -> Failure["InvalidRootDegree", <|"Degree" -> 1|>]   (0. s)
+  symbolic target -> Failure["ExactAlgebraicInputsRequired", <||>]   (0. s)
+
+########## review-2: CertifiedMultiplierStep[target, k, m] ##########
+  positive sqrt m=2 -> <|"Status" -> "CertifiedCandidates", "AbsoluteDegree" -> 2, "GCDDegree" -> 1, "Candidates" -> {(2 + Sqrt[6])/Sqrt[2]}|>   (0.06 s)
+     first candidate equals expected: True   equals target: True
+  positive sqrt m=1 (no proper GCD) -> <|"Status" -> "NoLowerDegreeGCD", "AbsoluteDegree" -> 4, "GCDDegree" -> 2, "Candidates" -> {}|>   (0.01 s)
+  negative target -> <|"Status" -> "CertifiedCandidates", "AbsoluteDegree" -> 2, "GCDDegree" -> 1, "Candidates" -> {-1 - Sqrt[2]}|>   (0.04 s)
+     first candidate equals expected: True   equals target: True
+  complex 3/2 power -> <|"Status" -> "CertifiedCandidates", "AbsoluteDegree" -> 2, "GCDDegree" -> 1, "Candidates" -> {-5 + I*Sqrt[2]}|>   (0.04 s)
+     first candidate equals expected: True   equals target: True
+  complex product -> <|"Status" -> "CertifiedCandidates", "AbsoluteDegree" -> 4, "GCDDegree" -> 1, "Candidates" -> {1 - Sqrt[6] - I*(-Sqrt[2] - Sqrt[3])}|>   (0.12 s)
+     first candidate equals expected: True   equals target: True
+  cube root m=9 -> <|"Status" -> "CertifiedCandidates", "AbsoluteDegree" -> 3, "GCDDegree" -> 1, "Candidates" -> {(1 - 2^(1/3) + 2^(2/3))/3^(2/3)}|>   (0.62 s)
+     first candidate equals expected: True   equals target: True
+  equal-degree multiplier -> <|"Status" -> "CertifiedCandidates", "AbsoluteDegree" -> 4, "GCDDegree" -> 1, "Candidates" -> {(1 + Sqrt[2] + Sqrt[3])/Sqrt[6 - 2*Sqrt[2] + 2*Sqrt[3] - 2*Sqrt[6]]}|>   (0.08 s)
+     first candidate equals expected: True   equals target: True
+  zero multiplier -> Failure["InvalidMultiplier", <|"Multiplier" -> 0|>]   (0. s)
+  inexact multiplier -> Failure["InvalidMultiplier", <|"Multiplier" -> 2.|>]   (0. s)
+  root order 1 -> Failure["InvalidRootOrder", <|"Order" -> 1|>]   (0. s)
+  symbolic target -> Failure["InvalidTarget", <|"Target" -> Sqrt[1 + x^2]|>]   (0. s)
+
+########## review-3: TryDenestCandidate[original, q, m] ##########
+
+ExactAlgebraicEqualQ::shdw: Symbol ExactAlgebraicEqualQ appears in multiple contexts {RadicalDenestingAudit`, RadicalAudit`}; definitions in context RadicalDenestingAudit` may shadow or be shadowed by other definitions.
+  positive sqrt m=2 -> <|"Original" -> Sqrt[5 + 2*Sqrt[6]], "Multiplier" -> 2, "RootOrder" -> 2, "MinimalPolynomial" -> (-2 - 4*#1 + #1^2 & ), "RationalDegree" -> 2, "RelativeGCDDegree" -> 1, "Status" -> "Candidate", "Candidates" -> {(2 + Sqrt[6])/Sqrt[2]}|>   (0.03 s)
+     first candidate equals expected: True   equals target: True
+     BestImprovement: InputForm[(2 + Sqrt[6])/Sqrt[2]]
+  positive sqrt m=1 (no proper GCD) -> <|"Original" -> Sqrt[5 + 2*Sqrt[6]], "Multiplier" -> 1, "RootOrder" -> 2, "MinimalPolynomial" -> (1 - 10*#1^2 + #1^4 & ), "RationalDegree" -> 4, "RelativeGCDDegree" -> 2, "Status" -> "NoDegreeReduction", "Candidates" -> {}|>   (0. s)
+  negative target -> <|"Original" -> -Sqrt[3 + 2*Sqrt[2]], "Multiplier" -> 1, "RootOrder" -> 2, "MinimalPolynomial" -> (-1 - 2*#1 + #1^2 & ), "RationalDegree" -> 2, "RelativeGCDDegree" -> 1, "Status" -> "Candidate", "Candidates" -> {-1 - Sqrt[2]}|>   (0.03 s)
+     first candidate equals expected: True   equals target: True
+     BestImprovement: InputForm[-1 - Sqrt[2]]
+  complex 3/2 power -> <|"Original" -> (-1 + (2*I)*Sqrt[2])^(3/2), "Multiplier" -> 1, "RootOrder" -> 2, "MinimalPolynomial" -> (27 - 10*#1 + #1^2 & ), "RationalDegree" -> 2, "RelativeGCDDegree" -> 1, "Status" -> "Candidate", "Candidates" -> {-5 + I*Sqrt[2]}|>   (0.03 s)
+     first candidate equals expected: True   equals target: True
+     BestImprovement: InputForm[-5 + I*Sqrt[2]]
+  complex product -> <|"Original" -> Sqrt[-1 + (2*I)*Sqrt[2]]*Sqrt[-2 + (2*I)*Sqrt[3]], "Multiplier" -> 1, "RootOrder" -> 2, "MinimalPolynomial" -> (144 + 48*#1 + 4*#1^2 + 4*#1^3 + #1^4 & ), "RationalDegree" -> 4, "RelativeGCDDegree" -> 1, "Status" -> "Candidate", "Candidates" -> {1 - Sqrt[6] - I*(-Sqrt[2] - Sqrt[3])}|>   (0.11 s)
+     first candidate equals expected: True   equals target: True
+     BestImprovement: InputForm[1 - Sqrt[6] - I*(-Sqrt[2] - Sqrt[3])]
+  cube root m=9 -> <|"Original" -> (-1 + 2^(1/3))^(1/3), "Multiplier" -> 9, "RootOrder" -> 3, "MinimalPolynomial" -> (-9 + 9*#1 - 3*#1^2 + #1^3 & ), "RationalDegree" -> 3, "RelativeGCDDegree" -> 1, "Status" -> "Candidate", "Candidates" -> {(1 - 2^(1/3) + 2^(2/3))/3^(2/3)}|>   (0.79 s)
+     first candidate equals expected: True   equals target: True
+     BestImprovement: InputForm[(1 - 2^(1/3) + 2^(2/3))/3^(2/3)]
+  equal-degree multiplier -> <|"Original" -> Sqrt[5 + 2*Sqrt[6]], "Multiplier" -> 6 - 2*Sqrt[2] + 2*Sqrt[3] - 2*Sqrt[6], "RootOrder" -> 2, "MinimalPolynomial" -> (-8 + 16*#1 - 4*#1^2 - 4*#1^3 + #1^4 & ), "RationalDegree" -> 4, "RelativeGCDDegree" -> 1, "Status" -> "Candidate", "Candidates" -> {(1 + Sqrt[2] + Sqrt[3])/Sqrt[6 - 2*Sqrt[2] + 2*Sqrt[3] - 2*Sqrt[6]]}|>   (0.14 s)
+     first candidate equals expected: True   equals target: True
+     BestImprovement: InputForm[Sqrt[5 + 2*Sqrt[6]]]
+  zero multiplier -> Failure["ZeroMultiplier", <||>]   (0. s)
+  inexact multiplier -> Failure["InvalidInput", <||>]   (0. s)
+  root order 1 -> Failure["InvalidRootOrder", <|"Order" -> 1|>]   (0. s)
+  symbolic target -> Failure["InvalidInput", <||>]   (0. s)
+  RadicalDepth of ugly BFHT output: 2
+  CandidateCost of it: {0, 2, 9, 69}  vs input {0, 3, 4, 28}
+
+########## review-2 regression tests of the guarded component (re-run with safer_core loaded) ##########
+
+Syntax::com: Warning: comma encountered with no adjacent expression. The expression will be treated as Null.  (line 320 of "C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/reports/review-2/original.wl").
+  zero multiplier -> Failure: True
+  root order one -> Failure: True
+  negative target certified: True
+  complex target certified: True
+
+DONE

@@ -1,0 +1,31 @@
+{
+  "record_id": "landauMiller",
+  "title": "Solvability by radicals is in polynomial time",
+  "asset_id": "pdf-journal-1985",
+  "version": "journal-1985",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://www.cs.cmu.edu/~glmiller/Publications/Papers/LaMi85.pdf",
+    "resolved_url": "https://www.cs.cmu.edu/~glmiller/Publications/Papers/LaMi85.pdf",
+    "retrieved_at": "2026-09-05T20:25:11+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 1226842,
+    "sha256": "998293c99e6bfae2d36a9d202145df4db34ffc66dc4e86a32f6d5c4749d65b93"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "browser_fulltext",
+  "note": "Author-hosted PDF, 30 PDF pages; title and authors checked.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/landauMiller-Solvability-by-radicals-is-in-polynomial-time/journal-1985/pdf-journal-1985.pdf",
+      "role": "pdf",
+      "bytes": 1226842,
+      "sha256": "998293c99e6bfae2d36a9d202145df4db34ffc66dc4e86a32f6d5c4749d65b93"
+    }
+  ],
+  "prior_candidate_errors": []
+}

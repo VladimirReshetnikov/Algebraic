@@ -1,0 +1,31 @@
+{
+  "record_id": "gutin",
+  "title": "Constructive proof of Herschfeld's Convergence Theorem",
+  "asset_id": "pdf",
+  "version": "arxiv-1907.02700v6",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://arxiv.org/pdf/1907.02700v6",
+    "resolved_url": "https://arxiv.org/pdf/1907.02700v6",
+    "retrieved_at": "2026-09-05T20:27:16+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 546732,
+    "sha256": "c51aa7700a3531174c1e612ff8c008deb8407a3c3a7b2529643e5022615252e5"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "repository_pdf_and_source_links",
+  "note": "Pinned arXiv version; PDF and source requests use the identical version identifier.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/gutin-Constructive-proof-of-Herschfeld-s-Convergence-Theorem/arxiv-1907.02700v6/paper.pdf",
+      "role": "pdf",
+      "bytes": 546732,
+      "sha256": "c51aa7700a3531174c1e612ff8c008deb8407a3c3a7b2529643e5022615252e5"
+    }
+  ],
+  "prior_candidate_errors": []
+}

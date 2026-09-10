@@ -1,0 +1,37 @@
+{
+  "record_id": "girstmair",
+  "title": "Reducing radicals in the spirit of Euclid",
+  "asset_id": "tex-source",
+  "version": "arxiv-2004.06039v1",
+  "kind": "source",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://arxiv.org/src/2004.06039v1",
+    "resolved_url": "https://arxiv.org/src/2004.06039v1",
+    "retrieved_at": "2026-09-05T20:26:23+00:00",
+    "http_status": 200,
+    "content_type": "application/gzip",
+    "content_encoding": "",
+    "bytes": 10312,
+    "sha256": "b09f9ae8c4a3c8748a8d02bfaa5e7a6b994f3f077ca433050625cc580ca092e3"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "repository_pdf_and_source_links",
+  "note": "arXiv advertises TeX Source; actual bytes and archive contents have NOT been retrieved in this environment.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/girstmair-Reducing-radicals-in-the-spirit-of-Euclid/arxiv-2004.06039v1/tex-source.tex.gz",
+      "role": "original_source_response",
+      "bytes": 10312,
+      "sha256": "b09f9ae8c4a3c8748a8d02bfaa5e7a6b994f3f077ca433050625cc580ca092e3"
+    },
+    {
+      "path": "papers/girstmair-Reducing-radicals-in-the-spirit-of-Euclid/arxiv-2004.06039v1/source/main.tex",
+      "role": "tex",
+      "bytes": 29701,
+      "sha256": "d6cdfa53978d15445ef056bac11cb783e7fcd10117e55c2432fc43cc20dc818b"
+    }
+  ],
+  "prior_candidate_errors": []
+}

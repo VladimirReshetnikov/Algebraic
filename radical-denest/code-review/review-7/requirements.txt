@@ -1,0 +1,2 @@
+# Used by tests/verify_independent.py; the patch builder needs no third-party packages.
+sympy==1.14.0

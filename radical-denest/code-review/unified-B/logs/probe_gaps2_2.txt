@@ -1,0 +1,732 @@
+Kernel: 15.0.1 for Microsoft Windows (64-bit) (July 2, 2026)
+=== P. further families ===
+P01  ok  depth 2->1  0.09 s
+      in : (19 + 15*2^(1/3) + 12*2^(2/3))^(1/3)
+      out: 1 + 2^(1/3) + 2^(2/3)
+P02  ok  depth 2->1  0.09 s
+      in : (133 + 57*2^(2/3)*3^(1/3) + 48*2^(1/3)*3^(2/3))^(1/6)
+      out: 2^(1/3) + 3^(1/3)
+P03  ok  depth 2->1  0.06 s
+      in : (9 + 6*2^(1/3) + 6*2^(2/3))^(1/4)
+      out: 1 + 2^(1/3)
+P04  ok  depth 2->1  0.07 s
+      in : (21 + 15*2^(1/3) + 12*2^(2/3))^(1/5)
+      out: 1 + 2^(1/3)
+P05  ok  depth 2->1  0.29 s
+      in : Sqrt[5 + 2^(2/3) + 2*2^(5/6) + 2*2^(1/3)*Sqrt[3] + 2*Sqrt[6]]
+      out: 2^(1/3) + Sqrt[2] + Sqrt[3]
+P06  ok  depth 2->1  0.31 s
+      in : Sqrt[2^(2/3) + 3^(2/3) + 5^(2/3) + 2*6^(1/3) + 2*10^(1/3) + 2*15^(1/3)]
+      out: 2^(1/3) + 3^(1/3) + 5^(1/3)
+P07  ok  depth 3->1  0.08 s
+      in : Sqrt[1 + 2*(7 + 5*Sqrt[2])^(1/3) + (7 + 5*Sqrt[2])^(2/3)]
+      out: 2 + Sqrt[2]
+P08  ok  depth 2->0  0.01 s
+      in : Sqrt[(-1 + Sqrt[2])*(1 + Sqrt[2])]
+      out: 1
+P09  MISS  depth 1->1  0. s
+      in : 1 + Sqrt[2]
+      out: 1 + Sqrt[2]
+      exp: 1 + Sqrt[2]  (exp==in: True)
+P10  MISS  depth 1->1  0. s
+      in : -1 + Sqrt[2]
+      out: -1 + Sqrt[2]
+      exp: -1 + Sqrt[2]  (exp==in: True)
+P11  MISS  depth 1->1  0. s
+      in : (-1)^(1/3)*(-1 + Sqrt[2])
+      out: (-1)^(1/3)*(-1 + Sqrt[2])
+      exp: (-1)^(1/3)*(-1 + Sqrt[2])  (exp==in: True)
+P12  MISS  depth 0->1  0.03 s
+      in : Root[1 - 10*#1^2 + #1^4 & , 4, 0]
+      out: Sqrt[2] + Sqrt[3]
+      exp: Sqrt[2] + Sqrt[3]  (exp==in: True)
+P13  ok  depth 2->1  0.58 s
+      in : Sqrt[28 + 2*Sqrt[6] + 2*Sqrt[10] + 2*Sqrt[14] + 2*Sqrt[15] + 2*Sqrt[21] + 2*Sqrt[22] + 2*Sqrt[33] + 2*Sqrt[35] + 2*Sqrt[55] + 2*Sqrt[77]]
+      out: Sqrt[2] + Sqrt[3] + Sqrt[5] + Sqrt[7] + Sqrt[11]
+P14  ok  depth 2->1  0.02 s
+      in : (1595 + 1211*Sqrt[2])^(1/3)
+      out: 5 + 7*Sqrt[2]
+P15  ok  depth 2->1  0.08 s
+      in : (7 - 5*Sqrt[2])^(1/3) + (7 + 5*Sqrt[2])^(1/3)
+      out: 1 + Sqrt[2] + (-1)^(1/3)*(-1 + Sqrt[2])
+P16  ok  depth 2->1  0.05 s
+      in : (17 + 12*Sqrt[2])^(3/4)
+      out: 7 + 5*Sqrt[2]
+P17  ok  depth 2->1  0.12 s
+      in : ((-14 + 14*I) - (10 - 10*I)*Sqrt[2])^(1/3)
+      out: (1 + I)*(1 + Sqrt[2])
+P18  ok  depth 2->1  0.06 s
+      in : (-17 - 12*Sqrt[2])^(1/4)
+      out: (-1)^(1/4) + (-1)^(1/4)*Sqrt[2]
+P19  ok  depth 2->1  0.1 s
+      in : (3363 - 2378*Sqrt[2])^(1/10)
+      out: -1 + Sqrt[2]
+P20  ok  depth 2->1  0.03 s
+      in : Sqrt[1 + 2*2^(1/4) + Sqrt[2]]
+      out: 1 + 2^(1/4)
+P21  ok  depth 2->1  0.04 s
+      in : (3 + 4*2^(1/4) + 6*Sqrt[2] + 4*2^(3/4))^(1/4)
+      out: 1 + 2^(1/4)
+P22  ok  depth 2->1  0.07 s
+      in : Sqrt[Sqrt[2] + 2*2^(1/4)*3^(1/3) + 3^(2/3)]
+      out: 2^(1/4) + 3^(1/3)
+P23  ok  depth 2->1  0.1 s
+      in : (3 + 2^(3/4) + 3*Sqrt[2]*3^(1/3) + 3*2^(1/4)*3^(2/3))^(1/3)
+      out: 2^(1/4) + 3^(1/3)
+P24  MISS  depth 2->2  0. s
+      in : Sqrt[2*Sqrt[-1 + a] + a]
+      out: Sqrt[2*Sqrt[-1 + a] + a]
+      exp: Sqrt[2*Sqrt[-1 + a] + a]  (exp==in: True)
+P25  MISS  depth 2->2  2.99 s
+      in : Sqrt[2 - Sqrt[3]] + Sqrt[1 + Sqrt[3]] - (1 + Sqrt[3])^(3/2) + Sqrt[2 + Sqrt[3]]
+      out: Sqrt[2 - Sqrt[3]] - Sqrt[3*(1 + Sqrt[3])] + Sqrt[2 + Sqrt[3]]
+      exp: Sqrt[6] - Sqrt[3*(1 + Sqrt[3])]  (exp==in: True)
+P26  ok  depth 2->1  0.03 s
+      in : Sqrt[2*(2 + Sqrt[3])]
+      out: 1 + Sqrt[3]
+P27  ok  depth 2->0  0.03 s
+      in : ((5 - 2*Sqrt[6])*(5 + 2*Sqrt[6]))^(1/4)
+      out: 1
+P28  ok  depth 3->2  2.05 s
+      in : Sqrt[3 + Sqrt[3 + 2*Sqrt[2]] + Sqrt[5 + 2*Sqrt[6]]]
+      out: Sqrt[4 + 2*Sqrt[2] + Sqrt[3]]
+P29  MISS  depth 2->2  0.88 s
+      in : Sqrt[2*(-1 + Sqrt[2])*(3 + 2*Sqrt[2])]
+      out: Sqrt[2*(1 + Sqrt[2])]
+      exp: Sqrt[2*(1 + Sqrt[2])]  (exp==in: True)
+P30  ok  depth 2->0  0.03 s
+      in : ((-1 + Sqrt[2])*(1 + Sqrt[2]))^(1/3)
+      out: 1
+
+=== SUMMARY ===
+non-ok: {{P09, MISS}, {P10, MISS}, {P11, MISS}, {P12, MISS}, {P24, MISS}, {P25, MISS}, {P29, MISS}}
+
+=== VERBOSE DIAGNOSTICS ===
+---- C05: (41 - 29*Sqrt[2])^(1/5)
+[RadicalDenest2] LinearFactor: (-41 + 29*Sqrt[2])^(1/5) -> -1 + Sqrt[2]
+[RadicalDenest2] NegativeRadicand: (41 - 29*Sqrt[2])^(1/5) -> -(-1)^(1/5) + (-1)^(1/5)*Sqrt[2]
+   result: -(-1)^(1/5) + (-1)^(1/5)*Sqrt[2]
+---- C14: (-99 - 70*Sqrt[2])^(1/6)
+[RadicalDenest2] LinearFactor: (99 + 70*Sqrt[2])^(1/6) -> 1 + Sqrt[2]
+[RadicalDenest2] NegativeRadicand: (-99 - 70*Sqrt[2])^(1/6) -> (-1)^(1/6) + (-1)^(1/6)*Sqrt[2]
+   result: (-1)^(1/6) + (-1)^(1/6)*Sqrt[2]
+---- R03: (-19 + 7*2^(2/3)*5^(1/3))^(1/6)
+[RadicalDenest2] multiplier 1  minpoly degree 9
+[RadicalDenest2] multiplier 2^(1/3)*5^(2/3)  minpoly degree 9
+[RadicalDenest2] multiplier 2^(2/3)*5^(1/3)  minpoly degree 9
+[RadicalDenest2] multiplier 2  minpoly degree 9
+[RadicalDenest2] multiplier 3  minpoly degree 9
+[RadicalDenest2] MultiplierOrbit: (1 + 2^(2/3)*5^(1/3) - 2^(1/3)*5^(2/3))^(1/3) -> -(2/3)^(1/3) + (5/3)^(1/3)
+[RadicalDenest2] IndexReduction: (-19 + 7*2^(2/3)*5^(1/3))^(1/6) -> -(2/3)^(1/3) + (5/3)^(1/3)
+[RadicalDenest2] NegativeRadicand: (-1 - 2^(2/3)*5^(1/3) + 2^(1/3)*5^(2/3))^(1/3) -> (-5/3)^(1/3) - (-2/3)^(1/3)
+   result: -(2/3)^(1/3) + (5/3)^(1/3)
+---- P08: Sqrt[(-1 + Sqrt[2])*(1 + Sqrt[2])]
+[RadicalDenest2] LinearFactor: Sqrt[(-1 + Sqrt[2])*(1 + Sqrt[2])] -> 1
+   result: 1
+---- Q21: Sqrt[1 + Sqrt[3]] + Sqrt[3 + 3*Sqrt[3]] - Sqrt[10 + 6*Sqrt[3]]
+[RadicalDenest2] multiplier 1  minpoly degree 4
+[RadicalDenest2] multiplier Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 2  minpoly degree 4
+[RadicalDenest2] multiplier 3  minpoly degree 4
+[RadicalDenest2] multiplier 5  minpoly degree 4
+[RadicalDenest2] multiplier 6  minpoly degree 4
+[RadicalDenest2] multiplier 2*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 3*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 6*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 4  minpoly degree 4
+[RadicalDenest2] multiplier 12  minpoly degree 4
+[RadicalDenest2] multiplier 9  minpoly degree 4
+[RadicalDenest2] multiplier 18  minpoly degree 4
+[RadicalDenest2] multiplier 10  minpoly degree 4
+[RadicalDenest2] multiplier 15  minpoly degree 4
+[RadicalDenest2] multiplier 25  minpoly degree 4
+[RadicalDenest2] multiplier 75  minpoly degree 4
+[RadicalDenest2] multiplier 50  minpoly degree 4
+[RadicalDenest2] multiplier 30  minpoly degree 4
+[RadicalDenest2] multiplier 150  minpoly degree 4
+[RadicalDenest2] multiplier 36  minpoly degree 4
+[RadicalDenest2] multiplier 4*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 12*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 9*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 18*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 36*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 8  minpoly degree 4
+[RadicalDenest2] multiplier 24  minpoly degree 4
+[RadicalDenest2] multiplier 72  minpoly degree 4
+[RadicalDenest2] multiplier 27  minpoly degree 4
+[RadicalDenest2] multiplier 54  minpoly degree 4
+[RadicalDenest2] multiplier 108  minpoly degree 4
+[RadicalDenest2] multiplier 20  minpoly degree 4
+[RadicalDenest2] multiplier 100  minpoly degree 4
+[RadicalDenest2] multiplier 60  minpoly degree 4
+[RadicalDenest2] multiplier 300  minpoly degree 4
+[RadicalDenest2] multiplier 45  minpoly degree 4
+[RadicalDenest2] multiplier 225  minpoly degree 4
+[RadicalDenest2] multiplier 90  minpoly degree 4
+[RadicalDenest2] multiplier 450  minpoly degree 4
+[RadicalDenest2] multiplier 125  minpoly degree 4
+[RadicalDenest2] multiplier 375  minpoly degree 4
+[RadicalDenest2] multiplier 250  minpoly degree 4
+[RadicalDenest2] multiplier 750  minpoly degree 4
+[RadicalDenest2] multiplier 1125  minpoly degree 4
+[RadicalDenest2] multiplier 2250  minpoly degree 4
+[RadicalDenest2] multiplier 500  minpoly degree 4
+[RadicalDenest2] multiplier 1500  minpoly degree 4
+[RadicalDenest2] multiplier 180  minpoly degree 4
+[RadicalDenest2] multiplier 900  minpoly degree 4
+[RadicalDenest2] multiplier 4500  minpoly degree 4
+[RadicalDenest2] multiplier 216  minpoly degree 4
+[RadicalDenest2] multiplier 8*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 24*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 72*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 27*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 54*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 108*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 216*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 16  minpoly degree 4
+[RadicalDenest2] multiplier 48  minpoly degree 4
+[RadicalDenest2] multiplier 144  minpoly degree 4
+[RadicalDenest2] multiplier 432  minpoly degree 4
+[RadicalDenest2] multiplier 81  minpoly degree 4
+[RadicalDenest2] multiplier 162  minpoly degree 4
+[RadicalDenest2] multiplier 324  minpoly degree 4
+[RadicalDenest2] multiplier 648  minpoly degree 4
+[RadicalDenest2] multiplier 40  minpoly degree 4
+[RadicalDenest2] multiplier 200  minpoly degree 4
+[RadicalDenest2] multiplier 120  minpoly degree 4
+[RadicalDenest2] multiplier 600  minpoly degree 4
+[RadicalDenest2] multiplier 1000  minpoly degree 4
+[RadicalDenest2] multiplier 3000  minpoly degree 4
+[RadicalDenest2] multiplier 360  minpoly degree 4
+[RadicalDenest2] multiplier 1800  minpoly degree 4
+[RadicalDenest2] multiplier 9000  minpoly degree 4
+[RadicalDenest2] multiplier 135  minpoly degree 4
+[RadicalDenest2] multiplier 675  minpoly degree 4
+[RadicalDenest2] multiplier 270  minpoly degree 4
+[RadicalDenest2] multiplier 1350  minpoly degree 4
+[RadicalDenest2] multiplier 3375  minpoly degree 4
+[RadicalDenest2] multiplier 6750  minpoly degree 4
+[RadicalDenest2] multiplier 540  minpoly degree 4
+[RadicalDenest2] multiplier 2700  minpoly degree 4
+[RadicalDenest2] multiplier 13500  minpoly degree 4
+[RadicalDenest2] multiplier 625  minpoly degree 4
+[RadicalDenest2] multiplier 1875  minpoly degree 4
+[RadicalDenest2] multiplier 1250  minpoly degree 4
+[RadicalDenest2] multiplier 3750  minpoly degree 4
+[RadicalDenest2] multiplier 5625  minpoly degree 4
+[RadicalDenest2] multiplier 11250  minpoly degree 4
+[RadicalDenest2] multiplier 2500  minpoly degree 4
+[RadicalDenest2] multiplier 7500  minpoly degree 4
+[RadicalDenest2] multiplier 22500  minpoly degree 4
+[RadicalDenest2] multiplier 16875  minpoly degree 4
+[RadicalDenest2] multiplier 33750  minpoly degree 4
+[RadicalDenest2] multiplier 67500  minpoly degree 4
+[RadicalDenest2] multiplier 5000  minpoly degree 4
+[RadicalDenest2] multiplier 15000  minpoly degree 4
+[RadicalDenest2] multiplier 45000  minpoly degree 4
+[RadicalDenest2] multiplier 1080  minpoly degree 4
+[RadicalDenest2] multiplier 5400  minpoly degree 4
+[RadicalDenest2] multiplier 27000  minpoly degree 4
+[RadicalDenest2] multiplier 135000  minpoly degree 4
+[RadicalDenest2] multiplier 1296  minpoly degree 4
+[RadicalDenest2] multiplier 16*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 48*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 144*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 432*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 81*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 162*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 324*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 648*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 1296*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 32  minpoly degree 4
+[RadicalDenest2] multiplier 96  minpoly degree 4
+[RadicalDenest2] multiplier 288  minpoly degree 4
+[RadicalDenest2] multiplier 864  minpoly degree 4
+[RadicalDenest2] multiplier 2592  minpoly degree 4
+[RadicalDenest2] multiplier 243  minpoly degree 4
+[RadicalDenest2] RootReduce/ToRadicals: Sqrt[3 + 3*Sqrt[3]] -> Sqrt[3*(1 + Sqrt[3])]
+[RadicalDenest2] multiplier 1  minpoly degree 4
+[RadicalDenest2] multiplier Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 2  minpoly degree 4
+[RadicalDenest2] multiplier 3  minpoly degree 4
+[RadicalDenest2] multiplier 5  minpoly degree 4
+[RadicalDenest2] multiplier 6  minpoly degree 4
+[RadicalDenest2] multiplier 2*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 3*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 6*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 4  minpoly degree 4
+[RadicalDenest2] multiplier 12  minpoly degree 4
+[RadicalDenest2] multiplier 9  minpoly degree 4
+[RadicalDenest2] multiplier 18  minpoly degree 4
+[RadicalDenest2] multiplier 10  minpoly degree 4
+[RadicalDenest2] multiplier 15  minpoly degree 4
+[RadicalDenest2] multiplier 25  minpoly degree 4
+[RadicalDenest2] multiplier 75  minpoly degree 4
+[RadicalDenest2] multiplier 50  minpoly degree 4
+[RadicalDenest2] multiplier 30  minpoly degree 4
+[RadicalDenest2] multiplier 150  minpoly degree 4
+[RadicalDenest2] multiplier 36  minpoly degree 4
+[RadicalDenest2] multiplier 4*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 12*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 9*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 18*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 36*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 8  minpoly degree 4
+[RadicalDenest2] multiplier 24  minpoly degree 4
+[RadicalDenest2] multiplier 72  minpoly degree 4
+[RadicalDenest2] multiplier 27  minpoly degree 4
+[RadicalDenest2] multiplier 54  minpoly degree 4
+[RadicalDenest2] multiplier 108  minpoly degree 4
+[RadicalDenest2] multiplier 20  minpoly degree 4
+[RadicalDenest2] multiplier 100  minpoly degree 4
+[RadicalDenest2] multiplier 60  minpoly degree 4
+[RadicalDenest2] multiplier 300  minpoly degree 4
+[RadicalDenest2] multiplier 45  minpoly degree 4
+[RadicalDenest2] multiplier 225  minpoly degree 4
+[RadicalDenest2] multiplier 90  minpoly degree 4
+[RadicalDenest2] multiplier 450  minpoly degree 4
+[RadicalDenest2] multiplier 125  minpoly degree 4
+[RadicalDenest2] multiplier 375  minpoly degree 4
+[RadicalDenest2] multiplier 250  minpoly degree 4
+[RadicalDenest2] multiplier 750  minpoly degree 4
+[RadicalDenest2] multiplier 1125  minpoly degree 4
+[RadicalDenest2] multiplier 2250  minpoly degree 4
+[RadicalDenest2] multiplier 500  minpoly degree 4
+[RadicalDenest2] multiplier 1500  minpoly degree 4
+[RadicalDenest2] multiplier 180  minpoly degree 4
+[RadicalDenest2] multiplier 900  minpoly degree 4
+[RadicalDenest2] multiplier 4500  minpoly degree 4
+[RadicalDenest2] multiplier 216  minpoly degree 4
+[RadicalDenest2] multiplier 8*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 24*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 72*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 27*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 54*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 108*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 216*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 16  minpoly degree 4
+[RadicalDenest2] multiplier 48  minpoly degree 4
+[RadicalDenest2] multiplier 144  minpoly degree 4
+[RadicalDenest2] multiplier 432  minpoly degree 4
+[RadicalDenest2] multiplier 81  minpoly degree 4
+[RadicalDenest2] multiplier 162  minpoly degree 4
+[RadicalDenest2] multiplier 324  minpoly degree 4
+[RadicalDenest2] multiplier 648  minpoly degree 4
+[RadicalDenest2] multiplier 40  minpoly degree 4
+[RadicalDenest2] multiplier 200  minpoly degree 4
+[RadicalDenest2] multiplier 120  minpoly degree 4
+[RadicalDenest2] multiplier 600  minpoly degree 4
+[RadicalDenest2] multiplier 1000  minpoly degree 4
+[RadicalDenest2] multiplier 3000  minpoly degree 4
+[RadicalDenest2] multiplier 360  minpoly degree 4
+[RadicalDenest2] multiplier 1800  minpoly degree 4
+[RadicalDenest2] multiplier 9000  minpoly degree 4
+[RadicalDenest2] multiplier 135  minpoly degree 4
+[RadicalDenest2] multiplier 675  minpoly degree 4
+[RadicalDenest2] multiplier 270  minpoly degree 4
+[RadicalDenest2] multiplier 1350  minpoly degree 4
+[RadicalDenest2] multiplier 3375  minpoly degree 4
+[RadicalDenest2] multiplier 6750  minpoly degree 4
+[RadicalDenest2] multiplier 540  minpoly degree 4
+[RadicalDenest2] multiplier 2700  minpoly degree 4
+[RadicalDenest2] multiplier 13500  minpoly degree 4
+[RadicalDenest2] multiplier 625  minpoly degree 4
+[RadicalDenest2] multiplier 1875  minpoly degree 4
+[RadicalDenest2] multiplier 1250  minpoly degree 4
+[RadicalDenest2] multiplier 3750  minpoly degree 4
+[RadicalDenest2] multiplier 5625  minpoly degree 4
+[RadicalDenest2] multiplier 11250  minpoly degree 4
+[RadicalDenest2] multiplier 2500  minpoly degree 4
+[RadicalDenest2] multiplier 7500  minpoly degree 4
+[RadicalDenest2] multiplier 22500  minpoly degree 4
+[RadicalDenest2] multiplier 16875  minpoly degree 4
+[RadicalDenest2] multiplier 33750  minpoly degree 4
+[RadicalDenest2] multiplier 67500  minpoly degree 4
+[RadicalDenest2] multiplier 5000  minpoly degree 4
+[RadicalDenest2] multiplier 15000  minpoly degree 4
+[RadicalDenest2] multiplier 45000  minpoly degree 4
+[RadicalDenest2] multiplier 1080  minpoly degree 4
+[RadicalDenest2] multiplier 5400  minpoly degree 4
+[RadicalDenest2] multiplier 27000  minpoly degree 4
+[RadicalDenest2] multiplier 135000  minpoly degree 4
+[RadicalDenest2] multiplier 1296  minpoly degree 4
+[RadicalDenest2] multiplier 16*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 48*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 144*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 432*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 81*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 162*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 324*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 648*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 1296*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 32  minpoly degree 4
+[RadicalDenest2] multiplier 96  minpoly degree 4
+[RadicalDenest2] multiplier 288  minpoly degree 4
+[RadicalDenest2] multiplier 864  minpoly degree 4
+[RadicalDenest2] multiplier 2592  minpoly degree 4
+[RadicalDenest2] multiplier 243  minpoly degree 4
+[RadicalDenest2] multiplier 1  minpoly degree 4
+[RadicalDenest2] multiplier Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 2  minpoly degree 4
+[RadicalDenest2] multiplier 3  minpoly degree 4
+[RadicalDenest2] multiplier 5  minpoly degree 4
+[RadicalDenest2] multiplier 6  minpoly degree 4
+[RadicalDenest2] multiplier 2*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 3*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 5*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 15*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 10*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 6*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 30*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 4  minpoly degree 4
+[RadicalDenest2] multiplier 12  minpoly degree 4
+[RadicalDenest2] multiplier 9  minpoly degree 4
+[RadicalDenest2] multiplier 18  minpoly degree 4
+[RadicalDenest2] multiplier 10  minpoly degree 4
+[RadicalDenest2] multiplier 15  minpoly degree 4
+[RadicalDenest2] multiplier 25  minpoly degree 4
+[RadicalDenest2] multiplier 75  minpoly degree 4
+[RadicalDenest2] multiplier 50  minpoly degree 4
+[RadicalDenest2] multiplier 30  minpoly degree 4
+[RadicalDenest2] multiplier 150  minpoly degree 4
+[RadicalDenest2] multiplier 36  minpoly degree 4
+[RadicalDenest2] multiplier 4*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 20*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 12*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 60*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 9*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 45*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 18*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 90*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 25*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 75*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 50*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 150*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 225*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 450*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 100*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 300*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 36*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 180*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 900*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 8  minpoly degree 4
+[RadicalDenest2] multiplier 24  minpoly degree 4
+[RadicalDenest2] multiplier 72  minpoly degree 4
+[RadicalDenest2] multiplier 27  minpoly degree 4
+[RadicalDenest2] multiplier 54  minpoly degree 4
+[RadicalDenest2] multiplier 108  minpoly degree 4
+[RadicalDenest2] multiplier 20  minpoly degree 4
+[RadicalDenest2] multiplier 100  minpoly degree 4
+[RadicalDenest2] multiplier 60  minpoly degree 4
+[RadicalDenest2] multiplier 300  minpoly degree 4
+[RadicalDenest2] multiplier 45  minpoly degree 4
+[RadicalDenest2] multiplier 225  minpoly degree 4
+[RadicalDenest2] multiplier 90  minpoly degree 4
+[RadicalDenest2] multiplier 450  minpoly degree 4
+[RadicalDenest2] multiplier 125  minpoly degree 4
+[RadicalDenest2] multiplier 375  minpoly degree 4
+[RadicalDenest2] multiplier 250  minpoly degree 4
+[RadicalDenest2] multiplier 750  minpoly degree 4
+[RadicalDenest2] multiplier 1125  minpoly degree 4
+[RadicalDenest2] multiplier 2250  minpoly degree 4
+[RadicalDenest2] multiplier 500  minpoly degree 4
+[RadicalDenest2] multiplier 1500  minpoly degree 4
+[RadicalDenest2] multiplier 180  minpoly degree 4
+[RadicalDenest2] multiplier 900  minpoly degree 4
+[RadicalDenest2] multiplier 4500  minpoly degree 4
+[RadicalDenest2] multiplier 216  minpoly degree 4
+[RadicalDenest2] multiplier 8*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 40*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 24*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 120*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 200*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 600*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 72*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 360*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 1800*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 27*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 135*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 54*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 270*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 675*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 1350*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 108*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 540*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 2700*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 125*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 375*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 250*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 750*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 1125*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 2250*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 500*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 1500*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 4500*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 3375*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 6750*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 13500*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 1000*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 3000*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 9000*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 216*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 1080*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 5400*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 27000*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 16  minpoly degree 4
+[RadicalDenest2] multiplier 48  minpoly degree 4
+[RadicalDenest2] multiplier 144  minpoly degree 4
+[RadicalDenest2] multiplier 432  minpoly degree 4
+[RadicalDenest2] multiplier 81  minpoly degree 4
+[RadicalDenest2] multiplier 162  minpoly degree 4
+[RadicalDenest2] multiplier 324  minpoly degree 4
+[RadicalDenest2] multiplier 648  minpoly degree 4
+[RadicalDenest2] multiplier 40  minpoly degree 4
+[RadicalDenest2] multiplier 200  minpoly degree 4
+[RadicalDenest2] multiplier 120  minpoly degree 4
+[RadicalDenest2] multiplier 600  minpoly degree 4
+[RadicalDenest2] multiplier 1000  minpoly degree 4
+[RadicalDenest2] multiplier 1  minpoly degree 4
+[RadicalDenest2] multiplier Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 2  minpoly degree 4
+[RadicalDenest2] multiplier 3  minpoly degree 4
+[RadicalDenest2] multiplier 5  minpoly degree 4
+[RadicalDenest2] multiplier 6  minpoly degree 4
+[RadicalDenest2] multiplier 2*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 3*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 5*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 15*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 10*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 6*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 30*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 4  minpoly degree 4
+[RadicalDenest2] multiplier 12  minpoly degree 4
+[RadicalDenest2] multiplier 9  minpoly degree 4
+[RadicalDenest2] multiplier 18  minpoly degree 4
+[RadicalDenest2] multiplier 10  minpoly degree 4
+[RadicalDenest2] multiplier 15  minpoly degree 4
+[RadicalDenest2] multiplier 25  minpoly degree 4
+[RadicalDenest2] multiplier 75  minpoly degree 4
+[RadicalDenest2] multiplier 50  minpoly degree 4
+[RadicalDenest2] multiplier 30  minpoly degree 4
+[RadicalDenest2] multiplier 150  minpoly degree 4
+[RadicalDenest2] multiplier 36  minpoly degree 4
+[RadicalDenest2] multiplier 4*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 20*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 12*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 60*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 9*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 45*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 18*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 90*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 25*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 75*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 50*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 150*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 225*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 450*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 100*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 300*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 36*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 180*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 900*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 8  minpoly degree 4
+[RadicalDenest2] multiplier 24  minpoly degree 4
+[RadicalDenest2] multiplier 72  minpoly degree 4
+[RadicalDenest2] multiplier 27  minpoly degree 4
+[RadicalDenest2] multiplier 54  minpoly degree 4
+[RadicalDenest2] multiplier 108  minpoly degree 4
+[RadicalDenest2] multiplier 20  minpoly degree 4
+[RadicalDenest2] multiplier 100  minpoly degree 4
+[RadicalDenest2] multiplier 60  minpoly degree 4
+[RadicalDenest2] multiplier 300  minpoly degree 4
+[RadicalDenest2] multiplier 45  minpoly degree 4
+[RadicalDenest2] multiplier 225  minpoly degree 4
+[RadicalDenest2] multiplier 90  minpoly degree 4
+[RadicalDenest2] multiplier 450  minpoly degree 4
+[RadicalDenest2] multiplier 125  minpoly degree 4
+[RadicalDenest2] multiplier 375  minpoly degree 4
+[RadicalDenest2] multiplier 250  minpoly degree 4
+[RadicalDenest2] multiplier 750  minpoly degree 4
+[RadicalDenest2] multiplier 1125  minpoly degree 4
+[RadicalDenest2] multiplier 2250  minpoly degree 4
+[RadicalDenest2] multiplier 500  minpoly degree 4
+[RadicalDenest2] multiplier 1500  minpoly degree 4
+[RadicalDenest2] multiplier 180  minpoly degree 4
+[RadicalDenest2] multiplier 900  minpoly degree 4
+[RadicalDenest2] multiplier 4500  minpoly degree 4
+[RadicalDenest2] multiplier 216  minpoly degree 4
+[RadicalDenest2] multiplier 8*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 40*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 24*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 120*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 200*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 600*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 72*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 360*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 1800*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 27*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 135*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 54*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 270*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 675*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 1350*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 108*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 540*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 2700*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 125*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 375*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 250*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 750*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 1125*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 2250*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 500*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 1500*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 4500*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 3375*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 6750*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 13500*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 1000*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 3000*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 9000*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 216*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 1080*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 5400*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 27000*Sqrt[3]  minpoly degree 4
+[RadicalDenest2] multiplier 16  minpoly degree 4
+[RadicalDenest2] multiplier 48  minpoly degree 4
+[RadicalDenest2] multiplier 144  minpoly degree 4
+[RadicalDenest2] multiplier 432  minpoly degree 4
+[RadicalDenest2] multiplier 81  minpoly degree 4
+[RadicalDenest2] multiplier 162  minpoly degree 4
+[RadicalDenest2] multiplier 324  minpoly degree 4
+[RadicalDenest2] multiplier 648  minpoly degree 4
+[RadicalDenest2] multiplier 40  minpoly degree 4
+[RadicalDenest2] multiplier 200  minpoly degree 4
+[RadicalDenest2] multiplier 120  minpoly degree 4
+[RadicalDenest2] multiplier 600  minpoly degree 4
+[RadicalDenest2] multiplier 1000  minpoly degree 4
+[RadicalDenest2] RootReduce: Sqrt[1 + Sqrt[3]] + Sqrt[3*(1 + Sqrt[3])] - Sqrt[10 + 6*Sqrt[3]] -> 0
+   result: 0
+---- R15: Sqrt[3 + 3*2^(1/3) + 3*2^(2/3) + 2*2^(2/3)*3^(1/3) + 3^(2/3) + 2*6^(1/3)]
+[RadicalDenest2] multiplier 1  minpoly degree 18
+[RadicalDenest2] multiplier 2^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 2^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 2^(1/3)*3^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 3^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 6^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 2  minpoly degree 18
+[RadicalDenest2] multiplier 3  minpoly degree 18
+[RadicalDenest2] multiplier 5  minpoly degree 18
+[RadicalDenest2] multiplier 17  minpoly degree 18
+[RadicalDenest2] multiplier 1637  minpoly degree 18
+[RadicalDenest2] multiplier 12007  minpoly degree 18
+[RadicalDenest2] multiplier 20021  minpoly degree 18
+[RadicalDenest2] multiplier 139969  minpoly degree 18
+[RadicalDenest2] multiplier 2802319349  minpoly degree 18
+[RadicalDenest2] multiplier 1680607783  minpoly degree 18
+[RadicalDenest2] multiplier 240392147  minpoly degree 18
+[RadicalDenest2] multiplier 33647448423443  minpoly degree 18
+[RadicalDenest2] multiplier 229129253  minpoly degree 18
+[RadicalDenest2] multiplier 32774377  minpoly degree 18
+[RadicalDenest2] multiplier 4587396774313  minpoly degree 18
+[RadicalDenest2] multiplier 19655459  minpoly degree 18
+[RadicalDenest2] multiplier 2751154940771  minpoly degree 18
+[RadicalDenest2] multiplier 393521944639  minpoly degree 18
+[RadicalDenest2] multiplier 55080873069176191  minpoly degree 18
+[RadicalDenest2] multiplier 2*2^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 3*2^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 5*2^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 1637*2^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 2213*2^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 12007*2^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 36947*2^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 138637*2^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 5122221239*2^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 1664614459*2^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 443622629*2^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 61502510416673*2^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 306803681*2^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 81763711*2^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 11335475601907*2^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 26571491*2^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 3683791797767*2^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 981736877977*2^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 136105055552097349*2^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 2*2^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 3*2^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 5*2^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 11*2^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 107*2^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 1637*2^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 9941*2^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 12007*2^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 119361587*2^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 19655459*2^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 16273417*2^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 195394917919*2^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 1284749*2^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 1063687*2^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 12771689809*2^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 175159*2^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 2103134113*2^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 1741255619*2^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 20907256217333*2^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 2*2^(1/3)*3^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 3*2^(1/3)*3^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 5*2^(1/3)*3^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 17*2^(1/3)*3^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 9941*2^(1/3)*3^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 12007*2^(1/3)*3^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 138637*2^(1/3)*3^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 139969*2^(1/3)*3^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 19404882253*2^(1/3)*3^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 1680607783*2^(1/3)*3^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 1664614459*2^(1/3)*3^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 232994421211771*2^(1/3)*3^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 1391431829*2^(1/3)*3^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 1378190417*2^(1/3)*3^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 192903934477073*2^(1/3)*3^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 119361587*2^(1/3)*3^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 16706921970803*2^(1/3)*3^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 16547932336919*2^(1/3)*3^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 2316197541266215511*2^(1/3)*3^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 2*3^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 3*3^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 5*3^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 17*3^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 7019*3^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 12007*3^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 30427*3^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 138637*3^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 4218307999*3^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 1664614459*3^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 365336989*3^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 50649224143993*3^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 973093103*3^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 213567113*3^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 29608303844981*3^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 84277133*3^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 11683928887721*3^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 2564300325791*3^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 355506904266686867*3^(1/3)  minpoly degree 18
+[RadicalDenest2] multiplier 2*6^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 3*6^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 5*6^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 17*6^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 2213*6^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 12007*6^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 20021*6^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 30427*6^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 609178967*6^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 365336989*6^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 240392147*6^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 7314411856769*6^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 67334951*6^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 44306473*6^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 1348113053971*6^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 26571491*6^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 808490756657*6^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 531987821311*6^(2/3)  minpoly degree 18
+[RadicalDenest2] multiplier 16186793439029797*6^(2/3)  minpoly degree 18
+   result: Sqrt[3 + 3*2^(1/3) + 3*2^(2/3) + 2*2^(2/3)*3^(1/3) + 3^(2/3) + 2*6^(1/3)]
+DONE

@@ -1,0 +1,156 @@
+\documentclass[reqno,a4paper]{amsart}
+\renewcommand{\paragraph}{\subsubsection*}
+\usepackage[UKenglish]{babel}
+\usepackage{microtype}
+\usepackage{booktabs}
+\def\figwidth{\columnwidth}
+%\usepackage{enumerate} (incompatible with enumitem)
+%%-----------------------
+\usepackage[foot]{amsaddr}%\usepackage{authblk}
+\usepackage{lineno}
+\usepackage{url}
+\usepackage[
+  pdftex,
+  bookmarks=true,%                   %%% generate bookmarks ...
+  bookmarksnumbered=true,%           %%% ... with numbers
+  hypertexnames=false,%              %%% needed for correct links to figures !!!
+  breaklinks=true,%                  %%% breaks lines, but links are very small
+  linkbordercolor={0 0 1}%          %%% blue frames around links]{hyperref}
+  ]{hyperref}
+\def\UrlBreaks{\do\@\do\\\do\/\do\!\do\|\do\;\do\>\do\]%
+ \do\,\do\?\do\'\do+\do\=\do\#}
+\providecommand{\urlstyle}[1]{}
+\providecommand{\doi}[1]{\href{http://dx.doi.org/#1}{\nolinkurl{doi:#1}}}
+
+\input{macro}
+\usepackage{amssymb}
+
+
+\usepackage{pgf}
+\usepackage{pgfplots}
+%\usetikzlibrary{arrows,calc,automata,backgrounds,decorations,intersections,fillbetween,shapes.misc,patterns, decorations.pathreplacing, calc}
+
+
+\begin{document}
+
+\title{Identity Testing for Radical Expressions}
+\author{Nikhil Balaji,$^1$ Klara Nosan,$^2$, \mbox{Mahsa
+  Shirmohammadi,$^2$} \and \mbox{James Worrell$^3$}}
+\address{\begin{minipage}{\textwidth}
+$^1$~IIT Delhi, New Delhi, India\\
+$^2$~Universit\'e Paris Cité, CNRS, IRIF, F-75013 Paris, France\\
+$^3$~Department of Computer Science, University of Oxford, UK\end{minipage}}
+\date{}
+
+%\author{Nikhil Balaji}
+%\email{nbalaji@cse.iitd.ac.in}
+%\affiliation{%
+%  \institution{IIT Delhi}
+%  \city{Delhi}
+%  \country{India}}
+%
+%\author{Klara Nosan}
+%\email{nosan@irif.fr}
+%\affiliation{%
+%  \institution{Universit\'e Paris Cité, CNRS, IRIF}
+%  \city{Paris}
+%  \country{France}}
+%
+%\author{Mahsa Shirmohammadi}
+%\email{mahsa@irif.fr}
+%\affiliation{%
+%  \institution{Universit\'e Paris Cité, CNRS, IRIF}
+%  \city{Paris}
+%  \country{France}}
+%  
+%\author{\mbox{James Worrell}}
+%\email{jbw@cs.ox.ac.uk}
+%\affiliation{%
+%  \institution{Department of Computer Science, University of Oxford}
+%  \city{Oxford}
+%  \country{UK}}
+
+
+\maketitle
+
+\DeclareRobustCommand{\gobblefive}[5]{}
+\DeclareRobustCommand{\gobblenine}[9]{}
+\newcommand*{\SkipTocEntry}{\addtocontents{toc}{\gobblenine}}
+
+
+
+\renewcommand{\shortauthors}{Balaji, Nosan, Shirmohammadi and Worrell}
+
+
+\begin{abstract}
+  \input{abstract}
+\end{abstract}
+
+
+%\keywords{Algebraic Circuits, Computational Complexity, Number Fields, Polynomial Identity Testing, Randomised Algorithms}
+
+\maketitle
+
+\section{Introduction}
+\input{intro}
+
+
+
+\section{Background and Overview}
+\label{sec:overview}
+\input{overview}
+
+
+\section{The RIT algorithm}
+\label{sec:conp}
+\input{conp}
+
+\section{The $2$-RIT algorithm}
+\label{sec:corp}
+\input{corp}
+
+\section{Discussion}
+\label{sec:discussion}
+\input{discussion}
+
+\SkipTocEntry\section*{Acknowledgements}
+This work has been partially supported by ANR-CREST-JST CyphAI.
+
+\bibliographystyle{plain}
+\bibliography{literature}
+
+\appendix
+
+\section{Reduction to the RIT problem with coprime radicands}
+\label{appendix:reduction}
+\input{appendix_reduction}
+
+\section{Extended preliminaries}\label{appendix:preliminaries}
+\input{app_preliminaries}
+
+\section{Missing proofs from Section~\ref{sec:conp}}
+\label{appendix:conp}
+
+\subsection{Bound on the norm}\label{appendix:norm}
+\input{app_norm}
+
+\subsection{On the primitive element of a radical field extension}\label{appendix:primitive_element}
+\input{app_primitiveel}
+
+\subsection{Bound on the discriminant}\label{appendix:discriminant}
+\input{app_discriminant}
+
+\subsection{Bound on the number of split primes}\label{appendix:bound_number_of_primes}
+\input{app_primes}
+
+\section{Missing proofs from Section~\ref{sec:corp}}
+\label{appendix:corp}
+
+\subsection{A note on Pocklington's algorithm}\label{appendix:pocklington}
+\input{app_pocklington}
+
+\subsection{The probability of choosing a good prime $p$}\label{appendix:probability_good_prime}
+\input{app_prob}
+
+
+\end{document}

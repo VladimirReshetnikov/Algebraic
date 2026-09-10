@@ -1,0 +1,25 @@
+{
+  "id": "gkioulekas",
+  "title": "On the denesting of nested square roots",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "gkioulekas",
+      "entry_latex": "E. Gkioulekas, ``On the denesting of nested square roots,'' \\emph{International Journal of Mathematical Education in Science and Technology} \\textbf{48}(6) (2017), 942--953. \\doi{10.1080/0020739X.2017.1290831}.\n\\access{https://faculty.utrgv.edu/eleftherios.gkioulekas/papers/024-denesting-square-roots.pdf}{Author-hosted PDF}; \\access{https://scholarworks.utrgv.edu/mss_fac/243/}{institutional record}. \\status{T}\nA clear elementary presentation of direct and indirect square-root denesting, useful alongside BFHT."
+    },
+    {
+      "report": "report-2",
+      "key": "gkioulekas",
+      "entry_latex": "Eleftherios Gkioulekas.\n\\emph{On the denesting of nested square roots}.\nInternational Journal of Mathematical Education in Science and Technology \\textbf{48}(6), 942--953, 2017.\n\\doi{10.1080/0020739X.2017.1290831}.\n\\sourceurl{https://faculty.utrgv.edu/eleftherios.gkioulekas/papers/024-denesting-square-roots.pdf}.\n\\textbf{FT.} Detailed elementary treatment suitable for teaching. The author-hosted version carries a differing final-page indication; the journal citation is used here."
+    },
+    {
+      "report": "report-3",
+      "key": "gkioulekas",
+      "entry_latex": "Eleftherios Gkioulekas. ``On the denesting of nested square roots.'' \\emph{International Journal of Mathematical Education in Science and Technology} \\textbf{48}(6) (2017), 942--953. \\doi{10.1080/0020739X.2017.1290831}. Author manuscript: \\url{https://faculty.utrgv.edu/eleftherios.gkioulekas/papers/submitted/denesting-square-roots.pdf}. \\status{F}\n\\entrynote{A modern elementary treatment of direct and indirect square-root denesting. Helpful for precise assumptions, counterexamples, and pedagogy; it does not replace the earlier general algorithmic literature.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

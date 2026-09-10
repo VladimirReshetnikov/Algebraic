@@ -1,0 +1,34 @@
+{
+  "id": "maple",
+  "title": "radnormal",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "maplerad",
+      "entry_latex": "Maplesoft, \\emph{radnormal}, Maple help.\n\\access{https://www.maplesoft.com/support/help/Maple/view.aspx?path=radnormal}{Official documentation}. \\status{D}\nDescribes exact radical normalization, zero detection, principal roots, and the indexed-\\texttt{RootOf}/field-basis pipeline. Denesting is explicitly only sometimes achieved."
+    },
+    {
+      "report": "report-1",
+      "key": "maplesimp",
+      "entry_latex": "Maplesoft, \\emph{simplify/radical}, Maple help.\n\\access{https://www.maplesoft.com/support/help/Maple/view.aspx?path=simplify\\%2Fradical}{Official documentation}. \\status{D}\nAssociated radical simplification and assumptions. Read together with \\texttt{radnormal} instead of attributing an unspecified universal denester to \\texttt{simplify}."
+    },
+    {
+      "report": "report-2",
+      "key": "mapleradnormal",
+      "entry_latex": "Maplesoft.\n\\emph{radnormal}, Maple help.\n\\sourceurl{https://www.maplesoft.com/support/help/Maple/view.aspx?path=radnormal}.\n\\textbf{D.} Official normal-form and exact-zero claims for the specified algebraic domain. Does not advertise global radical-depth minimization."
+    },
+    {
+      "report": "report-2",
+      "key": "mapleradical",
+      "entry_latex": "Maplesoft.\n\\emph{simplify/radical}, Maple help.\n\\sourceurl{https://www.maplesoft.com/support/help/Maple/view.aspx?path=simplify%2Fradical}.\n\\textbf{D.} Separates simplification of individual radicals, elimination of dependent radicals, and rational-expression normalization; a useful model of distinct simplification stages."
+    },
+    {
+      "report": "report-3",
+      "key": "maple",
+      "entry_latex": "Maplesoft. \\texttt{radnormal} and \\texttt{simplify/radical}, official Maple documentation. \\url{https://www.maplesoft.com/support/help/Maple/view.aspx?path=radnormal}; \\url{https://www.maplesoft.com/support/help/Maple/view.aspx?path=simplify%2Fradical}. \\status{D}\n\\entrynote{Documents radical normalization and simplification, including the importance of assumptions. Public documentation was used instead of speculation about proprietary internals. No Maple session was run for this report.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

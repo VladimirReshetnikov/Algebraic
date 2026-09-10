@@ -1,0 +1,25 @@
+{
+  "id": "landau92",
+  "title": "Simplification of nested radicals",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "landau92",
+      "entry_latex": "S. Landau, ``Simplification of nested radicals,'' \\emph{SIAM Journal on Computing} \\textbf{21}(1) (1992), 85--110. \\doi{10.1137/0221009}. Conference version: \\emph{FOCS 1989}, 314--319, \\doi{10.1109/SFCS.1989.63496}. \\status{A}\nThe central general denesting paper. The journal abstract specifies the roots-of-unity hypothesis, the near-optimal statement when it is absent, the splitting-field requirement, and exponential general running time. Related versions are grouped here."
+    },
+    {
+      "report": "report-2",
+      "key": "landau",
+      "entry_latex": "Susan Landau.\n\\emph{Simplification of nested radicals}.\nSIAM Journal on Computing \\textbf{21}(1), 85--110, 1992.\n\\doi{10.1137/0221009}.\nPreliminary FOCS 1989 version, 314--319: \\doi{10.1109/SFCS.1989.63496}.\n\\textbf{FT.} General denesting through splitting fields, with explicit roots-of-unity qualifications. Complexity is measured relative to algebraic representations that may be much larger than a compact radical input."
+    },
+    {
+      "report": "report-3",
+      "key": "landau",
+      "entry_latex": "Susan Landau. ``Simplification of Nested Radicals.'' Conference version in \\emph{30th Annual Symposium on Foundations of Computer Science}, 1989, pp.~314--319, \\doi{10.1109/SFCS.1989.63496}; expanded journal version, \\emph{SIAM Journal on Computing} \\textbf{21}(1) (1992), 85--110, \\doi{10.1137/0221009}. Institutional record: \\url{https://fletcher.tufts.edu/research/research-publications/simplification-nested-radicals-0}. \\status{A}\n\\entrynote{A general algorithmic landmark. Its guarantees depend on the base field and roots of unity. The roots-of-unity case, the near-optimal statement in the other case, and the representation of algebraic extensions should be read from the actual theorem rather than collapsed into an unconditional practical complexity slogan.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

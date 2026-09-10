@@ -1,0 +1,31 @@
+{
+  "record_id": "wikipedia",
+  "title": "Nested radical",
+  "asset_id": "resource-01",
+  "version": "web-resources",
+  "kind": "web",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://en.wikipedia.org/wiki/Nested_radical",
+    "resolved_url": "https://en.wikipedia.org/wiki/Nested_radical",
+    "retrieved_at": "2026-09-05T20:28:37+00:00",
+    "http_status": 200,
+    "content_type": "text/html; charset=UTF-8",
+    "content_encoding": "",
+    "bytes": 416389,
+    "sha256": "f36880d591ab5c74d1bb05280219a6b504762510b1ca2d8ead02dce7e507f810"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "cited_web_resource",
+  "note": "URL cited in an input report. Not all web pages have been independently reopened. HTML is saved as HTML; software code is not labelled as article TeX.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "web_resources/wikipedia-Nested-radical/web-resources/resource-01.html",
+      "role": "web",
+      "bytes": 416389,
+      "sha256": "f36880d591ab5c74d1bb05280219a6b504762510b1ca2d8ead02dce7e507f810"
+    }
+  ],
+  "prior_candidate_errors": []
+}

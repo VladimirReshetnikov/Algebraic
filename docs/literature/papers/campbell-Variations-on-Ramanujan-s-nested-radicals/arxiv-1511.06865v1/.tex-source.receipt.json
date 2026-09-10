@@ -1,0 +1,37 @@
+{
+  "record_id": "campbell",
+  "title": "Variations on Ramanujan's nested radicals",
+  "asset_id": "tex-source",
+  "version": "arxiv-1511.06865v1",
+  "kind": "source",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://arxiv.org/src/1511.06865v1",
+    "resolved_url": "https://arxiv.org/src/1511.06865v1",
+    "retrieved_at": "2026-09-05T20:27:06+00:00",
+    "http_status": 200,
+    "content_type": "application/gzip",
+    "content_encoding": "",
+    "bytes": 5540,
+    "sha256": "827e523a08becddb230672af17c24041153dfe43c4438e4c15ba01cd5d1bbeec"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "repository_pdf_and_source_links",
+  "note": "arXiv advertises TeX Source; actual bytes and archive contents have NOT been retrieved in this environment.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/campbell-Variations-on-Ramanujan-s-nested-radicals/arxiv-1511.06865v1/tex-source.tex.gz",
+      "role": "original_source_response",
+      "bytes": 5540,
+      "sha256": "827e523a08becddb230672af17c24041153dfe43c4438e4c15ba01cd5d1bbeec"
+    },
+    {
+      "path": "papers/campbell-Variations-on-Ramanujan-s-nested-radicals/arxiv-1511.06865v1/source/main.tex",
+      "role": "tex",
+      "bytes": 16257,
+      "sha256": "fd7a367f12ad882dc3ec0ad8f4fe32e63da411c1e752dca5fb05048801267a67"
+    }
+  ],
+  "prior_candidate_errors": []
+}

@@ -1,0 +1,31 @@
+{
+  "record_id": "bumby",
+  "title": "Incredible identities revisited",
+  "asset_id": "pdf-journal-1987",
+  "version": "journal-1987",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://www.fq.math.ca/Scanned/25-1/bumby.pdf",
+    "resolved_url": "https://www.fq.math.ca/Scanned/25-1/bumby.pdf",
+    "retrieved_at": "2026-09-05T20:26:04+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 544386,
+    "sha256": "21b143f86b624fb3cfa5e392f911ef03cb475997f993028539d857c68d97d42a"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "browser_fulltext",
+  "note": "Fibonacci Quarterly article, three scanned pages.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/bumby-Incredible-identities-revisited/journal-1987/pdf-journal-1987.pdf",
+      "role": "pdf",
+      "bytes": 544386,
+      "sha256": "21b143f86b624fb3cfa5e392f911ef03cb475997f993028539d857c68d97d42a"
+    }
+  ],
+  "prior_candidate_errors": []
+}

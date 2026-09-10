@@ -1,0 +1,15 @@
+{
+  "id": "lenstra06",
+  "title": "Entangled Radicals",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "lenstra06",
+      "entry_latex": "H.~W. Lenstra, Jr., \\emph{Entangled Radicals}, AMS Colloquium Lectures, 2006.\n\\access{https://www.math.leidenuniv.nl/~hwl/papers/rad.pdf}{Lecture notes}. \\status{B}\nBackground on interactions among radical extensions and cyclotomic structure. A structural companion, not a documented production denester."
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

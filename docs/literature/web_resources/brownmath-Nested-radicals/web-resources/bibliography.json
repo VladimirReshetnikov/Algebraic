@@ -1,0 +1,24 @@
+{
+  "id": "brownmath",
+  "title": "Nested radicals",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "brown",
+      "entry_latex": "S. Brown, \\emph{Denesting Radicals (or Unnesting Radicals)}.\n\\access{https://brownmath.com/alge/nestrad.htm}{Author's tutorial}. \\status{T}\nWorked elementary square-root examples. A convenient first algebraic introduction, not a general field-theoretic classification."
+    },
+    {
+      "report": "report-2",
+      "key": "brownmath",
+      "entry_latex": "Stan Brown.\n\\emph{Nested radicals}, BrownMath.\n\\sourceurl{https://brownmath.com/alge/nestrad.htm}.\n\\textbf{M.} Elementary exposition of practical denesting methods; appropriate as an introduction, not a substitute for general structural results."
+    },
+    {
+      "report": "report-3",
+      "key": "brownmath",
+      "entry_latex": "Stan Brown. ``Denesting Radicals (or Unnesting Radicals).'' \\url{https://brownmath.com/alge/nestrad.htm}. \\status{D}\n\\entrynote{An accessible tutorial on elementary surds and worked calculations. Appropriate for a first reading path; advanced impossibility and complexity statements should be sourced to the research papers.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

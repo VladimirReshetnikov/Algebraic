@@ -1,0 +1,24 @@
+{
+  "id": "pari",
+  "title": "General number fields",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "pari",
+      "entry_latex": "PARI/GP developers, \\emph{General number fields}, official reference.\n\\access{https://pari.math.u-bordeaux.fr/dochtml/html-stable/General_number_fields.html}{Number-field documentation}. \\status{D}\nSubfields, embeddings, factorization, and exact field arithmetic are building blocks for a denester. They do not automatically reconstruct a minimum-depth expression for a selected element."
+    },
+    {
+      "report": "report-2",
+      "key": "pari",
+      "entry_latex": "PARI/GP development team.\n\\emph{General number fields}, PARI/GP documentation.\n\\sourceurl{https://pari.math.u-bordeaux.fr/dochtml/html/General_number_fields.html}.\n\\textbf{D.} Subfields, inclusions, factorization, roots, and reduced defining polynomials. Infrastructure for reconstruction rather than a general denesting command."
+    },
+    {
+      "report": "report-3",
+      "key": "pari",
+      "entry_latex": "PARI/GP development team. ``General number fields,'' official manual. \\url{https://pari.math.u-bordeaux.fr/dochtml/html/General_number_fields.html}. \\status{D}\n\\entrynote{Number-field factorization and arithmetic supply useful infrastructure for membership tests and algebraic certificates. The manual does not imply a one-command general minimum-depth denester.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

@@ -1,0 +1,27 @@
+FAMILY F1 Sqrt[(p+q Sqrt[c])^2]  n=40  total 1.98s  max 0.19s
+   <|denested -> 40|>
+FAMILY F2 ((p+q Sqrt[c])^3)^(1/3)  n=30  total 7.03s  max 1.74s
+   <|denested -> 30|>
+FAMILY F3 Sqrt[a+b Sqrt[c]] generic  n=40  total 6.07s  max 0.71s
+   <|unchanged -> 34, denested -> 6|>
+   NOTE: Sqrt[20 + Sqrt[7]]  ->  Sqrt[20 + Sqrt[7]]  unchanged {}
+   NOTE: I*Sqrt[23 - 5*Sqrt[10]]  ->  I*Sqrt[23 - 5*Sqrt[10]]  unchanged {}
+   NOTE: I*Sqrt[10 + 2*Sqrt[17]]  ->  I*Sqrt[10 + 2*Sqrt[17]]  unchanged {}
+   NOTE: Sqrt[-1 + 6*Sqrt[2]]  ->  Sqrt[-1 + 6*Sqrt[2]]  unchanged {}
+   NOTE: I*Sqrt[25 - Sqrt[6]]  ->  I*Sqrt[25 - Sqrt[6]]  unchanged {}
+   NOTE: Sqrt[-7 + 6*Sqrt[3]]  ->  Sqrt[-7 + 6*Sqrt[3]]  unchanged {}
+FAMILY F4 Sqrt[(p+q I Sqrt[c])^2]  n=40  total 2.s  max 0.07s
+   <|denested -> 40|>
+FAMILY F5 ((p+q I Sqrt[c])^2)^(3/2)  n=40  total 3.23s  max 0.15s
+   <|denested -> 40|>
+FAMILY F6 Sqrt[u^2] Sqrt[v^2] complex products  n=40  total 7.16s  max 0.4s
+   <|denested -> 40|>
+FAMILY F7 ((p+q Sqrt[c])^4)^(1/4)  n=25  total 1.67s  max 0.14s
+   <|denested -> 25|>
+FAMILY F8 Sqrt[(p+q Sqrt[c]+r Sqrt[d])^2]  n=25  total 3.73s  max 0.24s
+   <|denested -> 25|>
+FAMILY F9 ((p+q Sqrt[c])^2)^(3/2) real  n=30  total 2.06s  max 0.12s
+   <|denested -> 30|>
+FAMILY F10 -Sqrt[..] Sqrt[..] real products with negative radicands  n=30  total 3.99s  max 0.3s
+   <|denested -> 30|>
+DONE

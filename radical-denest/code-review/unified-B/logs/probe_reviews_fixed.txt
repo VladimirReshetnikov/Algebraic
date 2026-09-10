@@ -1,0 +1,18 @@
+Kernel: 15.0.1 for Microsoft Windows (64-bit) (July 2, 2026)
+R4 F01 / R5 F1 / R6 F01  zero solver in symbolic host: x
+R5 F1  zero solver, numeric host: Sqrt[5 + 2*Sqrt[6]]
+R4 F07 / R5 F2  ambient assumption: x
+R4 F07  mixed host under assumption: Sqrt[2] + Sqrt[3] + x
+R4 F06  PolynomialQ[$Failed, x] = True
+R5 F7  cost arity: usage says {{#Root objects, radical depth, #radical nodes, leaf count}}  actual length 5
+R4 F04  cap 1, q 3, discriminant 5: {{False, {1, #1^2 - #1 - 1 & , 2}}, {5, 25}}
+R4 F04  cap 1, q 2, discriminant 65: {{False, {1, #1^2 - #1 - 16 & , 2}}, {5, 13}}
+R6 F04  cap 0, q 2, discriminant -9240: {{False, {1, Function[z, z^2 + 2310], 2}}, {2, 3, 5, 7, 11}}
+R6 F04  cap 1, q 2, discriminant -9240: {{False, {1, Function[z, z^2 + 2310], 2}}, {2, 3, 5, 7, 11}}
+R6 F04  cap 7, q 2, discriminant -9240: {{False, {1, Function[z, z^2 + 2310], 2}}, {2, 3, 5, 6, 7, 10, 11, 15, 30}}
+R6 F05  infinite cap (1 s watchdog): $Aborted
+R4 F02  SetOptions[Strad, TimeBudget -> 0] then Strad[Sqrt[5+2Sqrt[6]]]: Sqrt[2] + Sqrt[3]
+R5 F4  TimeBudget 0 with counting callback: Sqrt[2] + Sqrt[3]  callback calls: 1
+R5 F3  combine helper with positive aggregate factor: {{-1, 1}, {{{{-1, 0}, {2, 1}}, {{-1, 0}, {3, 1}}}, 1/2}}
+R4 F09  Sqrt[I](-1+I) vs -Sqrt[2]: 0
+DONE

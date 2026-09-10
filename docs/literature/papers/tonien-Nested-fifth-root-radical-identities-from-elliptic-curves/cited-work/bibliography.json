@@ -1,0 +1,25 @@
+{
+  "id": "tonien",
+  "title": "Nested fifth root radical identities from elliptic curves",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "tonien",
+      "entry_latex": "J. Tonien, ``Nested fifth root radical identities from elliptic curves,'' \\emph{Journal of Computational Algebra} \\textbf{13--14} (2025), Article 100032. \\doi{10.1016/j.jaca.2025.100032}.\n\\access{https://www.sciencedirect.com/science/article/pii/S2772827725000038}{Publisher record}. \\status{A}\nElliptic-curve constructions of fifth-root identities, with SageMath computational material described in the publication record. A higher-index family source, not a general denester."
+    },
+    {
+      "report": "report-2",
+      "key": "tonien",
+      "entry_latex": "Joseph Tonien.\n\\emph{Nested fifth root radical identities from elliptic curves}.\nJournal of Computational Algebra \\textbf{13--14}, Article 100032, 2025.\n\\doi{10.1016/j.jaca.2025.100032}.\n\\textbf{M.} Constructive fifth-root identities from an elliptic-curve family, with SageMath code. An important later direction, not a general fifth-root denesting decision algorithm."
+    },
+    {
+      "report": "report-3",
+      "key": "tonien",
+      "entry_latex": "Joseph Tonien. ``Nested fifth root radical identities from elliptic curves.'' \\emph{Journal of Computational Algebra} \\textbf{13--14} (2025), article~100032. \\doi{10.1016/j.jaca.2025.100032}. \\status{A}\n\\entrynote{A recent higher-index contribution using elliptic curves to construct fifth-root identities. Publisher metadata and abstract were inspected; no claim is made here to have independently verified the full elliptic-curve construction or to have obtained a general fifth-root denester from it.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

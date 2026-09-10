@@ -1,0 +1,31 @@
+{
+  "record_id": "sage",
+  "title": "Field of algebraic numbers",
+  "asset_id": "resource-02",
+  "version": "web-resources",
+  "kind": "web",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://doc.sagemath.org/html/en/reference/calculus/sage/symbolic/expression.html",
+    "resolved_url": "https://doc.sagemath.org/html/en/reference/calculus/sage/symbolic/expression.html",
+    "retrieved_at": "2026-09-05T20:28:22+00:00",
+    "http_status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "content_encoding": "",
+    "bytes": 2346443,
+    "sha256": "60b7bbf647de9aba586152975f979e048bd2d7ddaa6fd61c243ed8ef56c6b61f"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "cited_web_resource",
+  "note": "URL cited in an input report. Not all web pages have been independently reopened. HTML is saved as HTML; software code is not labelled as article TeX.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "web_resources/sage-Field-of-algebraic-numbers/web-resources/resource-02.html",
+      "role": "web",
+      "bytes": 2346443,
+      "sha256": "60b7bbf647de9aba586152975f979e048bd2d7ddaa6fd61c243ed8ef56c6b61f"
+    }
+  ],
+  "prior_candidate_errors": []
+}

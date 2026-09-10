@@ -1,0 +1,185 @@
+\section{How the code works}
+\label{sec:code}
+
+\subsection{Function map}
+Table~\ref{tab:funcmap} lists the twelve top-level definitions and the two
+local functions. The three layers are an orchestration layer
+(\code{Strad}, \code{DenestRadicals3}), the search engine (\code{denest11} with
+its local \code{trymultiplier} and \code{newmultipliers}), and helpers.
+
+\begin{table}[h]\centering\small
+\begin{tabularx}{\textwidth}{@{}l r X@{}}
+\toprule Function & Lines & Role\\\midrule
+\code{Strad} & 1--3 & Unprotects \code{Print} at load time; calls the wrapper with \code{Print} dynamically replaced by \code{Null &}.\\
+\code{DenestRadicals3} & 5--76 & Factors the input, marks $\text{rad}^{p/q}$ subexpressions with a local head \code{f}, normalizes and groups them, calls the engine, substitutes, simplifies.\\
+\code{denest11} & 79--441 & Chooses $q$, builds initial multipliers, runs the multiplier search with a history of degrees and a work stack.\\
+\quad\code{trymultiplier} & 107--155 & One trial: minimal polynomial, degree gate, polynomial GCD, roots-of-unity orbit, \code{PossibleZeroQ} filter.\\
+\quad\code{newmultipliers} & 159--211 & New batch of multipliers from the discriminant of a recorded minimal polynomial, or the product of two multipliers.\\
+\code{RationalizeDenominator} & 444--451 & $1/d=-Q(0)/P(0)$ where $P$ is the minimal polynomial of $d$ and $P=(X-d)Q$.\\
+\code{AlgebraicQ} & 454 & \code{Element[num, Algebraics]}.\\
+\code{nestdepths}, \code{nestdepthsort}, \code{maxnestdepth} & 457--498 & Annotate the expression tree with a nesting height for a predicate; group by height; extract the nodes of maximal height.\\
+\code{ComplexitySort} & 501--504 & Sort by \code{LeafCount}, then by absolute value.\\
+\code{Factorc}, \code{fullfactor}, \code{combine} & 507--584 & Custom factorizer: encode products, powers and sums as nested lists, extract common bases from sums, decode.\\
+\bottomrule
+\end{tabularx}
+\caption{Function map of \code{Strad.wl}.}\label{tab:funcmap}
+\end{table}
+
+\subsection{The wrapper, step by step}
+\label{sec:wrapper}
+Let $E$ be the input. \code{DenestRadicals3[E, alllevels, func]} proceeds as follows
+(\src{5--76}).
+\begin{enumerate}
+\item \textbf{Factor.} $E\mapsto\code{Factorc[E]}$. This happens \emph{before}
+      any algebraicity test, on the whole expression, symbolic parts included.
+\item \textbf{Mark.} Every subexpression matching
+      \code{radicand_?AlgebraicQ^pow_Rational} is replaced by a marker
+      \code{f[value, pow]}. With \code{alllevels =!= True} this is a single
+      \code{ReplaceAll}, which does not descend into the replaced parts, so
+      inner radicals stay inside the outer marker; with \code{alllevels === True}
+      it is \code{ReplaceRepeated}, which keeps marking inside markers and
+      produces nested markers such as \code{f[Sqrt[55 - 10 f[Sqrt[29]]]]}
+      (observed in the trace of experiment A30).
+      The \code{value} is a \emph{normalized} radicand: numeric content is split
+      off with \code{FactorTermsList}, the rest is factored again, Gaussian
+      integer content is decomposed, factors that contain a sum or a complex
+      number with nonzero real part are multiplied together, factors with
+      numerically negative real part (100 digits) are negated with a
+      compensating sign accumulator, each factor is rationalized, and the
+      product is simplified (\src{12--41}). This step preserves the value by
+      construction.
+\item \textbf{Group.} Two markers in one product whose radicands both contain
+      a \code{Power} are merged into one marker holding the product of the two
+      powers (\src{43--47}); markers become one-argument
+      \code{f[rad^pow]} (\src{48}); two one-argument markers whose numerical
+      values have nonzero real and imaginary parts are merged (\src{49--54}).
+      All three rules keep the product inside the marker, so they are also
+      value preserving; but they create problems $\beta$ that are products or
+      non-principal powers, which matters in Section~\ref{sec:branch}.
+\item \textbf{Solve.} In single-level mode each distinct marker \code{f[v]}
+      becomes a rule \code{f[v] -> func[v]} and the result is
+      \code{Simplify}d (\src{58--61}). In all-level mode a loop repeatedly picks
+      a marker that contains no other marker, solves it, and substitutes the
+      answer into the remaining markers (\src{62--73}); this is a hand-written
+      innermost-first resolution.
+\end{enumerate}
+\code{Strad[args]} simply wraps this in \code{Block[{Print = (Null &)}, ...]}.
+Note what is \emph{not} suppressed: kernel messages. Section~\ref{sec:exporig}
+shows that ordinary successful calls emit \code{PossibleZeroQ::ztest1} and
+\code{N::meprec}.
+
+\subsection{The engine}
+\label{sec:engine}
+\code{denest11[problem, forcedmultipliers]} (\src{79--441}) works on one exact
+value $\beta$.
+\begin{enumerate}
+\item \textbf{Gate.} If $\beta$ contains no \code{Power} whose base contains a
+      \code{Power}, return $\beta$ (\src{84--88}).
+\item \textbf{Root order.} $q=\lcm$ of the exponent denominators of the
+      rational-power nodes of maximal nesting height (\src{90--92});
+      $\rho=\beta^q$ (\src{94}). A second quantity \code{extrapower} is computed
+      and printed but never used (\src{95--103}).
+\item \textbf{Initial multipliers.} Unless a list is supplied: expand the
+      rationalized $\rho$, strip rational coefficients from its terms, replace
+      complex atoms by $\pm i$, and for each remaining radical factor
+      $b^{n/d}$ form the complementary factor $b^{(d-n)/d}$; prepend $1$
+      (\src{224--249}). For $\rho=5+2\sqrt6$ this gives $\{1,\sqrt6\}$; for
+      $\rho=\sqrt[3]2-1$ it gives $\{1,2^{2/3}\}$.
+\item \textbf{Trial} (\code{trymultiplier}, \src{107--155}). For a multiplier
+      $m$: $P_m=\operatorname{MinPoly}\big((m\rho)^{1/q}\big)$, $d_m=\deg P_m$.
+      If $d_m<d_{\text{best}}$ or $\gcd(d_m,d_{\text{best}})<d_{\text{best}}$,
+      compute $G_m=\gcd(P_m(X),\,X^q-m\rho)$ with \code{Extension -> Automatic}.
+      If $0<\deg G_m<q$: solve $G_m=0$, divide each root by $m^{1/q}$, multiply by
+      all $q$-th roots of unity, keep the candidates $c$ with
+      \code{PossibleZeroQ[c - radicand^outerpower]}, take the first, and report a
+      \emph{solution}. Otherwise report \emph{progress} if the degree decreased.
+      If the gate failed, report progress when the degree is different from the
+      best and no worse degree is known yet (\src{147--152}).
+\item \textbf{Search control} (\src{251--432}). A \code{history} of records
+      $\{m,P_m,d_m\}$ is kept sorted by decreasing degree, seeded with
+      $\{0,\infty,\infty\}$. A \code{multiplierstack} of batches is processed in
+      order; batches are either concrete lists or deferred calls to
+      \code{newmultipliers}. Progress on a full-set batch schedules a new batch
+      later; progress on a partial batch splits the current batch and inserts
+      the new one immediately. A solution stops the search when it is the first
+      finite-degree record or when the degree dropped by a factor $\ge q$;
+      otherwise the search continues for ``additional denesting''. After the
+      first pass, products of the promising initial multipliers are formed by
+      \code{Distribute} and appended (\src{398--428}).
+\item \textbf{New multipliers} (\code{newmultipliers}, \src{159--211}). In the
+      usual branch, partially factor $\Disc(P_{\text{smaller}})$, drop composite
+      cofactors, sort the primes (with the mis-typed comparator, see \U{5}), trim
+      primes separated by a ratio above 100, take a prefix of length
+      $\max(5,\lceil\log1000/\log q\rceil)$, and return
+      $m_{\text{smaller}}\cdot\big(\operatorname{Divisors}\big((\prod p_i)^{q-1}\big)\cup\{p_i\}\big)\setminus\{1\}$
+      sorted by complexity. In the other branch (degrees with a smaller common
+      divisor) return the product of the two multipliers.
+\end{enumerate}
+
+\subsection{Two actual traces}
+The following is the diagnostic output of \code{DenestRadicals3[Sqrt[5 + 2 Sqrt[6]]]}
+in the kernel (Section~\ref{sec:setup}). The first two multipliers give degree~4
+without a proper GCD; the discriminant $\Disc(P_1)=2^{14}3^2$ yields the batch
+$\{2,3,6\}$ and $m=2$ succeeds.
+\begin{lstlisting}
+{f[Sqrt[5 + 2*Sqrt[6]]]}
+problem  Sqrt[5 + 2*Sqrt[6]]
+outer root: 2  extra root: 1
+multiplier count: 2  multipliers: {1, Sqrt[6]}
+multiplier: 1   minpoly degree: 4
+adding new multipliers from: 1
+multiplier: Sqrt[6]   minpoly degree: 4
+adding new multipliers from: Sqrt[6]
+multiplier count: 3  from: {1, 4}
+multiplier: 2   minpoly degree: 2
+success: {2, 2, {{2, 1}}}
+history: {{0, Infinity}, {1, 4}, {2, 2}}
+Sqrt[2] + Sqrt[3]
+\end{lstlisting}
+For Ramanujan's $\sqrt[3]{\sqrt[3]2-1}$ the engine needs $m=9$, found as the
+fifth element of the discriminant batch:
+\begin{lstlisting}
+problem  (-1 + 2^(1/3))^(1/3)
+outer root: 3  extra root: 1
+multiplier count: 2  multipliers: {1, 2^(2/3)}
+multiplier: 1   minpoly degree: 9
+adding new multipliers from: 1
+multiplier: 2^(2/3)   minpoly degree: 9
+adding new multipliers from: 2^(2/3)
+multiplier count: 8  from: {1, 9}
+multiplier: 2   minpoly degree: 9
+multiplier: 3   minpoly degree: 9
+multiplier: 4   minpoly degree: 9
+multiplier: 6   minpoly degree: 9
+multiplier: 9   minpoly degree: 3
+success: {9, 3, {{3, 2}}}
+history: {{0, Infinity}, {1, 9}, {9, 3}}
+(1 - 2^(1/3) + 2^(2/3))/3^(2/3)
+\end{lstlisting}
+Indeed $(1-\sqrt[3]2+\sqrt[3]4)^3=9(\sqrt[3]2-1)$, so the multiplier $9$ turns
+the degree-9 number $(\sqrt[3]2-1)^{1/3}$ into the degree-3 number
+$1-\sqrt[3]2+\sqrt[3]4$, whose minimal polynomial has a linear common factor
+with $X^3-9(\sqrt[3]2-1)$ over $\Q(\sqrt[3]2)$.
+
+\subsection{The helpers}
+\paragraph{Rationalizer.} \code{RationalizeDenominator} (\src{444--451}) is
+mathematically sound (Proposition~\ref{prop:rat}) but uses the symbol \code{x}
+both as the polynomial variable and, through \code{/. x -> 0}, as a
+substitution target on the numerator (\U{11}).
+
+\paragraph{Nesting helpers.} \code{nestdepths} returns a nested list
+$\{E,\ \text{child annotations}\ldots,\ h(E)\}$ where
+$h(E)=\mathbf 1_{P(E)}+\max_c h(c)$; \code{maxnestdepth} prunes everything below
+the maximum height. With the predicate ``is a rational power'' this is
+$\rdepth$. The encoding mixes data lists with structure lists and is the reason
+list-valued input misbehaves (\U{15}).
+
+\paragraph{Custom factorizer.} \code{fullfactor} starts from \code{FactorList}
+and repeatedly (at most five passes) rewrites each $\{$factor, exponent$\}$ pair:
+a power $\{a^b,c\}$ becomes $\{a,bc\}$; a composite rational becomes its prime
+factorization; a sum is factored term by term by \code{combine}, which pulls
+bases common to all terms out of the sum with their minimal exponent, later
+multiplied by the outer exponent. \code{Factorc} decodes the nested lists with
+five shape rules. The two rewrites in italics are exactly the identities
+$(a^b)^c=a^{bc}$ and $(FS)^p=F^pS^p$, applied without any branch condition
+(\U{2}).

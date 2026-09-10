@@ -1,0 +1,31 @@
+{
+  "record_id": "sympysrc",
+  "title": "sqrtdenest.py",
+  "asset_id": "resource-01",
+  "version": "web-resources",
+  "kind": "source_code",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://raw.githubusercontent.com/sympy/sympy/1.14.0/sympy/simplify/sqrtdenest.py",
+    "resolved_url": "https://raw.githubusercontent.com/sympy/sympy/1.14.0/sympy/simplify/sqrtdenest.py",
+    "retrieved_at": "2026-09-05T20:28:01+00:00",
+    "http_status": 200,
+    "content_type": "text/plain; charset=utf-8",
+    "content_encoding": "",
+    "bytes": 21600,
+    "sha256": "32c4f23d470486231fe757e993a7b982b96ab9d53e2cc0073ae6ad3c2c68e6e0"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "cited_web_resource",
+  "note": "URL cited in an input report. Not all web pages have been independently reopened. HTML is saved as HTML; software code is not labelled as article TeX.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "web_resources/sympysrc-sqrtdenest.py/web-resources/resource-01.py",
+      "role": "source_code",
+      "bytes": 21600,
+      "sha256": "32c4f23d470486231fe757e993a7b982b96ab9d53e2cc0073ae6ad3c2c68e6e0"
+    }
+  ],
+  "prior_candidate_errors": []
+}

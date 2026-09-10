@@ -1,0 +1,31 @@
+{
+  "record_id": "mathworld",
+  "title": "Nested Radical",
+  "asset_id": "resource-01",
+  "version": "web-resources",
+  "kind": "web",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://mathworld.wolfram.com/NestedRadical.html",
+    "resolved_url": "https://mathworld.wolfram.com/NestedRadical.html",
+    "retrieved_at": "2026-09-05T20:28:38+00:00",
+    "http_status": 200,
+    "content_type": "text/html; charset=UTF-8",
+    "content_encoding": "",
+    "bytes": 79709,
+    "sha256": "7e369496adbe26141d5d953f6902ca17c5b2153c10ca2439843664a287900da1"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "cited_web_resource",
+  "note": "URL cited in an input report. Not all web pages have been independently reopened. HTML is saved as HTML; software code is not labelled as article TeX.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "web_resources/mathworld-Nested-Radical/web-resources/resource-01.html",
+      "role": "web",
+      "bytes": 79709,
+      "sha256": "7e369496adbe26141d5d953f6902ca17c5b2153c10ca2439843664a287900da1"
+    }
+  ],
+  "prior_candidate_errors": []
+}

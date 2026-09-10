@@ -1,0 +1,617 @@
+Kernel: 15.0.1 for Microsoft Windows (64-bit) (July 2, 2026)
+=== P. further families ===
+P01  ok  depth 2->1  0.1 s
+      in : (19 + 15*2^(1/3) + 12*2^(2/3))^(1/3)
+      out: 1 + 2^(1/3) + 2^(2/3)
+P02  MISS  depth 2->2  0.1 s
+      in : (133 + 57*2^(2/3)*3^(1/3) + 48*2^(1/3)*3^(2/3))^(1/6)
+      out: (133 + 57*2^(2/3)*3^(1/3) + 48*2^(1/3)*3^(2/3))^(1/6)
+      exp: 2^(1/3) + 3^(1/3)  (exp==in: True)
+P03  ok  depth 2->1  0.03 s
+      in : (9 + 6*2^(1/3) + 6*2^(2/3))^(1/4)
+      out: 1 + 2^(1/3)
+P04  ok  depth 2->1  0.03 s
+      in : (21 + 15*2^(1/3) + 12*2^(2/3))^(1/5)
+      out: 1 + 2^(1/3)
+P05  ok  depth 2->1  0.23 s
+      in : Sqrt[5 + 2^(2/3) + 2*2^(5/6) + 2*2^(1/3)*Sqrt[3] + 2*Sqrt[6]]
+      out: 2^(1/3) + Sqrt[2] + Sqrt[3]
+P06  ok  depth 2->1  0.21 s
+      in : Sqrt[2^(2/3) + 3^(2/3) + 5^(2/3) + 2*6^(1/3) + 2*10^(1/3) + 2*15^(1/3)]
+      out: 2^(1/3) + 3^(1/3) + 5^(1/3)
+P07  ok  depth 3->1  0.05 s
+      in : Sqrt[1 + 2*(7 + 5*Sqrt[2])^(1/3) + (7 + 5*Sqrt[2])^(2/3)]
+      out: 2 + Sqrt[2]
+P08  ok  depth 2->0  0.01 s
+      in : Sqrt[(-1 + Sqrt[2])*(1 + Sqrt[2])]
+      out: 1
+P09  MISS  depth 1->1  0. s
+      in : 1 + Sqrt[2]
+      out: 1 + Sqrt[2]
+      exp: 1 + Sqrt[2]  (exp==in: True)
+P10  MISS  depth 1->1  0. s
+      in : -1 + Sqrt[2]
+      out: -1 + Sqrt[2]
+      exp: -1 + Sqrt[2]  (exp==in: True)
+P11  MISS  depth 1->1  0.01 s
+      in : (-1)^(1/3)*(-1 + Sqrt[2])
+      out: (-1)^(1/3)*(-1 + Sqrt[2])
+      exp: (-1)^(1/3)*(-1 + Sqrt[2])  (exp==in: True)
+P12  MISS  depth 0->1  0.02 s
+      in : Root[1 - 10*#1^2 + #1^4 & , 4, 0]
+      out: Sqrt[2] + Sqrt[3]
+      exp: Sqrt[2] + Sqrt[3]  (exp==in: True)
+P13  TIMEOUT  depth 2->0  405.48 s
+      in : Sqrt[28 + 2*Sqrt[6] + 2*Sqrt[10] + 2*Sqrt[14] + 2*Sqrt[15] + 2*Sqrt[21] + 2*Sqrt[22] + 2*Sqrt[33] + 2*Sqrt[35] + 2*Sqrt[55] + 2*Sqrt[77]]
+      out: $TimedOut
+      exp: Sqrt[2] + Sqrt[3] + Sqrt[5] + Sqrt[7] + Sqrt[11]  (exp==in: True)
+P14  ok  depth 2->1  0.1 s
+      in : (1595 + 1211*Sqrt[2])^(1/3)
+      out: 5 + 7*Sqrt[2]
+P15  ok  depth 2->1  0.33 s
+      in : (7 - 5*Sqrt[2])^(1/3) + (7 + 5*Sqrt[2])^(1/3)
+      out: 1 + Sqrt[2] + ((-1 + Sqrt[2])*(1 + I*Sqrt[3]))/2
+P16  ok  depth 2->1  0.04 s
+      in : (17 + 12*Sqrt[2])^(3/4)
+      out: 7 + 5*Sqrt[2]
+P17  ok  depth 2->1  0.12 s
+      in : ((-14 + 14*I) - (10 - 10*I)*Sqrt[2])^(1/3)
+      out: (1 + I)*(1 + Sqrt[2])
+P18  ok  depth 2->1  0.15 s
+      in : (-17 - 12*Sqrt[2])^(1/4)
+      out: (1 + I) + (1 + I)/Sqrt[2]
+P19  ok  depth 2->1  0.04 s
+      in : (3363 - 2378*Sqrt[2])^(1/10)
+      out: -1 + Sqrt[2]
+P20  ok  depth 2->1  0.02 s
+      in : Sqrt[1 + 2*2^(1/4) + Sqrt[2]]
+      out: 1 + 2^(1/4)
+P21  ok  depth 2->1  0.05 s
+      in : (3 + 4*2^(1/4) + 6*Sqrt[2] + 4*2^(3/4))^(1/4)
+      out: 1 + 2^(1/4)
+P22  ok  depth 2->1  0.11 s
+      in : Sqrt[Sqrt[2] + 2*2^(1/4)*3^(1/3) + 3^(2/3)]
+      out: 2^(1/4) + 3^(1/3)
+P23  ok  depth 2->1  0.25 s
+      in : (3 + 2^(3/4) + 3*Sqrt[2]*3^(1/3) + 3*2^(1/4)*3^(2/3))^(1/3)
+      out: 2^(1/4) + 3^(1/3)
+P24  MISS  depth 2->2  0. s
+      in : Sqrt[2*Sqrt[-1 + a] + a]
+      out: Sqrt[2*Sqrt[-1 + a] + a]
+      exp: Sqrt[2*Sqrt[-1 + a] + a]  (exp==in: True)
+P25  MISS  depth 2->2  0.2 s
+      in : Sqrt[2 - Sqrt[3]] + Sqrt[1 + Sqrt[3]] - (1 + Sqrt[3])^(3/2) + Sqrt[2 + Sqrt[3]]
+      out: Sqrt[6] - Sqrt[3*(1 + Sqrt[3])]
+      exp: Sqrt[6] - Sqrt[3*(1 + Sqrt[3])]  (exp==in: True)
+P26  ok  depth 2->1  0.02 s
+      in : Sqrt[2*(2 + Sqrt[3])]
+      out: 1 + Sqrt[3]
+P27  ok  depth 2->0  0.01 s
+      in : ((5 - 2*Sqrt[6])*(5 + 2*Sqrt[6]))^(1/4)
+      out: 1
+P28  ok  depth 3->2  0.4 s
+      in : Sqrt[3 + Sqrt[3 + 2*Sqrt[2]] + Sqrt[5 + 2*Sqrt[6]]]
+      out: Sqrt[4 + 2*Sqrt[2] + Sqrt[3]]
+P29  MISS  depth 2->2  0.03 s
+      in : Sqrt[2*(-1 + Sqrt[2])*(3 + 2*Sqrt[2])]
+      out: Sqrt[2*(1 + Sqrt[2])]
+      exp: Sqrt[2*(1 + Sqrt[2])]  (exp==in: True)
+P30  ok  depth 2->0  0.01 s
+      in : ((-1 + Sqrt[2])*(1 + Sqrt[2]))^(1/3)
+      out: 1
+
+=== SUMMARY ===
+non-ok: {{P02, MISS}, {P09, MISS}, {P10, MISS}, {P11, MISS}, {P12, MISS}, {P13, TIMEOUT}, {P24, MISS}, {P25, MISS}, {P29, MISS}}
+
+=== VERBOSE DIAGNOSTICS ===
+---- C05: (41 - 29*Sqrt[2])^(1/5)
+problems: {RadicalDenest`Private`mark[(41 - 29*Sqrt[2])^(1/5)]}
+problem  (41 - 29*Sqrt[2])^(1/5)
+outer root: 5
+multiplier count: 2  multipliers: {1, Sqrt[2]}
+multiplier: 1   minpoly degree: 8
+success: {1, 8}
+history: {{0, Infinity}, {1, 8}}
+trials: 1
+   result: (41 - 29*Sqrt[2])^(1/5)
+---- C14: (-99 - 70*Sqrt[2])^(1/6)
+problems: {RadicalDenest`Private`mark[(-99 - 70*Sqrt[2])^(1/6)]}
+problem  (-99 - 70*Sqrt[2])^(1/6)
+outer root: 6
+multiplier count: 2  multipliers: {1, Sqrt[2]}
+multiplier: 1   minpoly degree: 8
+success: {1, 8}
+history: {{0, Infinity}, {1, 8}}
+trials: 1
+   result: (-99 - 70*Sqrt[2])^(1/6)
+---- R03: (-19 + 7*2^(2/3)*5^(1/3))^(1/6)
+problems: {RadicalDenest`Private`mark[(-19 + 7*2^(2/3)*5^(1/3))^(1/6)]}
+problem  (-19 + 7*2^(2/3)*5^(1/3))^(1/6)
+outer root: 6
+multiplier count: 2  multipliers: {1, 2^(1/3)*5^(2/3)}
+multiplier: 1   minpoly degree: 9
+success: {1, 9}
+history: {{0, Infinity}, {1, 9}}
+trials: 1
+   result: (-19 + 7*2^(2/3)*5^(1/3))^(1/6)
+---- P08: Sqrt[(-1 + Sqrt[2])*(1 + Sqrt[2])]
+problems: {}
+   result: 1
+---- Q21: Sqrt[1 + Sqrt[3]] + Sqrt[3 + 3*Sqrt[3]] - Sqrt[10 + 6*Sqrt[3]]
+problems: {RadicalDenest`Private`mark[Sqrt[1 + Sqrt[3]]], RadicalDenest`Private`mark[Sqrt[3*(1 + Sqrt[3])]], RadicalDenest`Private`mark[Sqrt[10 + 6*Sqrt[3]]]}
+problem  Sqrt[1 + Sqrt[3]]
+outer root: 2
+multiplier count: 2  multipliers: {1, Sqrt[3]}
+multiplier: 1   minpoly degree: 4
+adding new multipliers from: 1
+multiplier: Sqrt[3]   minpoly degree: 4
+adding new multipliers from: Sqrt[3]
+multiplier count: 3  from: {1, 4}
+multiplier: 2   minpoly degree: 4
+multiplier: 3   minpoly degree: 4
+multiplier: 6   minpoly degree: 4
+multiplier count: 3  from: {Sqrt[3], 4}
+multiplier: 2*Sqrt[3]   minpoly degree: 4
+multiplier: 3*Sqrt[3]   minpoly degree: 4
+multiplier: 6*Sqrt[3]   minpoly degree: 4
+history: {{0, Infinity}, {1, 4}}
+trials: 8
+problem  Sqrt[3*(1 + Sqrt[3])]
+outer root: 2
+multiplier count: 2  multipliers: {1, Sqrt[3]}
+multiplier: 1   minpoly degree: 4
+adding new multipliers from: 1
+multiplier: Sqrt[3]   minpoly degree: 4
+adding new multipliers from: Sqrt[3]
+multiplier count: 3  from: {1, 4}
+multiplier: 2   minpoly degree: 4
+multiplier: 3   minpoly degree: 4
+multiplier: 6   minpoly degree: 4
+multiplier count: 3  from: {Sqrt[3], 4}
+multiplier: 2*Sqrt[3]   minpoly degree: 4
+multiplier: 3*Sqrt[3]   minpoly degree: 4
+multiplier: 6*Sqrt[3]   minpoly degree: 4
+history: {{0, Infinity}, {1, 4}}
+trials: 8
+problem  Sqrt[10 + 6*Sqrt[3]]
+outer root: 2
+multiplier count: 2  multipliers: {1, Sqrt[3]}
+multiplier: 1   minpoly degree: 4
+adding new multipliers from: 1
+multiplier: Sqrt[3]   minpoly degree: 4
+adding new multipliers from: Sqrt[3]
+multiplier count: 3  from: {1, 4}
+multiplier: 2   minpoly degree: 4
+multiplier: 3   minpoly degree: 4
+multiplier: 6   minpoly degree: 4
+multiplier count: 7  from: {Sqrt[3], 4}
+multiplier: 2*Sqrt[3]   minpoly degree: 4
+multiplier: 3*Sqrt[3]   minpoly degree: 4
+multiplier: 5*Sqrt[3]   minpoly degree: 4
+multiplier: 6*Sqrt[3]   minpoly degree: 4
+multiplier: 10*Sqrt[3]   minpoly degree: 4
+multiplier: 15*Sqrt[3]   minpoly degree: 4
+multiplier: 30*Sqrt[3]   minpoly degree: 4
+history: {{0, Infinity}, {1, 4}}
+trials: 12
+   result: Sqrt[1 + Sqrt[3]] + Sqrt[3 + 3*Sqrt[3]] - Sqrt[10 + 6*Sqrt[3]]
+---- R15: Sqrt[3 + 3*2^(1/3) + 3*2^(2/3) + 2*2^(2/3)*3^(1/3) + 3^(2/3) + 2*6^(1/3)]
+problems: {RadicalDenest`Private`mark[3^(1/6)], RadicalDenest`Private`mark[Sqrt[2*2^(1/3) + 2*2^(2/3) + 3^(1/3) + 3^(2/3) + 2^(1/3)*3^(2/3) + 6^(2/3)]]}
+problem  Sqrt[2*2^(1/3) + 2*2^(2/3) + 3^(1/3) + 3^(2/3) + 2^(1/3)*3^(2/3) + 6^(2/3)]
+outer root: 2
+multiplier count: 7  multipliers: {1, 2^(2/3), 3^(2/3), 2^(1/3), 3^(1/3), 2^(2/3)*3^(1/3), 6^(1/3)}
+multiplier: 1   minpoly degree: 18
+adding new multipliers from: 1
+multiplier: 2^(2/3)   minpoly degree: 18
+adding new multipliers from: 2^(2/3)
+multiplier: 3^(2/3)   minpoly degree: 18
+adding new multipliers from: 3^(2/3)
+multiplier: 2^(1/3)   minpoly degree: 18
+adding new multipliers from: 2^(1/3)
+multiplier: 3^(1/3)   minpoly degree: 18
+adding new multipliers from: 3^(1/3)
+multiplier: 2^(2/3)*3^(1/3)   minpoly degree: 18
+adding new multipliers from: 2^(2/3)*3^(1/3)
+multiplier: 6^(1/3)   minpoly degree: 18
+adding new multipliers from: 6^(1/3)
+multiplier count: 255  from: {1, 18}
+multiplier: 2   minpoly degree: 18
+multiplier: 3   minpoly degree: 18
+multiplier: 5   minpoly degree: 18
+multiplier: 6   minpoly degree: 18
+multiplier: 10   minpoly degree: 18
+multiplier: 11   minpoly degree: 18
+multiplier: 15   minpoly degree: 18
+multiplier: 17   minpoly degree: 18
+multiplier: 22   minpoly degree: 18
+multiplier: 30   minpoly degree: 18
+multiplier: 33   minpoly degree: 18
+multiplier: 34   minpoly degree: 18
+multiplier: 51   minpoly degree: 18
+multiplier: 55   minpoly degree: 18
+multiplier: 66   minpoly degree: 18
+multiplier: 85   minpoly degree: 18
+multiplier: 102   minpoly degree: 18
+multiplier: 107   minpoly degree: 18
+multiplier: 110   minpoly degree: 18
+multiplier: 165   minpoly degree: 18
+multiplier: 170   minpoly degree: 18
+multiplier: 187   minpoly degree: 18
+multiplier: 214   minpoly degree: 18
+multiplier: 255   minpoly degree: 18
+multiplier: 321   minpoly degree: 18
+multiplier: 330   minpoly degree: 18
+multiplier: 374   minpoly degree: 18
+multiplier: 510   minpoly degree: 18
+multiplier: 535   minpoly degree: 18
+multiplier: 561   minpoly degree: 18
+multiplier: 642   minpoly degree: 18
+multiplier: 935   minpoly degree: 18
+multiplier: 1070   minpoly degree: 18
+multiplier: 1122   minpoly degree: 18
+multiplier: 1177   minpoly degree: 18
+multiplier: 1605   minpoly degree: 18
+multiplier: 1819   minpoly degree: 18
+multiplier: 1870   minpoly degree: 18
+multiplier: 2354   minpoly degree: 18
+multiplier: 2805   minpoly degree: 18
+multiplier: 3210   minpoly degree: 18
+multiplier: 3531   minpoly degree: 18
+multiplier: 3638   minpoly degree: 18
+multiplier: 5457   minpoly degree: 18
+multiplier: 5610   minpoly degree: 18
+multiplier: 5885   minpoly degree: 18
+multiplier: 7062   minpoly degree: 18
+multiplier: 9095   minpoly degree: 18
+multiplier: 10914   minpoly degree: 18
+multiplier: 11770   minpoly degree: 18
+multiplier: 12007   minpoly degree: 18
+multiplier: 17655   minpoly degree: 18
+multiplier: 18190   minpoly degree: 18
+multiplier: 20009   minpoly degree: 18
+multiplier: 24014   minpoly degree: 18
+multiplier: 27285   minpoly degree: 18
+multiplier: 35310   minpoly degree: 18
+multiplier: 36021   minpoly degree: 18
+multiplier: 36947   minpoly degree: 18
+multiplier: 40018   minpoly degree: 18
+multiplier: 54570   minpoly degree: 18
+multiplier: 60027   minpoly degree: 18
+multiplier: 60035   minpoly degree: 18
+multiplier: 72042   minpoly degree: 18
+multiplier: 73894   minpoly degree: 18
+multiplier: 100045   minpoly degree: 18
+multiplier: 110841   minpoly degree: 18
+multiplier: 120054   minpoly degree: 18
+multiplier: 120070   minpoly degree: 18
+multiplier: 132077   minpoly degree: 18
+multiplier: 180105   minpoly degree: 18
+multiplier: 184735   minpoly degree: 18
+multiplier: 200090   minpoly degree: 18
+multiplier: 204119   minpoly degree: 18
+multiplier: 221682   minpoly degree: 18
+multiplier: 264154   minpoly degree: 18
+multiplier: 300135   minpoly degree: 18
+multiplier: 360210   minpoly degree: 18
+multiplier: 369470   minpoly degree: 18
+multiplier: 396231   minpoly degree: 18
+multiplier: 406417   minpoly degree: 18
+multiplier: 408238   minpoly degree: 18
+multiplier: 554205   minpoly degree: 18
+multiplier: 600270   minpoly degree: 18
+multiplier: 612357   minpoly degree: 18
+multiplier: 628099   minpoly degree: 18
+multiplier: 660385   minpoly degree: 18
+multiplier: 792462   minpoly degree: 18
+multiplier: 812834   minpoly degree: 18
+multiplier: 1020595   minpoly degree: 18
+multiplier: 1108410   minpoly degree: 18
+multiplier: 1219251   minpoly degree: 18
+multiplier: 1224714   minpoly degree: 18
+multiplier: 1256198   minpoly degree: 18
+multiplier: 1284749   minpoly degree: 18
+multiplier: 1320770   minpoly degree: 18
+multiplier: 1884297   minpoly degree: 18
+multiplier: 1981155   minpoly degree: 18
+multiplier: 2032085   minpoly degree: 18
+multiplier: 2041190   minpoly degree: 18
+multiplier: 2245309   minpoly degree: 18
+multiplier: 2438502   minpoly degree: 18
+multiplier: 2569498   minpoly degree: 18
+multiplier: 3061785   minpoly degree: 18
+multiplier: 3140495   minpoly degree: 18
+multiplier: 3768594   minpoly degree: 18
+multiplier: 3854247   minpoly degree: 18
+multiplier: 3953329   minpoly degree: 18
+multiplier: 3962310   minpoly degree: 18
+multiplier: 4064170   minpoly degree: 18
+multiplier: 4490618   minpoly degree: 18
+multiplier: 6096255   minpoly degree: 18
+multiplier: 6123570   minpoly degree: 18
+multiplier: 6280990   minpoly degree: 18
+multiplier: 6423745   minpoly degree: 18
+multiplier: 6735927   minpoly degree: 18
+multiplier: 6909089   minpoly degree: 18
+multiplier: 7708494   minpoly degree: 18
+multiplier: 7906658   minpoly degree: 18
+multiplier: 9421485   minpoly degree: 18
+multiplier: 11226545   minpoly degree: 18
+multiplier: 11859987   minpoly degree: 18
+multiplier: 12192510   minpoly degree: 18
+multiplier: 12847490   minpoly degree: 18
+multiplier: 13471854   minpoly degree: 18
+multiplier: 13818178   minpoly degree: 18
+multiplier: 14132239   minpoly degree: 18
+multiplier: 18842970   minpoly degree: 18
+multiplier: 19271235   minpoly degree: 18
+multiplier: 19766645   minpoly degree: 18
+multiplier: 20727267   minpoly degree: 18
+multiplier: 21840733   minpoly degree: 18
+multiplier: 22453090   minpoly degree: 18
+multiplier: 23719974   minpoly degree: 18
+multiplier: 28264478   minpoly degree: 18
+multiplier: 33679635   minpoly degree: 18
+multiplier: 34545445   minpoly degree: 18
+multiplier: 38542470   minpoly degree: 18
+multiplier: 39533290   minpoly degree: 18
+multiplier: 41454534   minpoly degree: 18
+multiplier: 42396717   minpoly degree: 18
+multiplier: 43486619   minpoly degree: 18
+multiplier: 43681466   minpoly degree: 18
+multiplier: 59299935   minpoly degree: 18
+multiplier: 65522199   minpoly degree: 18
+multiplier: 67206593   minpoly degree: 18
+multiplier: 67359270   minpoly degree: 18
+multiplier: 69090890   minpoly degree: 18
+multiplier: 70661195   minpoly degree: 18
+multiplier: 84793434   minpoly degree: 18
+multiplier: 86973238   minpoly degree: 18
+multiplier: 103636335   minpoly degree: 18
+multiplier: 109203665   minpoly degree: 18
+multiplier: 118599870   minpoly degree: 18
+multiplier: 130459857   minpoly degree: 18
+multiplier: 131044398   minpoly degree: 18
+multiplier: 134413186   minpoly degree: 18
+multiplier: 141322390   minpoly degree: 18
+multiplier: 201619779   minpoly degree: 18
+multiplier: 207272670   minpoly degree: 18
+multiplier: 211983585   minpoly degree: 18
+multiplier: 217433095   minpoly degree: 18
+multiplier: 218407330   minpoly degree: 18
+multiplier: 240248063   minpoly degree: 18
+multiplier: 260919714   minpoly degree: 18
+multiplier: 327610995   minpoly degree: 18
+multiplier: 336032965   minpoly degree: 18
+multiplier: 403239558   minpoly degree: 18
+multiplier: 423967170   minpoly degree: 18
+multiplier: 434866190   minpoly degree: 18
+multiplier: 443622629   minpoly degree: 18
+multiplier: 480496126   minpoly degree: 18
+multiplier: 652299285   minpoly degree: 18
+multiplier: 655221990   minpoly degree: 18
+multiplier: 672065930   minpoly degree: 18
+multiplier: 720744189   minpoly degree: 18
+multiplier: 739272523   minpoly degree: 18
+multiplier: 887245258   minpoly degree: 18
+multiplier: 1008098895   minpoly degree: 18
+multiplier: 1201240315   minpoly degree: 18
+multiplier: 1304598570   minpoly degree: 18
+multiplier: 1330867887   minpoly degree: 18
+multiplier: 1441488378   minpoly degree: 18
+multiplier: 1478545046   minpoly degree: 18
+multiplier: 2016197790   minpoly degree: 18
+multiplier: 2217817569   minpoly degree: 18
+multiplier: 2218113145   minpoly degree: 18
+multiplier: 2402480630   minpoly degree: 18
+multiplier: 2661735774   minpoly degree: 18
+multiplier: 3603720945   minpoly degree: 18
+multiplier: 3696362615   minpoly degree: 18
+multiplier: 4435635138   minpoly degree: 18
+multiplier: 4436226290   minpoly degree: 18
+multiplier: 4879848919   minpoly degree: 18
+multiplier: 6654339435   minpoly degree: 18
+multiplier: 7207441890   minpoly degree: 18
+multiplier: 7392725230   minpoly degree: 18
+multiplier: 7541584693   minpoly degree: 18
+multiplier: 9759697838   minpoly degree: 18
+multiplier: 11089087845   minpoly degree: 18
+multiplier: 13308678870   minpoly degree: 18
+multiplier: 14639546757   minpoly degree: 18
+multiplier: 15083169386   minpoly degree: 18
+multiplier: 22178175690   minpoly degree: 18
+multiplier: 22624754079   minpoly degree: 18
+multiplier: 24399244595   minpoly degree: 18
+multiplier: 29279093514   minpoly degree: 18
+multiplier: 37707923465   minpoly degree: 18
+multiplier: 45249508158   minpoly degree: 18
+multiplier: 47467621303   minpoly degree: 18
+multiplier: 48798489190   minpoly degree: 18
+multiplier: 73197733785   minpoly degree: 18
+multiplier: 75415846930   minpoly degree: 18
+multiplier: 82957431623   minpoly degree: 18
+multiplier: 94935242606   minpoly degree: 18
+multiplier: 113123770395   minpoly degree: 18
+multiplier: 142402863909   minpoly degree: 18
+multiplier: 146395467570   minpoly degree: 18
+multiplier: 165914863246   minpoly degree: 18
+multiplier: 226247540790   minpoly degree: 18
+multiplier: 237338106515   minpoly degree: 18
+multiplier: 248872294869   minpoly degree: 18
+multiplier: 284805727818   minpoly degree: 18
+multiplier: 414787158115   minpoly degree: 18
+multiplier: 474676213030   minpoly degree: 18
+multiplier: 497744589738   minpoly degree: 18
+multiplier: 522143834333   minpoly degree: 18
+multiplier: 712014319545   minpoly degree: 18
+multiplier: 806949562151   minpoly degree: 18
+multiplier: 829574316230   minpoly degree: 18
+multiplier: 1044287668666   minpoly degree: 18
+multiplier: 1244361474345   minpoly degree: 18
+multiplier: 1424028639090   minpoly degree: 18
+multiplier: 1566431502999   minpoly degree: 18
+multiplier: 1613899124302   minpoly degree: 18
+multiplier: 2420848686453   minpoly degree: 18
+multiplier: 2488722948690   minpoly degree: 18
+multiplier: 2610719171665   minpoly degree: 18
+multiplier: 3132863005998   minpoly degree: 18
+multiplier: 4034747810755   minpoly degree: 18
+multiplier: 4841697372906   minpoly degree: 18
+multiplier: 5221438343330   minpoly degree: 18
+multiplier: 7832157514995   minpoly degree: 18
+multiplier: 8069495621510   minpoly degree: 18
+multiplier: 8876445183661   minpoly degree: 18
+multiplier: 12104243432265   minpoly degree: 18
+multiplier: 15664315029990   minpoly degree: 18
+multiplier: 17752890367322   minpoly degree: 18
+multiplier: 24208486864530   minpoly degree: 18
+multiplier: 26629335550983   minpoly degree: 18
+multiplier: 44382225918305   minpoly degree: 18
+multiplier: 53258671101966   minpoly degree: 18
+multiplier: 88764451836610   minpoly degree: 18
+multiplier: 133146677754915   minpoly degree: 18
+multiplier: 266293355509830   minpoly degree: 18
+multiplier count: 255  from: {2^(2/3), 18}
+multiplier: 2*2^(2/3)   minpoly degree: 18
+multiplier: 3*2^(2/3)   minpoly degree: 18
+multiplier: 5*2^(2/3)   minpoly degree: 18
+multiplier: 6*2^(2/3)   minpoly degree: 18
+multiplier: 10*2^(2/3)   minpoly degree: 18
+multiplier: 15*2^(2/3)   minpoly degree: 18
+multiplier: 17*2^(2/3)   minpoly degree: 18
+multiplier: 30*2^(2/3)   minpoly degree: 18
+multiplier: 34*2^(2/3)   minpoly degree: 18
+multiplier: 51*2^(2/3)   minpoly degree: 18
+multiplier: 85*2^(2/3)   minpoly degree: 18
+multiplier: 102*2^(2/3)   minpoly degree: 18
+multiplier: 170*2^(2/3)   minpoly degree: 18
+multiplier: 255*2^(2/3)   minpoly degree: 18
+multiplier: 510*2^(2/3)   minpoly degree: 18
+multiplier: 2213*2^(2/3)   minpoly degree: 18
+multiplier: 4426*2^(2/3)   minpoly degree: 18
+multiplier: 6639*2^(2/3)   minpoly degree: 18
+multiplier: 11065*2^(2/3)   minpoly degree: 18
+multiplier: 12007*2^(2/3)   minpoly degree: 18
+multiplier: 13278*2^(2/3)   minpoly degree: 18
+multiplier: 20021*2^(2/3)   minpoly degree: 18
+multiplier: 22130*2^(2/3)   minpoly degree: 18
+multiplier: 24014*2^(2/3)   minpoly degree: 18
+multiplier: 30427*2^(2/3)   minpoly degree: 18
+multiplier: 33195*2^(2/3)   minpoly degree: 18
+multiplier: 36021*2^(2/3)   minpoly degree: 18
+multiplier: 37621*2^(2/3)   minpoly degree: 18
+multiplier: 40042*2^(2/3)   minpoly degree: 18
+multiplier: 60035*2^(2/3)   minpoly degree: 18
+multiplier: 60063*2^(2/3)   minpoly degree: 18
+multiplier: 60854*2^(2/3)   minpoly degree: 18
+multiplier: 66390*2^(2/3)   minpoly degree: 18
+multiplier: 72042*2^(2/3)   minpoly degree: 18
+multiplier: 75242*2^(2/3)   minpoly degree: 18
+multiplier: 91281*2^(2/3)   minpoly degree: 18
+multiplier: 100105*2^(2/3)   minpoly degree: 18
+multiplier: 112863*2^(2/3)   minpoly degree: 18
+multiplier: 120070*2^(2/3)   minpoly degree: 18
+multiplier: 120126*2^(2/3)   minpoly degree: 18
+multiplier: 152135*2^(2/3)   minpoly degree: 18
+multiplier: 180105*2^(2/3)   minpoly degree: 18
+multiplier: 182562*2^(2/3)   minpoly degree: 18
+multiplier: 188105*2^(2/3)   minpoly degree: 18
+multiplier: 200210*2^(2/3)   minpoly degree: 18
+multiplier: 204119*2^(2/3)   minpoly degree: 18
+multiplier: 225726*2^(2/3)   minpoly degree: 18
+multiplier: 300315*2^(2/3)   minpoly degree: 18
+multiplier: 304270*2^(2/3)   minpoly degree: 18
+multiplier: 340357*2^(2/3)   minpoly degree: 18
+multiplier: 360210*2^(2/3)   minpoly degree: 18
+multiplier: 376210*2^(2/3)   minpoly degree: 18
+multiplier: 408238*2^(2/3)   minpoly degree: 18
+multiplier: 456405*2^(2/3)   minpoly degree: 18
+multiplier: 517259*2^(2/3)   minpoly degree: 18
+multiplier: 564315*2^(2/3)   minpoly degree: 18
+multiplier: 600630*2^(2/3)   minpoly degree: 18
+multiplier: 612357*2^(2/3)   minpoly degree: 18
+multiplier: 680714*2^(2/3)   minpoly degree: 18
+multiplier: 912810*2^(2/3)   minpoly degree: 18
+multiplier: 1020595*2^(2/3)   minpoly degree: 18
+multiplier: 1021071*2^(2/3)   minpoly degree: 18
+multiplier: 1034518*2^(2/3)   minpoly degree: 18
+multiplier: 1128630*2^(2/3)   minpoly degree: 18
+multiplier: 1224714*2^(2/3)   minpoly degree: 18
+multiplier: 1551777*2^(2/3)   minpoly degree: 18
+multiplier: 1701785*2^(2/3)   minpoly degree: 18
+multiplier: 2041190*2^(2/3)   minpoly degree: 18
+multiplier: 2042142*2^(2/3)   minpoly degree: 18
+multiplier: 2586295*2^(2/3)   minpoly degree: 18
+multiplier: 3061785*2^(2/3)   minpoly degree: 18
+multiplier: 3103554*2^(2/3)   minpoly degree: 18
+multiplier: 3403570*2^(2/3)   minpoly degree: 18
+multiplier: 5105355*2^(2/3)   minpoly degree: 18
+multiplier: 5172590*2^(2/3)   minpoly degree: 18
+multiplier: 6123570*2^(2/3)   minpoly degree: 18
+multiplier: 7758885*2^(2/3)   minpoly degree: 18
+multiplier: 10210710*2^(2/3)   minpoly degree: 18
+multiplier: 15517770*2^(2/3)   minpoly degree: 18
+multiplier: 26571491*2^(2/3)   minpoly degree: 18
+multiplier: 44306473*2^(2/3)   minpoly degree: 18
+multiplier: 53142982*2^(2/3)   minpoly degree: 18
+multiplier: 67334951*2^(2/3)   minpoly degree: 18
+multiplier: 79714473*2^(2/3)   minpoly degree: 18
+multiplier: 88612946*2^(2/3)   minpoly degree: 18
+multiplier: 132857455*2^(2/3)   minpoly degree: 18
+multiplier: 132919419*2^(2/3)   minpoly degree: 18
+multiplier: 134669902*2^(2/3)   minpoly degree: 18
+multiplier: 159428946*2^(2/3)   minpoly degree: 18
+multiplier: 202004853*2^(2/3)   minpoly degree: 18
+multiplier: 221532365*2^(2/3)   minpoly degree: 18
+multiplier: 240392147*2^(2/3)   minpoly degree: 18
+multiplier: 265714910*2^(2/3)   minpoly degree: 18
+multiplier: 265838838*2^(2/3)   minpoly degree: 18
+multiplier: 336674755*2^(2/3)   minpoly degree: 18
+multiplier: 365336989*2^(2/3)   minpoly degree: 18
+multiplier: 398572365*2^(2/3)   minpoly degree: 18
+multiplier: 404009706*2^(2/3)   minpoly degree: 18
+multiplier: 443064730*2^(2/3)   minpoly degree: 18
+multiplier: 451715347*2^(2/3)   minpoly degree: 18
+multiplier: 480784294*2^(2/3)   minpoly degree: 18
+multiplier: 609178967*2^(2/3)   minpoly degree: 18
+multiplier: 664597095*2^(2/3)   minpoly degree: 18
+multiplier: 673349510*2^(2/3)   minpoly degree: 18
+multiplier: 721176441*2^(2/3)   minpoly degree: 18
+multiplier: 730673978*2^(2/3)   minpoly degree: 18
+multiplier: 753210041*2^(2/3)   minpoly degree: 18
+multiplier: 797144730*2^(2/3)   minpoly degree: 18
+multiplier: 903430694*2^(2/3)   minpoly degree: 18
+multiplier: 1010024265*2^(2/3)   minpoly degree: 18
+multiplier: 1096010967*2^(2/3)   minpoly degree: 18
+multiplier: 1144694167*2^(2/3)   minpoly degree: 18
+multiplier: 1201960735*2^(2/3)   minpoly degree: 18
+multiplier: 1218357934*2^(2/3)   minpoly degree: 18
+multiplier: 1329194190*2^(2/3)   minpoly degree: 18
+multiplier: 1355146041*2^(2/3)   minpoly degree: 18
+multiplier: 1442352882*2^(2/3)   minpoly degree: 18
+multiplier: 1506420082*2^(2/3)   minpoly degree: 18
+multiplier: 1826684945*2^(2/3)   minpoly degree: 18
+multiplier: 1827536901*2^(2/3)   minpoly degree: 18
+multiplier: 2020048530*2^(2/3)   minpoly degree: 18
+multiplier: 2192021934*2^(2/3)   minpoly degree: 18
+multiplier: 2258576735*2^(2/3)   minpoly degree: 18
+multiplier: 2259630123*2^(2/3)   minpoly degree: 18
+multiplier: 2289388334*2^(2/3)   minpoly degree: 18
+multiplier: 2403921470*2^(2/3)   minpoly degree: 18
+multiplier: 2710292082*2^(2/3)   minpoly degree: 18
+multiplier: 3045894835*2^(2/3)   minpoly degree: 18
+multiplier: 3434082501*2^(2/3)   minpoly degree: 18
+multiplier: 3605882205*2^(2/3)   minpoly degree: 18
+multiplier: 3653369890*2^(2/3)   minpoly degree: 18
+multiplier: 3655073802*2^(2/3)   minpoly degree: 18
+multiplier: 3766050205*2^(2/3)   minpoly degree: 18
+multiplier: 4086666499*2^(2/3)   minpoly degree: 18
+multiplier: 4517153470*2^(2/3)   minpoly degree: 18
+multiplier: 4519260246*2^(2/3)   minpoly degree: 18
+multiplier: 5480054835*2^(2/3)   minpoly degree: 18
+multiplier: 5723470835*2^(2/3)   minpoly degree: 18
+budget exhausted after 400 trials
+history: {{0, Infinity}, {1, 18}}
+trials: 400
+   result: Sqrt[3 + 3*2^(1/3) + 3*2^(2/3) + 2*2^(2/3)*3^(1/3) + 3^(2/3) + 2*6^(1/3)]
+DONE
+exit 0

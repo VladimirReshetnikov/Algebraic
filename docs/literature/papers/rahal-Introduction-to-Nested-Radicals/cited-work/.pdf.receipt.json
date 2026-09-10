@@ -1,0 +1,31 @@
+{
+  "record_id": "rahal",
+  "title": "Introduction to Nested Radicals",
+  "asset_id": "pdf",
+  "version": "cited-work",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://kurser.math.su.se/pluginfile.php/16103/mod_folder/content/0/2017/2017_17_report.pdf",
+    "resolved_url": "https://kurser.math.su.se/pluginfile.php/16103/mod_folder/content/0/2017/2017_17_report.pdf",
+    "retrieved_at": "2026-09-05T20:26:19+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 487697,
+    "sha256": "1ca1fd2c4f5f9e38812c358a8e51637ce17a4b0683fb9f08ae565df8253e1138"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "candidate_unverified",
+  "note": "University thesis URL supplied in reports; not the separate thesis-register PDF.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/rahal-Introduction-to-Nested-Radicals/cited-work/paper.pdf",
+      "role": "pdf",
+      "bytes": 487697,
+      "sha256": "1ca1fd2c4f5f9e38812c358a8e51637ce17a4b0683fb9f08ae565df8253e1138"
+    }
+  ],
+  "prior_candidate_errors": []
+}

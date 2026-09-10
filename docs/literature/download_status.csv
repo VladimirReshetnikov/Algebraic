@@ -1,0 +1,129 @@
+﻿record_id,asset_id,kind,version,status,error
+fateman72,pdf,pdf,cited-work,failed,RuntimeError: https://web.archive.org/web/20051217213927id_/http://www.lcs.mit.edu/publications/pubs/pdf/MIT-LCS-TR-095.pdf: RuntimeError: Could not retrieve https://web.archive.org/web/20051217213927id_/http://www.lcs.mit.edu/publications/pubs/pdf/MIT-LCS-TR-095.pdf: HTTP Error 429: Too Many Requests
+fateman72,pdf-csail-direct,pdf,mit-lcs-tr-095-csail,downloaded,
+caviness76,pdf,pdf,cited-work,failed,RuntimeError: https://people.eecs.berkeley.edu/~fateman/papers/radcan.pdf: RuntimeError: Could not retrieve https://people.eecs.berkeley.edu/~fateman/papers/radcan.pdf: <urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+zippelthesis,pdf-from-landing,pdf,cited-work,downloaded,
+zippel1977,nasa-pdf,pdf,cited-work,failed,ValueError: No explicit matching download link resolved; manual inspection is needed.
+bfht,pdf,pdf,cited-work,downloaded,
+landauMiller,pdf-journal-1985,pdf,journal-1985,downloaded,
+landau92,pdf-author-upload-preprint,pdf,author-upload-preprint,failed,RuntimeError: https://www.researchgate.net/profile/Susan-Landau-2/publication/2629046_Simplification_of_Nested_Radicals/links/02bfe510fbd90dfb8f000000/Simplification-of-Nested-Radicals.pdf: RuntimeError: Could not retrieve https://www.researchgate.net/profile/Susan-Landau-2/publication/2629046_Simplification_of_Nested_Radicals/links/02bfe510fbd90dfb8f000000/Simplification-of-Nested-Radicals.pdf: HTTP Error 403: Forbidden
+landauNote,pdf-umass-1990-120,pdf,umass-1990-120,downloaded,
+landau94,pdf-umass-1991-076,pdf,umass-1991-076,downloaded,
+landau98,pdf-author-pdf,pdf,author-pdf,downloaded,
+horng99,pdf-from-landing,pdf,cited-work,failed,RuntimeError: Could not retrieve https://www.researchgate.net/publication/220577276_Solving_polynomials_by_radicals_with_roots_of_unity_in_minimum_depth: HTTP Error 403: Forbidden
+horng99,optional-publisher-candidate,pdf,cited-work,downloaded,
+bloemer91,optional-publisher-candidate,pdf,cited-work,failed,"RuntimeError: https://ieeexplore.ieee.org/iel2/379/4746/00185434.pdf: ValueError: Not a complete PDF: PDF header / EOF missing (possibly login, error, or truncated data)."
+bloemer92,optional-publisher-candidate,pdf,cited-work,failed,"RuntimeError: https://ieeexplore.ieee.org/iel2/424/6693/00267807.pdf: ValueError: Not a complete PDF: PDF header / EOF missing (possibly login, error, or truncated data)."
+bloemer93,pdf-thesis-1993,pdf,thesis-1993,downloaded,
+bloemer00,pdf-from-landing,pdf,cited-work,failed,RuntimeError: Could not retrieve https://www.researchgate.net/publication/225210864_Denesting_by_Bounded_Degree_Radicals: HTTP Error 403: Forbidden
+jeffrey,pdf-public-mirror,pdf,public-mirror,downloaded,
+honsbeek99,pdf-repository,pdf,repository,failed,RuntimeError: https://repository.ubn.ru.nl/bitstream/handle/2066/18722/18722.pdf: RuntimeError: Could not retrieve https://repository.ubn.ru.nl/bitstream/handle/2066/18722/18722.pdf: HTTP Error 403: Forbidden
+honsbeek05,pdf,pdf,cited-work,downloaded,
+mordell,pdf-journal-1953,pdf,journal-1953,downloaded,
+siegel,pdf-from-landing,pdf,cited-work,failed,ValueError: No explicit matching download link resolved; manual inspection is needed.
+kneser,pdf-journal-1975,pdf,journal-1975,downloaded,
+lll,pdf-journal-1982,pdf,journal-1982,downloaded,
+kluners,pdf-journal-1998,pdf,journal-1998,downloaded,
+lenstra06,pdf,pdf,cited-work,downloaded,
+perucca,pdf,pdf,arxiv-2511.02498v1,downloaded,
+perucca,tex-source,source,arxiv-2511.02498v1,downloaded,
+ramanujan,archive-pdf,pdf,1927-scan,downloaded,
+berndt98,pdf-journal-1998,pdf,journal-1998,downloaded,
+shanks,pdf-journal-1974-part-a,pdf,journal-1974-part-a,downloaded,
+shanks,pdf-journal-1974-part-b,pdf,journal-1974-part-b,downloaded,
+spohn,pdf-journal-letter,pdf,journal-letter,downloaded,
+bumby,pdf-journal-1987,pdf,journal-1987,downloaded,
+osler,pdf-from-landing,pdf,cited-work,failed,RuntimeError: Could not retrieve https://www.researchgate.net/publication/282728308_Cardan_Polynomials_and_the_Reduction_of_Radicals: HTTP Error 403: Forbidden
+oslercubic,pdf-university-mirror,pdf,university-mirror,downloaded,
+witula,pdf-author-upload,pdf,author-upload,failed,RuntimeError: https://www.researchgate.net/profile/Roman-Witula-2/publication/241071508_Cardano%27s_formula_square_roots_Chebyshev_polynomials_and_radicals/links/5d385ae992851cd04682a056/Cardanos-formula-square-roots-Chebyshev-polynomials-and-radicals.pdf: RuntimeError: Could not retrieve https://www.researchgate.net/profile/Roman-Witula-2/publication/241071508_Cardano%27s_formula_square_roots_Chebyshev_polynomials_and_radicals/links/5d385ae992851cd04682a056/Cardanos-formula-square-roots-Chebyshev-polynomials-and-radicals.pdf: HTTP Error 403: Forbidden
+barbero,pdf,pdf,jis-2013,downloaded,
+barbero,tex-source-from-publisher,source,jis-2013,downloaded,
+barbero,pdf-arxiv,pdf,arxiv-1401.1474v1,downloaded,
+barbero,tex-source-arxiv,source,arxiv-1401.1474v1,downloaded,
+shevelev,pdf,pdf,arxiv-0711.3420v1,downloaded,
+shevelev,tex-source,source,arxiv-0711.3420v1,downloaded,
+sury,pdf,pdf,cited-work,downloaded,
+krepkii,pdf-spbu,pdf,spbu-journal-11190,downloaded,
+antipov,pdf-mathnet,pdf,mathnet-vspua-180,downloaded,
+gkioulekas,pdf-author-submitted,pdf,author-submitted,downloaded,
+dokmeci,pdf,pdf,cited-work,downloaded,
+rahal,pdf,pdf,cited-work,downloaded,
+girstmair,pdf,pdf,arxiv-2004.06039v1,downloaded,
+girstmair,tex-source,source,arxiv-2004.06039v1,downloaded,
+cavallo,pdf,pdf,arxiv-2403.04776v2,downloaded,
+cavallo,tex-source,source,arxiv-2403.04776v2,downloaded,
+tonien,pdf-from-landing,pdf,cited-work,failed,RuntimeError: Could not retrieve https://www.sciencedirect.com/science/article/pii/S2772827725000038: HTTP Error 403: Forbidden
+rit,pdf,pdf,arxiv-2202.07961v4,downloaded,
+rit,tex-source,source,arxiv-2202.07961v4,downloaded,
+gaillard,pdf,pdf,arxiv-2304.13605v1,downloaded,
+gaillard,tex-source,source,arxiv-2304.13605v1,downloaded,
+allender,pdf-eccc-2005-037,pdf,eccc-2005-037,downloaded,
+exactgeometry,pdf-hal-v1,pdf,hal-v1,downloaded,
+herschfeld,pdf-university-mirror,pdf,university-mirror,failed,"RuntimeError: https://is.muni.cz/el/1431/jaro2015/M7400/um/2301294_147_251_4_41_15_08_2014_19_16.pdf: ValueError: Not a complete PDF: PDF header / EOF missing (possibly login, error, or truncated data)."
+borwein,optional-publisher-candidate,pdf,cited-work,failed,RuntimeError: https://www.tandfonline.com/doi/pdf/10.1080/00029890.1991.11995783: RuntimeError: Could not retrieve https://www.tandfonline.com/doi/pdf/10.1080/00029890.1991.11995783: HTTP Error 403: Forbidden
+campbell,pdf,pdf,arxiv-1511.06865v1,downloaded,
+campbell,tex-source,source,arxiv-1511.06865v1,downloaded,
+mitra,pdf,pdf,arxiv-2404.04051v1,downloaded,
+mitra,tex-source,source,arxiv-2404.04051v1,downloaded,
+gutin,pdf,pdf,arxiv-1907.02700v6,downloaded,
+gutin,tex-source,source,arxiv-1907.02700v6,downloaded,
+piagm,pdf-author-hosted-scan,pdf,author-hosted-scan,downloaded,
+euclid,tex-pdf-bundle,github_bundle,fitzpatrick-repository-snapshot,downloaded,
+euclid,published-2008-pdf,pdf,fitzpatrick-2008,downloaded,
+sympy,resource-01,web,web-resources,downloaded,
+sympysrc,resource-01,source_code,web-resources,downloaded,
+sympysrc,resource-02,source_code,web-resources,downloaded,
+sympysrc,resource-03,source_code,web-resources,downloaded,
+sympysrc,resource-04,source_code,web-resources,downloaded,
+sympyissues,resource-01,web,web-resources,downloaded,
+sympyissues,resource-02,web,web-resources,downloaded,
+maxima,resource-01,web,web-resources,downloaded,
+maxima,resource-02,source_code,web-resources,downloaded,
+maximamanual,resource-01,web,web-resources,downloaded,
+maximamanual,resource-02,web,web-resources,downloaded,
+maximathread,resource-01,web,web-resources,downloaded,
+maximathread,resource-02,web,web-resources,downloaded,
+maximathread,resource-03,web,web-resources,downloaded,
+wolframroot,resource-01,web,web-resources,downloaded,
+wolframradicals,resource-01,web,web-resources,downloaded,
+wolframresource,resource-01,web,web-resources,failed,RuntimeError: https://resources.wolframcloud.com/FunctionRepository/resources/RadicalDenest: RuntimeError: Could not retrieve https://resources.wolframcloud.com/FunctionRepository/resources/RadicalDenest: HTTP Error 404: Not Found
+wolframresource,resource-02,web,web-resources,failed,RuntimeError: https://resources.wolframcloud.com/FunctionRepository/resources/RadicalDenest/: RuntimeError: Could not retrieve https://resources.wolframcloud.com/FunctionRepository/resources/RadicalDenest/: HTTP Error 404: Not Found
+wolframcommunity,resource-01,web,web-resources,failed,RuntimeError: https://community.wolfram.com/groups/-/m/t/980264: RuntimeError: Could not retrieve https://community.wolfram.com/groups/-/m/t/980264: HTTP Error 503: Service Unavailable
+wolframcommunity,resource-02,web,web-resources,failed,RuntimeError: https://community.wolfram.com/groups/-/m/t/2120629: RuntimeError: Could not retrieve https://community.wolfram.com/groups/-/m/t/2120629: HTTP Error 503: Service Unavailable
+maple,resource-01,web,web-resources,downloaded,
+maple,resource-02,web,web-resources,downloaded,
+sage,resource-01,web,web-resources,downloaded,
+sage,resource-02,web,web-resources,downloaded,
+sage,resource-03,web,web-resources,failed,RuntimeError: https://doc.sagemath.org/html/en/reference/qqbar/sage/rings/qqbar.html: RuntimeError: Could not retrieve https://doc.sagemath.org/html/en/reference/qqbar/sage/rings/qqbar.html: HTTP Error 404: Not Found
+pari,resource-01,web,web-resources,downloaded,
+pari,resource-02,web,web-resources,downloaded,
+magma,resource-01,web,web-resources,downloaded,
+magma,resource-02,pdf,web-resources,downloaded,
+flint,resource-01,web,web-resources,downloaded,
+calcium,resource-01,web,web-resources,downloaded,
+fricas,resource-01,web,web-resources,downloaded,
+fricas,resource-02,web,web-resources,downloaded,
+honda,resource-01,web,web-resources,downloaded,
+wikipedia,resource-01,web,web-resources,downloaded,
+mathworld,resource-01,web,web-resources,downloaded,
+brownmath,resource-01,web,web-resources,downloaded,
+mse,resource-01,web,web-resources,failed,RuntimeError: https://math.stackexchange.com/questions/4680: RuntimeError: Could not retrieve https://math.stackexchange.com/questions/4680: HTTP Error 403: Forbidden
+mse,resource-02,web,web-resources,failed,RuntimeError: https://math.stackexchange.com/questions/16331: RuntimeError: Could not retrieve https://math.stackexchange.com/questions/16331: HTTP Error 403: Forbidden
+mse,resource-03,web,web-resources,failed,RuntimeError: https://math.stackexchange.com/questions/871639: RuntimeError: Could not retrieve https://math.stackexchange.com/questions/871639: HTTP Error 403: Forbidden
+mo,resource-01,web,web-resources,downloaded,
+mo,resource-02,web,web-resources,downloaded,
+mo,resource-03,web,web-resources,downloaded,
+mo,resource-04,web,web-resources,downloaded,
+oeis,resource-01,web,web-resources,downloaded,
+tiwari,resource-01,web,web-resources,downloaded,
+infiniteblogs,resource-01,web,web-resources,failed,RuntimeError: https://www.cantorsparadise.com/ramanujans-nested-radical-problem-f14c3060e495: RuntimeError: Could not retrieve https://www.cantorsparadise.com/ramanujans-nested-radical-problem-f14c3060e495: HTTP Error 403: Forbidden
+infiniteblogs,resource-02,web,web-resources,failed,RuntimeError: https://medium.com/@ArchieGSmith/calculus-of-infinite-nested-radicals-1ab3e1d26774: RuntimeError: Could not retrieve https://medium.com/@ArchieGSmith/calculus-of-infinite-nested-radicals-1ab3e1d26774: HTTP Error 403: Forbidden
+infiniteblogs,resource-03,web,web-resources,failed,RuntimeError: https://math.stackexchange.com/questions/4049946/the-infinitely-nested-radicals-problem-and-ramanujans-wondrous-formula: RuntimeError: Could not retrieve https://math.stackexchange.com/questions/4049946/the-infinitely-nested-radicals-problem-and-ramanujans-wondrous-formula: HTTP Error 403: Forbidden
+fateman72,pdf,pdf,mit-lcs-tr-095-archive-org,downloaded,
+berndt98,retypeset-2026,retypeset,retypeset-2026,downloaded,
+jeffrey,retypeset-2026,retypeset,retypeset-2026,downloaded,
+gkioulekas,retypeset-2026,retypeset,retypeset-2026,downloaded,
+landau92,retypeset-2026,retypeset,retypeset-2026,downloaded,
+bfht,retypeset-2026,retypeset,retypeset-2026,downloaded,
+scheinerman,retypeset-2026,retypeset,retypeset-2026,downloaded,
+wikipedia,snapshot-pdf-2026,web,snapshot-pdf-2026,downloaded,

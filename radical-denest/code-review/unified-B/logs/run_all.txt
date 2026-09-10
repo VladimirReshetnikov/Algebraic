@@ -1,0 +1,14 @@
+=== exp_battery2 start 16:27:06
+=== exp_battery2 exit 0 16:29:07
+=== exp_fuzz2 start 16:29:08
+=== exp_fuzz2 exit 0 16:30:36
+=== probe_gaps2_1 start 16:30:37
+=== probe_gaps2_1 exit 0 16:31:21
+=== probe_gaps2_2 start 16:31:22
+=== probe_gaps2_2 exit 0 16:32:09
+=== probe_gaps2_3 start 16:32:10
+=== probe_gaps2_3 exit 0 16:32:30
+=== probe_gaps2_4 start 16:32:30
+=== probe_gaps2_4 exit 0 16:32:39
+ALL-DONE
+chain exit 0

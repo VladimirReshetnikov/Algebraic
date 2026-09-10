@@ -1,0 +1,31 @@
+{
+  "record_id": "rit",
+  "title": "Identity testing for radical expressions",
+  "asset_id": "pdf",
+  "version": "arxiv-2202.07961v4",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://arxiv.org/pdf/2202.07961v4",
+    "resolved_url": "https://arxiv.org/pdf/2202.07961v4",
+    "retrieved_at": "2026-09-05T20:26:32+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 597850,
+    "sha256": "32fcecca7c655f29f139602e4ff9596d95d64c10046da7b7fc90fa1045d5532b"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "repository_pdf_and_source_links",
+  "note": "Pinned arXiv version; PDF and source requests use the identical version identifier.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/rit-Identity-testing-for-radical-expressions/arxiv-2202.07961v4/paper.pdf",
+      "role": "pdf",
+      "bytes": 597850,
+      "sha256": "32fcecca7c655f29f139602e4ff9596d95d64c10046da7b7fc90fa1045d5532b"
+    }
+  ],
+  "prior_candidate_errors": []
+}

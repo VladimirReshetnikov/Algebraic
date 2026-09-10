@@ -1,0 +1,31 @@
+{
+  "record_id": "jeffrey",
+  "title": "Simplifying square roots of square roots by denesting",
+  "asset_id": "pdf-public-mirror",
+  "version": "public-mirror",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://cybertester.com/data/denest.pdf",
+    "resolved_url": "https://cybertester.com/data/denest.pdf",
+    "retrieved_at": "2026-09-05T20:25:22+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 256928,
+    "sha256": "3d8213537d7b8b777a8d46ab16b40057dc1e3bb177a00ac9c10373b117ce7b7a"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "browser_fulltext",
+  "note": "Public secondary mirror; title checked, 13 PDF pages. Not an author/publisher site.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/jeffrey-Simplifying-square-roots-of-square-roots-by-denesting/public-mirror/pdf-public-mirror.pdf",
+      "role": "pdf",
+      "bytes": 256928,
+      "sha256": "3d8213537d7b8b777a8d46ab16b40057dc1e3bb177a00ac9c10373b117ce7b7a"
+    }
+  ],
+  "prior_candidate_errors": []
+}

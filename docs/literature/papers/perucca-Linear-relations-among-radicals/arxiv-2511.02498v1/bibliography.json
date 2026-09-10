@@ -1,0 +1,19 @@
+{
+  "id": "perucca",
+  "title": "Linear relations among radicals",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "perucca",
+      "entry_latex": "A. Perucca, ``Linear relations among radicals,'' arXiv:2511.02498, 2025.\n\\access{https://arxiv.org/abs/2511.02498}{arXiv record}. \\status{A}\nA recent addition concerning the relation between radical-group indices and field-extension degrees, and the role of roots of unity in linear dependence. Relevant to basis construction.\n\n\\bibgroup{II. Ramanujan, special families, and higher indices}"
+    },
+    {
+      "report": "report-3",
+      "key": "perucca",
+      "entry_latex": "Antonella Perucca. \\emph{Linear relations among radicals}. arXiv:2511.02498, submitted November 4, 2025. \\url{https://arxiv.org/abs/2511.02498}. \\status{A}\n\\entrynote{Recent structural work on linear relations in radical extensions. Potentially useful for dependency detection and basis design; the abstract does not by itself establish an implemented denesting algorithm.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

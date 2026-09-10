@@ -1,0 +1,29 @@
+{
+  "id": "sympysrc",
+  "title": "sqrtdenest.py",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "sympysrc",
+      "entry_latex": "SymPy developers, \\texttt{sympy/simplify/sqrtdenest.py}, version 1.14.0, and the associated test suite.\n\\access{https://github.com/sympy/sympy/blob/1.14.0/sympy/simplify/sqrtdenest.py}{Versioned source};\n\\access{https://github.com/sympy/sympy/blob/1.14.0/sympy/simplify/tests/test_sqrtdenest.py}{versioned tests}. \\status{D}\nImplementation-level reading beside BFHT and Jeffrey--Rich. Private helper names are navigation aids and may change between releases."
+    },
+    {
+      "report": "report-2",
+      "key": "sympysource",
+      "entry_latex": "SymPy development team.\n\\emph{sqrtdenest.py}, source code.\n\\sourceurl{https://github.com/sympy/sympy/blob/master/sympy/simplify/sqrtdenest.py}.\n\\textbf{D.} Inspectable implementation and references to BFHT and Jeffrey--Rich. A moving development branch is not the same evidence as the version recorded in the executed tests."
+    },
+    {
+      "report": "report-2",
+      "key": "sympytests",
+      "entry_latex": "SymPy development team.\n\\emph{test\\_sqrtdenest.py}, regression tests.\n\\sourceurl{https://github.com/sympy/sympy/blob/master/sympy/simplify/tests/test_sqrtdenest.py}.\n\\textbf{D.} Useful source of deeper, multiquadratic, and cancellation examples. A test suite documents cases, not mathematical completeness."
+    },
+    {
+      "report": "report-3",
+      "key": "sympysource",
+      "entry_latex": "SymPy development team. Source code and tests for \\texttt{sqrtdenest}. \\url{https://github.com/sympy/sympy/blob/master/sympy/simplify/sqrtdenest.py}; \\url{https://github.com/sympy/sympy/blob/master/sympy/simplify/tests/test_sqrtdenest.py}. \\status{D}\n\\entrynote{Primary implementation evidence, including algorithmic references, special cases, and test examples. These links track the development branch; the attached execution transcript fixes the version actually run.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

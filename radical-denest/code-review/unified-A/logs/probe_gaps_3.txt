@@ -1,0 +1,127 @@
+Kernel: 15.0.1 for Microsoft Windows (64-bit) (July 2, 2026)
+=== H1. what does the core's Solve step return for C05 / R03 / P02? ===
+-- C05  minpoly degree 8,  gcd degree 4
+   Solve roots: Short[{Root[{-2 + #1^2 & , -17 + 12*#1 - 7*#2 + 5*#1*#2 - 3*#2^2 + 2*#1*#2^2 - #2^3 + #1*#2^3 - #2^4 & }, {2, 1}], Root[{-2 + #1^2 & , -17 + 12*#1 - 7*#2 + 5*#1*#2 - 3*#2^2 + 2*#1*#2^2 - #2^3 + #1*#2^3 - #2^4 & }, {2, 2}], Root[{-2 + #1^2 & , -17 + 12*#1 - 7*#2 + 5*#1*#2 - 3*#2^2 + 2*#1*#2^2 - #2^3 + #1*#2^3 - #2^4 & }, {2, 3}], Root[{-2 + #1^2 & , -17 + 12*#1 - 7*#2 + 5*#1*#2 - 3*#2^2 + 2*#1*#2^2 - #2^3 + #1*#2^3 - #2^4 & }, {2, 4}]}, 4]
+   contain Root objects: True   RadicalCost of roots: {{1, 0, 0, 29, 62}, {1, 0, 0, 29, 62}, {1, 0, 0, 29, 62}, {1, 0, 0, 29, 62}}
+   ToRadicals: {-1/4*Sqrt[5*(3 - 2*Sqrt[2])] + (-1 + Sqrt[2])/4 - Sqrt[-15/4 + 5/Sqrt[2] - 2*(3 - 2*Sqrt[2]) + (3*(1 - Sqrt[2])^2)/4 - (-8*(7 - 5*Sqrt[2]) + (1 - Sqrt[2])*(4*(3 - 2*Sqrt[2]) - (1 - Sqrt[2])^2))/(2*Sqrt[5*(3 - 2*Sqrt[2])])]/2, -1/4*Sqrt[5*(3 - 2*Sqrt[2])] + (-1 + Sqrt[2])/4 + Sqrt[-15/4 + 5/Sqrt[2] - 2*(3 - 2*Sqrt[2]) + (3*(1 - Sqrt[2])^2)/4 - (-8*(7 - 5*Sqrt[2]) + (1 - Sqrt[2])*(4*(3 - 2*Sqrt[2]) - (1 - Sqrt[2])^2))/(2*Sqrt[5*(3 - 2*Sqrt[2])])]/2, Sqrt[5*(3 - 2*Sqrt[2])]/4 + (-1 + Sqrt[2])/4 - Sqrt[-15/4 + 5/Sqrt[2] - 2*(3 - 2*Sqrt[2]) + (3*(1 - Sqrt[2])^2)/4 + (-8*(7 - 5*Sqrt[2]) + (1 - Sqrt[2])*(4*(3 - 2*Sqrt[2]) - (1 - Sqrt[2])^2))/(2*Sqrt[5*(3 - 2*Sqrt[2])])]/2, Sqrt[5*(3 - 2*Sqrt[2])]/4 + (-1 + Sqrt[2])/4 + Sqrt[-15/4 + 5/Sqrt[2] - 2*(3 - 2*Sqrt[2]) + (3*(1 - Sqrt[2])^2)/4 + (-8*(7 - 5*Sqrt[2]) + (1 - Sqrt[2])*(4*(3 - 2*Sqrt[2]) - (1 - Sqrt[2])^2))/(2*Sqrt[5*(3 - 2*Sqrt[2])])]/2}
+   certified equal to problem: {Sqrt[5*(3 - 2*Sqrt[2])]/4 + (-1 + Sqrt[2])/4 + Sqrt[-15/4 + 5/Sqrt[2] - 2*(3 - 2*Sqrt[2]) + (3*(1 - Sqrt[2])^2)/4 + (-8*(7 - 5*Sqrt[2]) + (1 - Sqrt[2])*(4*(3 - 2*Sqrt[2]) - (1 - Sqrt[2])^2))/(2*Sqrt[5*(3 - 2*Sqrt[2])])]/2}
+-- C14  minpoly degree 8,  gcd degree 4
+   Solve roots: Short[{-Sqrt[3/2 + Sqrt[2] - (I/2)*Sqrt[51 + 36*Sqrt[2]]], Sqrt[3/2 + Sqrt[2] - (I/2)*Sqrt[51 + 36*Sqrt[2]]], -Sqrt[3/2 + Sqrt[2] + (I/2)*Sqrt[51 + 36*Sqrt[2]]], Sqrt[3/2 + Sqrt[2] + (I/2)*Sqrt[51 + 36*Sqrt[2]]]}, 4]
+   contain Root objects: False   RadicalCost of roots: {{0, 3, 4, 11, 34}, {0, 3, 4, 10, 32}, {0, 3, 4, 11, 34}, {0, 3, 4, 10, 32}}
+   ToRadicals: {-Sqrt[3/2 + Sqrt[2] - (I/2)*Sqrt[51 + 36*Sqrt[2]]], Sqrt[3/2 + Sqrt[2] - (I/2)*Sqrt[51 + 36*Sqrt[2]]], -Sqrt[3/2 + Sqrt[2] + (I/2)*Sqrt[51 + 36*Sqrt[2]]], Sqrt[3/2 + Sqrt[2] + (I/2)*Sqrt[51 + 36*Sqrt[2]]]}
+   certified equal to problem: {Sqrt[3/2 + Sqrt[2] + I/2*Sqrt[51 + 36*Sqrt[2]]]}
+-- R03  minpoly degree 9,  gcd degree 3
+   Solve roots: Short[{(1 + 2^(2/3)*5^(1/3) - 2^(1/3)*5^(2/3))^(1/3), (-1)^(2/3)*(1 + 2^(2/3)*5^(1/3) - 2^(1/3)*5^(2/3))^(1/3), -(-1 - 2^(2/3)*5^(1/3) + 2^(1/3)*5^(2/3))^(1/3)}, 4]
+   contain Root objects: False   RadicalCost of roots: {{0, 2, 5, 11, 29}, {0, 2, 6, 13, 35}, {0, 2, 5, 12, 31}}
+   ToRadicals: {(1 + 2^(2/3)*5^(1/3) - 2^(1/3)*5^(2/3))^(1/3), (-1)^(2/3)*(1 + 2^(2/3)*5^(1/3) - 2^(1/3)*5^(2/3))^(1/3), -(-1 - 2^(2/3)*5^(1/3) + 2^(1/3)*5^(2/3))^(1/3)}
+   certified equal to problem: {(1 + 2^(2/3)*5^(1/3) - 2^(1/3)*5^(2/3))^(1/3)}
+-- P02  minpoly degree 9,  gcd degree 3
+   Solve roots: Short[{-(-5 - 3*2^(2/3)*3^(1/3) - 3*2^(1/3)*3^(2/3))^(1/3), (5 + 3*2^(2/3)*3^(1/3) + 3*2^(1/3)*3^(2/3))^(1/3), (-1)^(2/3)*(5 + 3*2^(2/3)*3^(1/3) + 3*2^(1/3)*3^(2/3))^(1/3)}, 4]
+   contain Root objects: False   RadicalCost of roots: {{0, 2, 5, 13, 32}, {0, 2, 5, 12, 30}, {0, 2, 6, 14, 36}}
+   ToRadicals: {-(-5 - 3*2^(2/3)*3^(1/3) - 3*2^(1/3)*3^(2/3))^(1/3), (5 + 3*2^(2/3)*3^(1/3) + 3*2^(1/3)*3^(2/3))^(1/3), (-1)^(2/3)*(5 + 3*2^(2/3)*3^(1/3) + 3*2^(1/3)*3^(2/3))^(1/3)}
+   certified equal to problem: {(5 + 3*2^(2/3)*3^(1/3) + 3*2^(1/3)*3^(2/3))^(1/3)}
+
+=== H2. R15 without the factorizer, and the factorizer's effect ===
+Factorc[radicand] = 3^(1/3)*(2*2^(1/3) + 2*2^(2/3) + 3^(1/3) + 3^(2/3) + 2^(1/3)*3^(2/3) + 6^(2/3))
+R15b  MISS?  depth 2->2  28.01 s
+      in : Sqrt[3 + 3*2^(1/3) + 3*2^(2/3) + 2*2^(2/3)*3^(1/3) + 3^(2/3) + 2*6^(1/3)]
+      out: Sqrt[3 + 3*2^(1/3) + 3*2^(2/3) + 2*2^(2/3)*3^(1/3) + 3^(2/3) + 2*6^(1/3)]
+      exp: 1 + 2^(1/3) + 3^(1/3)  (exp==in: False)
+R15c  MISS?  depth 2->2  0.15 s
+      in : Sqrt[3 + 3*2^(1/3) + 3*2^(2/3) + 2*2^(2/3)*3^(1/3) + 3^(2/3) + 2*6^(1/3)]
+      out: Sqrt[3 + 3*2^(1/3) + 3*2^(2/3) + 2*2^(2/3)*3^(1/3) + 3^(2/3) + 2*6^(1/3)]
+      exp: 1 + 2^(1/3) + 3^(1/3)  (exp==in: False)
+R16  ok  depth 2->1  0.04 s
+      in : Sqrt[1 + 2*2^(1/3) + 2^(2/3) + 2*5^(1/3) + 5^(2/3) + 2*10^(1/3)]
+      out: 1 + 2^(1/3) + 5^(1/3)
+R17  ok  depth 2->1  0.04 s
+      in : Sqrt[4 + 4*2^(1/3) + 2^(2/3) + 4*3^(1/3) + 3^(2/3) + 2*6^(1/3)]
+      out: 2 + 2^(1/3) + 3^(1/3)
+R18  ok  depth 2->1  0.04 s
+      in : Sqrt[7 + 5*3^(1/3) + 3*3^(2/3)]
+      out: 1 + 3^(1/3) + 3^(2/3)
+R19  ok  depth 2->1  0.03 s
+      in : Sqrt[9 + 6*3^(1/3) + 3^(2/3)]
+      out: 3 + 3^(1/3)
+
+=== H3. time budget on the five-prime sum ===
+MinimalPolynomial time of the answer: 0.0150649
+MinimalPolynomial time of the problem: 0.0720581
+RootReduce time of the difference:      {0.1584415, 0}
+Strad with TimeBudget 20, MaxTrials 5, CertifyTime 10: 408.20000000000005 s -> Short[$TimedOut]
+
+=== H4. more roots whose degree exceeds the radicand's degree, and roots of negatives ===
+S01  ok  depth 2->1  0.47000000000000003 s
+      in : (45 + 36*2^(1/3) + 27*2^(2/3))^(1/6)
+      out: 1 + 2^(1/3)
+S02  ok  depth 2->1  0.15 s
+      in : (17 + 120*Sqrt[2] + 90*3^(1/3) + 24*Sqrt[2]*3^(1/3) + 60*3^(2/3) + 18*Sqrt[2]*3^(2/3))^(1/6)
+      out: Sqrt[2] + 3^(1/3)
+S03  ok  depth 2->1  0.12 s
+      in : (14*2^(1/3) + 11*3^(1/3) + 6*6^(2/3))^(1/4)
+      out: 2^(1/3) + 3^(1/3)
+S04  MISS  depth 2->2  0.15 s
+      in : (2555 + 1116*2^(2/3)*3^(1/3) + 981*2^(1/3)*3^(2/3))^(1/9)
+      out: (2555 + 1116*2^(2/3)*3^(1/3) + 981*2^(1/3)*3^(2/3))^(1/9)
+      exp: 2^(1/3) + 3^(1/3)  (exp==in: True)
+S05  MISS  depth 2->2  0.28 s
+      in : (1296 + 880*Sqrt[2] + 720*Sqrt[3] + 528*Sqrt[6])^(1/6)
+      out: (1296 + 880*Sqrt[2] + 720*Sqrt[3] + 528*Sqrt[6])^(1/6)
+      exp: 1 + Sqrt[2] + Sqrt[3]  (exp==in: True)
+S06  ok  depth 2->1  0.05 s
+      in : (3363 + 2378*Sqrt[2])^(1/10)
+      out: 1 + Sqrt[2]
+S07  ok  depth 2->1  0.06 s
+      in : (577 + 408*Sqrt[2])^(1/8)
+      out: 1 + Sqrt[2]
+S08  ok  depth 2->1  0.06 s
+      in : (19601 + 13860*Sqrt[2])^(1/12)
+      out: 1 + Sqrt[2]
+S09  ok  depth 2->1  0.05 s
+      in : (99 + 70*Sqrt[2])^(1/6)
+      out: 1 + Sqrt[2]
+S10  MISS  depth 2->2  0.15 s
+      in : (229 + 87*2^(2/3)*5^(1/3) + 60*2^(1/3)*5^(2/3))^(1/6)
+      out: (229 + 87*2^(2/3)*5^(1/3) + 60*2^(1/3)*5^(2/3))^(1/6)
+      exp: 2^(1/3) + 5^(1/3)  (exp==in: True)
+S11  MISS  depth 2->2  0.18 s
+      in : (-21 - 15*2^(1/3) - 12*2^(2/3))^(1/5)
+      out: (-21 - 15*2^(1/3) - 12*2^(2/3))^(1/5)
+      exp: (-1)^(1/5)*(1 + 2^(1/3))  (exp==in: True)
+S12  MISS  depth 2->2  0.24 s
+      in : (-239 - 169*Sqrt[2])^(1/7)
+      out: (-239 - 169*Sqrt[2])^(1/7)
+      exp: (-1)^(1/7)*(1 + Sqrt[2])  (exp==in: True)
+S13  MISS  depth 2->2  2.29 s
+      in : (76 - 44*Sqrt[3])^(1/5)
+      out: (76 - 44*Sqrt[3])^(1/5)
+      exp: (-1)^(1/5)*(-1 + Sqrt[3])  (exp==in: True)
+S14  MISS  depth 2->2  1.22 s
+      in : (682 - 305*Sqrt[5])^(1/5)
+      out: (682 - 305*Sqrt[5])^(1/5)
+      exp: (-1)^(1/5)*(-2 + Sqrt[5])  (exp==in: True)
+S15  MISS  depth 2->2  0.78 s
+      in : (1393 - 985*Sqrt[2])^(1/9)
+      out: (1393 - 985*Sqrt[2])^(1/9)
+      exp: (-1)^(1/9)*(-1 + Sqrt[2])  (exp==in: True)
+S16  ok  depth 2->1  0.06 s
+      in : (17 - 12*Sqrt[2])^(1/4)
+      out: -1 + Sqrt[2]
+S17  ok  depth 2->1  0.05 s
+      in : (99 - 70*Sqrt[2])^(1/6)
+      out: -1 + Sqrt[2]
+S18  ok  depth 2->1  0.39 s
+      in : (7 - 5*Sqrt[2])^(1/3)
+      out: ((-1 + Sqrt[2])*(1 + I*Sqrt[3]))/2
+S19  ok  depth 2->1  0.41000000000000003 s
+      in : (-1 - 3*2^(1/3) + 3*2^(2/3))^(1/3)
+      out: ((-1 + 2^(1/3))*(1 + I*Sqrt[3]))/2
+S20  MISS  depth 2->2  0.31 s
+      in : (109*Sqrt[2] - 89*Sqrt[3])^(1/5)
+      out: (109*Sqrt[2] - 89*Sqrt[3])^(1/5)
+      exp: (-1)^(1/5)*(-Sqrt[2] + Sqrt[3])  (exp==in: True)
+
+=== SUMMARY ===
+non-ok: {{R15b, MISS?}, {R15c, MISS?}, {S04, MISS}, {S05, MISS}, {S10, MISS}, {S11, MISS}, {S12, MISS}, {S13, MISS}, {S14, MISS}, {S15, MISS}, {S20, MISS}}
+DONE
+exit 0

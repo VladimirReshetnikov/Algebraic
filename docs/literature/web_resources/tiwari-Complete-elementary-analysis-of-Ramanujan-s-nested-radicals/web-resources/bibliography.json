@@ -1,0 +1,14 @@
+{
+  "id": "tiwari",
+  "title": "Complete elementary analysis of Ramanujan's nested radicals",
+  "citations": [
+    {
+      "report": "report-2",
+      "key": "tiwari",
+      "entry_latex": "Gaurav Tiwari.\n\\emph{Complete elementary analysis of Ramanujan's nested radicals}, web exposition and associated notes.\n\\sourceurl{https://gauravtiwari.org/projects-ramanujan-nested-radical/}.\n\\textbf{M.} Author-hosted educational resource identified during the audit, covering denesting and infinite radicals. The site also links an expanded guide; no general convergence theorem is imported without its hypotheses."
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

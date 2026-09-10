@@ -1,0 +1,33 @@
+{
+  "record_id": "lll",
+  "title": "Factoring polynomials with rational coefficients",
+  "asset_id": "pdf-journal-1982",
+  "version": "journal-1982",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://infoscience.epfl.ch/bitstreams/4fa72d55-df13-42ed-9c2d-bb1cdfdd8801/download",
+    "resolved_url": "https://infoscience.epfl.ch/server/api/core/bitstreams/4fa72d55-df13-42ed-9c2d-bb1cdfdd8801/content",
+    "retrieved_at": "2026-09-05T20:30:17+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf;charset=UTF-8",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36",
+    "content_encoding": "",
+    "bytes": 324240,
+    "sha256": "47979387b608c50ab1fc45ac87d8d4d948621f71638cddb5eee201da1b6302bc",
+    "tls_verification": "SKIPPED by --insecure"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "search_indexed_pdf",
+  "note": "EPFL repository; Lenstra, Lenstra and Lovasz, not a different similarly titled factoring paper.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/lll-Factoring-polynomials-with-rational-coefficients/journal-1982/pdf-journal-1982.pdf",
+      "role": "pdf",
+      "bytes": 324240,
+      "sha256": "47979387b608c50ab1fc45ac87d8d4d948621f71638cddb5eee201da1b6302bc"
+    }
+  ],
+  "prior_candidate_errors": []
+}

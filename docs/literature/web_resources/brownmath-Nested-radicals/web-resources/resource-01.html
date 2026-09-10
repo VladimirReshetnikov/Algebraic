@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta charset="windows-1252">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Denesting Radicals (or Unnesting Radicals)</title>
+<meta name="description" content="Simplifying a square root that contains a rational number plus or minus a square root">
+<meta name="keywords" content="algebra, radicals, surds, radical expressions">
+<link rel="SHORTCUT ICON" href="../pic/logo.ico">
+<link rel="stylesheet" type="text/css" href="../brm.css">
+</head>
+<body class="bottompadding">
+<div id="crummenu">
+<a href="../index.htm">BrownMath.com</a>&nbsp;&#x2192;
+<a href="index.htm">Algebra</a>&nbsp;&#x2192;
+Denesting&nbsp;Radicals
+<div id="crumrevdate">Updated&nbsp;18&nbsp;Oct&nbsp;2023
+<span class="nonprint">(<a href="#WhatsNew">What’s&nbsp;New?</a>)</span>
+</div>
+</div>
+<div class="maintitle">
+<h1>Denesting Radicals (or Unnesting Radicals)</h1>
+<p> Copyright © 2016–2025 by Stan&nbsp;Brown, <a href="../index.htm"><span style="color:brown">BrownMath.com</span></a></p>
+</div>
+<!-- -->
+
+<p class="Summary" id="Summary"><span class="SummaryH"><strong class="key">Summary:</strong></span>
+Expressions like &#x221a;<span class="radical">2&nbsp;+&nbsp;&#x221a;2</span> and
+&#x221a;<span class="radical">2&nbsp;&#x2212;&nbsp;&#x221a;3</span> come up in solutions to problems,
+even pretty basic algebra and trig problems. How can you eliminate the
+nested radicals? Read on for several techniques, with examples.</p>
+
+
+<div class="Summary" id="TOC0"><span class="SummaryH"><strong class="key">Contents:</strong></span>
+
+<ul class="TOC">
+<li><a href="#Survey">Denesting&nbsp;— Some of the Hard Ways</a>
+<ul>
+<li><a href="#BruteForce">Brute Force, Complete with Quartic Equations</a></li>
+<li><a href="#Assuming">Assuming &#x221a;<span class="radical"><i>a</i>&nbsp;±&nbsp;&#x221a;<span class="radical"><i>b</i></span></span> Denests as &#x221a;<span class="radical"><i>x</i></span> ± &#x221a;<span class="radical"><i>y</i></span> if It Denests at All</a></li>
+</ul></li>
+<li><a href="#Method1">Easy Method 1&nbsp;— &#x221a;<span class="radical"><i>a</i>&nbsp;±&nbsp;&#x221a;<span class="radical"><i>b</i></span></span> when &#x221a;<span class="radical"><i>a</i>²&nbsp;&#x2212;&nbsp;<i>b</i></span> Is Rational</a>
+<ul>
+<li><a href="#Conditions1">Requirements for Using Method 1</a></li>
+<li><a href="#Derive1">Solution Details for Method 1</a></li>
+<li><a href="#Quick1">Quick Reference for Method 1</a></li>
+<li><a href="#Examples1">Examples</a></li>
+<li><a href="#Var1a">Examples&nbsp;— &#x221a;<span class="radical"><i>a</i>&nbsp;±&nbsp;<i>u</i>&#x221a;<span class="radical"><i>b</i></span></span></a></li>
+<li><a href="#Var1b">Example&nbsp;— &#x221a;<span class="radical">&#x221a;<i>p</i>&nbsp;± &#x221a;<i>q</i></span></a></li>
+</ul></li>
+<li><a href="#Method2">Easy Method 2&nbsp;— &#x221a;<span class="radical"><i>a</i>&nbsp;+&nbsp;<i>u</i>&#x221a;<span class="radical"><i>b</i></span></span> when &#x221a;<span class="radical"><i>a</i>²&nbsp;&#x2212;&nbsp;<i>u</i>²<i>b</i></span> Isn’t Rational</a>
+<ul>
+<li><a href="#Conditions2">Requirements for Using Method 2</a></li>
+<li><a href="#Quick2">Quick Reference for Method 2</a></li>
+<li><a href="#Examples2">Examples</a></li>
+</ul></li>
+<li><a href="#Exercises">Now It’s Your Turn</a></li>
+<li class="nonprint"><a href="#WhatsNew">What’s New?</a></li>
+<li><a href="#Solutions">Solutions to Practice Problems</a></li>
+</ul>
+</div>
+
+
+<p class="brk"><strong class="key">Denesting radicals</strong>&nbsp;— also known as
+<strong class="key">unnesting radicals</strong>, <strong class="key">de-nesting radicals</strong>, or
+<strong class="key">un-nesting radicals</strong>&nbsp;— is one of the odd little corners
+that exist
+in algebra. They used to be taught, back in the 1800s and early 1900s,
+but even by the time I took algebra in the 1960s many had fallen by
+the wayside.</p>
+
+<p class="nonbrk">Denesting radicals is kind of cool, and they arise surprisingly
+often. For example, sin&nbsp;&#960;/8 (sin&nbsp;22½°)
+involves <a href="#sinpi/8">&#x221a;<span class="radical">2&nbsp;&#x2212;&nbsp;&#x221a;2</span></a>,
+and sin&nbsp;15° (sin&nbsp;&#960;/12) involves
+<a href="#Ex02">&#x221a;<span class="radical">2&nbsp;&#x2212;&nbsp;&#x221a;3</span></a>.
+Of course, you can evaluate
+them with a calculator, but how can you eliminate the nesting
+<strong class="key">without resorting to a calculator</strong> for merely approximate
+answers?</p>
+
+
+<h2 id="Survey">Denesting&nbsp;— Some of the Hard Ways</h2>
+
+<p class="brk">Googling turns up plenty of approaches, some harder than
+others. This section shows a couple of the traditional methods, for
+historical interest and for contrast with the <strong class="key">much easier ways</strong>
+in <a href="#Method1">Method 1</a> and <a href="#Method2">Method
+2</a>.</p>
+
+
+<h3 id="BruteForce">Brute Force, Complete with Quartic Equations</h3>
+
+<p class="brk">What we might call a brute-force approach is in
+<a href="https://web.archive.org/web/20180223120625/http://mathforum.org/library/drmath/view/52657.html" title="accessed 2021-11-14" class="showURL">Un-nesting Radicals</a>.
+“Doctor Rob” squares the original equation, rearranges, and squares again.
+For example:</p>
+
+<p class="algebra"><i>x</i> = &#x221a;<span class="radical">2&nbsp;&#x2212; &#x221a;3</span></p>
+<p class="algebra"><i>x</i>² = 2&nbsp;&#x2212; &#x221a;<span class="radical">3</span></p>
+<p class="algebra">&#x2212;<i>x</i>² + 2 = &#x221a;<span class="radical">3</span></p>
+<p class="algebra"><i>x</i>&#x2074;&nbsp;&#x2212; 4<i>x</i>² + 4 = 3</p>
+<p class="algebra"><i>x</i>&#x2074;&nbsp;&#x2212; 4<i>x</i>²&nbsp;+ 1 = 0</p>
+
+<p class="brk">As in this example, the brute-force method typically ends up with a
+quartic (also called biquadratic) equation. Only rarely is there any
+simple way to factor the left-hand side; usually you’d have to spend
+an afternoon solving the equation.</p>
+
+<div class="btw">This particular example happens to be one of the rare
+ones that are fairly easy to factor:
+<p class="algebra">(<i>x</i>&#x2074;&nbsp;&#x2212; 2<i>x</i>²&nbsp;+ 1) &#x2212; 2<i>x</i>² = 0</p>
+<p class="algebra">(<i>x</i>²&nbsp;&#x2212; 1)² &#x2212; (&#x221a;<span class="radical">2</span><i>x</i>)² = 0</p>
+<p class="algebra">(<i>x</i>²&nbsp;&#x2212; 1&nbsp;+ &#x221a;<span class="radical">2</span><i>x</i>)
+(<i>x</i>²&nbsp;&#x2212; 1&nbsp;&#x2212; &#x221a;<span class="radical">2</span><i>x</i>) = 0</p>
+<p class="algebra">(<i>x</i>²&nbsp;+ &#x221a;<span class="radical">2</span><i>x</i>&nbsp;&#x2212; 1)
+(<i>x</i>²&nbsp;&#x2212; &#x221a;<span class="radical">2</span><i>x</i>&nbsp;&#x2212; 1) = 0</p>
+<p class="secondhalf">Then all you need to do (all!) is apply the quadratic formula
+to each factor, and figure out which one of the four roots is equal to
+the original nested radical. (Spoiler: it’s
+(&#x221a;<span class="radical">6</span>&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical">2</span>)/2.) No
+thanks&nbsp;— and this is one of the <em>easy</em> ones!</div>
+
+<p class="brk">“Doctor Rob” gives a technique for factoring
+the fourth-power polynomial when it doesn’t have a simple
+factorization like this one. That involves solving five equations in five
+unknowns. <em>Then</em> you get to use the quadratic formula on both
+factors and figure out which of the four solutions is correct.</p>
+
+
+<h3 id="Assuming">Assuming
+&#x221a;<span class="radical"><i>a</i>&nbsp;±&nbsp;&#x221a;<span class="radical"><i>b</i></span></span> Denests as
+&#x221a;<span class="radical"><i>x</i></span> ± &#x221a;<span class="radical"><i>y</i></span> if It Denests at All</h3>
+
+<p class="brk" id="DocPeterson">“Doctor Peterson” takes this approach in
+<a href="https://web.archive.org/web/20190719064702/http://mathforum.org/library/drmath/view/52660.html" title="accessed 2021-11-14" class="showURL">Simplifying Radicals</a>.
+Making that assumption reduces the problem to finding the
+values of <i>x</i> and <i>y</i>, which means only two equations in two
+unknowns and one quadratic equation, nothing with higher powers.</p>
+
+<p class="nonbrk">That’s better than <a href="#BruteForce">brute force</a>,
+certainly, but how do we know that the assumption is correct for every
+case&nbsp;— how do we know that some nested radicals don’t denest into
+a different form? And even if the assumption is always valid, he shows
+only a specific case, and it would be nice to have a formula for
+getting <i>x</i> and <i>y</i>.</p>
+
+<p class="brk">As for the assumption, it <em>does</em> turn out to be correct
+for every case that can be denested to roots of rational numbers.
+In
+<a href="http://mathforum.org/kb/message.jspa?messageID=5451111" title="accessed 2016-12-18" class="showURL">this Math Forum article</a>,
+no longer available and unfortunately not archived at the Internet
+Wayback Machine,
+Dave L. Renfro answered the question of whether radicals of the form
+&#x221a;<span class="radical"><i>a</i>&nbsp;±&#x221a;<i>b</i></span> can be denested.
+He quoted <span id="Chrystal">George Chrystal’s</span> <cite>Algebra: An
+Elementary Text-Book</cite>.
+The fifth edition (1904) is on Google Books, and
+the relevant section is “Square Roots of Simple Surd
+Numbers”, starting on
+<a href="https://books.google.com/books?id=ZhoPAAAAIAAJ&amp;pg=PA207" title="accessed 2017-02-20" class="showURL">page 207 of Part I</a>.
+<p class="nonbrk">Chrystal’s theorem (with some adjustment by me to the
+notation) is</p>
+
+<blockquote id="ChrystalTheorem">
+Let <i>a</i>, <i>b</i> be rational numbers. Then
+<strong class="key">&#x221a;<span class="radical"><i>a</i>&nbsp;±&nbsp;&#x221a;<i>b</i></span> can be expressed as &#x221a;<span class="radical"><i>x</i></span>&nbsp;±&nbsp;&#x221a;<span class="radical"><i>y</i></span> for some rational numbers <i>x</i>, <i>y</i> if and only if <i>a</i>&nbsp;&gt;&nbsp;0 and <i>a</i>²&nbsp;&#x2212;&nbsp;<i>b</i> is a perfect square.</strong>
+</blockquote>
+
+<p class="secondhalf">That’s not quite as restrictive as you might
+think&nbsp;— “perfect square” can be the square of a
+rational number, not necessarily an integer.</p>
+
+<p class="nonbrk">In
+<a href="http://mathforum.org/kb/message.jspa?messageID=5451310" title="accessed 2016-12-18" class="showURL">a follow-up</a>,
+unfortunately no longer available and not archived,
+Renfro adds that we are meant to understand <i>b</i> must also be
+&gt;&nbsp;0 and &#x221a;<span class="radical"><i>b</i></span> must be irrational. Of course if
+&#x221a;<span class="radical"><i>b</i></span> is rational, there’s no need to find a denesting
+technique in the first place.</p>
+
+<p class="brk">Let’s formalize this in <a href="#Method1">Method 1</a>.</p>
+
+
+
+
+
+<h2 id="Method1">Easy Method 1&nbsp;—
+&#x221a;<span class="radical"><i>a</i>&nbsp;±&nbsp;&#x221a;<span class="radical"><i>b</i></span></span> when
+&#x221a;<span class="radical"><i>a</i>²&nbsp;&#x2212;&nbsp;<i>b</i></span> Is Rational</h2>
+
+<h3 class="secondheader" id="Conditions1">Requirements for Using
+Method 1</h3>
+
+<div class="begdon fr0"><span class="nonprint"><a href="https://www.paypal.com/webscr?cmd=_donations&amp;business=stan_paypal@fastmail.fm&amp;item_name=BrownMath%20donation:%20alge/nestrad.htm&amp;currency_code=USD">Because this article helps you,<br>please click to donate!</a></span><span class="onlyprint">Because this article helps you,<br>please donate at<br>BrownMath.com/donate.</span></div>
+
+<p class="brk"><strong class="key">To denest &#x221a;<span class="radical"><i>a</i>&nbsp;±&nbsp;&#x221a;<i>b</i></span> to radicals of rational numbers, all of these must be true:</strong></p>
+<ul>
+
+<li><i>a</i> is rational, and <i>b</i> is positive and rational.</li>
+
+<li>&#x221a;<span class="radical"><i>b</i></span> is irrational.</li>
+
+<li>&#x221a;<span class="radical"><i>a</i>²&nbsp;&#x2212;&nbsp;<i>b</i></span> is rational or is a
+rational multiple of the imaginary unit i. For example, &#x221a;<span class="radical">4</span> and
+&#x221a;<span class="radical">&#x2212;4/9</span> qualify, but not &#x221a;<span class="radical">5</span>.
+
+<p class="nonbrk" id="ChrystalReals">As <a href="#Chrystal">Chrystal</a>
+stated it, <i>a</i>²&nbsp;&#x2212;&nbsp;<i>b</i> must be positive, with a
+square root in the reals.
+However, if &#x221a;<span class="radical"><i>a</i>²&nbsp;&#x2212;&nbsp;<i>b</i></span> equals a
+rational number times the imaginary unit i, the method
+works correctly, though the
+denested radicals contain complex numbers. My guess is that because
+Chrystal had not yet introduced complex numbers at that point in his
+textbook, he phrased his requirement to limit solutions to the
+reals.</p>
+</ul>
+
+<p class="secondhalf">If those conditions are all met, your radical
+&#x221a;<span class="radical"><i>a</i>&nbsp;±&nbsp;&#x221a;<span class="radical"><i>b</i></span></span> <em>can</em> be
+denested to &#x221a;<span class="radical"><i>x</i></span>&nbsp;±&nbsp;&#x221a;<span class="radical"><i>y</i></span> for some
+<i>x</i> and <i>y</i> that are either both rational or both complex with
+rational real and imaginary parts.</p>
+
+
+<h3 id="Derive1">Solution Details for Method 1</h3>
+
+<p class="brk">First I’ll give the derivation of Method 1, then I’ll boil it down
+to <a href="#Quick1">just the formulas</a>. Feel free to skip ahead
+to that section.</p>
+
+<ol class="veryloose">
+
+<li>Assume, following <a href="#ChrystalTheorem">Chrystal’s
+theorem</a>, that there exist some <i>x</i> and <i>y</i> (either both
+rational, or both complex with rational real and imaginary parts) such that
+
+<p class="algebra">&#x221a;<span class="radical"><i>a</i>&nbsp;+&nbsp;&#x221a;<i>b</i></span>&nbsp;=
+&#x221a;<span class="radical"><i>x</i></span>&nbsp;+&nbsp;&#x221a;<span class="radical"><i>y</i></span></p></li>
+
+<li>It would be nice to multiply that by
+
+<p class="algebra">&#x221a;<span class="radical"><i>a</i>&nbsp;&#x2212;&nbsp;&#x221a;<i>b</i></span>&nbsp;=
+&#x221a;<span class="radical"><i>x</i></span>&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical"><i>y</i></span></p>
+
+<p class="secondhalf">But how do we know this second equation is true? Answer:
+<a href="#DocPeterson">“Doctor Peterson”</a>
+included a link to a page by Dave Rusin that no longer exists where
+Peterson found it, but
+<a href="https://web.archive.org/web/20130105233725/http://www.math.niu.edu/~rusin/known-math/99/nested_rad" title="accessed 2016-12-16" class="showURL">has been preserved</a>
+by the <a href="https://www.archive.org./web">Internet Wayback Machine</a>.
+That page was a sci.math thread from
+1999. In it, if you scroll about halfway down, you’ll find an
+exciting article from Dave L. Renfro.
+He referenced a textbook by Webster
+Wells (1904), 
+<a href="https://www.google.com/books/edition/Advanced_Course_in_Algebra/aOM5AAAAMAAJ" title="accessed 2023-10-17" class="showURL"><cite>Advanced Course in Algebra</cite></a>.
+Wells proves that</p>
+
+<blockquote id="WellsTheorem"> For rational <i>a</i>, <i>b</i>, <i>x</i>,
+<i>y</i>, with <i>a</i>²&nbsp;&gt;&nbsp;<i>b</i>,
+<strong class="key">&#x221a;<span class="radical"><i>a</i>&nbsp;+&nbsp;&#x221a;<i>b</i></span>&nbsp;= &#x221a;<span class="radical"><i>x</i></span>&nbsp;+&nbsp;&#x221a;<span class="radical"><i>y</i></span></strong>
+<strong class="key">if and only if</strong>
+<strong class="key">&#x221a;<span class="radical"><i>a</i>&nbsp;&#x2212;&nbsp;&#x221a;<i>b</i></span>&nbsp;= &#x221a;<span class="radical"><i>x</i></span>&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical"><i>y</i></span>.</strong>
+<p class="source">—&nbsp;Webster Wells, <cite>Advanced Course in Algebra</cite>,
+<a href="https://books.google.com/books?id=aOM5AAAAMAAJ&amp;pg=PA235" title="accessed 2017-02-20" class="showURL">page 235</a></p>
+</blockquote>
+
+<p class="btwroman">My sources all required <i>x</i> and <i>y</i> to be
+rationals. But in fact they could 
+be complex, provided they are complex conjugates, numbers in the form
+<i>p</i>+<i>q</i>i and <i>p</i>&#x2212;<i>q</i>i for rational <i>p</i> and <i>q</i>.
+Wells’s proof of the theorem above uses <i>x</i>&nbsp;+&nbsp;<i>y</i> and
+<i>x</i><i>y</i>, and when you add or multiply complex conjugates the result
+is real. He also separates rational and irrational parts of
+expressions on two sides of an equation, which works if the real and
+imaginary parts of <i>x</i> and <i>y</i> are rational.</p>
+
+<p class="brk"><strong class="key">Acknowledgment:</strong> Not only was the first version of this
+article based on that 1999 article by Dave L. Renfro, but in personal
+correspondence (December 2016) he generously supplied additional links
+and information.</p>
+
+<li>Now multiply the equation in step 1 by the equation in step 2:
+
+<p class="algebra">&#x221a;<span class="radical"><i>a</i>&nbsp;+&nbsp;&#x221a;<i>b</i></span>
+&#x221a;<span class="radical"><i>a</i>&nbsp;&#x2212;&nbsp;&#x221a;<i>b</i></span>&nbsp;=
+(&#x221a;<span class="radical"><i>x</i></span>&nbsp;+&nbsp;&#x221a;<span class="radical"><i>y</i></span>)
+(&#x221a;<span class="radical"><i>x</i></span>&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical"><i>y</i></span>)</p>
+
+<p class="secondhalf">Remembering that (A+B)(A&#x2212;B)&nbsp;= (A²&#x2212;B²), that
+becomes</p>
+
+<p class="algebra">&#x221a;<span class="radical"><i>a</i>²&nbsp;&#x2212; <i>b</i></span>&nbsp;= <i>x</i>&nbsp;&#x2212; <i>y</i></p>
+
+<p class="secondhalf">That got rid of three of the four radical signs!</p></li>
+
+<li>Square the equation from step 1:
+
+<p class="algebra"><i>a</i>&nbsp;+&nbsp;&#x221a;<span class="radical"><i>b</i></span>&nbsp;=
+<i>x</i>&nbsp;+&nbsp;2&nbsp;&#x221a;<span class="radical"><i>x</i><i>y</i></span>&nbsp;+&nbsp;<i>y</i></p></li>
+
+<li>From the equation in step 4, set the rational parts equal:
+
+<p class="algebra"><i>a</i>&nbsp;= <i>x</i>&nbsp;+&nbsp;<i>y</i>, from which
+<i>a</i>&nbsp;&#x2212;&nbsp;<i>x</i>&nbsp;= <i>y</i></p>
+
+<p class="secondhalf">(The irrational parts, &#x221a;<span class="radical">b</span> and
+2&#x221a;<span class="radical"><i>x</i><i>y</i></span>, also must equal each other, but we don’t need to
+use that.)</p></li>
+
+<li>Solve the equations from steps 3 and 5 for <i>x</i> and <i>y</i>:
+
+<p class="algebra">&#x221a;<span class="radical"><i>a</i>²&nbsp;&#x2212; <i>b</i></span>&nbsp;=
+    <i>x</i>&nbsp;&#x2212; <i>y</i></p>
+<p class="algebra">&#x221a;<span class="radical"><i>a</i>²&nbsp;&#x2212; <i>b</i></span>&nbsp;=
+    <i>x</i>&nbsp;&#x2212; (<i>a</i>&nbsp;&#x2212; <i>x</i>)</p>
+<p class="algebra">&#x221a;<span class="radical"><i>a</i>²&nbsp;&#x2212; <i>b</i></span>&nbsp;=
+    2<i>x</i>&nbsp;&#x2212; <i>a</i></p>
+<p class="algebra">2<i>x</i> = <i>a</i>&nbsp;+ &#x221a;<span class="radical"><i>a</i>²&nbsp;&#x2212; <i>b</i></span></p>
+<p class="algebra"><i>x</i> =
+    ½&nbsp;(<i>a</i>&nbsp;+ &#x221a;<span class="radical"><i>a</i>²&nbsp;&#x2212; <i>b</i></span>)</p>
+
+<p class="secondhalf">and then</p>
+
+<p class="algebra"><i>y</i>&nbsp;= <i>a</i>&nbsp;&#x2212; <i>x</i></p>
+<p class="algebra"><i>y</i>&nbsp;=
+    <i>a</i>&nbsp;&#x2212; [½&nbsp;(<i>a</i>&nbsp;+ &#x221a;<span class="radical"><i>a</i>²&nbsp;&#x2212; <i>b</i></span>)]</p>
+<p class="algebra"><i>y</i> =
+    ½&nbsp;(<i>a</i>&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical"><i>a</i>²&nbsp;&#x2212;&nbsp;<i>b</i></span>)</p></li>
+
+</ol>
+
+<p class="brk">If the original nested radical has a minus sign,
+&#x221a;<span class="radical"><i>a</i>&nbsp;&#x2212;&nbsp;&#x221a;<i>b</i></span>, the equations in steps
+1 and 2 are just interchanged,
+so <i>x</i> and <i>y</i> in step 6 are the same,
+but your answer is
+&#x221a;<span class="radical"><i>x</i></span>&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical"><i>y</i></span>.</p>
+
+
+<h3 id="Quick1">Quick Reference for Method 1</h3>
+
+<p class="brk">First, check that the <a href="#Conditions1">requirements</a>
+for using Method 1 on &#x221a;<span class="radical"><i>a</i>±&#x221a;<span class="radical"><i>b</i></span></span> are all met.
+(If not, see if you can use <a href="#Quick2">Method 2</a>, below.) If
+the requirements for Method 1 are met, then you can denest.
+
+<p class="brk">Next, substitute and simplify if necessary:</p>
+
+<p class="algebra">
+    <i>x</i>&nbsp;= ½&nbsp;(<i>a</i>&nbsp;+ &#x221a;<span class="radical"><i>a</i>²&nbsp;&#x2212; <i>b</i></span>)
+    &nbsp;&nbsp;&nbsp;and&nbsp;&nbsp;&nbsp;
+    <i>y</i>&nbsp;= ½&nbsp;(<i>a</i>&nbsp;&#x2212; &#x221a;<span class="radical"><i>a</i>²&nbsp;&#x2212; <i>b</i></span>)</p>
+
+<p class="brk">Finally, use your <i>x</i> and <i>y</i> to finish with the
+appropriate one of these:</p>
+
+<p class="algebra">
+    &#x221a;<span class="radical"><i>a</i>&nbsp;+ &#x221a;<span class="radical"><i>b</i></span></span>&nbsp;=
+    &#x221a;<span class="radical"><i>x</i></span>&nbsp;+ &#x221a;<span class="radical"><i>y</i></span>
+    &nbsp;&nbsp;&nbsp;or&nbsp;&nbsp;&nbsp;
+    &#x221a;<span class="radical"><i>a</i>&nbsp;&#x2212; &#x221a;<span class="radical"><i>b</i></span></span>&nbsp;=
+    &#x221a;<span class="radical"><i>x</i></span>&nbsp;&#x2212; &#x221a;<span class="radical"><i>y</i></span></p>
+
+<p class="brk">Notice that the sign between &#x221a;<span class="radical"><i>x</i></span> and
+&#x221a;<span class="radical"><i>y</i></span> is the same as the sign beween the two terms of the
+original radical.</p>
+
+
+<h3 id="Examples1">Examples</h3>
+
+<p class="brk" id="Ex01"><strong class="key">Example 1:</strong> &#x221a;<span class="radical">2&nbsp;+&nbsp;&#x221a;3</span>.</p>
+
+<p class="secondhalf"><strong class="key">Solution:</strong> Always check the
+<a href="#Conditions1">requirements</a> first. Here,
+<i>a</i>&nbsp;=&nbsp;2 and <i>b</i>&nbsp;=&nbsp;3 are positive and rational,
+&#x221a;<span class="radical"><i>b</i></span>&nbsp;= &#x221a;<span class="radical">3</span> is irrational, and
+<i>a</i>²&nbsp;&#x2212;&nbsp;<i>b</i>&nbsp;= 4&nbsp;&#x2212;&nbsp;3&nbsp;= 1 is a
+perfect square. Therefore, <a href="#Quick1">Method 1</a> will denest the
+radicals.</p>
+
+<p class="algebra"><i>x</i> = ½&nbsp;(<i>a</i>&nbsp;+ &#x221a;<span class="radical"><i>a</i>²&nbsp;&#x2212; <i>b</i></span>)</p>
+<p class="algebra"> &nbsp;&nbsp;&nbsp;&nbsp;= ½&nbsp;(2 + &#x221a;<span class="radical">4&nbsp;&#x2212; 3</span>
+    = ½&nbsp;(2 + 1) = 3/2</p>
+<p class="secondhalf">and</p>
+<p class="algebra"><i>x</i> = ½&nbsp;(<i>a</i>&nbsp;&#x2212; &#x221a;<span class="radical"><i>a</i>²&nbsp;&#x2212; <i>b</i></span>)</p>
+<p class="algebra"> &nbsp;&nbsp;&nbsp;&nbsp;= ½&nbsp;(2 &#x2212; &#x221a;<span class="radical">4&nbsp;&#x2212; 3</span>
+    = ½&nbsp;(2 &#x2212; 1) = 1/2</p>
+
+<p class="secondhalf">Therefore,</p>
+
+<p class="algebra">
+&#x221a;<span class="radical">2&nbsp;+&nbsp;&#x221a;3</span>&nbsp;=
+<span class="answer">&#x221a;<span class="radical">3/2</span>&nbsp;+&nbsp;&#x221a;<span class="radical">1/2</span></span></p>
+
+<p class="btw">With radicals, it’s often a matter of taste which of two
+forms is called “simpler”. Generally, we like to see fewer operators and
+fewer irrational numbers, but there are doubtful cases. For example, would you
+prefer 1/&#x221a;<span class="radical">2</span> or the equivalent &#x221a;<span class="radical">2</span>/2? Many
+algebra teachers say you must never have a radical in the
+denominator; others prefer the first alternative, or have no
+preference.</p>
+
+<p class="brk">If you (or your teacher) prefer, you can
+multiply each radical on the right-hand side by &#x221a;<span class="radical">2/2</span>&nbsp;—
+a <a href="../bsci/convert.htm">carefully chosen form of 1</a>&nbsp;— to get</p>
+
+<p class="algebra">(&#x221a;<span class="radical">3/2</span>&nbsp;+&nbsp;&#x221a;<span class="radical">1/2</span>)&#x221a;<span class="radical">2/2</span>&nbsp;=
+<span class="answer">(&#x221a;<span class="radical">6</span>&nbsp;+&nbsp;&#x221a;<span class="radical">2</span>)/2</span></p>
+
+
+<p class="brk" id="Ex02"><strong class="key">Example 2:</strong>
+&#x221a;<span class="radical">2&nbsp;&#x2212;&nbsp;&#x221a;3</span>.</p>
+<p class="secondhalf"><strong class="key">Solution:</strong> This is almost exactly the same deal as
+<a href="#Ex01">Example 1</a>, so you can shortcut it.
+<a href="#WellsTheorem">Remember</a> that
+&#x221a;<span class="radical"><i>a</i>&nbsp;+&nbsp;&#x221a;<i>b</i></span>&nbsp;= &#x221a;<span class="radical"><i>x</i></span>&nbsp;+&nbsp;&#x221a;<span class="radical"><i>y</i></span>
+if and only if
+&#x221a;<span class="radical"><i>a</i>&nbsp;&#x2212;&nbsp;&#x221a;<i>b</i></span>&nbsp;= &#x221a;<span class="radical"><i>x</i></span>&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical"><i>y</i></span>.
+You already know from <a href="#Ex01">Example 1</a> that</p>
+<p class="algebra">&#x221a;<span class="radical">2&nbsp;+&nbsp;&#x221a;3</span>&nbsp;=
+(&#x221a;<span class="radical">6</span>&nbsp;+&nbsp;&#x221a;<span class="radical">2</span>)/2</p>
+<p class="secondhalf">Therefore
+<p class="algebra">&#x221a;<span class="radical">2&nbsp;&#x2212;&nbsp;&#x221a;3</span>&nbsp;=
+<span class="answer">(&#x221a;<span class="radical">6</span>&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical">2</span>)/2</span></p>
+<p class="secondhalf">Done!</p>
+
+
+<p class="brk" id="Ex03"><strong class="key">Example 3:</strong> &#x221a;<span class="radical">2&nbsp;+ &#x221a;<span class="radical">2</span></span>.
+<p class="secondhalf"><strong class="key">Solution:</strong> Check the
+<a href="#Conditions1">requirements</a> as usual. <i>a</i>&nbsp;=&nbsp;2
+and <i>b</i>&nbsp;=&nbsp;2 are positive and rational,
+&#x221a;<span class="radical"><i>b</i></span>&nbsp;=&nbsp;&#x221a;<span class="radical">2</span> is irrational, but
+<i>a</i>²&nbsp;&#x2212;&nbsp;<i>b</i>&nbsp;= 4&nbsp;&#x2212;&nbsp;2&nbsp;= 2 is
+<em>not</em> a perfect square. Therefore, Method 1 won’t work to
+denest this radical. Your next step is to see whether
+<a href="#Method2">Method 2</a> will conquer it. (Spoiler:
+<a href="#Ex08">it will</a>.) </p>
+
+
+
+<p class="brk" id="Ex04"><strong class="key">Example 4:</strong> &#x221a;<span class="radical">3&nbsp;+ &#x221a;<span class="radical">34</span></span>.
+<p class="secondhalf"><strong class="key">Solution:</strong> <i>a</i>&nbsp;=&nbsp;3 and <i>b</i>&nbsp;=&nbsp;34
+are both positive and rational.
+&#x221a;<span class="radical"><i>a</i>²&#x2212;<i>b</i></span>&nbsp;=
+&#x221a;<span class="radical">9&#x2212;34</span>&nbsp;= 5i, a rational number times i. We’re
+good to go.</p>
+
+<p class="algebra"><i>x</i> = (3+5i)/2 &nbsp;&nbsp;&nbsp;and&nbsp;&nbsp;&nbsp; <i>y</i>
+= (3&#x2212;5i)/2</p>
+<p class="algebra">&#x221a;<span class="radical">3+&#x221a;<span class="radical">34</span></span>&nbsp;=
+<span
+class="answer">&#x221a;<span class="radical">(3+5i)/2</span>&nbsp;+ &#x221a;<span class="radical">(3&#x2212;5i)/2</span></span></p>
+
+<p class="secondhalf">If you wish, you can rationalize the denominators, multiplying
+through by &#x221a;<span class="radical">2</span>/&#x221a;<span class="radical">2</span>:</p>
+
+<p class="algebra">&#x221a;<span class="radical">3+&#x221a;<span class="radical">34</span></span>&nbsp;=
+&#x221a;<span class="radical">(3+5i)/2</span>&nbsp;+ &#x221a;<span class="radical">(3&#x2212;5i)/2</span>&nbsp;=</p>
+<p class="algebra">&nbsp;&nbsp;&nbsp;&nbsp;
+&#x221a;<span class="radical">(6+10i)/4</span>&nbsp;+ &#x221a;<span class="radical">(6&#x2212;10i)/4</span>&nbsp;=</p>
+<p class="algebra">&nbsp;&nbsp;&nbsp;&nbsp;
+<span class="answer">(&#x221a;<span class="radical">6+10i</span>&nbsp;+ &#x221a;<span class="radical">6&#x2212;10i</span>)&#x202f;/&#x202f;2</span></p>
+
+
+
+<h3 id="Var1a">Examples&nbsp;—
+&#x221a;<span class="radical"><i>a</i>&nbsp;±&nbsp;<i>u</i>&#x221a;<span class="radical"><i>b</i></span></span></h3>
+
+
+<p class="brk" id="Ex05"><strong class="key">Example 5:</strong>
+&#x221a;<span class="radical">7&nbsp;+ 2&#x221a;<span class="radical">6</span></span>.</p>
+
+<p class="secondhalf"><strong class="key">Solution:</strong> When there’s no common factor between <i>a</i> (7
+here) and <i>u</i> (2 here), all you can do is move <i>u</i> under the inner
+radical. If the result meets the requirements for
+<a href="#Conditions1">Method 1</a>, great; if not, see if you can use
+<a href="#Conditions2">Method 2</a>.</p>
+
+<p class="nonbrk">To keep the value of the overall expression unchanged, <i>u</i>
+becomes <i>u</i>² when it moves inside the radical:</p>
+
+<p class="algebra"> &#x221a;<span class="radical">7&nbsp;+ 2&#x221a;<span class="radical">6</span></span>&nbsp;=
+&#x221a;<span class="radical">7&nbsp;+ &#x221a;<span class="radical">(2²&nbsp;×&nbsp;6)</span></span>&nbsp;=
+&#x221a;<span class="radical">7&nbsp;+ &#x221a;<span class="radical">24</span></span></p>
+
+<p class="brk">Can you use <a href="#Quick1">Method 1</a>? Check the
+<a href="#Conditions1">Requirements</a>: <i>a</i>&nbsp;=&nbsp;7 and
+<i>b</i>&nbsp;=&nbsp;24 are positive and rational,
+&#x221a;<span class="radical"><i>b</i></span>&nbsp;= &#x221a;<span class="radical">24</span> is irrational, and
+<i>a</i>²&nbsp;&#x2212;&nbsp;<i>b</i>&nbsp;= 49&nbsp;&#x2212;&nbsp;24&nbsp;= 25 is a
+perfect square. Find <i>v</i> and <i>y</i> in <a href="#Quick1">the usual
+way</a>, and simplify:</p>
+
+<p class="algebra"><i>x</i> = ½(7&nbsp;+ 5)&nbsp;= 6
+&nbsp;&nbsp;&nbsp;and&nbsp;&nbsp;&nbsp;
+<i>y</i>&nbsp;= ½(7&nbsp;&#x2212; 5)&nbsp;= 1</p>
+
+<p class="secondhalf">The answer is
+&#x221a;<span class="radical"><i>x</i></span>&nbsp;+&nbsp;&#x221a;<span class="radical"><i>y</i></span>:</p>
+
+<p class="algebra">
+&#x221a;<span class="radical">7&nbsp;+ 2&#x221a;<span class="radical">6</span></span>&nbsp;=
+&#x221a;<span class="radical">7&nbsp;+ &#x221a;<span class="radical">24</span></span>&nbsp;=
+&#x221a;<span class="radical">6</span> + &#x221a;<span class="radical">1</span>&nbsp;=
+<span class="answer">&#x221a;<span class="radical">6</span> + 1</span></p>
+
+
+<p class="brk" id="Ex06"><strong class="key">Example 6:</strong> &#x221a;<span class="radical">12&nbsp;&#x2212; 3&#x221a;<span class="radical">7</span></span>.</p>
+
+<p class="secondhalf"><strong class="key">Solution:</strong> When you notice a common factor in both terms
+under the radical, there are two ways to go:</p>
+<ul>
+
+<li>You could tuck that 3 into the inner radical, where it becomes 3².
+And 3²&nbsp;×&nbsp;7&nbsp;=&nbsp;63, so the original radical becomes
+&#x221a;<span class="radical">12&nbsp;&#x2212; &#x221a;<span class="radical">63</span></span>.
+<p class="secondhalf"><i>a</i>&nbsp;=&nbsp;12 and <i>b</i>&nbsp;=&nbsp;63 are positive
+and rational, &#x221a;<span class="radical"><i>b</i></span>&nbsp;=&nbsp;&#x221a;<span class="radical">63</span> is
+irrational, and <i>a</i>²&nbsp;&#x2212;&nbsp;<i>b</i>&nbsp;=
+144&nbsp;&#x2212;&nbsp;63&nbsp;= 81 is a perfect square, so
+<a href="#Quick1">Method 1</a> will denest this radical.</li>
+
+<li>Or you could pull out the common factor of 3, changing the radical
+to &#x221a;<span class="radical">3</span>&nbsp;&#x221a;<span class="radical">4&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical">7</span></span>.
+<p class="secondhalf">Now <i>a</i>&nbsp;=&nbsp;4 and <i>b</i>&nbsp;=&nbsp;7 are both positive
+and rational, &#x221a;<span class="radical"><i>b</i></span>&nbsp;=&nbsp;&#x221a;<span class="radical">7</span> is
+irrational, and <i>a</i>²&nbsp;&#x2212;&nbsp;<i>b</i>&nbsp;=
+16&nbsp;&#x2212;&nbsp;7&nbsp;= 9 is a perfect square, so
+<a href="#Quick1">Method 1</a> will denest this radical.
+(It’s comforting to know that both choices lead to the same
+result.)</li>
+</ul>
+
+<p class="brk">Personally I like working with smaller numbers, so </p>
+
+<p class="algebra"><i>x</i> = ½(4 + 3) = 7/2
+&nbsp;&nbsp;&nbsp;and&nbsp;&nbsp;&nbsp;
+<i>y</i> = ½(4 &#x2212; 3) = 1/2</p>
+<p class="secondhalf">gives the answer:
+<p class="algebra">&#x221a;<span class="radical">12&nbsp;&#x2212; 3&#x221a;<span class="radical">7</span></span>&nbsp;=
+&#x221a;<span class="radical">3</span>&nbsp;&#x221a;<span class="radical">4&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical">7</span></span>&nbsp;=
+<span class="answer">&#x221a;<span class="radical">3</span>&nbsp;(&#x221a;<span class="radical">7/2</span>&nbsp;&#x2212; &#x221a;<span class="radical">1/2</span>)</span></p>
+
+<p class="brk">It’s probably worth pulling out that common factor of
+&#x221a;<span class="radical">1/2</span>:</p>
+
+<p class="algebra">&#x221a;<span class="radical">3</span>&nbsp;(&#x221a;<span class="radical">7/2</span>&nbsp;&#x2212; &#x221a;<span class="radical">1/2</span>) =
+&#x221a;<span class="radical">3/2</span>&nbsp;(&#x221a;<span class="radical">7</span>&nbsp;&#x2212; &#x221a;<span class="radical">1</span>) =
+&#x221a;<span class="radical">3/2</span>&nbsp;(&#x221a;<span class="radical">7</span>&nbsp;&#x2212; 1)</p>
+
+<p class="secondhalf">then multiplying by &#x221a;<span class="radical">2</span>/&#x221a;<span class="radical">2</span>  to rationalize
+the denominator:</p>
+
+<p class="algebra">&#x221a;<span class="radical">3/2</span>&nbsp;(&#x221a;<span class="radical">7</span>&nbsp;&#x2212; 1) =
+<span class="answer">(&#x221a;<span class="radical">6</span>/2)&nbsp;(&#x221a;<span class="radical">7</span>&nbsp;&#x2212; 1)</span></p>
+
+
+<h3 id="Var1b">Example&nbsp;—
+&#x221a;<span class="radical">&#x221a;<i>p</i>&nbsp;± &#x221a;<i>q</i></span></h3>
+
+<p class="brk">In <cite>Advanced Course in Algebra</cite> (1904), starting on
+<a href="https://books.google.com/books?id=aOM5AAAAMAAJ&amp;pg=PA235" title="accessed 2017-02-20" class="showURL">page 235</a>,
+Webster Wells shows a method similar to <a href="#Method1">Method
+1</a>. He also points out, on the next
+page, that some expressions of the form
+&#x221a;<span class="radical">&#x221a;<i>p</i>&nbsp;± &#x221a;<i>q</i></span>
+can be denested in the same way, if pulling out a common factor
+reduces them to the
+&#x221a;<span class="radical"><i>a</i>&nbsp;±&nbsp;&#x221a;<i>b</i></span> form. (If not, you may
+still be able to use <a href="#Quick2">Method 2</a>.)</p>
+
+<p class="brk" id="Ex07"><strong class="key">Example 7</strong> (from Wells):
+&#x221a;<span class="radical">&#x221a;392&nbsp;+&nbsp;&#x221a;360</span>.
+
+<p class="secondhalf"><strong class="key">Solution:</strong> The key is to recognize a common factor between the
+two inner radicals and factor it out. If one of the resulting numbers
+under the radicals is a perfect square, you’re back in the
+&#x221a;<span class="radical"><i>a</i>&nbsp;+&nbsp;&#x221a;<i>b</i></span> situation.</p>
+
+<p class="nonbrk" id="Ex07ret">Here, 392 and 360 obviously have a common factor of 2, so pull
+that out.<sup>[<a href="#Ex07fn">footnote</a>]</sup>
+It was inside two levels of radical, and when
+you pull it out it’s only inside one level, so it becomes
+&#x221a;<span class="radical">&#x221a;<span class="radical">2</span></span>, which is 2<sup>1/4</sup>:</p>
+<p class="algebra">&#x221a;<span class="radical">&#x221a;392&nbsp;+&nbsp;&#x221a;360</span>&nbsp;=
+&#x221a;<span class="radical">&nbsp;&#x221a;2&nbsp;(&#x221a;196&nbsp;+&nbsp;&#x221a;180)</span></p>
+
+<p class="secondhalf">196 is 14².</p>
+<p class="algebra">&#x221a;<span class="radical">&#x221a;392&nbsp;+&nbsp;&#x221a;360</span>&nbsp;=
+&#x221a;<span class="radical">&nbsp;&#x221a;2&nbsp;</span>&nbsp;&#x221a;<span class="radical">14&nbsp;+&nbsp;&#x221a;180</span></p>
+<p class="algebra">&#x221a;<span class="radical">&#x221a;392&nbsp;+&nbsp;&#x221a;360</span>&nbsp;=
+2<sup>1/4</sup>&nbsp;&#x221a;<span class="radical">14&nbsp;+&nbsp;&#x221a;180</span></p>
+
+<p class="nonbrk">Now you have <i>a</i>²&nbsp;&#x2212;&nbsp;<i>b</i>&nbsp;=
+14²&nbsp;&#x2212;&nbsp;180&nbsp;=
+196&nbsp;&#x2212;&nbsp;180&nbsp;= 16, which is a perfect square (4²), so
+<a href="#Quick1">Method 1</a> will work. Find <i>x</i> and <i>y</i>:</p>
+
+<p class="algebra"> <i>x</i> = ½(14&nbsp;+ 4)&nbsp;=&nbsp;9
+&nbsp;&nbsp;&nbsp;and&#x202f;&nbsp;&nbsp;&nbsp;
+<i>y</i> = ½(14&nbsp;&#x2212; 4)&nbsp;=&nbsp;5</p>
+
+<p class="secondhalf">Then the final answer:</p>
+
+<p class="algebra">&#x221a;<span class="radical">14&nbsp;+&nbsp;&#x221a;180</span>&nbsp;=
+&#x221a;<span class="radical">9</span>&nbsp;+&nbsp;&#x221a;<span class="radical">5</span>&nbsp;=
+3&nbsp;+&nbsp;&#x221a;<span class="radical">5</span></p>
+
+<p class="secondhalf">But wait! The problem wasn’t
+&#x221a;<span class="radical">14&nbsp;+&nbsp;&#x221a;180</span>, but 2<sup>1/4</sup> times that.
+So really the <em>final</em> answer is</p>
+<p class="algebra">&#x221a;<span class="radical">&#x221a;392&nbsp;+&nbsp;&#x221a;360</span>&nbsp;=
+<span class="answer">2<sup>1/4</sup>&nbsp;(3&nbsp;+&nbsp;&#x221a;<span class="radical">5</span>)</span></p>
+
+<p class="btw" id="Ex07fn">In fact, 392 and 360 have a common factor of 8. Why did Wells
+pull out only 2, not 8? There’s nothing wrong with factoring out
+the larger number, but then when you apply the method you get
+8<sup>1/4</sup>&nbsp;(&#x221a;<span class="radical">9/2</span>&nbsp;+&nbsp;&#x221a;<span class="radical">5/2</span>), and
+you have to do more work to simplify it. (Yes, the final answer is the
+same.) So your best strategy is to pull out the <em>smallest</em>
+common factor that leaves you with a perfect square under one of the
+two radicals. [<a href="#Ex07ret">Return</a>]</p>
+
+
+<h2 id="Method2">Easy Method 2&nbsp;—
+&#x221a;<span class="radical"><i>a</i>&nbsp;+&nbsp;<i>u</i>&#x221a;<span class="radical"><i>b</i></span></span> when
+&#x221a;<span class="radical"><i>a</i>²&nbsp;&#x2212;&nbsp;<i>u</i>²<i>b</i></span> Isn’t Rational</h2>
+
+<p class="brk">Remember &#x221a;<span class="radical">2&nbsp;+&nbsp;&#x221a;2</span>? Though that radical
+looks simple, <a href="#Method1">Method 1</a> won’t work because
+<i>a</i>&nbsp;=&nbsp;2 and <i>b</i>&nbsp;=&nbsp;2, and
+&#x221a;<span class="radical"><i>a</i>²&nbsp;&#x2212;&nbsp;<i>b</i></span>&nbsp;=
+&#x221a;<span class="radical">2²&nbsp;&#x2212;&nbsp;2</span>&nbsp;= &#x221a;<span class="radical">2</span> is irrational. But
+that doesn’t mean it can’t be simplified, just that
+<strong class="key">it can’t be simplified to roots of rational numbers.</strong></p>
+
+<p class="nonbrk">In fact, if you plug that nested radical into
+<a href="https://www.wolframalpha.com/input?i=%5Csqrt%7B2%2B%5Csqrt2%7D" title="accessed 2023-10-08" class="showURL">Wolfram Alpha</a>,
+it gives the “alternate form” as
+(&#x221a;<span class="radical">1&nbsp;+&nbsp;i</span>&nbsp;+&nbsp;&#x221a;<span class="radical">1&nbsp;&#x2212;&nbsp;i</span>)/<sup class="radicalindex">4</sup>&#x221a;<span class="radical">2</span>.
+How could you find that result on your own?</p>
+
+<p class="brk">In a 2016 paper called
+“<a href="https://faculty.utrgv.edu/eleftherios.gkioulekas/papers/024-denesting-square-roots.pdf" title="accessed 2023-10-08" class="showURL">On the denesting of nested square roots</a>”,
+Eleftherios Gkioulekas of the University of Texas gives a technique
+that he calls <strong class="key">indirect denesting</strong>. It’s his theorem 2.7, on page 947
+(page 6 of the PDF).</p>
+
+<p class="brk">With <a href="#Method1">Method 1</a>, since materials were
+scattered in multiple Web pages, some no longer accessible, I thought
+it would be good to go through the proof in detail. But for Method 2,
+it’s all in one paper, so I won’t duplicate Gkioulekas’s proof and
+will give just the requirements and the <a href="#Quick2">Quick
+Reference</a>. (I’ve changed his choice of variables a little bit, to
+show the contrasts with <a href="#Method1">Method 1</a>.)</p>
+
+
+<h3 id="Conditions2">Requirements for Using Method 2</h3>
+
+<div class="begdon fr0"><span class="nonprint"><a href="https://www.paypal.com/webscr?cmd=_donations&amp;business=stan_paypal@fastmail.fm&amp;item_name=BrownMath%20donation:%20alge/nestrad.htm&amp;currency_code=USD">Because this article helps you,<br>please click to donate!</a></span><span class="onlyprint">Because this article helps you,<br>please donate at<br>BrownMath.com/donate.</span></div>
+
+<p class="brk">When conditions are not met for <a href="#Method1">Method
+1</a> above, you can
+<strong class="key">denest &#x221a;<span class="radical"><i>a</i>&nbsp;+&nbsp;<i>u</i>&#x221a;<i>b</i></span> to</strong>
+<strong class="key">radicals of rational numbers, or radicals of complex numbers with real</strong>
+<strong class="key">and imaginary parts both rational, provided that:</strong></p>
+<ul>
+
+<li><i>a</i> and <i>u</i> are rational, not necessarily positive.
+<p class="secondhalf">(Two reminders: <i>u</i> is
+negative if there’s a minus sign between the two terms inside the
+radical. And if the second term doesn’t have an explicit coefficient,
+then <i>u</i>&nbsp;=&nbsp;1 or &#x2212;1.)</li>
+
+<li><i>b</i> is rational and positive.</li>
+
+<li>&#x221a;<span class="radical"><i>b</i></span> is not rational.</li>
+
+<li><i>a</i>&nbsp;+&nbsp;<i>u</i>&#x221a;<span class="radical"><i>b</i></span>&nbsp;&gt;&nbsp;0.</li>
+
+<li><i>d</i> = &#x221a;<span class="radical"><i>b</i>(<i>u</i>²<i>b</i>&nbsp;&#x2212;&nbsp;<i>a</i>²)</span> is
+rational, or is a rational multiple of the imaginary unit i. (If this
+condition is not met, the math is still valid but you end up with two
+nested radicals replacing the original one.)</li>
+</ul>
+
+
+<h3 id="Quick2">Quick Reference for Method 2</h3>
+
+<p class="brk">Use <i>d</i> =
+&#x221a;<span class="radical"><i>b</i>(<i>u</i>²<i>b</i>&nbsp;&#x2212;&nbsp;<i>a</i>²)</span>, which you
+computed in <a href="#Conditions2">checking requirements</a>.</p>
+
+<p class="brk">If <i>a</i> is positive, then</p>
+<p class="algebra">&#x221a;<span class="radical"><i>a</i>&nbsp;±&nbsp;<i>u</i>&#x221a;<i>b</i></span>&nbsp;=
+[&#x221a;<span class="radical">(<i>u</i><i>b</i>&nbsp;+&nbsp;<i>d</i>)/2</span>&nbsp;+&nbsp;&#x221a;<span class="radical">(<i>u</i><i>b</i>&nbsp;&#x2212;&nbsp;<i>d</i>)/2</span>]&nbsp;/&nbsp;<sup class="radicalindex">4</sup>&#x221a;<span class="radical"><i>b</i></span></p>
+
+<p class="brk">If <i>a</i> is negative, then</p>
+<p class="algebra">&#x221a;<span class="radical"><i>a</i>&nbsp;±&nbsp;<i>u</i>&#x221a;<i>b</i></span>&nbsp;=
+[&#x221a;<span class="radical">(<i>u</i><i>b</i>&nbsp;+&nbsp;<i>d</i>)/2</span>&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical">(<i>u</i><i>b</i>&nbsp;&#x2212;&nbsp;<i>d</i>)/2</span>]&nbsp;/&nbsp;<sup class="radicalindex">4</sup>&#x221a;<span class="radical"><i>b</i></span></p>
+
+
+
+<h3 id="Examples2">Examples</h3>
+
+<p class="brk" id="Ex08"><strong class="key">Example 8:</strong> Denest
+&#x221a;<span class="radical">2&nbsp;+&nbsp;&#x221a;<span class="radical">2</span></span>. (We’re revisiting
+<a href="#Ex03">Example 3</a>, which could not be denested by
+<a href="#Method1">Method 1</a>.)</p>
+
+<p class="brk"><strong class="key">Solution:</strong>
+<i>a</i>&nbsp;=&nbsp;2, <i>u</i>&nbsp;=&nbsp;1, and
+<i>b</i>&nbsp;=&nbsp;2. All three are rational and positive.
+&#x221a;<span class="radical"><i>b</i></span>&nbsp;= &#x221a;<span class="radical">2</span> is not rational.
+<i>a</i>&nbsp;+&nbsp;<i>u</i>&#x221a;<span class="radical"><i>b</i></span>&nbsp;=
+2+1&#x221a;<span class="radical">2</span> is positive.</p>
+
+<p class="nonbrk"><i>d</i>= &#x221a;<span class="radical"><i>b</i>(<i>u</i>²<i>b</i>&#x2212;<i>a</i>²)</span>&nbsp;=
+&#x221a;<span class="radical">2(1²×2&nbsp;&#x2212;&nbsp;2²)</span> = &#x221a;<span class="radical">2(&#x2212;2)</span> = &#x221a;<span class="radical">&#x2212;4</span> = 2i.
+The conditions are met for Gkioulekas’s theorem. Since <i>a</i> is positive,</p>
+
+<p class="algebra">&#x221a;<span class="radical">2&nbsp;+&nbsp;&#x221a;<span class="radical">2</span></span>&nbsp;=
+[&#x221a;<span class="radical">(1×2&nbsp;+&nbsp;2i)/2</span>&nbsp;+&nbsp;&#x221a;<span class="radical">(1×2&nbsp;&#x2212;&nbsp;2i)/2</span>]&nbsp;/&nbsp;<sup class="radicalindex">4</sup>&#x221a;<span class="radical">2</span>&nbsp;=
+<span class="answer">(&#x221a;<span class="radical">1+i</span>&nbsp;+&nbsp;&#x221a;<span class="radical">1&#x2212;i</span>)&#x202f;/&#x202f;<sup class="radicalindex">4</sup>&#x221a;<span class="radical">2</span></span></p>
+
+<p class="brk">Strange as it looks, that sum is a real number, though the
+individual radicals are not. Does that seem
+impossible? Yes, 1+i and 1&#x2212;i are complex numbers, not real,
+and so are their square roots. (To find roots of a complex number, see
+<a href="../twt/funcomplex.htm#ComplexRoot">Powers and Roots of a
+Complex Number</a> in my free online textbook, <a href="../twt/index.htm"><cite>Trig without Tears</cite></a>.) But
+when you square them, the imaginaries drop out:</p>
+
+<p class="algebra">[(&#x221a;<span class="radical">1+i</span>&nbsp;+&nbsp;&#x221a;<span class="radical">1&#x2212;i</span>]/<sup class="radicalindex">4</sup>&#x221a;<span class="radical">2</span>)²&nbsp;=
+(1+i&nbsp;+&nbsp;2&#x221a;<span class="radical">(1+i)(1&#x2212;i)</span>&nbsp;+&nbsp;1&#x2212;i)/&#x221a;<span class="radical">2</span>&nbsp;=</p>
+<p class="algebra">&nbsp;&nbsp;&nbsp;&nbsp;(2&nbsp;+&nbsp;2&#x221a;<span class="radical">(1&#x2212;i²)</span>)/&#x221a;<span class="radical">2</span>&nbsp;=
+(2&nbsp;+&nbsp;2&#x221a;<span class="radical">2)</span>)/&#x221a;<span class="radical">2</span>&nbsp;=
+&#x221a;<span class="radical">2</span>&nbsp;+&nbsp;2</p>
+
+<p class="secondhalf">which is just what you get when you square
+&#x221a;<span class="radical">2&nbsp;+&nbsp;&#x221a;<span class="radical">2</span></span>. Since
+(&#x221a;<span class="radical">1+i</span>&nbsp;+&nbsp;&#x221a;<span class="radical">1&#x2212;i</span>)/<sup class="radicalindex">4</sup>&#x221a;<span class="radical">2</span>
+is the square root of a positive number, it must be a real
+number.</p>
+
+
+<p class="brk" id="Ex09"><strong class="key">Example 9:</strong> Denest
+&#x221a;<span class="radical">&#x2212;8&nbsp;+&nbsp;3&#x221a;<span class="radical">10</span></span>.</p>
+
+<p class="secondhalf"><strong class="key">Solution:</strong>
+<i>a</i>&nbsp;=&nbsp;&#x2212;8, <i>u</i>&nbsp;=&nbsp;3, and
+<i>b</i>&nbsp;=&nbsp;10. <i>a</i> and <i>u</i> are rational;
+<i>b</i> is rational and positive.
+&#x221a;<span class="radical"><i>b</i></span>&nbsp;= &#x221a;<span class="radical">10</span> is not rational.
+<i>a</i>&nbsp;+&nbsp;<i>u</i>&#x221a;<span class="radical"><i>b</i></span>&nbsp;=
+&#x2212;8+3&#x221a;<span class="radical">10</span> is positive. (You can be sure of that, even without
+a calculator: &#x2212;8+3&#x221a;<span class="radical">10</span> is greater than &#x2212;8+3&#x221a;<span class="radical">9</span>,
+which is +1, so &#x2212;8+3&#x221a;<span class="radical">10</span> must be positive.)</p>
+
+<p class="nonbrk"> <i>d</i>&nbsp;= &#x221a;<span class="radical"><i>b</i>(<i>u</i>²<i>b</i>&#x2212;<i>a</i>²)</span>&nbsp;=
+&#x221a;<span class="radical">10(3²×10&nbsp;+&nbsp;8²)</span>&nbsp;=&nbsp;&#x221a;<span class="radical">1540</span>.
+Unfortunately, 1540 is not a perfect square, and therefore
+<i>d</i> is not rational.
+The conditions are not met for Gkioulekas’s
+theorem, so <span class="answer">indirect denesting is not possible for
+&#x221a;<span class="radical">&#x2212;8&nbsp;+&nbsp;3&#x221a;<span class="radical">10</span></span>.</span></p>
+
+<p class="nonbrk">Just to show you why this last requirement is a deal-breaker,
+why <i>d</i> <em>must</em> be rational (or a rational multiple of i, as
+in <a href="#Ex08">Example 8</a>), look at what happens if you just
+blindly use the formula in the <a href="#Quick2">Quick Reference</a>.
+Since <i>a</i> is negative,</p>
+
+<p class="algebra">&#x221a;<span class="radical">&#x2212;8&nbsp;+&nbsp;3&#x221a;<span class="radical">10</span></span>&nbsp;=
+[&#x221a;<span class="radical">(3×10&nbsp;+&nbsp;2&#x221a;<span class="radical">385</span>)/2</span>&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical">(3×10&nbsp;&#x2212;&nbsp;2&#x221a;<span class="radical">385</span>)/2</span>]&nbsp;/&nbsp;<sup class="radicalindex">4</sup>&#x221a;<span class="radical">2</span></p>
+<p class="algebra">&#x221a;<span class="radical">&#x2212;8&nbsp;+&nbsp;3&#x221a;<span class="radical">10</span></span>&nbsp;=
+[&#x221a;<span class="radical">15&nbsp;+&nbsp;&#x221a;<span class="radical">385</span></span>&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical">15&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical">385</span></span>]&nbsp;/&nbsp;<sup class="radicalindex">4</sup>&#x221a;<span class="radical">2</span></p>
+
+<p class="secondhalf">The second inner radical is negative, because 15&nbsp;=
+&#x221a;<span class="radical">225</span>, and 385&nbsp;&gt;&nbsp;225. Factor out &#x2212;1,
+which becomes &#x221a;<span class="radical">&#x2212;1</span>&nbsp;=&nbsp;i when you take it
+out of the radical.</p>
+<p class="algebra">&#x221a;<span class="radical">&#x2212;8&nbsp;+&nbsp;3&#x221a;<span class="radical">10</span></span>&nbsp;=
+[&#x221a;<span class="radical">15&nbsp;+&nbsp;&#x221a;<span class="radical">385</span></span>&nbsp;&#x2212;&nbsp;i&#x221a;<span class="radical">(&#x221a;<span class="radical">385</span>)&nbsp;&#x2212;&nbsp;15</span>]&nbsp;/&nbsp;<sup class="radicalindex">4</sup>&#x221a;<span class="radical">2</span></p>
+
+<p class="secondhalf">The imaginary isn’t a problem: <a href="#Ex08">Example 8</a>
+ended up with a complex number. The problem is that, with <i>d</i> not
+rational (<i>d</i>² not a perfect square), instead of simplifying the
+original expression, I made it more complicated by applying the
+formula where it shouldn’t be applied.</p>
+
+
+<p class="brk" id="Ex10"><strong class="key">Example 10:</strong> Denest &#x221a;<span class="radical">5&nbsp;+&nbsp;3&#x221a;<span class="radical">5</span></span>.
+
+<p class="secondhalf"><strong class="key">Solution:</strong>
+<i>a</i>&nbsp;=&nbsp;5, <i>u</i>&nbsp;=&nbsp;3, <i>b</i>&nbsp;=&nbsp;5,
+<i>d</i>²&nbsp;= <i>b</i>(<i>u</i>²<i>b</i>&nbsp;&#x2212;&nbsp;<i>a</i>²)&nbsp;=
+5(3²×5&nbsp;&#x2212;&nbsp;5²)&nbsp;= 100, and <i>d</i>&nbsp;=&nbsp;10. <i>a</i>,
+<i>u</i>, and <i>b</i> are all positive rational, <i>d</i> is rational, and
+<i>a</i>&nbsp;+&nbsp;<i>u</i>&#x221a;<span class="radical"><i>b</i></span>&nbsp;=
+5&nbsp;+&nbsp;3&#x221a;<span class="radical">5</span> is positive. All requirements are
+met for <a href="#Quick2">Method 2</a>, indirect nesting.</p>
+
+<p class="algebra">&#x221a;<span class="radical">5&nbsp;+&nbsp;3&#x221a;<span class="radical">5</span></span>&nbsp;=
+[&#x221a;<span class="radical">(3×5&nbsp;+&nbsp;10)/2</span>]&nbsp;+&nbsp;&#x221a;<span class="radical">(3×5&nbsp;&#x2212;&nbsp;10)/2</span>]&nbsp;/&nbsp;<sup class="radicalindex">4</sup>&#x221a;<span class="radical">5</span></p>
+<p class="algebra">&#x221a;<span class="radical">5&nbsp;+&nbsp;3&#x221a;<span class="radical">5</span></span> =
+<span class="answer">[&#x221a;<span class="radical">25/2</span>&nbsp;+&nbsp;&#x221a;<span class="radical">5/2</span>]&nbsp;/&nbsp;<sup class="radicalindex">4</sup>&#x221a;<span class="radical">5</span></span></p>
+
+<p class="secondhalf">There are several paths to simplifying this expression. Here is
+one:</p>
+
+<p class="algebra">&#x221a;<span class="radical">5&nbsp;+ 3&#x221a;<span class="radical">5</span></span> =
+&#x221a;<span class="radical">5/2</span>[&#x221a;<span class="radical">5</span>&nbsp;+ 1]&nbsp;/&nbsp;<sup class="radicalindex">4</sup>&#x221a;<span class="radical">5</span> =
+<p class="algebra">&nbsp;&nbsp;&nbsp;&nbsp;
+&#x221a;<span class="radical">5×2/4</span>[&#x221a;<span class="radical">5</span>&nbsp;+ 1]&nbsp;/&nbsp;<sup class="radicalindex">4</sup>&#x221a;<span class="radical">5</span> =
+&#x221a;<span class="radical">5×2</span>[&#x221a;<span class="radical">5</span>&nbsp;+ 1]&nbsp;/&nbsp;2<sup class="radicalindex">4</sup>&#x221a;<span class="radical">5</span>&nbsp;=</p>
+<p class="algebra">&nbsp;&nbsp;&nbsp;&nbsp;
+[&#x221a;<span class="radical">10</span>&nbsp;+ &#x221a;<span class="radical">2</span>]&#x202f;&#x221a;<span class="radical">5</span>/2<sup class="radicalindex">4</sup>&#x221a;<span class="radical">5</span> =
+<span class="answer">[&#x221a;<span class="radical">10</span>&nbsp;+ &#x221a;<span class="radical">2</span>]&#x202f;<sup class="radicalindex">4</sup>&#x221a;<span class="radical">5</span>&#x202f;/&#x202f;2</span></p>
+
+<p class="brk"><em>Note</em>: &#x221a;<span class="radical">5</span>&nbsp;=&nbsp;5<sup>1/2</sup> and
+<sup class="radicalindex">4</sup>&#x221a;<span class="radical">5</span>&nbsp;=&nbsp;5<sup>1/4</sup>, so
+&#x221a;<span class="radical">5</span>/<sup class="radicalindex">4</sup>&#x221a;<span class="radical">5</span>&nbsp;=
+5<sup>1/2&nbsp;&#x2212;&nbsp;1/4</sup>&nbsp;= 5<sup>1/4</sup>&nbsp;=
+<sup class="radicalindex">4</sup>&#x221a;<span class="radical">5</span>.</p>
+
+
+<p class="brk" id="Ex11"><strong class="key">Example 11:</strong> Denest
+&#x221a;<span class="radical">&#x2212;5&nbsp;+ 3&#x221a;<span class="radical">5</span></span>.</p>
+
+<p class="secondhalf"><strong class="key">Solution:</strong>
+<i>a</i>&nbsp;=&nbsp;&#x2212;5, <i>u</i>&nbsp;=&nbsp;3, <i>b</i>&nbsp;=&nbsp;5,
+<i>d</i>²&nbsp;= <i>b</i>(<i>u</i>²<i>b</i>&nbsp;&#x2212;&nbsp;<i>a</i>²)&nbsp;=
+5(3²×5&nbsp;&#x2212;&nbsp;(&#x2212;5)²)&nbsp;=
+5(45&nbsp;&#x2212;&nbsp;25)&nbsp;= 100, and <i>d</i>&nbsp;=&nbsp;10. <i>a</i>
+is negative but rational;
+<i>u</i> and <i>b</i> are positive rational, <i>d</i> is rational, and
+<i>a</i>&nbsp;+&nbsp;<i>u</i>&#x221a;<span class="radical"><i>b</i></span>&nbsp;=
+&#x2212;5&nbsp;+&nbsp;3&#x221a;<span class="radical">5</span> is positive. (How do you know?
+&#x2212;5&nbsp;+&nbsp;3&#x221a;<span class="radical">3</span> would be smaller, and it’s
+positive.) All requirements are
+met for <a href="#Quick2">Method 2</a>.</p>
+
+<p class="nonbrk">Since <i>a</i> is negative,</p>
+<p class="algebra">&#x221a;<span class="radical"><i>a</i>&nbsp;±&nbsp;<i>u</i>&#x221a;<i>b</i></span>&nbsp;=
+[&#x221a;<span class="radical">(<i>u</i><i>b</i>&nbsp;+&nbsp;<i>d</i>)/2</span>&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical">(<i>u</i><i>b</i>&nbsp;&#x2212;&nbsp;<i>d</i>)/2</span>]&nbsp;/&nbsp;<sup class="radicalindex">4</sup>&#x221a;<span class="radical"><i>b</i></span></p>
+
+<p class="algebra">&#x221a;<span class="radical">&#x2212;5&nbsp;±&nbsp;3&#x221a;5</span>&nbsp;=
+[&#x221a;<span class="radical">(3&nbsp;×&nbsp;5&nbsp;+&nbsp;10)/2</span>&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical">(3&nbsp;×&nbsp;5&nbsp;&#x2212;&nbsp;10)/2</span>]&nbsp;/&nbsp;<sup class="radicalindex">4</sup>&#x221a;<span class="radical">5</span></p>
+
+<p class="algebra">&#x221a;<span class="radical">&#x2212;5&nbsp;±&nbsp;3&#x221a;5</span>&nbsp;=
+(&#x221a;<span class="radical">25/2</span>&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical">5/2</span>)&nbsp;/&nbsp;<sup class="radicalindex">4</sup>&#x221a;<span class="radical">5</span></p>
+
+<p class="secondhalf">Factor out &#x221a;<span class="radical">5</span>/&#x221a;<span class="radical">2</span>.</p>
+
+<p class="algebra">&#x221a;<span class="radical">&#x2212;5&nbsp;±&nbsp;3&#x221a;5</span>&nbsp;=
+(&#x221a;<span class="radical">5</span>&nbsp;&#x2212;&nbsp;1)&nbsp;&#x221a;<span class="radical">5</span>&nbsp;/&nbsp;(<sup class="radicalindex">4</sup>&#x221a;<span class="radical">5</span>&#x221a;<span class="radical">2</span>)</p>
+
+<p class="secondhalf">According to <a href="expolaws.htm">It’s the Law&nbsp;— the Laws of&nbsp;Exponents</a>,
+&#x221a;<span class="radical">5</span> is <sup class="radicalindex">2</sup>&#x221a;<span class="radical">5</span>&nbsp;= 5<sup>1/2</sup>, and
+<sup class="radicalindex">4</sup>&#x221a;<span class="radical">5</span>&nbsp;= 5<sup>1/4</sup>.
+Therefore &#x221a;<span class="radical">5</span>/<sup class="radicalindex">4</sup>&#x221a;<span class="radical">5</span>&nbsp;=
+5<sup>1/2</sup>/5<sup>1/4</sup>&nbsp;=
+5<sup>1/2&nbsp;&#x2212;&nbsp;1/4</sup>&nbsp;= 5<sup>1/4</sup> or
+<sup class="radicalindex">4</sup>&#x221a;<span class="radical">5</span>.</p>
+
+<p class="algebra">&#x221a;<span class="radical">&#x2212;5&nbsp;±&nbsp;3&#x221a;5</span>&nbsp;=
+(&#x221a;<span class="radical">5</span>&nbsp;&#x2212;&nbsp;1)&nbsp;<sup class="radicalindex">4</sup>&#x221a;<span class="radical">5</span>/&#x221a;<span class="radical">2</span></p>
+
+<p class="secondhalf">Multiply by &#x221a;<span class="radical">2</span>/&#x221a;<span class="radical">2</span>, using the form
+<sup class="radicalindex">4</sup>&#x221a;<span class="radical">4</span>&#x202f;/&#x202f;&#x221a;<span class="radical">2</span>:</p>
+
+<p class="algebra">&#x221a;<span class="radical">&#x2212;5&nbsp;±&nbsp;3&#x221a;5</span>&nbsp;=
+<span class="answer">(&#x221a;<span class="radical">5</span>&nbsp;&#x2212;&nbsp;1)&nbsp;<sup class="radicalindex">4</sup>&#x221a;<span class="radical">20</span>&#x202f;/&#x202f;2</span></p>
+
+
+
+
+<h2 id="Exercises">Now It’s Your Turn</h2>
+
+<div class="begdon fr0"><span class="nonprint"><a href="https://www.paypal.com/webscr?cmd=_donations&amp;business=stan_paypal@fastmail.fm&amp;item_name=BrownMath%20donation:%20alge/nestrad.htm&amp;currency_code=USD">Because this article helps you,<br>please click to donate!</a></span><span class="onlyprint">Because this article helps you,<br>please donate at<br>BrownMath.com/donate.</span></div>
+
+<p class="brk">Here are a few exercises to test your understanding. In each
+case, simplify (denest) the radical, or explain why it cannot be done.
+Try them yourself with pencil and paper, and then
+<a href="#Solutions">check your answers</a>.</p>
+
+<p class="nonbrk">Caution! Don’t just start in substituting in a formula. Check
+the preconditions for <a href="#Method1">Method 1</a> and for
+<a href="#Method2">Method 2</a> or you’ll get nonsense
+answers.</p>
+
+<ol class="loose">
+
+
+
+<li>&#x221a;<span class="radical">3&nbsp;+&nbsp;&#x221a;5</span>
+
+</li>
+
+
+
+
+<li>Use your answer to the previous exercise to
+simplify &#x221a;<span class="radical">3&nbsp;&#x2212;&nbsp;&#x221a;5</span>.
+
+</li>
+
+
+
+
+<li>&#x221a;<span class="radical">2&nbsp;+&nbsp;&#x221a;5</span>
+
+</li>
+
+
+
+
+<li>&#x221a;<span class="radical">2&nbsp;&#x2212;&nbsp;&#x221a;5</span>
+
+</li>
+
+
+
+
+<li>&#x221a;<span class="radical">5&nbsp;&#x2212;&nbsp;&#x221a;21</span>
+
+</li>
+
+
+
+
+<li id="sinpi/8">&#x221a;<span class="radical">2&nbsp;&#x2212; &#x221a;<span class="radical">2</span></span>
+
+</li>
+
+
+
+
+<li>&#x221a;<span class="radical">20&nbsp;&#x2212;&nbsp;&#x221a;144</span>
+
+</li>
+
+
+
+
+<li>&#x221a;<span class="radical">10&nbsp;&#x2212;&nbsp;4&#x221a;6</span> (Hint: 4&#x221a;<span class="radical">6</span> is the square root of what number?)
+
+</li>
+
+
+
+
+<li>&#x221a;<span class="radical">10&nbsp;+&nbsp;2&#x221a;6</span>
+
+</li>
+
+
+
+
+
+
+
+
+<li>From
+<a href="https://books.google.com/books?id=aOM5AAAAMAAJ&amp;pg=PA239" title="accessed 2017-02-20" class="showURL">Wells, page 239</a>:
+&#x221a;<span class="radical">&#x221a;1058&nbsp;&#x2212;&nbsp;&#x221a;896</span>
+
+</li>
+
+
+</ol>
+
+
+
+<div class="nonprint">
+<h2 id="WhatsNew">What’s New?</h2>
+<ul class="purelist loose">
+
+<li><strong class="key">18 Oct 2023</strong>: A major rewrite and much new content, including:<ul>
+<li><a href="#Method2">A second method</a> of
+denesting, which handles some cases that <a href="#Method1">the
+original method</a> can’t.</li>
+<li>Discovery and verification that the methods can work if the
+radicands are negative, producing expressions like
+&#x221a;<span class="radical">11+3i</span>&nbsp;+ &#x221a;<span class="radical">11&#x2212;3i</span> (which are
+<a href="#Ex08">actually real numbers</a>, though they don’t look it).</li>
+<li>Rewrite and restructure of most of the earlier
+content to make the derivations clearer.</li>
+<li>A <a href="#Quick1">Quick Reference</a> so you can avoid going
+through the derivations on every problem.</li>
+<li>More examples, more practice problems, and better explanations of
+the solutions.</li>
+</ul></li>
+
+<li><strong class="key">14 Nov 2021</strong>: Earlier this year, the National Council of
+Teachers of Mathematics
+<a href="https://www.themathdoctors.org/what-happened-to-ask-dr-math/" title="accessed 2021-11-14" class="showURL">took over “Ask Dr. Math”</a>
+a/k/a mathforum.org,
+and made its massive archive unavailable. (How taking useful content
+off the public Web enhances the teaching and learning of mathematics
+utterly escapes me.) I found archived pages for
+<em>some</em> of the articles I had cited, and replaced links to
+mathforum with links to the Internet Wayback Machine.</li>
+
+<li class="nobullet">(intervening changes suppressed)</li>
+<li><strong class="key">18 Dec 2016</strong>: New article.</li>
+</ul></div>
+
+
+
+<h2 id="Solutions">Solutions to Practice Problems</h2>
+
+<ol class="veryloose">
+
+
+
+<li><strong>&#x221a;<span class="radical">3&nbsp;+&nbsp;&#x221a;5</span>
+
+</strong>
+<p class="nonbrk">This meets the <a href="#Conditions1">requirements</a> for
+<a href="#Quick1">Method 1</a>, and evaluates to
+<span class="answer">&#x221a;<span class="radical">5/2</span>&nbsp;+&nbsp;&#x221a;<span class="radical">1/2</span></span>.
+If you don’t like fractions under radicals (or if your teacher
+doesn’t), multiply by
+&#x221a;<span class="radical">2/2</span> (which is 1), factor out &#x221a;<span class="radical">1/4</span> as ½,
+and give your answer as
+<span class="answer">(&#x221a;<span class="radical">10</span>&nbsp;+&nbsp;&#x221a;<span class="radical">2</span>)&#x202f;/&#x202f;2</span></p>
+</li>
+
+
+
+
+<li><strong>Use your answer to the previous exercise to
+simplify &#x221a;<span class="radical">3&nbsp;&#x2212;&nbsp;&#x221a;5</span>.
+
+</strong>
+<p class="nonbrk"><a href="#WellsTheorem">Remember</a> that changing
+&#x221a;<span class="radical"><i>a</i>&nbsp;+&nbsp;&#x221a;<span class="radical"><i>b</i></span></span>
+to &#x221a;<span class="radical"><i>a</i>&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical"><i>b</i></span></span>
+changes the denested form
+&#x221a;<span class="radical"><i>x</i></span>&nbsp;+&nbsp;&#x221a;<span class="radical"><i>y</i></span>
+to &#x221a;<span class="radical"><i>x</i></span>&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical"><i>y</i></span>.
+Your answer is <span class="answer">&#x221a;<span class="radical">5/2</span>&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical">1/2</span></span>, or
+<span class="answer">(&#x221a;<span class="radical">10</span>&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical">2</span>)</span></p>
+</li>
+
+
+
+
+<li><strong>&#x221a;<span class="radical">2&nbsp;+&nbsp;&#x221a;5</span>
+
+</strong>
+<p class="nonbrk" id="ChrystalExtended">The radicand is a positive
+number, so the radical is a real number, but still
+2²&nbsp;&#x2212;&nbsp;5&nbsp;= &#x2212;1 is the negative of a perfect
+square, so you can use <a href="#Quick1">Method 1</a>.</p>
+
+<p class="algebra"><i>x</i>&nbsp;=&nbsp;½(2&nbsp;+&nbsp;&#x221a;<span class="radical">&#x2212;1</span>)&nbsp;=
+(2+i)/2
+&nbsp;&nbsp;&nbsp;and&nbsp;&nbsp;&nbsp;
+<i>y</i>&nbsp;=&nbsp;½(2&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical">&#x2212;1</span>)&nbsp;=
+(2&#x2212;i)/2.</p>
+<p class="secondhalf">That gives
+<p class="algebra">&#x221a;<span class="radical">2&nbsp;+&nbsp;&#x221a;<span class="radical">5</span></span>&nbsp;=
+&#x221a;<span class="radical">(2+i)/2</span>&nbsp;+ &#x221a;<span class="radical">(2&#x2212;i)/2</span></p>
+<p class="algebra">&nbsp;&nbsp;&nbsp;&nbsp;=
+<span class="answer">(&#x221a;<span class="radical">4+2i</span>&nbsp;+ &#x221a;<span class="radical">4&#x2212;2i</span>)/2</span></p>
+
+<p class="secondhalf">You can verify that this answer is correct. Squaring the right-hand
+side, you get
+<p class="algebra">[(&#x221a;<span class="radical">4+2i</span>&nbsp;+&nbsp;&#x221a;<span class="radical">4&#x2212;2i</span>)/2]²&nbsp;=
+(4+2i&nbsp;+&nbsp;2&#x221a;<span class="radical">16&#x2212;4i²</span>&nbsp;+&nbsp;4&#x2212;2i)/4</p>
+<p class="algebra">&nbsp;&nbsp;&nbsp;&nbsp;= (8&nbsp;+&nbsp;2&#x221a;<span class="radical">20</span>)/4&nbsp;=
+(8&nbsp;+&nbsp;4&#x221a;<span class="radical">5</span>)/4&nbsp;=
+2&nbsp;+&nbsp;&#x221a;<span class="radical">5</span></p>
+<p class="secondhalf">which is the square of the original nested radical.</p>
+</li>
+
+
+
+
+<li><strong>&#x221a;<span class="radical">2&nbsp;&#x2212;&nbsp;&#x221a;5</span>
+
+</strong>
+<p class="nonbrk">The radicand is negative, so there’s no way to get a purely
+real solution to this one. However, you could factor &#x2212;1 out
+of the radical:</p>
+
+<p class="algebra">&#x221a;<span class="radical">2&nbsp;&#x2212; &#x221a;<span class="radical">5</span></span>&nbsp;=
+&#x221a;<span class="radical">(&#x2212;1) (&#x2212;2&nbsp;+ &#x221a;<span class="radical">5</span>)</span>&nbsp;=
+i&nbsp;&#x221a;<span class="radical">&#x2212;2&nbsp;+ &#x221a;<span class="radical">5</span></span></p>
+
+<p class="secondhalf">and then proceed by <a href="#Quick1">Method 1</a>, to get
+<span class="answer">(i/2)(&#x221a;<span class="radical">&#x2212;4+2i</span>&nbsp;+&nbsp;&#x221a;<span class="radical">&#x2212;4&#x2212;2i</span>)</span>.
+(That’s i/2, not 1/2.) Square the answer to verify that you get
+2&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical">5</span>.</p>
+
+</li>
+
+
+
+
+<li><strong>&#x221a;<span class="radical">5&nbsp;&#x2212;&nbsp;&#x221a;21</span>
+
+</strong>
+<p class="nonbrk">Using <a href="#Quick1">Method 1</a>, you get
+&#x221a;<span class="radical">7/2</span>&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical">3/2</span>, or
+<span class="answer">(&#x221a;<span class="radical">14</span>&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical">6</span>)&#x202f;/&#x202f;2</span></p>
+</li>
+
+
+
+
+<li ><strong>&#x221a;<span class="radical">2&nbsp;&#x2212; &#x221a;<span class="radical">2</span></span>
+
+</strong>
+<p class="nonbrk"><a href="#Quick2">Method 2</a> works for this one.</p>
+<p class="algebra"><i>d</i>&nbsp;=
+&#x221a;<span class="radical">2(1²&#x202f;×&#x202f;2&nbsp;&#x2212;&nbsp;(&#x2212;2)²)</span>&nbsp;=
+&#x221a;<span class="radical">2(2&nbsp;&#x2212;&nbsp;4)</span>&nbsp;= &#x221a;<span class="radical">&#x2212;4</span>&nbsp;=
+2i</p>
+<p class="secondhalf">Then
+<p class="algebra">&#x221a;<span class="radical">2&nbsp;&#x2212; &#x221a;<span class="radical">2</span></span>&nbsp;= 
+[&#x221a;<span class="radical">(&#x2212;2+2i)/2</span>&nbsp;+&nbsp;&#x221a;<span class="radical">(&#x2212;2&#x2212;2i)/2</span>]&#x202f;/&#x202f;<sup class="radicalindex">4</sup>&#x221a;<span class="radical">2</span>&nbsp;=</p>
+<p class="algebra">&nbsp;&nbsp;&nbsp;&nbsp; 
+<span class="answer">(&#x221a;<span class="radical">&#x2212;1+i</span>&nbsp;+&nbsp;&#x221a;<span class="radical">&#x2212;1&#x2212;i</span>)&#x202f;/&#x202f;<sup class="radicalindex">4</sup>&#x221a;<span class="radical">2</span></span></p>
+</li>
+
+
+
+
+<li><strong>&#x221a;<span class="radical">20&nbsp;&#x2212;&nbsp;&#x221a;144</span>
+
+</strong>
+<p class="nonbrk">&#x221a;<span class="radical">144</span> is rational, so you don’t need a denesting
+method.</p>
+<p class="algebra">&#x221a;<span class="radical">20&nbsp;&#x2212;&nbsp;&#x221a; 144</span>&nbsp;=
+&#x221a;<span class="radical">20&nbsp;&#x2212;&nbsp;12</span>&nbsp;= &#x221a;<span class="radical">8</span>&nbsp;=
+<span class="answer">2&#x221a;<span class="radical">2</span></span></p>
+</li>
+
+
+
+
+<li><strong>&#x221a;<span class="radical">10&nbsp;&#x2212;&nbsp;4&#x221a;6</span> (Hint: 4&#x221a;<span class="radical">6</span> is the square root of what number?)
+
+</strong>
+<p class="nonbrk">4&#x221a;<span class="radical">6</span>&nbsp;= &#x221a;<span class="radical">16&nbsp;×&nbsp;6</span>&nbsp;=
+&#x221a;<span class="radical">96</span>. Therefore &#x221a;<span class="radical">10&nbsp;&#x2212;&nbsp;4&#x221a;6</span>&nbsp;=
+&#x221a;<span class="radical">10&nbsp;&#x2212;&nbsp;&#x221a;96</span>, and by <a
+href="#Quick1">Method 1</a> that equals
+<span class="answer">&#x221a;<span class="radical">6</span>&nbsp;&#x2212;&nbsp;2</span></p>
+</li>
+
+
+
+
+<li><strong>&#x221a;<span class="radical">10&nbsp;+&nbsp;2&#x221a;6</span>
+
+</strong>
+<p class="nonbrk"><i>a</i>²&nbsp;&#x2212;&nbsp;<i>b</i>&nbsp;= 100&nbsp;&#x2212;&nbsp;24&nbsp;= 76 is
+not a perfect square, so this one can’t be denested by <a
+href="#Conditions1">Method 1</a>. And in <a href="#Quick2">Method
+2</a>, <i>d</i>&nbsp;=&nbsp;&#x221a;<span class="radical">&#x2212;456</span> is not a rational
+multiple of i, so you’re blocked there too.</p>
+
+<p class="nonbrk">About all
+you can do is factor out &#x221a;<span class="radical">2</span> to get
+&#x221a;<span class="radical">2</span>&nbsp;&#x221a;<span class="radical">5&nbsp;+&nbsp;&#x221a;6</span>, and that hardly
+seems worth the effort.</p>
+</li>
+
+
+
+
+
+
+
+
+<li><strong>From
+<a href="https://books.google.com/books?id=aOM5AAAAMAAJ&amp;pg=PA239" title="accessed 2017-02-20" class="showURL">Wells, page 239</a>:
+&#x221a;<span class="radical">&#x221a;1058&nbsp;&#x2212;&nbsp;&#x221a;896</span>
+
+</strong>
+<p class="nonbrk">This one looks worse than it is. The only common factor
+of 1058 and 896 is 2.
+1058/2&nbsp;= 529&nbsp;= 23²
+and 896/2&nbsp;= 448, so
+<p class="algebra">&#x221a;<span class="radical">&#x221a;1058&nbsp;&#x2212;&nbsp;&#x221a;896</span>&nbsp;=
+2<sup>1/4</sup>&nbsp;&#x221a;<span class="radical">23&nbsp;&#x2212;&nbsp;&#x221a;448</span></p>
+<p class="secondhalf">Now <a href="#Method1">Method 1</a> can be
+used.
+<i>x</i>&nbsp;=&nbsp;16 and
+<i>y</i>&nbsp;=&nbsp;7, so</p>
+<p class="algebra">&#x221a;<span class="radical">&#x221a;1058&nbsp;&#x2212;&nbsp;&#x221a;896</span>&nbsp;=
+<span class="answer">2<sup>1/4</sup>&nbsp;(4&nbsp;&#x2212;&nbsp;&#x221a;<span class="radical">7</span>)</span></p>
+</li>
+
+
+</ol>
+
+<div id="pageend">
+<div class="begdon"><span class="nonprint"><a href="https://www.paypal.com/webscr?cmd=_donations&amp;business=stan_paypal@fastmail.fm&amp;item_name=BrownMath%20donation:%20alge/nestrad.htm&amp;currency_code=USD">Because this article helps you,<br>please click to donate!</a></span><span class="onlyprint">Because this article helps you,<br>please donate at<br>BrownMath.com/donate.</span></div>
+<p class="brmwrapup onlyprint">Updates and new info: <a href="index.htm">https://BrownMath.com/alge/</a></p>
+<p class="source nonprint">
+<a href="../sitemap.htm">Site&nbsp;Map</a> |
+<a href="../about/search.htm">Searches</a> |
+<a href="../index.htm">Home&nbsp;Page</a>
+| <a href="../about/index.htm#Contact">Contact</a>
+</p>
+</div>
+</body></html>

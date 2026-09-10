@@ -1,0 +1,25 @@
+{
+  "id": "mordell",
+  "title": "On the linear independence of algebraic numbers",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "mordell",
+      "entry_latex": "L.~J. Mordell, ``On the linear independence of algebraic numbers,'' \\emph{Pacific Journal of Mathematics} \\textbf{3} (1953), 625--630. \\status{B}\nA further classical source for independence of algebraic radicals. Relevant to exact basis construction, not a stand-alone denesting implementation."
+    },
+    {
+      "report": "report-2",
+      "key": "mordell",
+      "entry_latex": "L. J. Mordell.\n\\emph{On the linear independence of algebraic numbers}.\nPacific Journal of Mathematics \\textbf{3}, 625--630, 1953.\n\\textbf{R.} Classical radical-independence background, repeatedly used in later structural work."
+    },
+    {
+      "report": "report-3",
+      "key": "mordell",
+      "entry_latex": "L. J. Mordell. ``On the linear independence of algebraic numbers.'' \\emph{Pacific Journal of Mathematics} \\textbf{3} (1953), 625--630. \\status{A}\n\\entrynote{Another foundational independence reference. Useful for understanding why apparently different radical terms can or cannot cancel and how a suitable basis is chosen.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

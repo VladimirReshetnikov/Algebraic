@@ -1,0 +1,48 @@
+{
+  "record_id": "barbero",
+  "title": "Identities involving zeros of Ramanujan and Shanks cubic polynomials",
+  "asset_id": "tex-source-from-publisher",
+  "version": "jis-2013",
+  "kind": "source",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://cs.uwaterloo.ca/journals/JIS/VOL16/Barbero/barbero11.tex",
+    "resolved_url": "https://cs.uwaterloo.ca/journals/JIS/VOL16/Barbero/barbero11.tex",
+    "retrieved_at": "2026-09-05T20:26:06+00:00",
+    "http_status": 200,
+    "content_type": "text/x-tex",
+    "content_encoding": "",
+    "bytes": 31753,
+    "sha256": "86699979507d5399904845159b6388aeb9541cdae8acb7681743d977aa02beb4"
+  },
+  "resolution": {
+    "landing_page": {
+      "requested_url": "https://cs.uwaterloo.ca/journals/JIS/VOL16/Barbero/barbero11.html",
+      "resolved_url": "https://cs.uwaterloo.ca/journals/JIS/VOL16/Barbero/barbero11.html",
+      "retrieved_at": "2026-09-05T20:26:06+00:00",
+      "http_status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "content_encoding": "",
+      "bytes": 2291,
+      "sha256": "d5450fb613ee466d9e3bcb56044aeb735c8ba89233e3c63a15ac71c566585bbe"
+    }
+  },
+  "catalog_evidence_level": "download_link_listed",
+  "note": "Follow the publisher link labelled latex; source bytes have not been downloaded.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/barbero-Identities-involving-zeros-of-Ramanujan-and-Shanks-cubic-polynomi/jis-2013/tex-source-from-publisher.tex",
+      "role": "original_source_response",
+      "bytes": 31753,
+      "sha256": "86699979507d5399904845159b6388aeb9541cdae8acb7681743d977aa02beb4"
+    },
+    {
+      "path": "papers/barbero-Identities-involving-zeros-of-Ramanujan-and-Shanks-cubic-polynomi/jis-2013/source/main.tex",
+      "role": "tex",
+      "bytes": 31753,
+      "sha256": "86699979507d5399904845159b6388aeb9541cdae8acb7681743d977aa02beb4"
+    }
+  ],
+  "prior_candidate_errors": []
+}

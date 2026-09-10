@@ -1,0 +1,13 @@
+test_archive_traversal_rejected_before_write (test_fetcher.FetcherTests.test_archive_traversal_rejected_before_write) ... ok
+test_local_http_and_resume (test_fetcher.FetcherTests.test_local_http_and_resume) ... ok
+test_package_zip (test_fetcher.FetcherTests.test_package_zip) ... ok
+test_pdf_only_source (test_fetcher.FetcherTests.test_pdf_only_source) ... ok
+test_pdf_rejection (test_fetcher.FetcherTests.test_pdf_rejection) ... ok
+test_plain_and_gzip_tex (test_fetcher.FetcherTests.test_plain_and_gzip_tex) ... ok
+test_tar_and_auxiliary_file (test_fetcher.FetcherTests.test_tar_and_auxiliary_file) ... ok
+test_zip_source (test_fetcher.FetcherTests.test_zip_source) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.516s
+
+OK

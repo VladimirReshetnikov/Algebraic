@@ -1,0 +1,23 @@
+test_challenge_rejected (test_download_all.FormatTests.test_challenge_rejected) ... ok
+test_obtain_fallback_and_resolver (test_download_all.FormatTests.test_obtain_fallback_and_resolver) ... ok
+test_page_download_resolution (test_download_all.FormatTests.test_page_download_resolution) ... ok
+test_pdf_checks (test_download_all.FormatTests.test_pdf_checks) ... ok
+test_source_text_not_html (test_download_all.FormatTests.test_source_text_not_html) ... ok
+test_archive_without_tex_rejected (test_download_all.SourceSafetyTests.test_archive_without_tex_rejected) ... ok
+test_plain_and_gz_source (test_download_all.SourceSafetyTests.test_plain_and_gz_source) ... ok
+test_tar_link_rejected (test_download_all.SourceSafetyTests.test_tar_link_rejected) ... ok
+test_tar_preserves_source_dependencies (test_download_all.SourceSafetyTests.test_tar_preserves_source_dependencies) ... ok
+test_tar_traversal (test_download_all.SourceSafetyTests.test_tar_traversal) ... ok
+test_unsafe_paths (test_download_all.SourceSafetyTests.test_unsafe_paths) ... ok
+test_zip_traversal (test_download_all.SourceSafetyTests.test_zip_traversal) ... ok
+test_arxiv_matching_paths_and_bytes (test_download_all.WorkflowTests.test_arxiv_matching_paths_and_bytes) ... ok
+test_download_resume_and_modified_retry (test_download_all.WorkflowTests.test_download_resume_and_modified_retry) ... ok
+test_failure_records_no_download (test_download_all.WorkflowTests.test_failure_records_no_download) ... ok
+test_no_version_refuses_pair (test_download_all.WorkflowTests.test_no_version_refuses_pair) ... ok
+test_version_pinning (test_download_all.WorkflowTests.test_version_pinning) ... ok
+test_zip_contains_only_output_files (test_download_all.WorkflowTests.test_zip_contains_only_output_files) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.027s
+
+OK

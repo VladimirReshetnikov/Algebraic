@@ -1,0 +1,43 @@
+{
+  "record_id": "gaillard",
+  "title": "On the order of power series and the sum of square roots problem",
+  "asset_id": "tex-source",
+  "version": "arxiv-2304.13605v1",
+  "kind": "source",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://arxiv.org/src/2304.13605v1",
+    "resolved_url": "https://arxiv.org/src/2304.13605v1",
+    "retrieved_at": "2026-09-05T20:26:41+00:00",
+    "http_status": 200,
+    "content_type": "application/gzip",
+    "content_encoding": "",
+    "bytes": 19899,
+    "sha256": "b5e204cc88583af3af79fd3434e6df6de2a9b0c0ea2a49e39116172d852f28dc"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "repository_pdf_and_source_links",
+  "note": "arXiv advertises TeX Source; actual bytes and archive contents have NOT been retrieved in this environment.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/gaillard-On-the-order-of-power-series-and-the-sum-of-square-roots-problem/arxiv-2304.13605v1/tex-source.tar.gz",
+      "role": "original_source_response",
+      "bytes": 19899,
+      "sha256": "b5e204cc88583af3af79fd3434e6df6de2a9b0c0ea2a49e39116172d852f28dc"
+    },
+    {
+      "path": "papers/gaillard-On-the-order-of-power-series-and-the-sum-of-square-roots-problem/arxiv-2304.13605v1/source/arxiv.bbl",
+      "role": "source_member",
+      "bytes": 4766,
+      "sha256": "fa60d3c4665f90b4cb75cb79bf906f0ec70f1d82c4731d7c772507a0a60b79c3"
+    },
+    {
+      "path": "papers/gaillard-On-the-order-of-power-series-and-the-sum-of-square-roots-problem/arxiv-2304.13605v1/source/arxiv.tex",
+      "role": "tex",
+      "bytes": 57068,
+      "sha256": "9411fef67ced52855063c9d950965b846ae0590ce2bf7992bc0a915526d5e7c8"
+    }
+  ],
+  "prior_candidate_errors": []
+}

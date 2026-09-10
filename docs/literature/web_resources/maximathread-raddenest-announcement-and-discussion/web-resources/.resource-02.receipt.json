@@ -1,0 +1,31 @@
+{
+  "record_id": "maximathread",
+  "title": "raddenest announcement and discussion",
+  "asset_id": "resource-02",
+  "version": "web-resources",
+  "kind": "web",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://maxima-discuss.narkive.com/rz7bUs4t/denesting",
+    "resolved_url": "https://maxima-discuss.narkive.com/rz7bUs4t/denesting",
+    "retrieved_at": "2026-09-05T20:28:08+00:00",
+    "http_status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "content_encoding": "",
+    "bytes": 44854,
+    "sha256": "7ccbf89f9d673a2bd478009fceca039bd17b560e8904c6a3116466fc1fb872aa"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "cited_web_resource",
+  "note": "URL cited in an input report. Not all web pages have been independently reopened. HTML is saved as HTML; software code is not labelled as article TeX.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "web_resources/maximathread-raddenest-announcement-and-discussion/web-resources/resource-02.html",
+      "role": "web",
+      "bytes": 44854,
+      "sha256": "7ccbf89f9d673a2bd478009fceca039bd17b560e8904c6a3116466fc1fb872aa"
+    }
+  ],
+  "prior_candidate_errors": []
+}

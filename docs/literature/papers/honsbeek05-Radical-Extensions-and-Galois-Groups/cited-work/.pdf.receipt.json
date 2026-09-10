@@ -1,0 +1,31 @@
+{
+  "record_id": "honsbeek05",
+  "title": "Radical Extensions and Galois Groups",
+  "asset_id": "pdf",
+  "version": "cited-work",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://www.math.ru.nl/~bosma/students/honsbeek/M_Honsbeek_thesis.pdf",
+    "resolved_url": "https://www.math.ru.nl/~bosma/students/honsbeek/M_Honsbeek_thesis.pdf",
+    "retrieved_at": "2026-09-05T20:25:27+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 669431,
+    "sha256": "6a0e48c525c04dc29685d060c4630cc8e4d2adb5b1df5bd5382736cd9630ebb3"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "candidate_unverified",
+  "note": "University URL supplied in reports; bytes not verified.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/honsbeek05-Radical-Extensions-and-Galois-Groups/cited-work/paper.pdf",
+      "role": "pdf",
+      "bytes": 669431,
+      "sha256": "6a0e48c525c04dc29685d060c4630cc8e4d2adb5b1df5bd5382736cd9630ebb3"
+    }
+  ],
+  "prior_candidate_errors": []
+}

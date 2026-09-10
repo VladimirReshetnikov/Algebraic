@@ -1,0 +1,25 @@
+{
+  "id": "lll",
+  "title": "Factoring polynomials with rational coefficients",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "lll",
+      "entry_latex": "A.~K. Lenstra, H.~W. Lenstra, Jr., and L. Lov\\'asz, ``Factoring polynomials with rational coefficients,'' \\emph{Mathematische Annalen} \\textbf{261} (1982), 515--534. \\doi{10.1007/BF01457454}. \\status{T}\nThe polynomial-time rational polynomial-factorization result used to correct the alleged equivalence between the restricted cubic denesting test and integer factorization."
+    },
+    {
+      "report": "report-2",
+      "key": "lll",
+      "entry_latex": "A. K. Lenstra, H. W. Lenstra, Jr., and L. Lov\\'asz.\n\\emph{Factoring polynomials with rational coefficients}.\nMathematische Annalen \\textbf{261}, 515--534, 1982.\n\\doi{10.1007/BF01457454}.\n\\textbf{M.} Essential computational background and the reason rational polynomial factorization must not be equated with integer prime factorization."
+    },
+    {
+      "report": "report-3",
+      "key": "lll",
+      "entry_latex": "A. K. Lenstra, H. W. Lenstra, Jr., and L. Lov\\'asz. ``Factoring polynomials with rational coefficients.'' \\emph{Mathematische Annalen} \\textbf{261} (1982), 515--534. \\doi{10.1007/BF01457454}. \\status{A}\n\\entrynote{The polynomial-time factorization result needed to distinguish rational-polynomial factorization from integer factorization. It supplies the complexity correction to the divisor-enumeration argument discussed in the cubic section.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

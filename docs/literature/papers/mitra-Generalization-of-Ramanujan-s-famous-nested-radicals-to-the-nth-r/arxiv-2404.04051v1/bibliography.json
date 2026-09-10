@@ -1,0 +1,24 @@
+{
+  "id": "mitra",
+  "title": "Generalization of Ramanujan's famous nested radicals to the nth root and their evaluation",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "mitra",
+      "entry_latex": "N. Mitra, ``Generalization of Ramanujan's famous nested radicals to the $n$th root and their evaluation,'' arXiv:2404.04051, 2024.\n\\access{https://arxiv.org/abs/2404.04051}{Preprint record}. \\status{A}\nGeneralizations of the famous infinite-radical evaluations. Included as a related analytic subject, not as a decision algorithm for finite denesting."
+    },
+    {
+      "report": "report-2",
+      "key": "mitra",
+      "entry_latex": "N. Mitra.\n\\emph{Generalization of Ramanujan's famous nested radicals to the nth root and their evaluation}.\narXiv:2404.04051, 2024.\n\\sourceurl{https://arxiv.org/abs/2404.04051}.\n\\textbf{M.} Infinite-radical evaluation and higher-root generalizations. Distinct from finite algebraic depth reduction."
+    },
+    {
+      "report": "report-3",
+      "key": "mitra",
+      "entry_latex": "Narendranath Mitra. \\emph{Generalization of Ramanujan's Famous Nested Radicals to the nth Root and their Evaluation}. arXiv:2404.04051, 2024. \\url{https://arxiv.org/abs/2404.04051}. \\status{A}\n\\entrynote{An adjacent source on generalized infinite nests. Any evaluation obtained by solving a formal fixed-point equation still needs an independent convergence and branch argument.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

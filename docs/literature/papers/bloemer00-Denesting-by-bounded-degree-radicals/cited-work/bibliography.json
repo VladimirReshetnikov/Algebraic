@@ -1,0 +1,25 @@
+{
+  "id": "bloemer00",
+  "title": "Denesting by bounded degree radicals",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "bloemer00",
+      "entry_latex": "J. Bl\\\"omer, ``Denesting by bounded degree radicals,'' \\emph{Algorithmica} \\textbf{28} (2000), 2--15. \\doi{10.1007/s004530010028}. Conference version: \\emph{ESA 1997}, LNCS \\textbf{1284}, 53--63, \\doi{10.1007/3-540-63397-9_5}. \\status{A}\nBounded allowed indices and optimal or near-optimal depth. The polynomial running-time parameter is the splitting-field description size, not automatically the original radical-expression length."
+    },
+    {
+      "report": "report-2",
+      "key": "blomer2000",
+      "entry_latex": "Johannes Bl\\\"omer.\n\\emph{Denesting by bounded degree radicals}.\nAlgorithmica \\textbf{28}, 2--15, 2000.\n\\doi{10.1007/s004530010028}.\nConference version: ESA 1997, LNCS 1284, 53--63, \\doi{10.1007/3-540-63397-9_5}.\n\\textbf{M.} Optimization subject to root-degree restrictions. The stated cost depends on a splitting-field description; this differs from the algorithmic route emphasized in the 1992 work."
+    },
+    {
+      "report": "report-3",
+      "key": "blomer2000",
+      "entry_latex": "Johannes Bl\\\"omer. ``Denesting by Bounded Degree Radicals.'' Conference version in \\emph{Algorithms---ESA '97}, Lecture Notes in Computer Science \\textbf{1284} (1997), 53--63, \\doi{10.1007/3-540-63397-9_5}; journal version, \\emph{Algorithmica} \\textbf{28} (2000), 2--15, \\doi{10.1007/s004530010028}. \\status{A}\n\\entrynote{A separate stage of the bounded-degree theory. The root-degree bound and field hypotheses are essential; publication dates 1997 and 2000 denote versions of the same research line, not two unrelated discoveries.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

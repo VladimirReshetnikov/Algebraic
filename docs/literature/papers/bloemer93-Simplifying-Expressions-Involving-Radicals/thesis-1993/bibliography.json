@@ -1,0 +1,25 @@
+{
+  "id": "bloemer93",
+  "title": "Simplifying Expressions Involving Radicals",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "bloemer93",
+      "entry_latex": "J. Bl\\\"omer, \\emph{Simplifying Expressions Involving Radicals}, PhD thesis, Freie Universit\\\"at Berlin, 1993.\n\\access{https://cs.nyu.edu/exact/pap/rootBounds/sumOfSqrts/bloemerThesis.pdf}{Full dissertation PDF}. \\status{T}\nThe most extensive single technical source in the consolidated core bibliography: independence, radical representations, denesting, and arithmetic/bit-size complexity. The thesis is not a second independent discovery of every theorem already published in the conference papers."
+    },
+    {
+      "report": "report-2",
+      "key": "blomerthesis",
+      "entry_latex": "Johannes Bl\\\"omer.\n\\emph{Simplifying Expressions Involving Radicals}.\nPh.D. thesis, Freie Universit\\\"at Berlin, 1993.\n\\sourceurl{https://cs.nyu.edu/exact/pap/rootBounds/sumOfSqrts/bloemerThesis.pdf}.\n\\textbf{FT.} Detailed denesting algorithms, admissible sequences, real variants, radical combinations, and complexity parameters. A particularly valuable implementation-oriented research source."
+    },
+    {
+      "report": "report-3",
+      "key": "blomerthesis",
+      "entry_latex": "Johannes Bl\\\"omer. \\emph{Simplifying Expressions Involving Radicals}. Ph.D. thesis, Freie Universit\\\"at Berlin, 1993. Archived full text: \\url{https://cs.nyu.edu/exact/pap/rootBounds/sumOfSqrts/bloemerThesis.pdf}. \\status{F}\n\\entrynote{A substantial source for proofs, depth-two real denesting, and the surrounding algebraic algorithms. Selected chapters were inspected, including the distinctions between real radicals and bounded-degree radicals.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

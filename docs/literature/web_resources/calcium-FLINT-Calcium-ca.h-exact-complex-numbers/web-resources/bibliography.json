@@ -1,0 +1,14 @@
+{
+  "id": "calcium",
+  "title": "FLINT / Calcium ca.h: exact complex numbers",
+  "citations": [
+    {
+      "report": "report-3",
+      "key": "calcium",
+      "entry_latex": "FLINT/Calcium development team. ``\\texttt{ca.h} -- exact complex numbers,'' especially \\texttt{ca\\_sqrt\\_factor}, documentation served as FLINT 3.7.0-dev. \\url{https://flintlib.org/doc/ca.html}. \\status{D}\n\\entrynote{Documents square-root simplification by factorization and extraction of square parts, together with branch selection. This is useful denesting-adjacent machinery, not an advertised global minimum-depth procedure.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

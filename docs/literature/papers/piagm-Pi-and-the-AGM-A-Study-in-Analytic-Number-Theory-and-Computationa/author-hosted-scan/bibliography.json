@@ -1,0 +1,25 @@
+{
+  "id": "piagm",
+  "title": "Pi and the AGM: A Study in Analytic Number Theory and Computational Complexity",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "piagm",
+      "entry_latex": "J.~M. Borwein and P.~B. Borwein, \\emph{Pi and the AGM: A Study in Analytic Number Theory and Computational Complexity}, Wiley, 1987. \\status{B}\nAdjacent background on algebraic transformations, infinite products, and analytic computation. Not a finite-denesting algorithm source.\n\n\\bibgroup{V. Infinite radicals and related implicit equations}"
+    },
+    {
+      "report": "report-2",
+      "key": "borweinagm",
+      "entry_latex": "Jonathan M. Borwein and Peter B. Borwein.\n\\emph{Pi and the AGM: A Study in Analytic Number Theory and Computational Complexity}.\nWiley, 1987.\n\\textbf{R.} Special values, arithmetic--geometric means, and related nested constructions; an adjacent reference rather than a manual of generic denesting."
+    },
+    {
+      "report": "report-3",
+      "key": "piagm",
+      "entry_latex": "Jonathan M. Borwein and Peter B. Borwein. \\emph{Pi and the AGM: A Study in Analytic Number Theory and Computational Complexity}. Wiley, 1987. \\status{L}\n\\entrynote{Background on iterative algebraic transformations and computation. Included as an adjacent book lead, not as a source of a universal finite radical-denesting algorithm.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "record_id": "mo",
+  "title": "MathOverflow discussions of radicals and algebraic identities",
+  "asset_id": "resource-03",
+  "version": "web-resources",
+  "kind": "web",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://mathoverflow.net/questions/344478",
+    "resolved_url": "https://mathoverflow.net/questions/344478/is-there-an-algorithm-for-determining-whether-an-expression-involving-nested-rad",
+    "retrieved_at": "2026-09-05T20:28:41+00:00",
+    "http_status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "content_encoding": "",
+    "bytes": 200336,
+    "sha256": "9d0113486cc5194134a39412059aeda14b26a23d0965283bde868250f91e982c"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "cited_web_resource",
+  "note": "URL cited in an input report. Not all web pages have been independently reopened. HTML is saved as HTML; software code is not labelled as article TeX.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "web_resources/mo-MathOverflow-discussions-of-radicals-and-algebraic-identities/web-resources/resource-03.html",
+      "role": "web",
+      "bytes": 200336,
+      "sha256": "9d0113486cc5194134a39412059aeda14b26a23d0965283bde868250f91e982c"
+    }
+  ],
+  "prior_candidate_errors": []
+}

@@ -1,0 +1,25 @@
+{
+  "id": "bfht",
+  "title": "Decreasing the nesting depth of expressions involving square roots",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "bfht",
+      "entry_latex": "A. Borodin, R. Fagin, J.~E. Hopcroft, and M. Tompa, ``Decreasing the nesting depth of expressions involving square roots,'' \\emph{Journal of Symbolic Computation} \\textbf{1}(2) (1985), 169--188. \\doi{10.1016/S0747-7171(85)80013-4}.\n\\access{https://www.cs.toronto.edu/~bor/Papers/decreasing-nesting-depth-for-expressions.pdf}{Author-hosted PDF}. \\status{T}\nPrincipal reference for square-root denesting, the role of fourth roots, real-field restrictions, and tower-based algorithms. Read the precise input shape and representation assumptions with each complexity statement."
+    },
+    {
+      "report": "report-2",
+      "key": "bfht",
+      "entry_latex": "Allan Borodin, Ronald Fagin, John E. Hopcroft, and Martin Tompa.\n\\emph{Decreasing the nesting depth of expressions involving square roots}.\nJournal of Symbolic Computation \\textbf{1}(2), 169--188, 1985.\n\\doi{10.1016/S0747-7171(85)80013-4}.\n\\sourceurl{https://www.cs.toronto.edu/~bor/Papers/decreasing-nesting-depth-for-expressions.pdf}.\n\\textbf{FT.} Central square-root structure, fourth-root alternatives, algorithms, combinations of radicals, and representation-size cautions. One of the explicit foundations cited by SymPy."
+    },
+    {
+      "report": "report-3",
+      "key": "bfht",
+      "entry_latex": "Allan Borodin, Ronald Fagin, John E. Hopcroft, and Martin Tompa. ``Decreasing the nesting depth of expressions involving square roots.'' \\emph{Journal of Symbolic Computation} \\textbf{1}(2) (1985), 169--188. \\doi{10.1016/S0747-7171(85)80013-4}. Author copy: \\url{https://www.cs.toronto.edu/~bor/Papers/decreasing-nesting-depth-for-expressions.pdf}. \\status{F}\n\\entrynote{The central square-root-denesting reference: structural reductions, fourth-root phenomena, and algorithms in a carefully specified representation model. The local sufficiency of fourth roots does not extend verbatim to arbitrarily deep square-root towers.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

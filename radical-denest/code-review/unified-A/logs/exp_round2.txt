@@ -1,0 +1,364 @@
+
+Syntax::com: Warning: comma encountered with no adjacent expression. The expression will be treated as Null.  (line 320 of "C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/original/Strad.wl").
+Kernel: 15.0.1 for Microsoft Windows (64-bit) (July 2, 2026)
+Print attributes before load: {Protected}  after: {}
+=== I. Identity checks (numerical, 30 digits) ===
+Ramanujan cbrt(cbrt5-cbrt4) vs (cbrt2+cbrt20-cbrt25)/3 : 0.1466384111431978407316923072692486222894952689483947598567`30.
+RootReduce of that difference: Root[-30 + 360*#1 - 1530*#1^2 + 4089*#1^3 - 8154*#1^4 + 17127*#1^5 - 23658*#1^6 + 48276*#1^7 - 56295*#1^8 + 71047*#1^9 - 39654*#1^10 + 122211*#1^11 - 183147*#1^12 + 209790*#1^13 - 56484*#1^14 - 7137*#1^15 + 22869*#1^16 + 4671*#1^17 - 1309*#1^18 + 1890*#1^19 + 1188*#1^20 + 216*#1^21 - 63*#1^23 - 21*#1^24 + #1^27 & , 1, 0]
+
+                                                                                                                  2/3  1/3    1/3  2/3
+                                                                                                 2/3  1/3    1 + 2    7    - 2    7
+N::meprec: Internal precision limit $MaxExtraPrecision = 50. reached while evaluating Sqrt[-3 + 2    7   ] + -------------------------.
+                                                                                                                         3
+sqrt(cbrt28-3) vs (cbrt98-cbrt28-1)/3 : 0``79.1980113930004
+BFHT: -4.1866291984125392099044287111032656153980597350626185893623`30.
+BFHT alt: -0.6729720083962888817597458692713016263437910314607704048063`30.
+BFHT alt2: 5.1451079633958682745780932067338540972250277506838218533481`30.
+BFHT alt3: 0.2855067565870401829139186263592868554831769841604328591796`30.
+BFHT alt4: -5.1451079633958682745780932067338540972250277506838218533481`30.
+BFHT alt5: 9.6172439183954476673964405441964065681062644699068733018899`30.
+=== J. Wrapper-level numeric branch error from Factorc ===
+{}
+
+J01 | HoldForm[Strad[Sqrt[-(Sqrt[2] + (-1)^(1/3))]]]
+   -> I*Sqrt[(-1)^(1/3) + Sqrt[2]]
+   time 0.097s  numeric=True  exact=False  depth 2->2
+{}
+
+J02 | HoldForm[Strad[Sqrt[-(Sqrt[2] + (-1)^(1/3))] + 1]]
+   -> 1 + I*Sqrt[(-1)^(1/3) + Sqrt[2]]
+   time 0.101s  numeric=True  exact=False  depth 2->2
+{}
+
+J03 | HoldForm[Factorc[Sqrt[(-(1 + Sqrt[2]))*((1 + I*Sqrt[3])/2)]]]
+   -> Sqrt[(-1/2*I)*(1 + Sqrt[2])*(-I + Sqrt[3])]
+   time 0.004s  numeric=True  exact=True  depth 2->2
+{}
+
+J04 | HoldForm[Strad[Sqrt[(-(1 + Sqrt[2]))*((1 + I*Sqrt[3])/2)]]]
+   -> Sqrt[(-1/2*I)*(1 + Sqrt[2])*(-I + Sqrt[3])]
+   time 0.313s  numeric=True  exact=True  depth 2->2
+{}
+
+
+                                                                            3       1
+PossibleZeroQ::ztest1: Unable to decide whether numeric quantity 1 - I Sqrt[-] + ------- - I Sqrt[3] - Sqrt[-I (3 + 2 Sqrt[2]) (-I + Sqrt[3])] is equal to zero. Assuming it is.
+                                                                            2    Sqrt[2]
+J05 | HoldForm[Strad[Sqrt[-3 - 2*Sqrt[2] - I*(3 + 2*Sqrt[2])*Sqrt[3]]]]
+   -> ((2 + Sqrt[2])*(1 - I*Sqrt[3]))/2
+   time 0.026000000000000002s  numeric=True  exact=True  depth 1->1
+{}
+
+J06 | HoldForm[Strad[(-(Sqrt[2] + (-1)^(1/3)))^(1/3)]]
+   -> (-1)^(1/3)*((-1)^(1/3) + Sqrt[2])^(1/3)
+   time 0.792s  numeric=True  exact=False  depth 2->2
+{}
+
+J07 | HoldForm[Strad[Sqrt[-Sqrt[2] - I*Sqrt[3]]]]
+   -> Sqrt[-Sqrt[2] - I*Sqrt[3]]
+   time 0.109s  numeric=True  exact=True  depth 2->2
+{}
+
+J08 | HoldForm[Strad[Sqrt[-1 - I*Sqrt[3] - Sqrt[2] - I*Sqrt[6]]]]
+   -> Sqrt[(-I)*(1 + Sqrt[2])*(-I + Sqrt[3])]
+   time 0.45s  numeric=True  exact=True  depth 2->2
+=== K. More identities and odd inputs ===
+{}
+
+
+                                                                         2/3  1/3    1/3  2/3
+                                                                   1    2    7      2    7                 2/3  1/3
+PossibleZeroQ::ztest1: Unable to decide whether numeric quantity -(-) - --------- + --------- - Sqrt[-3 + 2    7   ] is equal to zero. Assuming it is.
+                                                                   3        3           3
+K01 | HoldForm[Strad[Sqrt[28^(1/3) - 3]]]
+   -> (-1 - 2^(2/3)*7^(1/3) + 2^(1/3)*7^(2/3))/3
+   time 0.018000000000000002s  numeric=True  exact=True  depth 1->1
+{}
+
+K02 | HoldForm[Strad[(1 + 2^(1/3))^3]]
+   -> (1 + 2^(1/3))^3
+   time 0.002s  numeric=True  exact=True  depth 1->1
+{}
+
+problem  (1 + 2^(1/3))^3
+outer root: 3  extra root: 1
+
+multiplier count: 3  multipliers: {1, 2^(2/3), 2^(1/3)}
+multiplier: 1   minpoly degree: 3
+success: {1, 3, {{1, 1}}}
+history: {{0, Infinity}, {1, 3}}
+3*(1 + 2^(1/3) + 2^(2/3))
+
+problem  (1 + 2^(1/3))^3
+outer root: 3  extra root: 1
+
+multiplier count: 3  multipliers: {1, 2^(2/3), 2^(1/3)}
+multiplier: 1   minpoly degree: 3
+success: {1, 3, {{1, 1}}}
+history: {{0, Infinity}, {1, 3}}
+3*(1 + 2^(1/3) + 2^(2/3))
+
+K03 | HoldForm[denest11[(1 + 2^(1/3))^3]]
+   -> 3*(1 + 2^(1/3) + 2^(2/3))
+   time 0.006s  numeric=True  exact=True  depth 1->1
+{}
+
+
+                                                                                                                                                             2     4                                      2     4                           2     4       2
+                                                                                                                    -105 + 20 Sqrt[29] - 20 Root[125 - 110 #1  + #1  & , 3] + 2 Sqrt[29] Root[125 - 110 #1  + #1  & , 3] - Root[125 - 110 #1  + #1  & , 3]
+PossibleZeroQ::ztest1: Unable to decide whether numeric quantity -Sqrt[2 (8 - Sqrt[29] + Sqrt[55 - 10 Sqrt[29]])] - --------------------------------------------------------------------------------------------------------------------------------------- is equal to zero. Assuming it is.
+                                                                                                                                                                                                     2     4
+                                                                                                                                                          2 Sqrt[5] (5 - Sqrt[29] + Root[125 - 110 #1  + #1  & , 3])
+
+General::stop: Further output of PossibleZeroQ::ztest1 will be suppressed during this calculation.
+K04 | HoldForm[Strad[Strad[Sqrt[16 - 2*Sqrt[29] + 2*Sqrt[55 - 10*Sqrt[29]]], True]]]
+   -> (Sqrt[319 - 58*Sqrt[29]] - 10*Sqrt[11 - 2*Sqrt[29]] + Sqrt[5]*(-16 + 3*Sqrt[29]))/(-5 + Sqrt[29] - Sqrt[55 - 10*Sqrt[29]])
+   time 0.37s  numeric=True  exact=True  depth 2->2  MSGS: {PossibleZeroQ::ztest1}
+{}
+
+K05 | HoldForm[Strad[Sqrt[2 + Sqrt[3]]*Sqrt[2 - Sqrt[3]]]]
+   -> 1
+   time 0.001s  numeric=True  exact=True  depth 0->0
+{}
+
+K06 | HoldForm[Strad[Sqrt[Sqrt[2] - 1]*Sqrt[Sqrt[2] + 1]]]
+   -> 1
+   time 0.s  numeric=True  exact=True  depth 0->0
+{}
+
+K07 | HoldForm[Strad[Sqrt[3 + 2*Sqrt[2]]^(1/3)]]
+   -> (1 + Sqrt[2])^(1/3)
+   time 0.01s  numeric=True  exact=True  depth 2->2
+{}
+
+K08 | HoldForm[Strad[(3 + 2*Sqrt[2])^(1/6)]]
+   -> (1 + Sqrt[2])^(1/3)
+   time 0.012s  numeric=True  exact=True  depth 2->2
+{}
+
+K09 | HoldForm[Strad[Sqrt[5 + 2*Sqrt[6]]/Sqrt[3 + 2*Sqrt[2]]]]
+   -> 2 - Sqrt[2] - Sqrt[3] + Sqrt[6]
+   time 0.024s  numeric=True  exact=True  depth 1->1
+{}
+
+K10 | HoldForm[Strad[Exp[I*(Pi/7)]*Sqrt[3 + 2*Sqrt[2]]]]
+   -> (-1)^(1/7)*(1 + Sqrt[2])
+   time 0.01s  numeric=True  exact=True  depth 1->1
+{}
+
+K11 | HoldForm[Strad[Sqrt[3 + 2*Sqrt[2]] + Pi]]
+   -> 1 + Sqrt[2] + Pi
+   time 0.01s  numeric=True  exact=True  depth 1->1
+{}
+
+K12 | HoldForm[Strad[Sqrt[3. + 2*Sqrt[2]]]]
+   -> 2.414213562373095
+   time 0.s  numeric=True  exact=n/a  depth 0->0
+{}
+
+K13 | HoldForm[Strad[Sqrt[2 + Sqrt[3]], "yes"]]
+   -> (1 + Sqrt[3])/Sqrt[2]
+   time 0.013000000000000001s  numeric=True  exact=True  depth 1->1
+{}
+
+K14 | HoldForm[Strad[{Sqrt[3 + 2*Sqrt[2]], Sqrt[5 + 2*Sqrt[6]]}]]
+   -> (3 + 2*Sqrt[2])^((Sqrt[2] + Sqrt[3])/2)
+   time 0.019s  numeric=True  exact=n/a  depth 1->1
+{}
+
+K15 | HoldForm[Strad[Sqrt[3 + 2*Sqrt[2]] == 1 + Sqrt[2]]]
+   -> True
+   time 0.002s  numeric=n/a  exact=n/a  depth 0->0
+{}
+
+K16 | HoldForm[Strad[Sqrt[9 + 4*Sqrt[5]]]]
+   -> 2 + Sqrt[5]
+   time 0.009000000000000001s  numeric=True  exact=True  depth 1->1
+{}
+
+K17 | HoldForm[Strad[Sqrt[(3 + 2*Sqrt[2])/(5 + 2*Sqrt[6])]]]
+   -> -2 - Sqrt[2] + Sqrt[3] + Sqrt[6]
+   time 0.024s  numeric=True  exact=True  depth 1->1
+{}
+
+K18 | HoldForm[Strad[Sqrt[3 + 2*Sqrt[2]]*Sqrt[x]]]
+   -> (1 + Sqrt[2])*Sqrt[x]
+   time 0.008s  numeric=n/a  exact=True  depth 1->1
+{}
+
+K19 | HoldForm[Strad[Sqrt[Sqrt[2] + 1]^3]]
+   -> (1 + Sqrt[2])^(3/2)
+   time 0.028s  numeric=True  exact=True  depth 2->2
+{}
+
+K20 | HoldForm[Strad[Sqrt[2 + Sqrt[3]]*Sqrt[3 + 2*Sqrt[2]]]]
+   -> ((2 + Sqrt[2])*(1 + Sqrt[3]))/2
+   time 0.017s  numeric=True  exact=True  depth 1->1
+=== L. Higher-order roots, timing ===
+{}
+
+L01 | HoldForm[Strad[(239 + 169*Sqrt[2])^(1/7)]]
+   -> 1 + Sqrt[2]
+   time 0.008s  numeric=True  exact=True  depth 1->1
+{}
+
+L02 | HoldForm[Strad[(2 + Sqrt[2])^(1/5)]]
+   -> 2^(1/10)*(1 + Sqrt[2])^(1/5)
+   time 0.198s  numeric=True  exact=True  depth 2->2
+{}
+
+L03 | HoldForm[Strad[(1 + Sqrt[2])^(1/7)]]
+   -> (1 + Sqrt[2])^(1/7)
+   time 0.494s  numeric=True  exact=True  depth 2->2
+{}
+
+L04 | HoldForm[Strad[Sqrt[17 + 2*Sqrt[6] + 2*Sqrt[10] + 2*Sqrt[14] + 2*Sqrt[15] + 2*Sqrt[21] + 2*Sqrt[35]]]]
+   -> (6397*Sqrt[2] + 5316*Sqrt[3] + 4090*Sqrt[5] + 3432*Sqrt[7] + 1695*Sqrt[30] + 1423*Sqrt[42] + 1095*Sqrt[70] + 910*Sqrt[105])/(1108 + 467*Sqrt[6] + 359*Sqrt[10] + 299*Sqrt[14] + 302*Sqrt[15] + 252*Sqrt[21] + 194*Sqrt[35] + 81*Sqrt[210])
+   time 0.9560000000000001s  numeric=True  exact=True  depth 1->1
+{}
+
+L05 | HoldForm[Strad[Expand[(1 + Sqrt[2] + Sqrt[3])^3]^(1/3)]]
+   -> 1 + Sqrt[2] + Sqrt[3]
+   time 0.02s  numeric=True  exact=True  depth 1->1
+{}
+
+L06 | HoldForm[Strad[Expand[(Sqrt[2] + Sqrt[3])^4]^(1/4)]]
+   -> Sqrt[5 + 2*Sqrt[6]]
+   time 0.013000000000000001s  numeric=True  exact=True  depth 2->2
+{}
+
+L07 | HoldForm[Strad[Sqrt[1000003 + 2*Sqrt[999983]]]]
+   -> Sqrt[1000003 + 2*Sqrt[999983]]
+   time 0.215s  numeric=True  exact=True  depth 2->2
+{}
+
+L08 | HoldForm[Strad[Sqrt[2 + Sqrt[3] + Sqrt[5]]]]
+   -> Sqrt[2 + Sqrt[3] + Sqrt[5]]
+   time 0.216s  numeric=True  exact=True  depth 2->2
+{}
+
+L09 | HoldForm[Strad[(5 + 2*Sqrt[6])^(1/6)]]
+   -> (2 + Sqrt[6])^(1/3)/2^(1/6)
+   time 2.2560000000000002s  numeric=True  exact=True  depth 2->2
+{}
+
+L10 | HoldForm[Strad[(11*Sqrt[2] + 9*Sqrt[3])^(1/3)]]
+   -> Sqrt[2] + Sqrt[3]
+   time 0.015s  numeric=True  exact=True  depth 1->1
+{}
+
+L11 | HoldForm[Strad[Expand[(2^(1/3) + 3^(1/3))^3]^(1/3)]]
+   -> 2^(1/3) + 3^(1/3)
+   time 0.133s  numeric=True  exact=True  depth 1->1
+{}
+
+L12 | HoldForm[Strad[Sqrt[Expand[(1 + 2^(1/3) + 3^(1/3))^2]]]]
+   -> 1 + 2^(1/3) + 3^(1/3)
+   time 0.006s  numeric=True  exact=True  depth 1->1
+{}
+
+L13 | HoldForm[Strad[Expand[(1 + 2^(1/5))^5]^(1/5)]]
+   -> 1 + 2^(1/5)
+   time 0.023s  numeric=True  exact=True  depth 1->1
+{}
+
+
+                                                                                                    Log[1000]
+Ceiling::meprec: Internal precision limit $MaxExtraPrecision = 50. reached while evaluating Ceiling[---------].
+                                                                                                     Log[10]
+
+                                                                                                    Log[1000]
+Ceiling::meprec: Internal precision limit $MaxExtraPrecision = 50. reached while evaluating Ceiling[---------].
+                                                                                                     Log[10]
+
+                                                                                                    Log[1000]
+Ceiling::meprec: Internal precision limit $MaxExtraPrecision = 50. reached while evaluating Ceiling[---------].
+                                                                                                     Log[10]
+
+General::stop: Further output of Ceiling::meprec will be suppressed during this calculation.
+L14 | HoldForm[Strad[Sqrt[5 + 2*Sqrt[6]]^(1/5)]]
+   -> -(((-1)^(4/5)*(-2 - Sqrt[6])^(1/5))/2^(1/10))
+   time 20.35s  numeric=True  exact=True  depth 2->2  MSGS: {Ceiling::meprec}
+=== M. PossibleZeroQ behaviour on actual candidate differences ===
+{}
+
+M01 | HoldForm[PossibleZeroQ[Sqrt[3/2] + 1/Sqrt[2] - Sqrt[2 + Sqrt[3]]]]
+   -> True
+   time 0.s  numeric=n/a  exact=n/a  depth 0->0
+{}
+
+M02 | HoldForm[PossibleZeroQ[Sqrt[3/2] + 1/Sqrt[2] - Sqrt[2 + Sqrt[3]], Method -> "ExactAlgebraics"]]
+   -> True
+   time 0.s  numeric=n/a  exact=n/a  depth 0->0
+{}
+
+M03 | HoldForm[RootReduce[Sqrt[3/2] + 1/Sqrt[2] - Sqrt[2 + Sqrt[3]]]]
+   -> 0
+   time 0.014s  numeric=True  exact=n/a  depth 0->0
+{}
+
+M04 | HoldForm[PossibleZeroQ[-Sqrt[3/2] - 1/Sqrt[2] - Sqrt[2 + Sqrt[3]]]]
+   -> False
+   time 0.s  numeric=n/a  exact=n/a  depth 0->0
+{}
+
+M05 | HoldForm[PossibleZeroQ[(1 + I*Sqrt[2])*(1 + I*Sqrt[3]) - Sqrt[Expand[(1 + I*Sqrt[2])^2*(1 + I*Sqrt[3])^2]]]]
+   -> False
+   time 0.s  numeric=n/a  exact=n/a  depth 0->0
+{}
+
+M06 | HoldForm[PossibleZeroQ[(-(1 + I*Sqrt[2]))*(1 + I*Sqrt[3]) - Sqrt[Expand[(1 + I*Sqrt[2])^2*(1 + I*Sqrt[3])^2]]]]
+   -> True
+   time 0.s  numeric=n/a  exact=n/a  depth 0->0
+=== N. Prime-processing snippet: original vs fixed comparator ===
+{}
+
+   after ratio loop: {2, 2003, 11, 7, 5, 3}
+   selected: {2, 2003, 11, 7, 5, 3}
+   after ratio loop: {2, 2003, 11, 7, 5, 3}
+   selected: {2, 2003, 11, 7, 5, 3}
+N01 | HoldForm[primeProc[facs, #1[[1]] <= #1[[2]] & , 2]]
+   -> {{2, 2003, 11, 7, 5, 3}, {2, 2003, 11, 7, 5, 3}}
+   time 0.s  numeric=n/a  exact=n/a  depth 0->0
+{}
+
+   after ratio loop: {2, 3, 5, 7, 11, 0}
+
+Part::take: Cannot take positions 1 through 6 in {2, 3, 5, 7, 11}.
+   selected: {2, 3, 5, 7, 11}[[Span[1, 6]]]
+   after ratio loop: {2, 3, 5, 7, 11, 0}
+
+Part::take: Cannot take positions 1 through 6 in {2, 3, 5, 7, 11}.
+   selected: {2, 3, 5, 7, 11}[[Span[1, 6]]]
+N02 | HoldForm[primeProc[facs, #1[[1]] <= #2[[1]] & , 2]]
+   -> {{2, 3, 5, 7, 11, 2003}, {2, 3, 5, 7, 11}[[1 ;; 6]]}
+   time 0.s  numeric=n/a  exact=n/a  depth 0->0  MSGS: {Part::take}
+{}
+
+   after ratio loop: {2, 31, 29, 23, 19, 17, 13, 11, 7, 5, 3}
+   selected: {2, 31, 29, 23, 19, 17, 13, 11, 7, 5}
+   after ratio loop: {2, 31, 29, 23, 19, 17, 13, 11, 7, 5, 3}
+   selected: {2, 31, 29, 23, 19, 17, 13, 11, 7, 5}
+N03 | HoldForm[primeProc[{{2, 14}, {3, 2}, {5, 1}, {7, 1}, {11, 1}, {13, 1}, {17, 1}, {19, 1}, {23, 1}, {29, 1}, {31, 1}}, #1[[1]] <= #1[[2]] & , 2]]
+   -> {{2, 31, 29, 23, 19, 17, 13, 11, 7, 5, 3}, {2, 31, 29, 23, 19, 17, 13, 11, 7, 5}}
+   time 0.s  numeric=n/a  exact=n/a  depth 0->0
+{}
+
+   after ratio loop: {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31}
+   selected: {2, 3, 5, 7, 11, 13, 17, 19, 23, 29}
+   after ratio loop: {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31}
+   selected: {2, 3, 5, 7, 11, 13, 17, 19, 23, 29}
+N04 | HoldForm[primeProc[{{2, 14}, {3, 2}, {5, 1}, {7, 1}, {11, 1}, {13, 1}, {17, 1}, {19, 1}, {23, 1}, {29, 1}, {31, 1}}, #1[[1]] <= #2[[1]] & , 2]]
+   -> {{2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31}, {2, 3, 5, 7, 11, 13, 17, 19, 23, 29}}
+   time 0.s  numeric=n/a  exact=n/a  depth 0->0
+{}
+
+N05 | HoldForm[Length[Divisors[(2*3*5*7*11*13*17*19*23*29)^(2 - 1)]]]
+   -> 1024
+   time 0.s  numeric=True  exact=n/a  depth 0->0
+{}
+
+N06 | HoldForm[Length[Divisors[(2*3*5*7*11)^(10 - 1)]]]
+   -> 100000
+   time 0.039s  numeric=True  exact=n/a  depth 0->0
+DONE

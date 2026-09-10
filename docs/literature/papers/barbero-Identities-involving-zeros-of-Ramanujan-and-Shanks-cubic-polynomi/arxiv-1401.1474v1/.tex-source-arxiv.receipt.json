@@ -1,0 +1,39 @@
+{
+  "record_id": "barbero",
+  "title": "Identities involving zeros of Ramanujan and Shanks cubic polynomials",
+  "asset_id": "tex-source-arxiv",
+  "version": "arxiv-1401.1474v1",
+  "kind": "source",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://arxiv.org/src/1401.1474v1",
+    "resolved_url": "https://arxiv.org/src/1401.1474v1",
+    "retrieved_at": "2026-09-05T20:30:22+00:00",
+    "http_status": 200,
+    "content_type": "application/gzip",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36",
+    "content_encoding": "",
+    "bytes": 9526,
+    "sha256": "b086c0890fa8bf23bcbec7d9e35a54e0c47ac97cfb5687c22b34136e6dd097d0",
+    "tls_verification": "SKIPPED by --insecure"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "repository_pdf_and_source_links",
+  "note": "arXiv submission source for the same pinned version v1.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/barbero-Identities-involving-zeros-of-Ramanujan-and-Shanks-cubic-polynomi/arxiv-1401.1474v1/tex-source-arxiv.tex.gz",
+      "role": "original_source_response",
+      "bytes": 9526,
+      "sha256": "b086c0890fa8bf23bcbec7d9e35a54e0c47ac97cfb5687c22b34136e6dd097d0"
+    },
+    {
+      "path": "papers/barbero-Identities-involving-zeros-of-Ramanujan-and-Shanks-cubic-polynomi/arxiv-1401.1474v1/source/main.tex",
+      "role": "tex",
+      "bytes": 31085,
+      "sha256": "ffc4f18671455bfa39b71a6db19545ac3a3f8cfd6e363da16f8f6ed0850a5e27"
+    }
+  ],
+  "prior_candidate_errors": []
+}

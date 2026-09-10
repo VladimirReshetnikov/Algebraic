@@ -1,0 +1,25 @@
+{
+  "id": "shanks",
+  "title": "Incredible identities",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "shanks",
+      "entry_latex": "D. Shanks, ``Incredible identities,'' \\emph{Fibonacci Quarterly} \\textbf{12} (1974), 271, 280. \\status{B}\nA classical source of striking radical identities and a useful starting point for the subsequent corrections and revisitations."
+    },
+    {
+      "report": "report-2",
+      "key": "shanks",
+      "entry_latex": "Daniel Shanks.\n\\emph{Incredible identities}.\nThe Fibonacci Quarterly \\textbf{12}(3), 271, 280, 1974.\n\\doi{10.1080/00150517.1974.12430734}.\n\\sourceurl{https://www.fq.math.ca/12-3.html}.\n\\textbf{M.} A classical source of elaborate-looking examples, including deeper square-root expressions. The two printed parts belong to one item; online digitization in 2024 does not change its date."
+    },
+    {
+      "report": "report-3",
+      "key": "shanks",
+      "entry_latex": "Daniel Shanks. ``Incredible identities.'' \\emph{The Fibonacci Quarterly} \\textbf{12} (1974), 271 and 280. \\status{A}\n\\entrynote{A classical source of striking radical identities. The nonconsecutive page numbers are part of the citation. Read together with Spohn's correction and Bumby's later explanation.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

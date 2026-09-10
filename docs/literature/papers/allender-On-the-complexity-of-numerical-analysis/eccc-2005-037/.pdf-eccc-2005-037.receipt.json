@@ -1,0 +1,33 @@
+{
+  "record_id": "allender",
+  "title": "On the complexity of numerical analysis",
+  "asset_id": "pdf-eccc-2005-037",
+  "version": "eccc-2005-037",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://eccc.weizmann.ac.il/report/2005/037/download/",
+    "resolved_url": "https://eccc.weizmann.ac.il/report/2005/037/download/",
+    "retrieved_at": "2026-09-05T20:30:32+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36",
+    "content_encoding": "",
+    "bytes": 149975,
+    "sha256": "ca2eb3cf22d8df65b98535cbe8f5915dc2d0f756c40e5e34d763301134d3c272",
+    "tls_verification": "SKIPPED by --insecure"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "search_indexed_pdf",
+  "note": "ECCC preprint; separate from the SIAM 2009 typeset version.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/allender-On-the-complexity-of-numerical-analysis/eccc-2005-037/pdf-eccc-2005-037.pdf",
+      "role": "pdf",
+      "bytes": 149975,
+      "sha256": "ca2eb3cf22d8df65b98535cbe8f5915dc2d0f756c40e5e34d763301134d3c272"
+    }
+  ],
+  "prior_candidate_errors": []
+}

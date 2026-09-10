@@ -1,0 +1,24 @@
+{
+  "id": "wolframroot",
+  "title": "RootReduce",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "wolframroot",
+      "entry_latex": "Wolfram Research, \\emph{RootReduce}, Wolfram Language documentation.\n\\access{https://reference.wolfram.com/language/ref/RootReduce.html}{Official reference}. \\status{D}\nCanonical exact algebraic-number reduction. Its output language may be \\texttt{Root}, so it is not in itself a minimum-depth radical-expression interface."
+    },
+    {
+      "report": "report-2",
+      "key": "wolframroot",
+      "entry_latex": "Wolfram Research.\n\\emph{RootReduce}, Wolfram Language documentation.\n\\sourceurl{https://reference.wolfram.com/language/ref/RootReduce.html}.\n\\textbf{D.} Exact algebraic-number normalization; do not equate a canonical \\texttt{Root} with a minimum-depth radical expression."
+    },
+    {
+      "report": "report-3",
+      "key": "wolframroot",
+      "entry_latex": "Wolfram Research. \\texttt{RootReduce}, Wolfram Language documentation. \\url{https://reference.wolfram.com/language/ref/RootReduce.html}. \\status{D}\n\\entrynote{Documents algebraic-number reduction to a root representation. This is a powerful equality and representation tool, but its stated objective is not minimum radical nesting depth.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

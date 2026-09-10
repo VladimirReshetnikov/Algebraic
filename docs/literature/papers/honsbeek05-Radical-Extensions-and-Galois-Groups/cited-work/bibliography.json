@@ -1,0 +1,25 @@
+{
+  "id": "honsbeek05",
+  "title": "Radical Extensions and Galois Groups",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "honsbeek05",
+      "entry_latex": "M. Honsbeek, \\emph{Radical Extensions and Galois Groups}, PhD thesis, Radboud University Nijmegen, 2005.\n\\access{https://www.math.ru.nl/~bosma/students/honsbeek/M_Honsbeek_thesis.pdf}{Full dissertation PDF}. \\status{T}\nField-theoretic treatment of radical extensions, including the depth-two family and its denesting criterion. A substantial companion to the shorter 1999 report."
+    },
+    {
+      "report": "report-2",
+      "key": "honsbeek2005",
+      "entry_latex": "Mascha Honsbeek.\n\\emph{Radical Extensions and Galois Groups}.\nPh.D. thesis, Radboud University Nijmegen, 2005.\n\\sourceurl{https://www.math.ru.nl/~bosma/students/honsbeek/M_Honsbeek_thesis.pdf}.\n\\textbf{FT.} Radical extensions, subfields, Ramanujan's mixed square/cube radicals, counterexamples, roots of unity, and continued-fraction special values. Chapter~3 supplies the quartic criterion and reconstruction used in this report.\n\n\\item[]\\textbf{B. Radical independence, field computation, and reference books}"
+    },
+    {
+      "report": "report-3",
+      "key": "honsbeek",
+      "entry_latex": "Mascha Honsbeek. \\emph{Radical Extensions and Galois Groups}. Ph.D. thesis, Radboud University Nijmegen, 2005. Author-hosted full text: \\url{https://www.math.ru.nl/~bosma/students/honsbeek/M_Honsbeek_thesis.pdf}. \\status{F}\n\\entrynote{A particularly useful extended source on radical extensions, Galois groups, and denesting. Chapter~3 contains the mixed square-root/cube-root family and quartic criterion discussed in this report; later structural material places it in a broader framework. Selected relevant sections were inspected.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

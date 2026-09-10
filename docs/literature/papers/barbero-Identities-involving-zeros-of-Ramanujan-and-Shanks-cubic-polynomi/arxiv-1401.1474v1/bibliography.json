@@ -1,0 +1,24 @@
+{
+  "id": "barbero",
+  "title": "Identities involving zeros of Ramanujan and Shanks cubic polynomials",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "barbero",
+      "entry_latex": "S. Barbero, U. Cerruti, N. Murru, and M. Abrate, ``Identities involving zeros of Ramanujan and Shanks cubic polynomials,'' \\emph{Journal of Integer Sequences} \\textbf{16} (2013), Article 13.8.1.\n\\access{https://cs.uwaterloo.ca/journals/JIS/VOL16/Barbero/barbero11.html}{Journal page and full text}; arXiv:1401.1474. \\status{A}\nConnects the two cubic families, cyclic cubic fields, Gaussian periods, trigonometric root formulas, and resulting identities. The 2014 arXiv posting is not the journal publication year."
+    },
+    {
+      "report": "report-2",
+      "key": "barbero",
+      "entry_latex": "Stefano Barbero, Umberto Cerruti, Nadir Murru, and Marco Abrate.\n\\emph{Identities involving zeros of Ramanujan and Shanks cubic polynomials}.\nJournal of Integer Sequences \\textbf{16}, Article 13.8.1, 2013.\n\\textbf{R.} Polynomial-family identities adjacent to pure-cubic denesting; retained separately from the Berndt and Elia references."
+    },
+    {
+      "report": "report-3",
+      "key": "barbero",
+      "entry_latex": "Stefano Barbero, Umberto Cerruti, Nadir Murru, and Marco Abrate. ``Identities involving zeros of Ramanujan and Shanks cubic polynomials.'' \\emph{Journal of Integer Sequences} \\textbf{16} (2013), article~13.8.1. \\status{A}\n\\entrynote{Studies structured cubic polynomial families underlying radical identities. The bibliographic identity is also corroborated by the references in Antipov--Pimenov.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

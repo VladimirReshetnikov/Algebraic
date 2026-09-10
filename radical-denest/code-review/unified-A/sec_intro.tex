@@ -1,0 +1,80 @@
+\section{Scope, material, and method}
+\label{sec:intro}
+
+\subsection{The object under analysis}
+The file \code{src/original/Strad.wl} (585 physical lines, SHA-256
+\path{693a2825...cccc93}, byte-identical to the copies shipped with the three
+reviews) defines a radical denester for the Wolfram Language. Its entry point
+\code{Strad[expr]} suppresses diagnostics and calls \code{DenestRadicals3}, which
+factors the input, marks every subexpression of the form
+$\text{radicand}^{p/q}$ whose radicand is an explicit algebraic number, groups
+some products of markers, and hands each marked value to the search engine
+\code{denest11}. The engine chooses a root order $q$, forms $\rho=\beta^q$, and
+searches over multipliers $m$ for a lower-degree factor of $X^q-m\rho$ over an
+algebraic coefficient field. Helpers implement a minimal-polynomial based
+denominator rationalizer, nesting-depth annotations, and a custom factorizer.
+Appendix~\ref{app:original} reproduces the file with line numbers; all
+``\src{$n$}'' references point there.
+
+\subsection{The three reviews}
+Three independent reviews were written on the same day, 5~September 2026, and
+are kept under \code{reports/review-1}, \code{review-2} and \code{review-3}. We
+refer to them as \RI, \RII\ and \RIII. Table~\ref{tab:reviewsummary}
+summarizes them. They agree on the architecture, on the most serious defect
+(the principal-root reset), and on the broad repair strategy. They differ in the
+defects they add, in their emphasis, and in a few predictions that the live
+experiments below refine or overturn. Crucially, \emph{none of the three ran
+the program}: each states explicitly that its Wolfram tests were not executed
+and that its proposed replacement component is unexecuted.
+
+\begin{table}[h]\centering\small
+\begin{tabularx}{\textwidth}{@{}l X X X@{}}
+\toprule
+ & \RI & \RII & \RIII\\\midrule
+Length & 38 pages, 14 findings F01--F14 & 34 pages, 16 findings B1--B10, H1--H5, M1 & $\approx$30 pages, 12 findings F1--F12\\
+Executed checks & 45 SymPy/mpmath checks & SymPy/mpmath script & 26 SymPy checks\\
+Wolfram execution & none & none & none\\
+Proposed code & \code{VerifiedMultiplierTrial} (one trial) & \code{CertifiedMultiplierStep} (one trial) & \code{TryDenestCandidate} + cost policy\\
+Regression file & 14 \code{VerificationTest}s & 15 tests (\code{.wlt}) & 20 tests (\code{.wlt}) + runner\\
+Distinctive content & complex-product wrapper example; discriminant/index discussion; ``what should not be misdiagnosed'' & marker \code{f} and variable \code{x} collisions; equal-degree gate counterexample; \code{List @@ Expand} head issue & stale-length slice; quadratic-surd fast path; explicit cost tuple; \code{combine} unit-entry gap\\
+\bottomrule
+\end{tabularx}
+\caption{The three reviews at a glance.}\label{tab:reviewsummary}
+\end{table}
+
+\subsection{What this document adds}
+\begin{enumerate}
+\item A single reconstruction of how the code works, with actual search traces
+      (Section~\ref{sec:code}), and proofs of the statements that justify or
+      refute its steps (Section~\ref{sec:math}).
+\item A finding-by-finding comparison of the three reviews, including the
+      places where a review over- or under-stated a defect
+      (Section~\ref{sec:reviews}).
+\item Executed experiments: 90 hand-chosen probes of the original program, 20
+      helper-level probes, 340 randomized inputs in ten structured families, the
+      reviews' own regression suites, and the same batteries against the
+      corrected version (Section~\ref{sec:experiments}).
+\item A unified, numbered catalogue of 27 defects and shortcomings, each with
+      its status (confirmed, refined, refuted, or theoretical), its source
+      lines, and the reviews that reported it (Section~\ref{sec:findings}).
+\item A corrected implementation, \code{src/corrected/StradFixed.wl}, that
+      keeps the original architecture and search heuristics but makes
+      correctness independent of them (Section~\ref{sec:corrected},
+      Appendix~\ref{app:fixed}).
+\item A prioritized list of future improvements (Section~\ref{sec:future}).
+\end{enumerate}
+
+\subsection{Conventions}
+Throughout, $\beta$ denotes the exact algebraic number handed to the search
+engine (the ``problem''), $q\ge2$ the chosen root order, $\rho=\beta^q$ the
+``radicand'', $m$ a multiplier, and $P_m$ the minimal polynomial over $\Q$ of
+the principal value $(m\rho)^{1/q}$. Rational powers of complex numbers have
+their Wolfram Language meaning: $z^{p/q}=\exp\!\big(\tfrac pq\log z\big)$ with the
+principal logarithm, so $\Arg z^{1/q}\in(-\pi/q,\pi/q]$. The syntactic radical
+depth $\rdepth(E)$ is the maximal number of \code{Power[_, _Rational]} nodes on
+a root-to-leaf path of the expression tree of $E$; it is a property of the
+representation, not of the number.
+
+Experiment identifiers such as A02 or D06 refer to the rows of the tables in
+Section~\ref{sec:experiments}. Every result quoted in the text is copied from
+those mechanically generated tables or from the recorded logs.

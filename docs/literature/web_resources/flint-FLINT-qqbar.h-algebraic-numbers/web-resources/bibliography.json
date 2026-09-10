@@ -1,0 +1,14 @@
+{
+  "id": "flint",
+  "title": "FLINT qqbar.h: algebraic numbers",
+  "citations": [
+    {
+      "report": "report-3",
+      "key": "flint",
+      "entry_latex": "FLINT development team. ``\\texttt{qqbar.h} -- algebraic numbers,'' documentation served as FLINT 3.7.0-dev at inspection. \\url{https://flintlib.org/doc/qqbar.html}. \\status{D}\n\\entrynote{Exact algebraic numbers represented using minimal polynomials and isolating enclosures. The documentation distinguishes heuristically finding an expression in a specified field from rigorous validation of a successful candidate; failed searches do not establish nonmembership.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

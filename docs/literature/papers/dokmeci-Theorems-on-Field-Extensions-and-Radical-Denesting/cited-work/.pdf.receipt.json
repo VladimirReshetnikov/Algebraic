@@ -1,0 +1,33 @@
+{
+  "record_id": "dokmeci",
+  "title": "Theorems on Field Extensions and Radical Denesting",
+  "asset_id": "pdf",
+  "version": "cited-work",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://math.mit.edu/research/highschool/primes/materials/2017/Dokmeci.pdf",
+    "resolved_url": "https://math.mit.edu/research/highschool/primes/materials/2017/Dokmeci.pdf",
+    "retrieved_at": "2026-09-05T20:30:28+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36",
+    "content_encoding": "",
+    "bytes": 304322,
+    "sha256": "cc19bbc5ff2c56c9c0870cda989fa4ad6b82aab918a2627d7dc806e2cbe099bd",
+    "tls_verification": "SKIPPED by --insecure"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "candidate_unverified",
+  "note": "MIT PRIMES URL supplied in reports; bytes not verified.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/dokmeci-Theorems-on-Field-Extensions-and-Radical-Denesting/cited-work/paper.pdf",
+      "role": "pdf",
+      "bytes": 304322,
+      "sha256": "cc19bbc5ff2c56c9c0870cda989fa4ad6b82aab918a2627d7dc806e2cbe099bd"
+    }
+  ],
+  "prior_candidate_errors": []
+}

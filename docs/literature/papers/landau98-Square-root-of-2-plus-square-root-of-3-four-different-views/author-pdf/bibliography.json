@@ -1,0 +1,25 @@
+{
+  "id": "landau98",
+  "title": "Square root of 2 plus square root of 3: four different views",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "landau98",
+      "entry_latex": "S. Landau, ``$\\sqrt2+\\sqrt3$: four different views,'' \\emph{The Mathematical Intelligencer} \\textbf{20} (1998), 55--60. \\doi{10.1007/BF03025229}.\n\\access{https://privacyink.org/pdf/Sqrt2+Sqrt3.pdf}{Author-hosted PDF}. \\status{T}\nA focused exposition of one algebraic number from several perspectives; useful for separating representation, degree, and computation."
+    },
+    {
+      "report": "report-2",
+      "key": "landau1998",
+      "entry_latex": "Susan Landau.\n\\emph{$\\sqrt2+\\sqrt3$: four different views}.\nThe Mathematical Intelligencer, 1998.\n\\doi{10.1007/BF03025229}.\n\\sourceurl{https://privacyink.org/pdf/Sqrt2%2BSqrt3.pdf}.\n\\textbf{FT.} A useful conceptual treatment of algebraic representations, complementing the same number's role as the simplest denesting example.\n\n\\item[]\\textbf{D. Equality testing and numerical-complexity connections}"
+    },
+    {
+      "report": "report-3",
+      "key": "landauviews",
+      "entry_latex": "Susan Landau. ``$\\sqrt{2}+\\sqrt{3}$: four different views.'' \\emph{The Mathematical Intelligencer} \\textbf{20} (1998). \\doi{10.1007/BF03025229}. Author copy: \\url{https://privacyink.org/pdf/Sqrt2%2BSqrt3.pdf}. \\status{A}\n\\entrynote{Explains several representations and interpretations of a simple algebraic number. Useful background for distinguishing a radical formula, a minimal polynomial, and a computational representation.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

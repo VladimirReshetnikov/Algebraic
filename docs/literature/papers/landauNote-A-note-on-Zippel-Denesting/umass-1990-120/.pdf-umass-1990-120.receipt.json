@@ -1,0 +1,33 @@
+{
+  "record_id": "landauNote",
+  "title": "A note on ``Zippel Denesting''",
+  "asset_id": "pdf-umass-1990-120",
+  "version": "umass-1990-120",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://web.cs.umass.edu/publication/docs/1990/UM-CS-1990-120.pdf",
+    "resolved_url": "https://web.cs.umass.edu/publication/docs/1990/UM-CS-1990-120.pdf",
+    "retrieved_at": "2026-09-05T20:29:59+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36",
+    "content_encoding": "",
+    "bytes": 2800458,
+    "sha256": "c03c0e7ddc36dc0f12001e84488a1d89d6300261b83a180b6d1940c317312393",
+    "tls_verification": "SKIPPED by --insecure"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "search_indexed_pdf",
+  "note": "University technical-report version, not a claim of identical journal typesetting.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/landauNote-A-note-on-Zippel-Denesting/umass-1990-120/pdf-umass-1990-120.pdf",
+      "role": "pdf",
+      "bytes": 2800458,
+      "sha256": "c03c0e7ddc36dc0f12001e84488a1d89d6300261b83a180b6d1940c317312393"
+    }
+  ],
+  "prior_candidate_errors": []
+}

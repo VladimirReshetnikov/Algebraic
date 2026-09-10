@@ -1,0 +1,19 @@
+{
+  "id": "fricas",
+  "title": "RadicalSolvePackage",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "fricas",
+      "entry_latex": "FriCAS developers, \\emph{RadicalSolvePackage} API; related Axiom documentation.\n\\access{https://fricas.github.io/api/RadicalSolvePackage.html}{Official FriCAS API}. \\status{D}\nRadical polynomial-solving interfaces. Newer \\texttt{rsimp}/\\texttt{recursiveRootSimplification} claims from the supplied material remain unverified at a precise release/API level."
+    },
+    {
+      "report": "report-3",
+      "key": "fricas",
+      "entry_latex": "FriCAS developer discussion. Radical simplification, \\texttt{recursiveRootSimplification}, and \\texttt{rsimp}. \\url{https://groups.google.com/g/fricas-devel/c/7Kp0vVbPXJE}. \\status{D}\n\\entrynote{A developer-level implementation lead retained from the reports. It supports the existence of relevant routines and discussion, not an independent benchmark or a complete public specification of all supported inputs.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

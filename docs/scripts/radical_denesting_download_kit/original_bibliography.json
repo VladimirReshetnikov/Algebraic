@@ -1,0 +1,2461 @@
+[
+  {
+    "report": "report-1",
+    "key": "besicovitch",
+    "text": "A.~S. Besicovitch, ``On the linear independence of fractional powers of integers,'' \\emph{Journal of the London Mathematical Society} \\textbf{15} (1940), 3--6. \\status{B}\nClassical independence theorem underlying the use of radical monomials as field-basis elements. Retained as foundational background; its hypotheses should be read in the original rather than inferred from the title.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "mordell",
+    "text": "L.~J. Mordell, ``On the linear independence of algebraic numbers,'' \\emph{Pacific Journal of Mathematics} \\textbf{3} (1953), 625--630. \\status{B}\nA further classical source for independence of algebraic radicals. Relevant to exact basis construction, not a stand-alone denesting implementation.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "siegel",
+    "text": "C.~L. Siegel, ``Algebraische Abh\\\"angigkeit von Wurzeln,'' \\emph{Acta Arithmetica} \\textbf{21} (1972), 59--64. \\doi{10.4064/aa-21-1-59-64}. \\status{A}\nAlgebraic dependence of roots; part of the structural foundation used in later denesting algorithms.",
+    "urls": [],
+    "dois": [
+      "10.4064/aa-21-1-59-64"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "kneser",
+    "text": "M. Kneser, ``Lineare Abh\\\"angigkeit von Wurzeln,'' \\emph{Acta Arithmetica} \\textbf{26}(3) (1975), 307--308. \\doi{10.4064/aa-26-3-307-308}. \\status{A}\nA short, important source on linear dependence and radical extensions. The issue year is recorded here as 1975.",
+    "urls": [],
+    "dois": [
+      "10.4064/aa-26-3-307-308"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "fateman72",
+    "text": "R.~J. Fateman, \\emph{Essays in Algebraic Simplification}, PhD thesis, Massachusetts Institute of Technology, 1972. \\status{B}\nHistorical background for algebraic simplification and the MACSYMA tradition. Distinguished from the later joint SYMSAC paper.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "caviness76",
+    "text": "B.~F. Caviness and R.~J. Fateman, ``Simplification of radical expressions,'' in \\emph{Proceedings of the 1976 ACM Symposium on Symbolic and Algebraic Computation}, 329--338.\n\\access{https://people.eecs.berkeley.edu/~fateman/papers/radcan.pdf}{Author-hosted paper}. \\status{T}\nFoundational RADCAN-style normalization and exact treatment of radical expressions. Essential for understanding why canonicalization in a field basis and minimum-depth denesting are different tasks.",
+    "urls": [
+      "https://people.eecs.berkeley.edu/~fateman/papers/radcan.pdf"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "zippel77",
+    "text": "R. Zippel, \\emph{Simplification of Radicals with Applications to Solving Polynomial Equations}, master's thesis, Massachusetts Institute of Technology, 1977; related contribution, ``Radical simplification made easy,'' \\emph{MACSYMA Users' Conference}, 1977. \\status{B}\nEarly work preceding the 1985 journal article. These related historical records are grouped, without assuming that their texts are identical.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "lll",
+    "text": "A.~K. Lenstra, H.~W. Lenstra, Jr., and L. Lov\\'asz, ``Factoring polynomials with rational coefficients,'' \\emph{Mathematische Annalen} \\textbf{261} (1982), 515--534. \\doi{10.1007/BF01457454}. \\status{T}\nThe polynomial-time rational polynomial-factorization result used to correct the alleged equivalence between the restricted cubic denesting test and integer factorization.",
+    "urls": [],
+    "dois": [
+      "10.1007/BF01457454"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "bfht",
+    "text": "A. Borodin, R. Fagin, J.~E. Hopcroft, and M. Tompa, ``Decreasing the nesting depth of expressions involving square roots,'' \\emph{Journal of Symbolic Computation} \\textbf{1}(2) (1985), 169--188. \\doi{10.1016/S0747-7171(85)80013-4}.\n\\access{https://www.cs.toronto.edu/~bor/Papers/decreasing-nesting-depth-for-expressions.pdf}{Author-hosted PDF}. \\status{T}\nPrincipal reference for square-root denesting, the role of fourth roots, real-field restrictions, and tower-based algorithms. Read the precise input shape and representation assumptions with each complexity statement.",
+    "urls": [
+      "https://www.cs.toronto.edu/~bor/Papers/decreasing-nesting-depth-for-expressions.pdf"
+    ],
+    "dois": [
+      "10.1016/S0747-7171(85)80013-4"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "zippel85",
+    "text": "R. Zippel, ``Simplification of expressions involving radicals,'' \\emph{Journal of Symbolic Computation} \\textbf{1}(2) (1985), 189--210. \\doi{10.1016/S0747-7171(85)80014-6}. \\status{A}\nStructural treatment of radical expressions and algebraic dependence. Read together with Landau's correction, not as an unqualified universal criterion detached from its field hypotheses.",
+    "urls": [],
+    "dois": [
+      "10.1016/S0747-7171(85)80014-6"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "landauMiller",
+    "text": "S. Landau and G.~L. Miller, ``Solvability by radicals is in polynomial time,'' \\emph{Journal of Computer and System Sciences} \\textbf{30}(2) (1985), 179--208. \\status{A}\nAlgorithmic Galois-theory infrastructure. Deciding radical solvability of a polynomial is not identical to constructing a shortest or shallowest formula for an already given radical expression.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "landau92",
+    "text": "S. Landau, ``Simplification of nested radicals,'' \\emph{SIAM Journal on Computing} \\textbf{21}(1) (1992), 85--110. \\doi{10.1137/0221009}. Conference version: \\emph{FOCS 1989}, 314--319, \\doi{10.1109/SFCS.1989.63496}. \\status{A}\nThe central general denesting paper. The journal abstract specifies the roots-of-unity hypothesis, the near-optimal statement when it is absent, the splitting-field requirement, and exponential general running time. Related versions are grouped here.",
+    "urls": [],
+    "dois": [
+      "10.1137/0221009",
+      "10.1109/SFCS.1989.63496"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "landauNote",
+    "text": "S. Landau, ``A note on `Zippel denesting','' \\emph{Journal of Symbolic Computation} \\textbf{13}(1) (1992), 41--45. \\doi{10.1016/0747-7171(92)90004-N}.\n\\access{https://web.cs.umass.edu/publication/docs/1990/UM-CS-1990-120.pdf}{UMass technical-report version}. \\status{T}\nRepairs the gap in the earlier argument and establishes necessity of the relevant Zippel condition. Page range corrected from a discrepancy in the supplied reports.",
+    "urls": [
+      "https://web.cs.umass.edu/publication/docs/1990/UM-CS-1990-120.pdf"
+    ],
+    "dois": [
+      "10.1016/0747-7171(92)90004-N"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "horng90",
+    "text": "G. Horng and M.-D.~A. Huang, ``Simplifying nested radicals and solving polynomials by radicals in minimum depth,'' \\emph{FOCS 1990}, beginning at p.~847.\n\\access{https://ieeexplore.ieee.org/document/89607/}{IEEE record, document 89607}. \\status{A}\nAlso cited under the longer title ``On simplifying nested radicals and solving polynomials by pure nested radicals of minimum depth.'' Secondary and author bibliographies disagree between terminal pages 854 and 856; the identifier is more reliable than silently selecting one. Foundational minimum-depth work.",
+    "urls": [
+      "https://ieeexplore.ieee.org/document/89607/"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "horngThesis",
+    "text": "G. Horng, \\emph{Simplifying Nested Radicals and Solving Polynomials by Nested Radicals in Minimum Depth}, PhD thesis, University of Southern California, 1990. \\doi{10.5555/142931}. \\status{A}\nLonger thesis treatment associated with the Horng--Huang program. Useful for definitions of pure root extensions and the relationship with Galois-group structure.",
+    "urls": [],
+    "dois": [
+      "10.5555/142931"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "bloemer91",
+    "text": "J. Bl\\\"omer, ``Computing sums of radicals in polynomial time,'' \\emph{FOCS 1991}, 670--677. \\doi{10.1109/SFCS.1991.185434}. \\status{A}\nExact computation and equality of explicitly represented sums of radicals. Kept distinct from the author's denesting and probabilistic zero-testing papers.",
+    "urls": [],
+    "dois": [
+      "10.1109/SFCS.1991.185434"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "bloemer92",
+    "text": "J. Bl\\\"omer, ``How to denest Ramanujan's nested radicals,'' \\emph{FOCS 1992}, 447--456. \\doi{10.1109/SFCS.1992.267807}. \\status{A}\nA key depth-two result avoiding unnecessary construction of full minimal-polynomial and splitting-field data. Relates structure and size bounds to denesting by real or bounded-degree radicals.",
+    "urls": [],
+    "dois": [
+      "10.1109/SFCS.1992.267807"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "bloemer93",
+    "text": "J. Bl\\\"omer, \\emph{Simplifying Expressions Involving Radicals}, PhD thesis, Freie Universit\\\"at Berlin, 1993.\n\\access{https://cs.nyu.edu/exact/pap/rootBounds/sumOfSqrts/bloemerThesis.pdf}{Full dissertation PDF}. \\status{T}\nThe most extensive single technical source in the consolidated core bibliography: independence, radical representations, denesting, and arithmetic/bit-size complexity. The thesis is not a second independent discovery of every theorem already published in the conference papers.",
+    "urls": [
+      "https://cs.nyu.edu/exact/pap/rootBounds/sumOfSqrts/bloemerThesis.pdf"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "bloemer00",
+    "text": "J. Bl\\\"omer, ``Denesting by bounded degree radicals,'' \\emph{Algorithmica} \\textbf{28} (2000), 2--15. \\doi{10.1007/s004530010028}. Conference version: \\emph{ESA 1997}, LNCS \\textbf{1284}, 53--63, \\doi{10.1007/3-540-63397-9_5}. \\status{A}\nBounded allowed indices and optimal or near-optimal depth. The polynomial running-time parameter is the splitting-field description size, not automatically the original radical-expression length.",
+    "urls": [],
+    "dois": [
+      "10.1007/s004530010028",
+      "10.1007/3-540-63397-9_5"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "bloemer98",
+    "text": "J. Bl\\\"omer, ``A probabilistic zero-test for expressions involving roots of rational numbers,'' \\emph{ESA 1998}, LNCS \\textbf{1461}, 151--162. \\status{A}\nRandomized exact-algebraic testing with a specified radical input representation. A separate contribution from the 1991 sums-of-radicals paper.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "horng99",
+    "text": "G. Horng and M.-D.~A. Huang, ``Solving polynomials by radicals with roots of unity in minimum depth,'' \\emph{Mathematics of Computation} \\textbf{68}(226) (1999), 881--885. \\doi{10.1090/S0025-5718-99-01060-1}. \\status{T}\nA concise source for minimum-depth polynomial solving with roots of unity included explicitly in the model. Corrected terminal page: 885.",
+    "urls": [],
+    "dois": [
+      "10.1090/S0025-5718-99-01060-1"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "cotner",
+    "text": "C.~F. Cotner, \\emph{The Nesting Depths of Radical Expression}, PhD thesis, University of California, Berkeley, 1995.\n\\access{https://math.berkeley.edu/publications/nesting-depths-radical-expression}{Departmental dissertation record}. \\status{A}\nThe singular ``Expression'' follows the institutional record. H.~W. Lenstra, Jr.\\ is the advisor, not a second dissertation author. Included as a verified thesis lead; detailed results were not audited.",
+    "urls": [
+      "https://math.berkeley.edu/publications/nesting-depths-radical-expression"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "landau94",
+    "text": "S. Landau, ``How to tangle with a nested radical,'' \\emph{The Mathematical Intelligencer} \\textbf{16}(2) (1994), 49--55. \\doi{10.1007/BF03024284}. \\status{T}\nThe most useful short orientation to the mathematical and algorithmic landscape before the general technical papers.",
+    "urls": [],
+    "dois": [
+      "10.1007/BF03024284"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "landau98",
+    "text": "S. Landau, ``$\\sqrt2+\\sqrt3$: four different views,'' \\emph{The Mathematical Intelligencer} \\textbf{20} (1998), 55--60. \\doi{10.1007/BF03025229}.\n\\access{https://privacyink.org/pdf/Sqrt2+Sqrt3.pdf}{Author-hosted PDF}. \\status{T}\nA focused exposition of one algebraic number from several perspectives; useful for separating representation, degree, and computation.",
+    "urls": [
+      "https://privacyink.org/pdf/Sqrt2+Sqrt3.pdf"
+    ],
+    "dois": [
+      "10.1007/BF03025229"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "jeffrey",
+    "text": "D.~J. Jeffrey and A.~D. Rich, ``Simplifying square roots of square roots by denesting,'' in M.~J. Wester (ed.), \\emph{Computer Algebra Systems: A Practical Guide}, Wiley, 1999, 61--72. ISBN 0-471-98353-5.\n\\access{https://cybertester.com/data/denest.pdf}{Paper PDF}; \\access{https://math.unm.edu/~wester/cas/book/contents.html}{editor's book contents}. \\status{T}\nRecursive practical denesting and complexity control. One of the two references explicitly cited by SymPy's square-root denester.",
+    "urls": [
+      "https://cybertester.com/data/denest.pdf",
+      "https://math.unm.edu/~wester/cas/book/contents.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "lenstra06",
+    "text": "H.~W. Lenstra, Jr., \\emph{Entangled Radicals}, AMS Colloquium Lectures, 2006.\n\\access{https://www.math.leidenuniv.nl/~hwl/papers/rad.pdf}{Lecture notes}. \\status{B}\nBackground on interactions among radical extensions and cyclotomic structure. A structural companion, not a documented production denester.",
+    "urls": [
+      "https://www.math.leidenuniv.nl/~hwl/papers/rad.pdf"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "perucca",
+    "text": "A. Perucca, ``Linear relations among radicals,'' arXiv:2511.02498, 2025.\n\\access{https://arxiv.org/abs/2511.02498}{arXiv record}. \\status{A}\nA recent addition concerning the relation between radical-group indices and field-extension degrees, and the role of roots of unity in linear dependence. Relevant to basis construction.\n\n\\bibgroup{II. Ramanujan, special families, and higher indices}",
+    "urls": [
+      "https://arxiv.org/abs/2511.02498"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "ramanujan",
+    "text": "S. Ramanujan, \\emph{Collected Papers of Srinivasa Ramanujan}, G.~H. Hardy, P.~V. Seshu Aiyar, and B.~M. Wilson (eds.), Cambridge University Press, 1927. \\status{B}\nPrimary historical collection. Individual finite identities and infinite-radical questions should be distinguished when following later references back to their origin.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "berndtIV",
+    "text": "B.~C. Berndt, \\emph{Ramanujan's Notebooks, Part IV}, Springer, 1994. \\status{B}\nPrincipal book-length source for many algebraic and radical identities, with proofs and historical context supplied by the editor.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "berndtV",
+    "text": "B.~C. Berndt, \\emph{Ramanujan's Notebooks, Part V}, Springer, 1998. \\status{B}\nCompanion volume for the broader notebook context, units, and related identities. Not a general-purpose CAS algorithm reference.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "berndt97",
+    "text": "B.~C. Berndt, H.~H. Chan, and L.-C. Zhang, ``Ramanujan's association with radicals in India,'' \\emph{American Mathematical Monthly} \\textbf{104}(10) (1997), 905--911. \\doi{10.1080/00029890.1997.11990738}.\n\\access{https://faculty.math.illinois.edu/~berndt/publications.html}{Author's publication directory}. \\status{A}\nHistorical and mathematical context for Ramanujan's radical identities; a good entry point before the classification literature.",
+    "urls": [
+      "https://faculty.math.illinois.edu/~berndt/publications.html"
+    ],
+    "dois": [
+      "10.1080/00029890.1997.11990738"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "berndt98",
+    "text": "B.~C. Berndt, H.~H. Chan, and L.-C. Zhang, ``Radicals and units in Ramanujan's work,'' \\emph{Acta Arithmetica} \\textbf{87}(2) (1998), 145--158.\n\\access{https://eudml.org/doc/207210}{EuDML record and access}. \\status{A}\nExplains the number-theoretic role of units in the identities. Distinct from the preceding historical article.",
+    "urls": [
+      "https://eudml.org/doc/207210"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "shanks",
+    "text": "D. Shanks, ``Incredible identities,'' \\emph{Fibonacci Quarterly} \\textbf{12} (1974), 271, 280. \\status{B}\nA classical source of striking radical identities and a useful starting point for the subsequent corrections and revisitations.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "spohn",
+    "text": "W.~G. Spohn, Jr., ``Letter to the Editor,'' \\emph{Fibonacci Quarterly} \\textbf{14} (1976), 12. \\status{B}\nA corrective historical companion to the incredible-identities discussion; retained to avoid presenting that literature without its follow-up.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "bumby",
+    "text": "R.~T. Bumby, ``Incredible identities revisited,'' \\emph{Fibonacci Quarterly} \\textbf{25}(1) (1987), 62--64. \\doi{10.1080/00150517.1987.12429728}.\n\\access{https://www.fq.math.ca/25-1.html}{Original volume index}. \\status{A}\nThe issue year is 1987. A 2024 digitization/publication timestamp should not be mistaken for a recent theorem.",
+    "urls": [
+      "https://www.fq.math.ca/25-1.html"
+    ],
+    "dois": [
+      "10.1080/00150517.1987.12429728"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "honsbeek99",
+    "text": "M. Honsbeek, \\emph{Denesting Certain Nested Radicals of Depth Two}, Report 9916, University of Nijmegen, 1999.\n\\access{https://repository.ubn.ru.nl/handle/2066/18722}{Institutional repository record}. \\status{A}\nThe early report on the square root of a sum of cube roots. The repository identifier must not be relabelled as the later dissertation.",
+    "urls": [
+      "https://repository.ubn.ru.nl/handle/2066/18722"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "honsbeek05",
+    "text": "M. Honsbeek, \\emph{Radical Extensions and Galois Groups}, PhD thesis, Radboud University Nijmegen, 2005.\n\\access{https://www.math.ru.nl/~bosma/students/honsbeek/M_Honsbeek_thesis.pdf}{Full dissertation PDF}. \\status{T}\nField-theoretic treatment of radical extensions, including the depth-two family and its denesting criterion. A substantial companion to the shorter 1999 report.",
+    "urls": [
+      "https://www.math.ru.nl/~bosma/students/honsbeek/M_Honsbeek_thesis.pdf"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "sury",
+    "text": "B. Sury, \\emph{Ramanujan's Route to Roots of Roots}, lecture notes, Indian Statistical Institute, Bangalore, for a talk at IIT Madras.\n\\access{https://www.isibang.ac.in/~sury/ramanujanday.pdf}{Institutional PDF}. \\status{T}\nAccessible treatment of the Galois-theoretic criterion, rational quartic test, and explicit formulas. The sign of $\\beta$ in one printed example needs care; this report uses $(28,-27)$.",
+    "urls": [
+      "https://www.isibang.ac.in/~sury/ramanujanday.pdf"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "osler",
+    "text": "T.~J. Osler, ``Cardan polynomials and the reduction of radicals,'' \\emph{Mathematics Magazine} \\textbf{74}(1) (2001), 26--32. \\status{A}\nTrace-type recurrence identities that explain some reductions of higher roots. Useful algebraic background for the Cardan route visible in practical denesters.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "witula",
+    "text": "R. Witu\\l a and D. S\\l ota, ``Cardano's formula, square roots, Chebyshev polynomials and radicals,'' \\emph{Journal of Mathematical Analysis and Applications} \\textbf{363} (2010), 639--647. \\status{B}\nConnects cubic formulas, Chebyshev-type identities, and radical expressions. Included as a related algebraic construction source, not a universal denesting theorem.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "shevelev",
+    "text": "V. Shevelev, ``On Ramanujan cubic polynomials,'' arXiv:0711.3420, 2007.\n\\access{https://arxiv.org/abs/0711.3420}{arXiv record}. \\status{A}\nRamanujan cubic polynomials and associated radical identities. Useful before the cyclic-cubic and Shanks-polynomial connection in the next entry.",
+    "urls": [
+      "https://arxiv.org/abs/0711.3420"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "barbero",
+    "text": "S. Barbero, U. Cerruti, N. Murru, and M. Abrate, ``Identities involving zeros of Ramanujan and Shanks cubic polynomials,'' \\emph{Journal of Integer Sequences} \\textbf{16} (2013), Article 13.8.1.\n\\access{https://cs.uwaterloo.ca/journals/JIS/VOL16/Barbero/barbero11.html}{Journal page and full text}; arXiv:1401.1474. \\status{A}\nConnects the two cubic families, cyclic cubic fields, Gaussian periods, trigonometric root formulas, and resulting identities. The 2014 arXiv posting is not the journal publication year.",
+    "urls": [
+      "https://cs.uwaterloo.ca/journals/JIS/VOL16/Barbero/barbero11.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "krepkii",
+    "text": "I.~A. Krepkii and K.~I. Pimenov, ``Cube root Ramanujan formulas and elementary Galois theory,'' \\emph{Vestnik St. Petersburg University: Mathematics} \\textbf{48} (2015), 214--223. \\doi{10.3103/S106345411504007X}. \\status{A}\nNormal closures of pure cubic extensions over cyclic cubic fields, Hilbert's Theorem~90, and a prime-degree extension of the method. Online publication was in March 2016; the issue year is 2015.",
+    "urls": [],
+    "dois": [
+      "10.3103/S106345411504007X"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "antipov",
+    "text": "M.~A. Antipov and K.~I. Pimenov, ``Ramanujan denesting formulas for cubic radicals,'' \\emph{Vestnik St. Petersburg University: Mathematics} \\textbf{53}(2) (2020), 115--121. \\doi{10.1134/S1063454120020028}. \\status{A}\nA classification in a specified pure-cubic setting, including a three-summand bound and a norm condition. Its qualified uniqueness statement should not be generalized beyond that setting.",
+    "urls": [],
+    "dois": [
+      "10.1134/S1063454120020028"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "dokmeci",
+    "text": "K. Dokmeci, \\emph{Theorems on Field Extensions and Radical Denesting}, MIT PRIMES report, 2017.\n\\access{https://math.mit.edu/research/highschool/primes/materials/2017/Dokmeci.pdf}{Institutional PDF}. \\status{B}\nStudent research on field extensions and real radical denesting, useful for alternative elementary routes. Author's given name: Kaan. Included with its actual publication status.",
+    "urls": [
+      "https://math.mit.edu/research/highschool/primes/materials/2017/Dokmeci.pdf"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "gkioulekas",
+    "text": "E. Gkioulekas, ``On the denesting of nested square roots,'' \\emph{International Journal of Mathematical Education in Science and Technology} \\textbf{48}(6) (2017), 942--953. \\doi{10.1080/0020739X.2017.1290831}.\n\\access{https://faculty.utrgv.edu/eleftherios.gkioulekas/papers/024-denesting-square-roots.pdf}{Author-hosted PDF}; \\access{https://scholarworks.utrgv.edu/mss_fac/243/}{institutional record}. \\status{T}\nA clear elementary presentation of direct and indirect square-root denesting, useful alongside BFHT.",
+    "urls": [
+      "https://faculty.utrgv.edu/eleftherios.gkioulekas/papers/024-denesting-square-roots.pdf",
+      "https://scholarworks.utrgv.edu/mss_fac/243/"
+    ],
+    "dois": [
+      "10.1080/0020739X.2017.1290831"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "campbell",
+    "text": "G.~B. Campbell and A. Zujev, ``Variations on Ramanujan's nested radicals,'' arXiv:1511.06865, 2015.\n\\access{https://arxiv.org/html/1511.06865v1}{Full HTML text}. \\status{T}\nFinite nested-radical identities, including cubic and quartic constructions. Not classified here as primarily an infinite-radical convergence paper.",
+    "urls": [
+      "https://arxiv.org/html/1511.06865v1"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "girstmair",
+    "text": "K. Girstmair, ``Reducing radicals in the spirit of Euclid,'' \\emph{Journal of Symbolic Computation} \\textbf{104} (2021), 356--365. \\doi{10.1016/j.jsc.2020.07.019}; arXiv:2004.06039.\n\\access{https://arxiv.org/abs/2004.06039}{Preprint record}. \\status{T}\nOdd-index radical constructions viewed as algebraic-degree reduction. The 2020 preprint and 2021 journal paper are grouped; degree reduction is not automatically radical-depth reduction.",
+    "urls": [
+      "https://arxiv.org/abs/2004.06039"
+    ],
+    "dois": [
+      "10.1016/j.jsc.2020.07.019"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "osipov21",
+    "text": "N.~N. Osipov and A.~A. Kytmanov, ``Simplification of nested real radicals revisited,'' in \\emph{Computer Algebra in Scientific Computing, CASC 2021}, LNCS \\textbf{12865}, 293--313. \\doi{10.1007/978-3-030-85165-1_17}. \\status{A}\nA detailed theory and algorithm for specified triply nested real radicals over $\\Q$, with nonsimplifiable examples. Scope here is based on the publisher's abstract, not an invented unrestricted theorem.",
+    "urls": [],
+    "dois": [
+      "10.1007/978-3-030-85165-1_17"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "cavallo",
+    "text": "A. Cavallo, ``Denesting cubic radicals,'' arXiv:2403.04776, version 2, 28 September 2024.\n\\access{https://arxiv.org/html/2403.04776v2}{Full HTML text}; \\access{https://sites.google.com/view/albertocavallomath/misc}{author's program page, as linked by the paper}. \\status{T}\nThe quadratic-field cubic criterion is useful and is proved in rescaled form in Theorem~\\ref{thm:cubic}. The preprint's integer-factorization inference is not accepted; the linked program's contents were not independently tested.",
+    "urls": [
+      "https://arxiv.org/html/2403.04776v2",
+      "https://sites.google.com/view/albertocavallomath/misc"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "tonien",
+    "text": "J. Tonien, ``Nested fifth root radical identities from elliptic curves,'' \\emph{Journal of Computational Algebra} \\textbf{13--14} (2025), Article 100032. \\doi{10.1016/j.jaca.2025.100032}.\n\\access{https://www.sciencedirect.com/science/article/pii/S2772827725000038}{Publisher record}. \\status{A}\nElliptic-curve constructions of fifth-root identities, with SageMath computational material described in the publication record. A higher-index family source, not a general denester.",
+    "urls": [
+      "https://www.sciencedirect.com/science/article/pii/S2772827725000038"
+    ],
+    "dois": [
+      "10.1016/j.jaca.2025.100032"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "osipov26",
+    "text": "N.~N. Osipov, ``On Ramanujan's identities with nested cubic radicals,'' \\emph{Programmirovanie} (Russian edition), 2026, no.~2, 71--77. \\doi{10.7868/S3034584726020081}.\n\\access{https://journals.rcsi.science/0132-3474/article/view/446083}{Publisher page with English title and abstract}. \\status{A}\nA 2026 addition on specified cubic identity families and dependence on the base field. Full text required authentication; the damaged formulas in the accessible abstract are not reconstructed into unsupported theorem statements.\n\n\\bibgroup{III. Identity testing and exact-computation complexity}",
+    "urls": [
+      "https://journals.rcsi.science/0132-3474/article/view/446083"
+    ],
+    "dois": [
+      "10.7868/S3034584726020081"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "rit",
+    "text": "N. Balaji, K. Nosan, M. Shirmohammadi, and J. Worrell, ``Identity testing for radical expressions,'' \\emph{LICS 2022}, Article 8, 1--11. \\doi{10.1145/3531130.3533331}; arXiv:2202.07961, version 4, 16 October 2024.\n\\access{https://arxiv.org/abs/2202.07961}{Revised preprint record}. \\status{A}\nRIT for polynomial circuits evaluated at real radical constants; coNP under GRH, with stronger statements for the prime-square-root restriction. The circuit model and conditional hypotheses are essential.",
+    "urls": [
+      "https://arxiv.org/abs/2202.07961"
+    ],
+    "dois": [
+      "10.1145/3531130.3533331"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "gaillard",
+    "text": "L. Gaillard and G. Jindal, ``On the order of power series and the sum of square roots problem,'' \\emph{ISSAC 2023}. \\doi{10.1145/3597066.3597079}; arXiv:2304.13605.\n\\access{https://arxiv.org/abs/2304.13605}{Preprint and abstract}. \\status{A}\nWronskian/order methods and a succinct-input generalization of the equality problem. Not a general solution of square-root-sum sign comparison.",
+    "urls": [
+      "https://arxiv.org/abs/2304.13605"
+    ],
+    "dois": [
+      "10.1145/3597066.3597079"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "allender",
+    "text": "E. Allender, P. B\\\"urgisser, J. Kjeldgaard-Pedersen, and P.~B. Miltersen, ``On the complexity of numerical analysis,'' \\emph{SIAM Journal on Computing} \\textbf{38}(5) (2009), 1987--2006. \\status{A}\nFoundational complexity background for exact numerical decisions, including square-root-sum problems. Included without an unsupported assertion that every bound remains the best known as of the source-check date.\n\n\\bibgroup{IV. Books and broader mathematical background}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "zippelbook",
+    "text": "R. Zippel, \\emph{Effective Polynomial Computation}, Kluwer Academic Publishers, 1993. \\status{B}\nPolynomial and symbolic-computation background from a principal contributor to radical simplification. Useful for the structural and representation issues surrounding the papers.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "geddes",
+    "text": "K.~O. Geddes, S.~R. Czapor, and G. Labahn, \\emph{Algorithms for Computer Algebra}, Kluwer Academic Publishers, 1992. \\status{B}\nCore algorithms for exact symbolic computation, including algebraic extensions and polynomial arithmetic needed by denesters.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "gathen",
+    "text": "J. von zur Gathen and J. Gerhard, \\emph{Modern Computer Algebra}, 3rd ed., Cambridge University Press, 2013. \\status{B}\nAlgorithmic infrastructure and complexity analysis. Not cited as containing a complete modern survey of minimum-depth denesting.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "davenport",
+    "text": "J.~H. Davenport, Y. Siret, and \\'E. Tournier, \\emph{Computer Algebra}, Academic Press, 1988. \\status{B}\nGeneral CAS and algebraic-simplification background; English edition of the work originally published in French.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "cohen",
+    "text": "H. Cohen, \\emph{A Course in Computational Algebraic Number Theory}, Graduate Texts in Mathematics \\textbf{138}, Springer, 1993. \\status{B}\nNumber-field arithmetic, factorization, and representations supporting rigorous algebraic implementations.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "cox",
+    "text": "D.~A. Cox, \\emph{Galois Theory}, 2nd ed., Wiley, 2012. \\status{B}\nBackground on radical extensions, solvable groups, roots of unity, and the distinction between a polynomial and its splitting field.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "newman",
+    "text": "S.~C. Newman, \\emph{A Classical Introduction to Galois Theory}, Wiley, 2012. ISBN 978-1-118-33681-6. \\status{B}\nAn additional route into the field-theoretic language used throughout the denesting literature.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "euclid",
+    "text": "Euclid, \\emph{Elements}, Book X. \\status{B}\nHistorical background on irrational magnitudes and quadratic constructions. Modern generalizations and degree-reduction results should be attributed separately to their modern authors.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "piagm",
+    "text": "J.~M. Borwein and P.~B. Borwein, \\emph{Pi and the AGM: A Study in Analytic Number Theory and Computational Complexity}, Wiley, 1987. \\status{B}\nAdjacent background on algebraic transformations, infinite products, and analytic computation. Not a finite-denesting algorithm source.\n\n\\bibgroup{V. Infinite radicals and related implicit equations}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "herschfeld",
+    "text": "A. Herschfeld, ``On infinite radicals,'' \\emph{American Mathematical Monthly} \\textbf{42} (1935), 419--429. \\status{A}\nClassical convergence criterion for nonnegative nested square roots. The bounded sequence is $a_n^{2^{-n}}$, not necessarily $a_n$ itself.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "borwein",
+    "text": "J.~M. Borwein and G. de Barra, ``Nested radicals,'' \\emph{American Mathematical Monthly} \\textbf{98} (1991), 735--739. \\status{A}\nA later analytic discussion of nested radicals and convergence, retained separately from finite algebraic denesting.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "elia",
+    "text": "M. Elia, ``Observations on some algebraic equations associated with Ramanujan's work,'' in \\emph{Number Theory and Discrete Mathematics}, Birkh\\\"auser, 2002, 101--111. \\doi{10.1007/978-3-0348-8223-1_11}. \\status{A}\nImplicit algebraic equations produced by iterated radical patterns. The correct author is Michele Elia; the attribution to Berndt and Andrews in a supplied report is incorrect.",
+    "urls": [],
+    "dois": [
+      "10.1007/978-3-0348-8223-1_11"
+    ]
+  },
+  {
+    "report": "report-1",
+    "key": "mitra",
+    "text": "N. Mitra, ``Generalization of Ramanujan's famous nested radicals to the $n$th root and their evaluation,'' arXiv:2404.04051, 2024.\n\\access{https://arxiv.org/abs/2404.04051}{Preprint record}. \\status{A}\nGeneralizations of the famous infinite-radical evaluations. Included as a related analytic subject, not as a decision algorithm for finite denesting.",
+    "urls": [
+      "https://arxiv.org/abs/2404.04051"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "rahal",
+    "text": "S. Rahal, \\emph{Introduction to Nested Radicals}, bachelor's thesis, Stockholm University, 2017, report 2017:17.\n\\access{https://kurser.math.su.se/pluginfile.php/16103/mod_folder/content/0/2017/2017_examensarbeten_matematik.pdf?forcedownload=1}{Institutional 2017 thesis register}. \\status{A}\nIntroductory thesis lead on nested radicals. Institutional metadata checked; detailed results are not used as the basis of a new theorem claim.",
+    "urls": [
+      "https://kurser.math.su.se/pluginfile.php/16103/mod_folder/content/0/2017/2017_examensarbeten_matematik.pdf?forcedownload=1"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "infiniteblogs",
+    "text": "Ancillary infinite-radical exposition: ``Ramanujan's nested radical problem,'' \\emph{Cantor's Paradise},\n\\access{https://www.cantorsparadise.com/ramanujans-nested-radical-problem-f14c3060e495}{article}; A.~G. Smith, ``Calculus of infinite nested radicals,''\n\\access{https://medium.com/@ArchieGSmith/calculus-of-infinite-nested-radicals-1ab3e1d26774}{Medium article}; and\n\\access{https://math.stackexchange.com/questions/4049946/the-infinitely-nested-radicals-problem-and-ramanujans-wondrous-formula}{Math StackExchange discussion 4049946}. \\status{B}\nInformal leads retained from the supplied material. They are not used to support the finite-denesting criteria or complexity claims.\n\n\\bibgroup{VI. Official software documentation, source, and development discussions}",
+    "urls": [
+      "https://www.cantorsparadise.com/ramanujans-nested-radical-problem-f14c3060e495",
+      "https://medium.com/@ArchieGSmith/calculus-of-infinite-nested-radicals-1ab3e1d26774",
+      "https://math.stackexchange.com/questions/4049946/the-infinitely-nested-radicals-problem-and-ramanujans-wondrous-formula"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "sympydocs",
+    "text": "SymPy developers, \\emph{Simplify documentation}, entries for \\texttt{sqrtdenest}, \\texttt{nthroot}, \\texttt{radsimp}, and \\texttt{powdenest}.\n\\access{https://docs.sympy.org/latest/modules/simplify/simplify.html}{Official documentation}. \\status{D}\nPublic contracts and examples. The real $n$th-root routine is a significant addition to the coverage in the supplied reports. The local verification run used version 1.14.0.",
+    "urls": [
+      "https://docs.sympy.org/latest/modules/simplify/simplify.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "sympysrc",
+    "text": "SymPy developers, \\texttt{sympy/simplify/sqrtdenest.py}, version 1.14.0, and the associated test suite.\n\\access{https://github.com/sympy/sympy/blob/1.14.0/sympy/simplify/sqrtdenest.py}{Versioned source};\n\\access{https://github.com/sympy/sympy/blob/1.14.0/sympy/simplify/tests/test_sqrtdenest.py}{versioned tests}. \\status{D}\nImplementation-level reading beside BFHT and Jeffrey--Rich. Private helper names are navigation aids and may change between releases.",
+    "urls": [
+      "https://github.com/sympy/sympy/blob/1.14.0/sympy/simplify/sqrtdenest.py",
+      "https://github.com/sympy/sympy/blob/1.14.0/sympy/simplify/tests/test_sqrtdenest.py"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "sympyissue",
+    "text": "SymPy development discussions:\n\\access{https://github.com/sympy/sympy/issues/2415}{issue 2415} and\n\\access{https://github.com/sympy/sympy/issues/27082}{issue 27082, ``simplify roots with base having surds''}. \\status{D}\nRegression and feature-discussion leads. They are not evidence that the reported behavior persists in every current API; \\texttt{nthroot} handles examples that a square-root-only route does not.",
+    "urls": [
+      "https://github.com/sympy/sympy/issues/2415",
+      "https://github.com/sympy/sympy/issues/27082"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "raddenestsrc",
+    "text": "G. Schintgen, \\emph{raddenest}, Maxima package.\n\\access{https://github.com/gschintgen/raddenest}{Repository};\n\\access{https://raw.githubusercontent.com/gschintgen/raddenest/master/raddenest.mac}{implementation source}. \\status{D}\nA SymPy-derived square-root denester with original higher-root extensions, including Cardan and Honsbeek-style routines. Source comments and branch settings should be read before translating examples involving negative radicands.",
+    "urls": [
+      "https://github.com/gschintgen/raddenest",
+      "https://raw.githubusercontent.com/gschintgen/raddenest/master/raddenest.mac"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "maximamanual",
+    "text": "Maxima developers, \\emph{Maxima Manual}.\n\\access{https://maxima.sourceforge.io/docs/manual/maxima_singlepage.html}{Official manual}. \\status{B}\nReference directory for \\texttt{radcan}, radical expansion, and installed package interfaces. Legacy \\texttt{sqdnst}/\\texttt{sqrtdenest} release-history claims were not independently settled here.",
+    "urls": [
+      "https://maxima.sourceforge.io/docs/manual/maxima_singlepage.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "maximathread",
+    "text": "G. Schintgen and participants, denesting and \\texttt{raddenest} discussions, \\emph{maxima-discuss}, 2017.\n\\access{https://sourceforge.net/p/maxima/mailman/maxima-discuss/thread/o6lan6\\%24h4r\\%241\\%40blaine.gmane.org/}{SourceForge thread};\n\\access{https://maxima-discuss.narkive.com/rz7bUs4t/denesting}{discussion mirror}. \\status{B}\nHistorical development context. The package source, not a historical message alone, is the main evidence for capabilities described in this report.",
+    "urls": [
+      "https://sourceforge.net/p/maxima/mailman/maxima-discuss/thread/o6lan6%24h4r%241%40blaine.gmane.org/",
+      "https://maxima-discuss.narkive.com/rz7bUs4t/denesting"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "wolframroot",
+    "text": "Wolfram Research, \\emph{RootReduce}, Wolfram Language documentation.\n\\access{https://reference.wolfram.com/language/ref/RootReduce.html}{Official reference}. \\status{D}\nCanonical exact algebraic-number reduction. Its output language may be \\texttt{Root}, so it is not in itself a minimum-depth radical-expression interface.",
+    "urls": [
+      "https://reference.wolfram.com/language/ref/RootReduce.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "wolframradical",
+    "text": "Wolfram Research, \\emph{ToRadicals}, Wolfram Language documentation.\n\\access{https://reference.wolfram.com/language/ref/ToRadicals.html}{Official reference}. \\status{D}\nLow-degree algebraic-root conversion, higher-degree limitations, and parameter qualifications. Conversion from an algebraic number to radicals is distinct from optimizing a pre-existing radical expression.",
+    "urls": [
+      "https://reference.wolfram.com/language/ref/ToRadicals.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "wolframrd",
+    "text": "S. Banerjee, \\emph{RadicalDenest}, Wolfram Function Repository, version 2.1.0, 29 April 2024.\n\\access{https://resources.wolframcloud.com/FunctionRepository/resources/RadicalDenest}{Function page}. \\status{D}\nA heuristic, time-constrained denesting resource function; acknowledges Corey Ziegler, Bill Gosper, and Daniel Lichtblau. Not a built-in kernel guarantee of complete minimum-depth denesting.",
+    "urls": [
+      "https://resources.wolframcloud.com/FunctionRepository/resources/RadicalDenest"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "wolframcommunity",
+    "text": "Wolfram Community, ``Heuristic package to denest radicals'' and ``Radical Denest: an ancient difficult task in symbolic computation.''\n\\access{https://community.wolfram.com/groups/-/m/t/980264}{Discussion 980264};\n\\access{https://community.wolfram.com/groups/-/m/t/2120629}{discussion 2120629}. \\status{D}\nDevelopment discussion and examples underlying the contributed heuristic tools. Useful for provenance and design trade-offs, not as a replacement for formal completeness proofs.",
+    "urls": [
+      "https://community.wolfram.com/groups/-/m/t/980264",
+      "https://community.wolfram.com/groups/-/m/t/2120629"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "maplerad",
+    "text": "Maplesoft, \\emph{radnormal}, Maple help.\n\\access{https://www.maplesoft.com/support/help/Maple/view.aspx?path=radnormal}{Official documentation}. \\status{D}\nDescribes exact radical normalization, zero detection, principal roots, and the indexed-\\texttt{RootOf}/field-basis pipeline. Denesting is explicitly only sometimes achieved.",
+    "urls": [
+      "https://www.maplesoft.com/support/help/Maple/view.aspx?path=radnormal"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "maplesimp",
+    "text": "Maplesoft, \\emph{simplify/radical}, Maple help.\n\\access{https://www.maplesoft.com/support/help/Maple/view.aspx?path=simplify\\%2Fradical}{Official documentation}. \\status{D}\nAssociated radical simplification and assumptions. Read together with \\texttt{radnormal} instead of attributing an unspecified universal denester to \\texttt{simplify}.",
+    "urls": [
+      "https://www.maplesoft.com/support/help/Maple/view.aspx?path=simplify%2Fradical"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "sageaa",
+    "text": "SageMath developers, \\emph{Field of algebraic numbers}, \\texttt{sage.rings.qqbar} reference, especially \\texttt{radical\\_expression()}.\n\\access{https://doc.sagemath.org/html/en/reference/number_fields/sage/rings/qqbar.html}{Official reference}. \\status{D}\nExact real/complex algebraic-number representations and attempted radical conversion. An unchanged exact algebraic object is not a numerical approximation or impossibility certificate.",
+    "urls": [
+      "https://doc.sagemath.org/html/en/reference/number_fields/sage/rings/qqbar.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "sagesymbolic",
+    "text": "SageMath developers, \\emph{Symbolic expressions}, especially \\texttt{canonicalize\\_radical()}.\n\\access{https://doc.sagemath.org/html/en/reference/calculus/sage/symbolic/expression.html}{Official reference}. \\status{D}\nSymbolic radical normalization with explicit branch/assumption cautions. Distinct from the algebraic-field conversion method in the preceding entry.",
+    "urls": [
+      "https://doc.sagemath.org/html/en/reference/calculus/sage/symbolic/expression.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "pari",
+    "text": "PARI/GP developers, \\emph{General number fields}, official reference.\n\\access{https://pari.math.u-bordeaux.fr/dochtml/html-stable/General_number_fields.html}{Number-field documentation}. \\status{D}\nSubfields, embeddings, factorization, and exact field arithmetic are building blocks for a denester. They do not automatically reconstruct a minimum-depth expression for a selected element.",
+    "urls": [
+      "https://pari.math.u-bordeaux.fr/dochtml/html-stable/General_number_fields.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "magma",
+    "text": "Magma Computational Algebra System, \\emph{Handbook} and number-field release notes.\n\\access{https://magma.maths.usyd.edu.au/magma/handbook/}{Handbook};\n\\access{https://magma.maths.usyd.edu.au/magma/releasenotes/pdf/relv210.pdf}{Version 2.10 release notes}. \\status{D}\nOptimized field representations and related operations concern defining data. The record is not used to assert the absence of every radical simplification facility.",
+    "urls": [
+      "https://magma.maths.usyd.edu.au/magma/handbook/",
+      "https://magma.maths.usyd.edu.au/magma/releasenotes/pdf/relv210.pdf"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "fricas",
+    "text": "FriCAS developers, \\emph{RadicalSolvePackage} API; related Axiom documentation.\n\\access{https://fricas.github.io/api/RadicalSolvePackage.html}{Official FriCAS API}. \\status{D}\nRadical polynomial-solving interfaces. Newer \\texttt{rsimp}/\\texttt{recursiveRootSimplification} claims from the supplied material remain unverified at a precise release/API level.",
+    "urls": [
+      "https://fricas.github.io/api/RadicalSolvePackage.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "honda",
+    "text": "Y. Honda, \\emph{GaloisGroupSolver}, Maxima package.\n\\access{https://github.com/YasuakiHonda/GaloisGroupSolver}{Author's repository}. \\status{B}\nAdjacent solvable-polynomial/Galois-group implementation lead. Not tested here and not asserted to be a minimum-depth denester.\n\n\\bibgroup{VII. Encyclopedias, elementary pages, and question-and-answer resources}",
+    "urls": [
+      "https://github.com/YasuakiHonda/GaloisGroupSolver"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "wiki",
+    "text": "Wikipedia contributors, \\emph{Nested radical}, especially ``Denesting.''\n\\access{https://en.wikipedia.org/wiki/Nested_radical\\#Denesting}{Article section}. \\status{B}\nThe original prompt's starting point; useful for orientation and bibliography. Core results in this report are supported by primary papers or direct proofs rather than this page alone.",
+    "urls": [
+      "https://en.wikipedia.org/wiki/Nested_radical\\#Denesting"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "mathworld",
+    "text": "E.~W. Weisstein, \\emph{Nested Radical}, MathWorld.\n\\access{https://mathworld.wolfram.com/NestedRadical.html}{Encyclopedia entry}. \\status{B}\nA compact source of identities and literature leads. Check domain and denesting-model restrictions in the original references.",
+    "urls": [
+      "https://mathworld.wolfram.com/NestedRadical.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "brown",
+    "text": "S. Brown, \\emph{Denesting Radicals (or Unnesting Radicals)}.\n\\access{https://brownmath.com/alge/nestrad.htm}{Author's tutorial}. \\status{T}\nWorked elementary square-root examples. A convenient first algebraic introduction, not a general field-theoretic classification.",
+    "urls": [
+      "https://brownmath.com/alge/nestrad.htm"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "mo",
+    "text": "MathOverflow, \\emph{Relevance of Landau's algorithm for denesting radicals}, question 319874; related discussions 410388 and 344478.\n\\access{https://mathoverflow.net/questions/319874/relevance-of-landaus-algorithm-for-denesting-radicals}{Question 319874};\n\\access{https://mathoverflow.net/questions/410388}{question 410388};\n\\access{https://mathoverflow.net/questions/344478}{question 344478}. \\status{B}\nResearch-level discussion leads on general algorithms, multiple square roots, and rationality/representation. Not treated as independent proof of a theorem already cited from the literature.",
+    "urls": [
+      "https://mathoverflow.net/questions/319874/relevance-of-landaus-algorithm-for-denesting-radicals",
+      "https://mathoverflow.net/questions/410388",
+      "https://mathoverflow.net/questions/344478"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-1",
+    "key": "mse",
+    "text": "Math StackExchange, discussions of elementary radical denesting and Ramanujan cube-root identities:\n\\access{https://math.stackexchange.com/questions/4680}{question 4680},\n\\access{https://math.stackexchange.com/questions/16331}{question 16331}, and\n\\access{https://math.stackexchange.com/questions/871639}{question 871639}. \\status{B}\nConcrete question identifiers replace vague unverified titles from the supplied reports. Useful coefficient-matching, field-theoretic, and exact-identity explanations; informal rather than a substitute for primary-source verification.",
+    "urls": [
+      "https://math.stackexchange.com/questions/4680",
+      "https://math.stackexchange.com/questions/16331",
+      "https://math.stackexchange.com/questions/871639"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "cavinessfateman",
+    "text": "B. F. Caviness and R. J. Fateman.\n\\emph{Simplification of radical expressions}.\nProceedings of the 1976 ACM Symposium on Symbolic and Algebraic Computation (SYMSAC), 329--338, 1976.\n\\sourceurl{https://people.eecs.berkeley.edu/~fateman/papers/radcan.pdf}.\n\\textbf{R.} Foundational radical normalization and the Macsyma/RADCAN lineage; distinguish canonical representation from depth minimization.",
+    "urls": [
+      "https://people.eecs.berkeley.edu/~fateman/papers/radcan.pdf"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "zippelthesis",
+    "text": "Richard E. Zippel.\n\\emph{Simplification of Radicals with Applications to Solving Polynomial Equations}.\nMaster's thesis, Massachusetts Institute of Technology, 1977.\n\\sourceurl{https://dspace.mit.edu/entities/publication/8c890e97-f123-4c57-9278-9c85915cf15c}.\n\\textbf{M.} Institutional record confirms the title, year, and thesis status. It is not the same bibliographic item as the conference contribution immediately below.",
+    "urls": [
+      "https://dspace.mit.edu/entities/publication/8c890e97-f123-4c57-9278-9c85915cf15c"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "zippel1977",
+    "text": "Richard E. B. Zippel.\n\\emph{Radical simplification made easy}.\nMACSYMA Users' Conference contribution, 1977; NASA Technical Reports Server record 19770021838.\n\\sourceurl{https://ntrs.nasa.gov/citations/19770021838}.\n\\textbf{M.} Early account of manipulating nested and unnested radicals. Retained separately from the master's thesis while avoiding repeated treatment of their common historical role.",
+    "urls": [
+      "https://ntrs.nasa.gov/citations/19770021838"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "bfht",
+    "text": "Allan Borodin, Ronald Fagin, John E. Hopcroft, and Martin Tompa.\n\\emph{Decreasing the nesting depth of expressions involving square roots}.\nJournal of Symbolic Computation \\textbf{1}(2), 169--188, 1985.\n\\doi{10.1016/S0747-7171(85)80013-4}.\n\\sourceurl{https://www.cs.toronto.edu/~bor/Papers/decreasing-nesting-depth-for-expressions.pdf}.\n\\textbf{FT.} Central square-root structure, fourth-root alternatives, algorithms, combinations of radicals, and representation-size cautions. One of the explicit foundations cited by SymPy.",
+    "urls": [
+      "https://www.cs.toronto.edu/~bor/Papers/decreasing-nesting-depth-for-expressions.pdf"
+    ],
+    "dois": [
+      "10.1016/S0747-7171(85)80013-4"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "zippel",
+    "text": "Richard Zippel.\n\\emph{Simplification of expressions involving radicals}.\nJournal of Symbolic Computation \\textbf{1}(2), 189--210, 1985.\n\\doi{10.1016/S0747-7171(85)80014-6}.\n\\textbf{M.} Radical bases, linear dependence, and a structural denesting criterion. Read together with Landau's 1992 correction rather than citing its structure theorem without qualification.",
+    "urls": [],
+    "dois": [
+      "10.1016/S0747-7171(85)80014-6"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "landaumiller",
+    "text": "Susan Landau and Gary L. Miller.\n\\emph{Solvability by radicals is in polynomial time}.\nJournal of Computer and System Sciences \\textbf{30}(2), 179--208, 1985.\n\\doi{10.1016/0022-0000(85)90013-3}.\nPreliminary STOC 1983 version: \\doi{10.1145/800061.808743}.\n\\textbf{M.} Decides solvability by radicals; this is not a minimum-depth output theorem. The conference and journal appearances are grouped as versions of one line of work.",
+    "urls": [],
+    "dois": [
+      "10.1016/0022-0000(85)90013-3",
+      "10.1145/800061.808743"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "landau",
+    "text": "Susan Landau.\n\\emph{Simplification of nested radicals}.\nSIAM Journal on Computing \\textbf{21}(1), 85--110, 1992.\n\\doi{10.1137/0221009}.\nPreliminary FOCS 1989 version, 314--319: \\doi{10.1109/SFCS.1989.63496}.\n\\textbf{FT.} General denesting through splitting fields, with explicit roots-of-unity qualifications. Complexity is measured relative to algebraic representations that may be much larger than a compact radical input.",
+    "urls": [],
+    "dois": [
+      "10.1137/0221009",
+      "10.1109/SFCS.1989.63496"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "landaunote",
+    "text": "Susan Landau.\n\\emph{A note on ``Zippel Denesting''}.\nJournal of Symbolic Computation \\textbf{13}(1), 41--45, 1992.\n\\doi{10.1016/0747-7171(92)90004-N}.\n\\sourceurl{https://fletcher.tufts.edu/research/research-publications/note-zippel-denesting}.\n\\textbf{M.} Repairs a gap in Zippel's argument and establishes the relevant necessity statement. The author-affiliated record supports 41--45; some later bibliographies give a different ending page.",
+    "urls": [
+      "https://fletcher.tufts.edu/research/research-publications/note-zippel-denesting"
+    ],
+    "dois": [
+      "10.1016/0747-7171(92)90004-N"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "landausurvey",
+    "text": "Susan Landau.\n\\emph{How to tangle with a nested radical}.\nThe Mathematical Intelligencer \\textbf{16}(2), 49--55, 1994.\n\\doi{10.1007/BF03024284}.\n\\textbf{FT.} Accessible synthesis connecting identities, Galois theory, denesting, and computational cost. Especially useful before the more technical SIAM paper.",
+    "urls": [],
+    "dois": [
+      "10.1007/BF03024284"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "horng1990",
+    "text": "Gwoboa Horng and Ming-Deh Huang.\n\\emph{Simplifying nested radicals and solving polynomials by radicals in minimum depth}.\nProceedings of the 31st IEEE Symposium on Foundations of Computer Science, 1990, beginning at p.~847.\n\\textbf{R.} Minimum-depth radical expressions and polynomial solving. Citations disagree on the final page (854 or 856); this report does not silently choose one. Horng's related USC dissertation is a separate retained lead; no unverified theorem detail is assigned to it.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "horng1999",
+    "text": "Gwoboa Horng and Ming-Deh Huang.\n\\emph{Solving polynomials by radicals with roots of unity in minimum depth}.\nMathematics of Computation \\textbf{68}(226), 881--885, 1999.\n\\doi{10.1090/S0025-5718-99-01060-1}.\n\\sourceurl{https://www.jstor.org/stable/2585063}.\n\\textbf{FT.} The roots-of-unity convention is central. This paper should not be conflated with a branch-sensitive simplifier for arbitrary symbolic functions.",
+    "urls": [
+      "https://www.jstor.org/stable/2585063"
+    ],
+    "dois": [
+      "10.1090/S0025-5718-99-01060-1"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "cotner",
+    "text": "Carl Frank Cotner.\n\\emph{The Nesting Depths of Radical Expression} [institutional catalog title].\nPh.D. thesis, University of California, Berkeley, 1995; adviser H. W. Lenstra, Jr.\n\\sourceurl{https://math.berkeley.edu/publications/nesting-depths-radical-expression}.\n\\textbf{M.} Often cited with the plural ``Expressions.'' Honsbeek's introduction corroborates the minimum-depth computability result; the original thesis's detailed proofs and complexity analysis were not inspected in this audit.",
+    "urls": [
+      "https://math.berkeley.edu/publications/nesting-depths-radical-expression"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "blomer1991",
+    "text": "Johannes Bl\\\"omer.\n\\emph{Computing sums of radicals in polynomial time}.\nProceedings of the 32nd IEEE Symposium on Foundations of Computer Science, 670--677, 1991.\n\\doi{10.1109/SFCS.1991.185434}.\n\\textbf{M.} Important for radical sums, field membership, and equality-related computation. Its title must not be expanded into an unrestricted compact-input denesting guarantee.",
+    "urls": [],
+    "dois": [
+      "10.1109/SFCS.1991.185434"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "blomer1992",
+    "text": "Johannes Bl\\\"omer.\n\\emph{How to denest Ramanujan's nested radicals}.\nProceedings of the 33rd IEEE Symposium on Foundations of Computer Science, 447--456, 1992.\n\\doi{10.1109/SFCS.1992.267807}.\n\\textbf{FT.} Structural and algorithmic work on depth-two denesting, avoiding the general splitting-field construction in its target cases. The thesis supplies much more detailed size accounting.",
+    "urls": [],
+    "dois": [
+      "10.1109/SFCS.1992.267807"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "blomerthesis",
+    "text": "Johannes Bl\\\"omer.\n\\emph{Simplifying Expressions Involving Radicals}.\nPh.D. thesis, Freie Universit\\\"at Berlin, 1993.\n\\sourceurl{https://cs.nyu.edu/exact/pap/rootBounds/sumOfSqrts/bloemerThesis.pdf}.\n\\textbf{FT.} Detailed denesting algorithms, admissible sequences, real variants, radical combinations, and complexity parameters. A particularly valuable implementation-oriented research source.",
+    "urls": [
+      "https://cs.nyu.edu/exact/pap/rootBounds/sumOfSqrts/bloemerThesis.pdf"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "blomer2000",
+    "text": "Johannes Bl\\\"omer.\n\\emph{Denesting by bounded degree radicals}.\nAlgorithmica \\textbf{28}, 2--15, 2000.\n\\doi{10.1007/s004530010028}.\nConference version: ESA 1997, LNCS 1284, 53--63, \\doi{10.1007/3-540-63397-9_5}.\n\\textbf{M.} Optimization subject to root-degree restrictions. The stated cost depends on a splitting-field description; this differs from the algorithmic route emphasized in the 1992 work.",
+    "urls": [],
+    "dois": [
+      "10.1007/s004530010028",
+      "10.1007/3-540-63397-9_5"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "jeffreyrich",
+    "text": "David J. Jeffrey and Albert D. Rich.\n\\emph{Simplifying square roots of square roots by denesting}.\nIn Michael J. Wester (ed.), \\emph{Computer Algebra Systems: A Practical Guide}, Wiley, 61--72, 1999.\n\\sourceurl{https://cybertester.com/data/denest.pdf}.\n\\textbf{FT.} Practical recursive square-root methods and an expression-complexity measure distinct from ordinary radical depth. Another explicit reference for SymPy's implementation.",
+    "urls": [
+      "https://cybertester.com/data/denest.pdf"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "honsbeek1999",
+    "text": "Mascha Honsbeek.\n\\emph{Denesting certain nested radicals of depth two}.\nUniversity of Nijmegen, Report 9916, 1999.\n\\sourceurl{https://repository.ubn.ru.nl/handle/2066/18722}.\n\\textbf{M.} Earlier report in the Honsbeek line of research. The frequently circulated repository item 18722 is this report, not the complete 2005 doctoral thesis.",
+    "urls": [
+      "https://repository.ubn.ru.nl/handle/2066/18722"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "honsbeek2005",
+    "text": "Mascha Honsbeek.\n\\emph{Radical Extensions and Galois Groups}.\nPh.D. thesis, Radboud University Nijmegen, 2005.\n\\sourceurl{https://www.math.ru.nl/~bosma/students/honsbeek/M_Honsbeek_thesis.pdf}.\n\\textbf{FT.} Radical extensions, subfields, Ramanujan's mixed square/cube radicals, counterexamples, roots of unity, and continued-fraction special values. Chapter~3 supplies the quartic criterion and reconstruction used in this report.\n\n\\item[]\\textbf{B. Radical independence, field computation, and reference books}",
+    "urls": [
+      "https://www.math.ru.nl/~bosma/students/honsbeek/M_Honsbeek_thesis.pdf"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "besicovitch",
+    "text": "A. S. Besicovitch.\n\\emph{On the linear independence of fractional powers of integers}.\nJournal of the London Mathematical Society \\textbf{15}, 3--6, 1940.\n\\textbf{R.} Classical independence results underlying bases of radical extensions; retain the actual independence hypotheses when using such results.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "mordell",
+    "text": "L. J. Mordell.\n\\emph{On the linear independence of algebraic numbers}.\nPacific Journal of Mathematics \\textbf{3}, 625--630, 1953.\n\\textbf{R.} Classical radical-independence background, repeatedly used in later structural work.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "siegel",
+    "text": "Carl Ludwig Siegel.\n\\emph{Algebraische Abh\\\"angigkeit von Wurzeln}.\nActa Arithmetica \\textbf{21}, 59--64, 1972.\n\\doi{10.4064/aa-21-1-59-64}.\n\\textbf{R.} Structural independence of real radicals; Bl\\\"omer's thesis is an accessible route to its role in algorithms.",
+    "urls": [],
+    "dois": [
+      "10.4064/aa-21-1-59-64"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "kneser",
+    "text": "Martin Kneser.\n\\emph{Lineare Abh\\\"angigkeit von Wurzeln}.\nActa Arithmetica \\textbf{26}(3), 307--308, 1975.\n\\doi{10.4064/aa-26-3-307-308}.\n\\textbf{M.} The publisher dates the article to 1975; some catalog records label the volume 1974/75. Relevant to radical extensions beyond the simplest real setting.",
+    "urls": [],
+    "dois": [
+      "10.4064/aa-26-3-307-308"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "lll",
+    "text": "A. K. Lenstra, H. W. Lenstra, Jr., and L. Lov\\'asz.\n\\emph{Factoring polynomials with rational coefficients}.\nMathematische Annalen \\textbf{261}, 515--534, 1982.\n\\doi{10.1007/BF01457454}.\n\\textbf{M.} Essential computational background and the reason rational polynomial factorization must not be equated with integer prime factorization.",
+    "urls": [],
+    "dois": [
+      "10.1007/BF01457454"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "landaufactor",
+    "text": "Susan Landau.\n\\emph{Factoring polynomials over algebraic number fields}.\nSIAM Journal on Computing \\textbf{14}(1), 184--195, 1985.\n\\textbf{R.} An important algorithmic ingredient for field-based approaches; distinct from her denesting papers and the Landau--Miller solvability paper.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "kluners",
+    "text": "J\\\"urgen Kl\\\"uners.\n\\emph{On computing subfields. A detailed description of the algorithm}.\nJournal de Th\\'eorie des Nombres de Bordeaux \\textbf{10}(2), 243--271, 1998.\n\\sourceurl{https://jtnb.centre-mersenne.org/item/JTNB_1998__10_2_243_0/}.\n\\textbf{M.} Subfield computation as a practical component for discovering smaller radical representations; not itself a complete denester.",
+    "urls": [
+      "https://jtnb.centre-mersenne.org/item/JTNB_1998__10_2_243_0/"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "cohen",
+    "text": "Henri Cohen.\n\\emph{A Course in Computational Algebraic Number Theory}.\nGraduate Texts in Mathematics 138, Springer, 1993.\n\\textbf{R.} Number-field arithmetic, polynomial algorithms, and exact reconstruction. Later corrected printings are not independent books for deduplication purposes.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "cox",
+    "text": "David A. Cox.\n\\emph{Galois Theory}, 2nd edition.\nWiley, 2012.\n\\textbf{R.} Background on solvability, radical extensions, and roots of unity. A textbook reference rather than a specialized algorithmic paper.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "zippelbook",
+    "text": "Richard Zippel.\n\\emph{Effective Polynomial Computation}.\nKluwer Academic Publishers, 1993.\n\\textbf{R.} Broader computational algebra context, including the algebraic machinery behind radical simplification.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "geddes",
+    "text": "Keith O. Geddes, Stephen R. Czapor, and George Labahn.\n\\emph{Algorithms for Computer Algebra}.\nKluwer Academic Publishers, 1992.\n\\textbf{R.} Standard reference for normalization, factorization, and exact symbolic computation.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "vzg",
+    "text": "Joachim von zur Gathen and J\\\"urgen Gerhard.\n\\emph{Modern Computer Algebra}, 3rd edition.\nCambridge University Press, 2013.\n\\textbf{R.} Complexity and polynomial algorithms supporting field-based denesting. Not presented here as a specialized radical-depth monograph.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "davenport",
+    "text": "James H. Davenport, Yves Siret, and \\'Evelyne Tournier.\n\\emph{Computer Algebra: Systems and Algorithms for Algebraic Computation}.\nAcademic Press, 1988; French original, Masson, 1987.\n\\textbf{R.} Historical and algorithmic context for CAS treatment of algebraic expressions.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "newman",
+    "text": "Stephen C. Newman.\n\\emph{A Classical Introduction to Galois Theory}.\nWiley, 2012.\n\\textbf{R.} Additional field-theoretic background retained from the supplied reading lists.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "fatemanthesis",
+    "text": "Richard J. Fateman.\n\\emph{Essays in Algebraic Simplification}.\nPh.D. thesis, Massachusetts Institute of Technology, 1972.\n\\textbf{R.} Early symbolic-simplification context preceding the Caviness--Fateman radical paper.\n\n\\item[]\\textbf{C. Classical identities, special forms, and later research}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "ramanujan",
+    "text": "Srinivasa Ramanujan.\n\\emph{Collected Papers of Srinivasa Ramanujan}.\nEdited by G. H. Hardy, P. V. Seshu Aiyar, and B. M. Wilson.\nCambridge University Press, 1927; later reprints.\n\\textbf{R.} Primary historical collection for identities and problems. Original publication, later reprint, and online scan are not three independent research sources.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "berndtII",
+    "text": "Bruce C. Berndt.\n\\emph{Ramanujan's Notebooks, Part II}.\nSpringer, 1989.\n\\textbf{R.} The principal notebook-commentary reference for many of the radical identities discussed in later denesting literature.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "berndtIV",
+    "text": "Bruce C. Berndt.\n\\emph{Ramanujan's Notebooks, Part IV}.\nSpringer, 1994.\n\\textbf{R.} Further special-value and identity context. A distinct volume, not a replacement citation for all material in Part~II.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "berndtV",
+    "text": "Bruce C. Berndt.\n\\emph{Ramanujan's Notebooks, Part V}.\nSpringer, 1998.\n\\textbf{R.} Additional context for Ramanujan's formulas and continued fractions; retained without attributing every radical identity to this volume.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "berndtchan1997",
+    "text": "Bruce C. Berndt, Heng Huat Chan, and Liang-Cheng Zhang.\n\\emph{Ramanujan's association with radicals in India}.\nAmerican Mathematical Monthly \\textbf{104}(10), 905--911, 1997.\n\\doi{10.1080/00029890.1997.11990738}.\n\\textbf{M.} Historical and mathematical exposition linking Ramanujan's identities with algebraic structure.",
+    "urls": [],
+    "dois": [
+      "10.1080/00029890.1997.11990738"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "berndtchan1998",
+    "text": "Bruce C. Berndt, Heng Huat Chan, and Liang-Cheng Zhang.\n\\emph{Radicals and units in Ramanujan's work}.\nActa Arithmetica \\textbf{87}(2), 145--158, 1998.\n\\sourceurl{https://eudml.org/doc/207210}.\n\\textbf{M.} Algebraic units explain families of identities that otherwise appear accidental.",
+    "urls": [
+      "https://eudml.org/doc/207210"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "shanks",
+    "text": "Daniel Shanks.\n\\emph{Incredible identities}.\nThe Fibonacci Quarterly \\textbf{12}(3), 271, 280, 1974.\n\\doi{10.1080/00150517.1974.12430734}.\n\\sourceurl{https://www.fq.math.ca/12-3.html}.\n\\textbf{M.} A classical source of elaborate-looking examples, including deeper square-root expressions. The two printed parts belong to one item; online digitization in 2024 does not change its date.",
+    "urls": [
+      "https://www.fq.math.ca/12-3.html"
+    ],
+    "dois": [
+      "10.1080/00150517.1974.12430734"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "spohn",
+    "text": "William G. Spohn, Jr.\n\\emph{Letter to the editor} concerning Shanks's identities.\nThe Fibonacci Quarterly \\textbf{14}(1), 12, 1976.\n\\textbf{R.} Follow-up to the preceding identities, retained as a separate mathematical contribution rather than as another copy of Shanks's paper.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "bumby",
+    "text": "Richard T. Bumby.\n\\emph{Incredible identities revisited}.\nThe Fibonacci Quarterly \\textbf{25}(1), 62--64, 1987.\n\\doi{10.1080/00150517.1987.12429728}.\n\\textbf{M.} Reexamines the identities; a 2024 online-publication timestamp is digitization metadata, not the original research year.",
+    "urls": [],
+    "dois": [
+      "10.1080/00150517.1987.12429728"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "elia",
+    "text": "Michele Elia.\n\\emph{Observations on some algebraic equations associated with Ramanujan's work}.\nIn \\emph{Number Theory and Discrete Mathematics}, Trends in Mathematics, Birkh\\\"auser, 2002.\n\\doi{10.1007/978-3-0348-8223-1_11}.\n\\textbf{M.} Corrected authorship: this is Elia's chapter, not a paper by Berndt--Chan--Zhang or Andrews. Relevant to algebraic equations behind the identities.",
+    "urls": [],
+    "dois": [
+      "10.1007/978-3-0348-8223-1_11"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "osler",
+    "text": "Thomas J. Osler.\n\\emph{Cardan polynomials and the reduction of radicals}.\nMathematics Magazine \\textbf{74}(1), 26--32, 2001.\n\\sourceurl{https://www.jstor.org/stable/2691150}.\n\\textbf{M.} An elementary polynomial framework for reductions and identities, useful alongside the trace--norm derivation in this report.",
+    "urls": [
+      "https://www.jstor.org/stable/2691150"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "witula",
+    "text": "Roman Witu\\l a and Damian S\\l ota.\n\\emph{Cardano's formula, square roots, Chebyshev polynomials and radicals}.\nJournal of Mathematical Analysis and Applications \\textbf{363}, 639--647, 2010.\n\\textbf{R.} Develops the connection between classical radical formulas and special polynomial families.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "barbero",
+    "text": "Stefano Barbero, Umberto Cerruti, Nadir Murru, and Marco Abrate.\n\\emph{Identities involving zeros of Ramanujan and Shanks cubic polynomials}.\nJournal of Integer Sequences \\textbf{16}, Article 13.8.1, 2013.\n\\textbf{R.} Polynomial-family identities adjacent to pure-cubic denesting; retained separately from the Berndt and Elia references.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "sury",
+    "text": "B. Sury.\n\\emph{Ramanujan's route to roots of roots}.\nLecture notes, 2007.\n\\sourceurl{https://www.isibang.ac.in/~sury/ramanujanday.pdf}.\n\\textbf{FT.} Readable field-theoretic exposition of Ramanujan's radicals, including the Honsbeek criterion. The ratio-versus-integral-parametrization distinction is important when interpreting its examples.",
+    "urls": [
+      "https://www.isibang.ac.in/~sury/ramanujanday.pdf"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "krepkii",
+    "text": "I. A. Krepkii and K. I. Pimenov.\n\\emph{Cube root Ramanujan formulas and elementary Galois theory}.\nVestnik St. Petersburg University: Mathematics \\textbf{48}, 214--223, 2015.\n\\doi{10.3103/S106345411504007X}.\n\\textbf{M.} Explains specified cubic identities using elementary Galois theory; preserve the pure-cubic setting.",
+    "urls": [],
+    "dois": [
+      "10.3103/S106345411504007X"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "antipov",
+    "text": "M. A. Antipov and K. I. Pimenov.\n\\emph{Ramanujan denesting formulas for cubic radicals}.\nVestnik St. Petersburg University: Mathematics \\textbf{53}(2), 115--121, 2020.\n\\doi{10.1134/S1063454120020028}.\n\\textbf{M.} Classification and uniqueness within a defined Ramanujan-type class, including summand and norm restrictions. Not a universal three-term theorem for every cubic radical expression.",
+    "urls": [],
+    "dois": [
+      "10.1134/S1063454120020028"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "gkioulekas",
+    "text": "Eleftherios Gkioulekas.\n\\emph{On the denesting of nested square roots}.\nInternational Journal of Mathematical Education in Science and Technology \\textbf{48}(6), 942--953, 2017.\n\\doi{10.1080/0020739X.2017.1290831}.\n\\sourceurl{https://faculty.utrgv.edu/eleftherios.gkioulekas/papers/024-denesting-square-roots.pdf}.\n\\textbf{FT.} Detailed elementary treatment suitable for teaching. The author-hosted version carries a differing final-page indication; the journal citation is used here.",
+    "urls": [
+      "https://faculty.utrgv.edu/eleftherios.gkioulekas/papers/024-denesting-square-roots.pdf"
+    ],
+    "dois": [
+      "10.1080/0020739X.2017.1290831"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "dokmeci",
+    "text": "Kaan Dokmeci.\n\\emph{Theorems on Field Extensions and Radical Denesting}.\nMIT PRIMES-USA research report, 26 September 2017.\n\\sourceurl{https://math.mit.edu/research/highschool/primes/materials/2017/Dokmeci.pdf}.\n\\textbf{FT.} Student research on field extensions, denesting, and degree/root-of-unity arguments. Corrects the first-name initial and publication type given in one input report.",
+    "urls": [
+      "https://math.mit.edu/research/highschool/primes/materials/2017/Dokmeci.pdf"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "rahal",
+    "text": "Sandra Rahal.\n\\emph{Introduction to Nested Radicals}.\nBachelor's thesis, Stockholm University, Report 2017:17, 2017.\n\\sourceurl{https://kurser.math.su.se/pluginfile.php/16103/mod_folder/content/0/2017/2017_17_report.pdf}.\n\\textbf{FT.} Introductory synthesis and reading guide. Adviser Qimh Xantcha is not a coauthor.",
+    "urls": [
+      "https://kurser.math.su.se/pluginfile.php/16103/mod_folder/content/0/2017/2017_17_report.pdf"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "girstmair",
+    "text": "Kurt Girstmair.\n\\emph{Reducing radicals in the spirit of Euclid}.\nJournal of Symbolic Computation \\textbf{104}, 356--365, 2021.\nPreprint: \\sourceurl{https://arxiv.org/abs/2004.06039}.\n\\textbf{M.} Reduction involving lower-degree irrationals and odd prime indices. The 2020 preprint and 2021 journal article are one publication family; degree reduction need not be radical-depth reduction.",
+    "urls": [
+      "https://arxiv.org/abs/2004.06039"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "osipovkytmanov",
+    "text": "N. N. Osipov and A. A. Kytmanov.\n\\emph{Simplification of nested real radicals revisited}.\nComputer Algebra in Scientific Computing (CASC 2021), LNCS 12865, 293--313, 2021.\n\\doi{10.1007/978-3-030-85165-1_17}.\n\\textbf{M.} Theory and algorithms for specified triply nested real radicals. The full algorithm and examples were not executed during this audit.",
+    "urls": [],
+    "dois": [
+      "10.1007/978-3-030-85165-1_17"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "cavallo",
+    "text": "Alberto Cavallo.\n\\emph{Denesting cubic radicals}.\narXiv:2403.04776, 2024; version 2, 28 September 2024.\n\\sourceurl{https://arxiv.org/abs/2403.04776}.\n\\textbf{FT.} Criterion and formulas for cube roots of quadratic surds. This report restates the target-field restriction and does not endorse an unqualified hardness equivalence with integer factorization.",
+    "urls": [
+      "https://arxiv.org/abs/2403.04776"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "tonien",
+    "text": "Joseph Tonien.\n\\emph{Nested fifth root radical identities from elliptic curves}.\nJournal of Computational Algebra \\textbf{13--14}, Article 100032, 2025.\n\\doi{10.1016/j.jaca.2025.100032}.\n\\textbf{M.} Constructive fifth-root identities from an elliptic-curve family, with SageMath code. An important later direction, not a general fifth-root denesting decision algorithm.",
+    "urls": [],
+    "dois": [
+      "10.1016/j.jaca.2025.100032"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "osipov2026",
+    "text": "N. N. Osipov.\n\\emph{On Ramanujan's identities with nested cubic radicals} [Russian article].\nProgrammirovanie, no.~2, 71--77, 2026.\n\\doi{10.7868/S3034584726020081}.\n\\sourceurl{https://journals.rcsi.science/0132-3474/article/view/446083}.\n\\textbf{M.} Additional source located during this audit. The publisher's abstract contrasts specified identities over $\\Q$ with arbitrary real ground fields. Full text was unavailable; unreliable web-rendered formulas are not reproduced.",
+    "urls": [
+      "https://journals.rcsi.science/0132-3474/article/view/446083"
+    ],
+    "dois": [
+      "10.7868/S3034584726020081"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "landau1998",
+    "text": "Susan Landau.\n\\emph{$\\sqrt2+\\sqrt3$: four different views}.\nThe Mathematical Intelligencer, 1998.\n\\doi{10.1007/BF03025229}.\n\\sourceurl{https://privacyink.org/pdf/Sqrt2%2BSqrt3.pdf}.\n\\textbf{FT.} A useful conceptual treatment of algebraic representations, complementing the same number's role as the simplest denesting example.\n\n\\item[]\\textbf{D. Equality testing and numerical-complexity connections}",
+    "urls": [
+      "https://privacyink.org/pdf/Sqrt2%2BSqrt3.pdf"
+    ],
+    "dois": [
+      "10.1007/BF03025229"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "blomerzero",
+    "text": "Johannes Bl\\\"omer.\n\\emph{A probabilistic zero-test for expressions involving roots of rational numbers}.\nAlgorithms---ESA 1998, LNCS 1461, 151--162, 1998.\n\\doi{10.1007/3-540-68530-8_13}.\n\\textbf{M.} Equality testing, not global depth minimization. Later online dates attached to the chapter should not replace the conference year.",
+    "urls": [],
+    "dois": [
+      "10.1007/3-540-68530-8_13"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "rit",
+    "text": "Nikhil Balaji, Klara Nosan, Mahsa Shirmohammadi, and James Worrell.\n\\emph{Identity testing for radical expressions}.\nLICS 2022, Article 8, 1--11.\n\\doi{10.1145/3531130.3533331}.\nRevised preprint: \\sourceurl{https://arxiv.org/abs/2202.07961}, version 4, 16 October 2024.\n\\textbf{FT.} Circuit-based radical identity testing, with explicit GRH-conditional and unconditional complexity results. The restrictions defining $2$-RIT are part of the theorem.",
+    "urls": [
+      "https://arxiv.org/abs/2202.07961"
+    ],
+    "dois": [
+      "10.1145/3531130.3533331"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "gaillard",
+    "text": "L. Gaillard and G. Jindal.\n\\emph{On the order of power series and the sum of square roots problem}.\nISSAC 2023.\n\\doi{10.1145/3597066.3597079}.\n\\sourceurl{https://arxiv.org/abs/2304.13605}.\n\\textbf{M.} Connects radical-sum questions with orders of power series and algebraic methods. Do not treat its problem formulations as interchangeable with all sign-decision variants of SQRT-SUM.",
+    "urls": [
+      "https://arxiv.org/abs/2304.13605"
+    ],
+    "dois": [
+      "10.1145/3597066.3597079"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "allender",
+    "text": "Eric Allender, Peter B\\\"urgisser, Johan Kjeldgaard-Pedersen, and Peter Bro Miltersen.\n\\emph{On the complexity of numerical analysis}.\nSIAM Journal on Computing \\textbf{38}(5), 1987--2006, 2009.\n\\doi{10.1137/070697926}.\n\\textbf{M.} Broader complexity framework for exact numerical decisions, useful for understanding why arithmetic expressions, equality, and ordering require separate analysis.",
+    "urls": [],
+    "dois": [
+      "10.1137/070697926"
+    ]
+  },
+  {
+    "report": "report-2",
+    "key": "exactgeometry",
+    "text": "Chen Li, Sylvain Pion, and Chee-Keng Yap.\n\\emph{Recent progress in exact geometric computation}.\nJournal of Logic and Algebraic Programming \\textbf{64}(1), 85--111, 2005.\n\\sourceurl{https://www.sciencedirect.com/science/article/pii/S1567832604000773}.\n\\textbf{M.} Application context for exact algebraic arithmetic, separation, and reliable predicates rather than radical presentation alone.\n\n\\item[]\\textbf{E. Infinite radicals, special values, and educational context}",
+    "urls": [
+      "https://www.sciencedirect.com/science/article/pii/S1567832604000773"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "herschfeld",
+    "text": "Aaron Herschfeld.\n\\emph{On infinite radicals}.\nAmerican Mathematical Monthly \\textbf{42}, 419--429, 1935.\n\\textbf{R.} Classical convergence criterion: boundedness of $a_n^{2^{-n}}$ for nonnegative inputs, not boundedness of $a_n$ itself. Analytic convergence is separate from finite denesting.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "borweindebarra",
+    "text": "Jonathan M. Borwein and G. de Barra.\n\\emph{Nested radicals}.\nAmerican Mathematical Monthly \\textbf{98}, 735--739, 1991.\n\\textbf{R.} A concise later source on infinite nested radicals and convergence questions.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "campbell",
+    "text": "Geoffrey B. Campbell and Aleksander Zujev.\n\\emph{Variations on Ramanujan's nested radicals}.\narXiv:1511.06865, 2015.\n\\sourceurl{https://arxiv.org/abs/1511.06865}.\n\\textbf{M.} Variations and related identities; retained in the analytic/special-form strand rather than treated as a general denesting algorithm.",
+    "urls": [
+      "https://arxiv.org/abs/1511.06865"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "mitra",
+    "text": "N. Mitra.\n\\emph{Generalization of Ramanujan's famous nested radicals to the nth root and their evaluation}.\narXiv:2404.04051, 2024.\n\\sourceurl{https://arxiv.org/abs/2404.04051}.\n\\textbf{M.} Infinite-radical evaluation and higher-root generalizations. Distinct from finite algebraic depth reduction.",
+    "urls": [
+      "https://arxiv.org/abs/2404.04051"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "borweinagm",
+    "text": "Jonathan M. Borwein and Peter B. Borwein.\n\\emph{Pi and the AGM: A Study in Analytic Number Theory and Computational Complexity}.\nWiley, 1987.\n\\textbf{R.} Special values, arithmetic--geometric means, and related nested constructions; an adjacent reference rather than a manual of generic denesting.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "polya",
+    "text": "George P\\'olya and G\\'abor Szeg\\H{o}.\n\\emph{Problems and Theorems in Analysis}, Volume I.\nSpringer; multiple editions and translations.\n\\textbf{R.} Classical problem-oriented background for sequences, limits, and nested expressions. No unverified exercise number is assigned here.",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "guin",
+    "text": "Dominique Guin, Kenneth Ruthven, and Luc Trouche (eds.).\n\\emph{The Didactical Challenge of Symbolic Calculators: Turning a Computational Device into a Mathematical Instrument}.\nSpringer, 2005.\n\\textbf{R.} Pedagogical context for interpreting CAS output. Retained as an educational resource, not as a source of new structural denesting theorems.\n\n\\item[]\\textbf{F. Official documentation, open-source implementations, and developer material}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "sympydocs",
+    "text": "SymPy development team.\n\\emph{Simplify: simplification functions}, official documentation.\n\\sourceurl{https://docs.sympy.org/latest/modules/simplify/simplify.html}.\n\\textbf{D.} Documents \\texttt{sqrtdenest}, \\texttt{nthroot}, \\texttt{radsimp}, and related routines. Experiments in this report used SymPy 1.14.0; the live documentation URL may track later releases.",
+    "urls": [
+      "https://docs.sympy.org/latest/modules/simplify/simplify.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "sympysource",
+    "text": "SymPy development team.\n\\emph{sqrtdenest.py}, source code.\n\\sourceurl{https://github.com/sympy/sympy/blob/master/sympy/simplify/sqrtdenest.py}.\n\\textbf{D.} Inspectable implementation and references to BFHT and Jeffrey--Rich. A moving development branch is not the same evidence as the version recorded in the executed tests.",
+    "urls": [
+      "https://github.com/sympy/sympy/blob/master/sympy/simplify/sqrtdenest.py"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "sympytests",
+    "text": "SymPy development team.\n\\emph{test\\_sqrtdenest.py}, regression tests.\n\\sourceurl{https://github.com/sympy/sympy/blob/master/sympy/simplify/tests/test_sqrtdenest.py}.\n\\textbf{D.} Useful source of deeper, multiquadratic, and cancellation examples. A test suite documents cases, not mathematical completeness.",
+    "urls": [
+      "https://github.com/sympy/sympy/blob/master/sympy/simplify/tests/test_sqrtdenest.py"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "maximaraddenest",
+    "text": "Gilles Schintgen.\n\\emph{raddenest}, Maxima package and source repository.\n\\sourceurl{https://github.com/gschintgen/raddenest}.\nSource: \\sourceurl{https://raw.githubusercontent.com/gschintgen/raddenest/master/raddenest.mac}.\n\\textbf{D.} SymPy port plus additional Cardan-polynomial and Ramanujan-type methods. Source comments discuss real-domain semantics and cite Honsbeek.",
+    "urls": [
+      "https://github.com/gschintgen/raddenest",
+      "https://raw.githubusercontent.com/gschintgen/raddenest/master/raddenest.mac"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "maximamanual",
+    "text": "Maxima project.\n\\emph{Maxima manual}, radical simplification and contributed packages.\n\\sourceurl{https://maxima.sourceforge.io/docs/manual/}.\n\\textbf{R.} Documentation entry point for \\texttt{radcan}, legacy \\texttt{sqdnst}/\\texttt{sqrtdenest}, and installed package details. Package availability should be checked against the local release.",
+    "urls": [
+      "https://maxima.sourceforge.io/docs/manual/"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "maximathread",
+    "text": "Gilles Schintgen and Maxima-discuss participants.\n\\emph{raddenest announcement and discussion}, 2017.\n\\sourceurl{https://sourceforge.net/p/maxima/mailman/maxima-discuss/thread/slrno8nek9.2pg.robert.dodier@freekbox.fglan/}.\n\\textbf{R.} Historical developer context. Current source code is the stronger reference for what the implementation actually contains.",
+    "urls": [
+      "https://sourceforge.net/p/maxima/mailman/maxima-discuss/thread/slrno8nek9.2pg.robert.dodier@freekbox.fglan/"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "wolframroot",
+    "text": "Wolfram Research.\n\\emph{RootReduce}, Wolfram Language documentation.\n\\sourceurl{https://reference.wolfram.com/language/ref/RootReduce.html}.\n\\textbf{D.} Exact algebraic-number normalization; do not equate a canonical \\texttt{Root} with a minimum-depth radical expression.",
+    "urls": [
+      "https://reference.wolfram.com/language/ref/RootReduce.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "wolframtoradicals",
+    "text": "Wolfram Research.\n\\emph{ToRadicals}, Wolfram Language documentation.\n\\sourceurl{https://reference.wolfram.com/language/ref/ToRadicals.html}.\n\\textbf{D.} Radical conversion, degree limitations, and parameter-related qualifications. A failure to return radicals is not a non-solvability proof.",
+    "urls": [
+      "https://reference.wolfram.com/language/ref/ToRadicals.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "wolframresource",
+    "text": "Swastik Banerjee.\n\\emph{RadicalDenest}, Wolfram Function Repository.\n\\sourceurl{https://resources.wolframcloud.com/FunctionRepository/resources/RadicalDenest/}.\n\\textbf{D.} Contributed heuristic resource, including a time constraint and examples involving algebraic \\texttt{Root} objects. Distinct from a built-in universal minimum-depth algorithm.",
+    "urls": [
+      "https://resources.wolframcloud.com/FunctionRepository/resources/RadicalDenest/"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "wolframcommunity",
+    "text": "Wolfram Community contributors, including Swastik Banerjee, Bill Gosper, and Daniel Lichtblau.\n\\emph{Radical denest: an ancient difficult task in symbolic computation} and \\emph{Heuristic package to denest radicals}.\n\\sourceurl{https://community.wolfram.com/groups/-/m/t/2120629};\n\\sourceurl{https://community.wolfram.com/groups/-/m/t/980264}.\n\\textbf{R.} Implementation history, notebooks, and examples. Grouped as related developer resources, not used to infer a completeness theorem.",
+    "urls": [
+      "https://community.wolfram.com/groups/-/m/t/2120629",
+      "https://community.wolfram.com/groups/-/m/t/980264"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "mapleradnormal",
+    "text": "Maplesoft.\n\\emph{radnormal}, Maple help.\n\\sourceurl{https://www.maplesoft.com/support/help/Maple/view.aspx?path=radnormal}.\n\\textbf{D.} Official normal-form and exact-zero claims for the specified algebraic domain. Does not advertise global radical-depth minimization.",
+    "urls": [
+      "https://www.maplesoft.com/support/help/Maple/view.aspx?path=radnormal"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "mapleradical",
+    "text": "Maplesoft.\n\\emph{simplify/radical}, Maple help.\n\\sourceurl{https://www.maplesoft.com/support/help/Maple/view.aspx?path=simplify%2Fradical}.\n\\textbf{D.} Separates simplification of individual radicals, elimination of dependent radicals, and rational-expression normalization; a useful model of distinct simplification stages.",
+    "urls": [
+      "https://www.maplesoft.com/support/help/Maple/view.aspx?path=simplify%2Fradical"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "sageqqbar",
+    "text": "SageMath development team.\n\\emph{Field of algebraic numbers}, reference manual for \\texttt{AA} and \\texttt{QQbar}.\n\\sourceurl{https://doc.sagemath.org/html/en/reference/number_fields/sage/rings/qqbar.html}.\n\\textbf{D.} Exact representations and \\texttt{radical\\_expression()}; an algebraic-number object may remain without a requested radical presentation.",
+    "urls": [
+      "https://doc.sagemath.org/html/en/reference/number_fields/sage/rings/qqbar.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "sageexpression",
+    "text": "SageMath development team.\n\\emph{Symbolic expressions}, reference manual.\n\\sourceurl{https://doc.sagemath.org/html/en/reference/calculus/sage/symbolic/expression.html}.\n\\textbf{D.} Includes \\texttt{canonicalize\\_radical()} and warnings about assumptions and branches; symbolic normalization must be distinguished from exact algebraic-number arithmetic.",
+    "urls": [
+      "https://doc.sagemath.org/html/en/reference/calculus/sage/symbolic/expression.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "pari",
+    "text": "PARI/GP development team.\n\\emph{General number fields}, PARI/GP documentation.\n\\sourceurl{https://pari.math.u-bordeaux.fr/dochtml/html/General_number_fields.html}.\n\\textbf{D.} Subfields, inclusions, factorization, roots, and reduced defining polynomials. Infrastructure for reconstruction rather than a general denesting command.",
+    "urls": [
+      "https://pari.math.u-bordeaux.fr/dochtml/html/General_number_fields.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "honda",
+    "text": "Yasuaki Honda.\n\\emph{GaloisGroupSolver}, source repository.\n\\sourceurl{https://github.com/YasuakiHonda/GaloisGroupSolver}.\n\\textbf{R.} Adjacent software for solving algebraic equations by radicals; not evaluated here as a denesting engine.\n\n\\item[]\\textbf{G. Encyclopedic entries, discussions, and discovery resources}",
+    "urls": [
+      "https://github.com/YasuakiHonda/GaloisGroupSolver"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "wikipedia",
+    "text": "Wikipedia contributors.\n\\emph{Nested radical}, especially the denesting section.\n\\sourceurl{https://en.wikipedia.org/wiki/Nested_radical#Denesting}.\n\\textbf{R.} The common starting point supplied in the original research prompt. Useful for orientation and references; theorems in this report are supported by original literature or proofs rather than Wikipedia alone.",
+    "urls": [
+      "https://en.wikipedia.org/wiki/Nested_radical#Denesting"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "mathworld",
+    "text": "Eric W. Weisstein.\n\\emph{Nested Radical}, MathWorld.\n\\sourceurl{https://mathworld.wolfram.com/NestedRadical.html}.\n\\textbf{R.} Convenient index of identities and references. Its finite and infinite examples belong to different problem classes.",
+    "urls": [
+      "https://mathworld.wolfram.com/NestedRadical.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "brownmath",
+    "text": "Stan Brown.\n\\emph{Nested radicals}, BrownMath.\n\\sourceurl{https://brownmath.com/alge/nestrad.htm}.\n\\textbf{M.} Elementary exposition of practical denesting methods; appropriate as an introduction, not a substitute for general structural results.",
+    "urls": [
+      "https://brownmath.com/alge/nestrad.htm"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "mse4680",
+    "text": "Mathematics Stack Exchange contributors.\nDiscussion of denesting nested radicals, question 4680.\n\\sourceurl{https://math.stackexchange.com/questions/4680}.\n\\textbf{R.} A retained question-and-answer resource for elementary methods and references. Individual answers have their own authorship and should not be cited as one refereed theorem.",
+    "urls": [
+      "https://math.stackexchange.com/questions/4680"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "mse16331",
+    "text": "Mathematics Stack Exchange contributors.\nRadical-denesting discussion, question 16331.\n\\sourceurl{https://math.stackexchange.com/questions/16331}.\n\\textbf{R.} Useful discovery trail for structural explanations and classical identities; primary sources should carry the final mathematical attribution.",
+    "urls": [
+      "https://math.stackexchange.com/questions/16331"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "mse871639",
+    "text": "Mathematics Stack Exchange contributors.\nNested-radical discussion, question 871639.\n\\sourceurl{https://math.stackexchange.com/questions/871639}.\n\\textbf{R.} Retained as an additional informal explanation resource rather than an independent research publication.",
+    "urls": [
+      "https://math.stackexchange.com/questions/871639"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "mo319874",
+    "text": "MathOverflow contributors.\nDiscussion of denesting algorithms, question 319874.\n\\sourceurl{https://mathoverflow.net/questions/319874}.\n\\textbf{R.} A useful route to Landau and related general theory; distinguish an answer's specified root convention from an unrestricted claim.",
+    "urls": [
+      "https://mathoverflow.net/questions/319874"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "mo410388",
+    "text": "MathOverflow contributors.\nDiscussion of multiquadratic denesting, question 410388.\n\\sourceurl{https://mathoverflow.net/questions/410388}.\n\\textbf{R.} Complements the multiquadratic viewpoint. The report gives its elementary field argument directly, so the discussion is not the sole justification.",
+    "urls": [
+      "https://mathoverflow.net/questions/410388"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "mo344478",
+    "text": "MathOverflow contributors.\nDiscussion of rationality/equality for nested radicals, question 344478.\n\\sourceurl{https://mathoverflow.net/questions/344478}.\n\\textbf{R.} Useful for distinguishing exact algebraic-number tests from radical reconstruction.",
+    "urls": [
+      "https://mathoverflow.net/questions/344478"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "sympyissues",
+    "text": "SymPy contributors.\nHistorical issue discussions 2415 and 27082.\n\\sourceurl{https://github.com/sympy/sympy/issues/2415};\n\\sourceurl{https://github.com/sympy/sympy/issues/27082}.\n\\textbf{R.} Version-specific behavior and development history. An old issue is not evidence that the same defect persists in the currently installed release.",
+    "urls": [
+      "https://github.com/sympy/sympy/issues/2415",
+      "https://github.com/sympy/sympy/issues/27082"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "oeis",
+    "text": "OEIS Foundation Inc. and contributors.\n\\emph{A135611}, decimal expansion of $\\sqrt2+\\sqrt3$.\n\\sourceurl{https://oeis.org/A135611}.\n\\textbf{M.} A sequence entry and pointer to related representations, not a research paper proving a denesting algorithm.",
+    "urls": [
+      "https://oeis.org/A135611"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-2",
+    "key": "tiwari",
+    "text": "Gaurav Tiwari.\n\\emph{Complete elementary analysis of Ramanujan's nested radicals}, web exposition and associated notes.\n\\sourceurl{https://gauravtiwari.org/projects-ramanujan-nested-radical/}.\n\\textbf{M.} Author-hosted educational resource identified during the audit, covering denesting and infinite radicals. The site also links an expanded guide; no general convergence theorem is imported without its hypotheses.",
+    "urls": [
+      "https://gauravtiwari.org/projects-ramanujan-nested-radical/"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "fateman",
+    "text": "Richard J. Fateman. \\emph{Essays in Algebraic Simplification}. Ph.D. thesis, Massachusetts Institute of Technology, 1972. \\status{A}\n\\entrynote{An early source for symbolic simplification, including the background to radical canonicalization. Read with the later Caviness--Fateman paper rather than treating the two as unrelated algorithms.}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "caviness",
+    "text": "B. F. Caviness and R. J. Fateman. ``Simplification of radical expressions.'' In \\emph{Proceedings of the 1976 ACM Symposium on Symbolic and Algebraic Computation}, pp.~329--338, 1976. Author copy: \\url{https://people.eecs.berkeley.edu/~fateman/papers/radcan.pdf}. \\status{F}\n\\entrynote{A foundational treatment of normal forms and simplification of radical expressions. Important for the historical development of \\texttt{radcan}; normal-form objectives and radical-depth minimization must still be distinguished.}",
+    "urls": [
+      "https://people.eecs.berkeley.edu/~fateman/papers/radcan.pdf"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "zippel77",
+    "text": "Richard Zippel. \\emph{Simplification of Radicals with Applications to Solving Polynomial Equations}. S.M. thesis, Massachusetts Institute of Technology, 1977. \\status{A}\n\\entrynote{Early thesis treatment of radical simplification. The related 1977 MACSYMA presentation ``Radical simplification made easy'' is a companion discovery lead, not a second independent modern completeness result.}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "bfht",
+    "text": "Allan Borodin, Ronald Fagin, John E. Hopcroft, and Martin Tompa. ``Decreasing the nesting depth of expressions involving square roots.'' \\emph{Journal of Symbolic Computation} \\textbf{1}(2) (1985), 169--188. \\doi{10.1016/S0747-7171(85)80013-4}. Author copy: \\url{https://www.cs.toronto.edu/~bor/Papers/decreasing-nesting-depth-for-expressions.pdf}. \\status{F}\n\\entrynote{The central square-root-denesting reference: structural reductions, fourth-root phenomena, and algorithms in a carefully specified representation model. The local sufficiency of fourth roots does not extend verbatim to arbitrarily deep square-root towers.}",
+    "urls": [
+      "https://www.cs.toronto.edu/~bor/Papers/decreasing-nesting-depth-for-expressions.pdf"
+    ],
+    "dois": [
+      "10.1016/S0747-7171(85)80013-4"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "zippel85",
+    "text": "Richard Zippel. ``Simplification of expressions involving radicals.'' \\emph{Journal of Symbolic Computation} \\textbf{1}(2) (1985), 189--210. \\doi{10.1016/S0747-7171(85)80014-6}. \\status{A}\n\\entrynote{A major early denesting algorithm and a source of later terminology. Landau's note below supplies an essential qualification to claims of completeness.}",
+    "urls": [],
+    "dois": [
+      "10.1016/S0747-7171(85)80014-6"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "landaumiller",
+    "text": "Susan Landau and Gary L. Miller. ``Solvability by radicals is in polynomial time.'' \\emph{Journal of Computer and System Sciences} \\textbf{30}(2) (1985), 179--208. \\status{A}\n\\entrynote{A foundational computational Galois-theory result. Its problem is deciding solvability by radicals from a polynomial, not minimizing the depth of an already supplied radical expression. It helps explain the theoretical infrastructure of later denesting algorithms.}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "landau",
+    "text": "Susan Landau. ``Simplification of Nested Radicals.'' Conference version in \\emph{30th Annual Symposium on Foundations of Computer Science}, 1989, pp.~314--319, \\doi{10.1109/SFCS.1989.63496}; expanded journal version, \\emph{SIAM Journal on Computing} \\textbf{21}(1) (1992), 85--110, \\doi{10.1137/0221009}. Institutional record: \\url{https://fletcher.tufts.edu/research/research-publications/simplification-nested-radicals-0}. \\status{A}\n\\entrynote{A general algorithmic landmark. Its guarantees depend on the base field and roots of unity. The roots-of-unity case, the near-optimal statement in the other case, and the representation of algebraic extensions should be read from the actual theorem rather than collapsed into an unconditional practical complexity slogan.}",
+    "urls": [
+      "https://fletcher.tufts.edu/research/research-publications/simplification-nested-radicals-0"
+    ],
+    "dois": [
+      "10.1109/SFCS.1989.63496",
+      "10.1137/0221009"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "landauzippel",
+    "text": "Susan Landau. ``A note on `Zippel denesting'.'' \\emph{Journal of Symbolic Computation} \\textbf{13}(1) (1992), 41--45. \\doi{10.1016/0747-7171(92)90004-N}. Author preprint: \\url{https://web.cs.umass.edu/publication/docs/1990/UM-CS-1990-120.pdf}. \\status{F}\n\\entrynote{Explains the extent and limitations of the earlier Zippel procedure. Essential for avoiding the incorrect inference that a useful successful-case method decides every admissible denesting. The journal year is 1992, not a later web-upload date.}",
+    "urls": [
+      "https://web.cs.umass.edu/publication/docs/1990/UM-CS-1990-120.pdf"
+    ],
+    "dois": [
+      "10.1016/0747-7171(92)90004-N"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "landau94",
+    "text": "Susan Landau. ``How to Tangle with a Nested Radical.'' \\emph{The Mathematical Intelligencer} \\textbf{16}(2) (1994), 49--55. \\doi{10.1007/BF03024284}. \\status{A}\n\\entrynote{An accessible entry point into the relationship between striking identities and general algebraic algorithms. Best paired with the technical SIAM paper for exact hypotheses and complexity claims.}",
+    "urls": [],
+    "dois": [
+      "10.1007/BF03024284"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "landauviews",
+    "text": "Susan Landau. ``$\\sqrt{2}+\\sqrt{3}$: four different views.'' \\emph{The Mathematical Intelligencer} \\textbf{20} (1998). \\doi{10.1007/BF03025229}. Author copy: \\url{https://privacyink.org/pdf/Sqrt2%2BSqrt3.pdf}. \\status{A}\n\\entrynote{Explains several representations and interpretations of a simple algebraic number. Useful background for distinguishing a radical formula, a minimal polynomial, and a computational representation.}",
+    "urls": [
+      "https://privacyink.org/pdf/Sqrt2%2BSqrt3.pdf"
+    ],
+    "dois": [
+      "10.1007/BF03025229"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "hornghuang",
+    "text": "Gwoboa Horng and Ming-Deh A. Huang. ``Simplifying Nested Radicals and Solving Polynomials by Radicals in Minimum Depth.'' In \\emph{31st Annual Symposium on Foundations of Computer Science}, 1990, pp.~847--854. Related later article: ``Solving Polynomials by Radicals with Roots of Unity in Minimum Depth,'' \\emph{Mathematics of Computation} \\textbf{68}(226) (1999), \\doi{10.1090/S0025-5718-99-01060-1}. \\status{A}\n\\entrynote{Minimum-depth work that makes the roots-of-unity setting explicit. These are related but distinct publications, not interchangeable citations. Some secondary records disagree on the final page of the 1999 paper; its DOI uniquely identifies it.}",
+    "urls": [],
+    "dois": [
+      "10.1090/S0025-5718-99-01060-1"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "horngthesis",
+    "text": "Gwoboa Horng. \\emph{Simplifying Nested Radicals and Solving Polynomials by Radicals in Minimum Depth}. Ph.D. thesis, University of Southern California, 1990. Dissertation record: \\doi{10.5555/142931}. \\status{A}\n\\entrynote{An extended thesis source behind the Horng--Huang research program. The record was checked; no claim of a complete independent audit of its proofs is made here.}",
+    "urls": [],
+    "dois": [
+      "10.5555/142931"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "cotner",
+    "text": "Carl Frank Cotner. \\emph{The Nesting Depths of Radical Expression}. Ph.D. thesis, University of California, Berkeley, 1995. University record: \\url{https://math.berkeley.edu/publications/nesting-depths-radical-expression}. \\status{A}\n\\entrynote{A specialized dissertation on nesting depth. The title follows the institution's visible record; bibliographic variants use ``expressions.'' Preserved as a substantive thesis lead without attributing an uninspected theorem to it.}",
+    "urls": [
+      "https://math.berkeley.edu/publications/nesting-depths-radical-expression"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "blomer91",
+    "text": "Johannes Bl\\\"omer. ``Computing Sums of Radicals in Polynomial Time.'' In \\emph{32nd Annual Symposium on Foundations of Computer Science}, 1991, pp.~670--677. \\doi{10.1109/SFCS.1991.185434}. \\status{A}\n\\entrynote{A key source on effective manipulation and comparison of radical sums. Read its input model carefully: a result for explicitly represented radical sums is not automatically a result for all succinct radical circuits.}",
+    "urls": [],
+    "dois": [
+      "10.1109/SFCS.1991.185434"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "blomer92",
+    "text": "Johannes Bl\\\"omer. ``How to Denest Ramanujan's Nested Radicals.'' In \\emph{33rd Annual Symposium on Foundations of Computer Science}, 1992, pp.~447--456. \\doi{10.1109/SFCS.1992.267807}. \\status{A}\n\\entrynote{Conditions and algorithms for depth-two radical expressions using real radicals or radicals of bounded degree. This is the correct title of the 1992 FOCS paper; it is not the later paper titled ``Denesting by Bounded Degree Radicals.''}",
+    "urls": [],
+    "dois": [
+      "10.1109/SFCS.1992.267807"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "blomerthesis",
+    "text": "Johannes Bl\\\"omer. \\emph{Simplifying Expressions Involving Radicals}. Ph.D. thesis, Freie Universit\\\"at Berlin, 1993. Archived full text: \\url{https://cs.nyu.edu/exact/pap/rootBounds/sumOfSqrts/bloemerThesis.pdf}. \\status{F}\n\\entrynote{A substantial source for proofs, depth-two real denesting, and the surrounding algebraic algorithms. Selected chapters were inspected, including the distinctions between real radicals and bounded-degree radicals.}",
+    "urls": [
+      "https://cs.nyu.edu/exact/pap/rootBounds/sumOfSqrts/bloemerThesis.pdf"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "blomer2000",
+    "text": "Johannes Bl\\\"omer. ``Denesting by Bounded Degree Radicals.'' Conference version in \\emph{Algorithms---ESA '97}, Lecture Notes in Computer Science \\textbf{1284} (1997), 53--63, \\doi{10.1007/3-540-63397-9_5}; journal version, \\emph{Algorithmica} \\textbf{28} (2000), 2--15, \\doi{10.1007/s004530010028}. \\status{A}\n\\entrynote{A separate stage of the bounded-degree theory. The root-degree bound and field hypotheses are essential; publication dates 1997 and 2000 denote versions of the same research line, not two unrelated discoveries.}",
+    "urls": [],
+    "dois": [
+      "10.1007/3-540-63397-9_5",
+      "10.1007/s004530010028"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "blomer98",
+    "text": "Johannes Bl\\\"omer. ``A Probabilistic Zero-Test for Expressions Involving Roots of Rationals.'' In \\emph{Algorithms---ESA '98}, Lecture Notes in Computer Science \\textbf{1461} (1998), 151--162. \\status{A}\n\\entrynote{An early identity-testing reference linking radical arithmetic and randomized algorithms. It belongs next to, but is distinct from, construction of a minimum-depth denesting.}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "jeffrey",
+    "text": "David J. Jeffrey and Albert D. Rich. ``Simplifying Square Roots of Square Roots by Denesting.'' In Michael J. Wester (ed.), \\emph{Computer Algebra Systems: A Practical Guide}, Wiley, 1999, pp.~61--72. Author publication list: \\url{https://www.math.uwo.ca/faculty/jeffrey_david/publications.html}; accessible text: \\url{https://cybertester.com/data/denest.pdf}. \\status{F}\n\\entrynote{A practical bridge from square-root theory to implementable procedures. Particularly relevant to SymPy's documented algorithmic lineage and to selected simplification strategies in other systems.}",
+    "urls": [
+      "https://www.math.uwo.ca/faculty/jeffrey_david/publications.html",
+      "https://cybertester.com/data/denest.pdf"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "besicovitch",
+    "text": "A. S. Besicovitch. ``On the linear independence of fractional powers of integers.'' \\emph{Journal of the London Mathematical Society} \\textbf{15} (1940), 3--6. \\status{A}\n\\entrynote{A classical radical-independence result used as background by later algorithmic work. Linear independence licenses coefficient comparison only after the theorem's hypotheses and multiplicative dependencies have been checked.}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "mordell",
+    "text": "L. J. Mordell. ``On the linear independence of algebraic numbers.'' \\emph{Pacific Journal of Mathematics} \\textbf{3} (1953), 625--630. \\status{A}\n\\entrynote{Another foundational independence reference. Useful for understanding why apparently different radical terms can or cannot cancel and how a suitable basis is chosen.}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "siegel",
+    "text": "C. L. Siegel. ``Algebraische Abh\\\"angigkeit von Wurzeln.'' \\emph{Acta Arithmetica} \\textbf{21} (1972), 59--64. \\doi{10.4064/aa-21-1-59-64}. \\status{A}\n\\entrynote{Structural results on dependence among radicals. Part of the number-theoretic background to the algorithmic literature, rather than a stand-alone CAS denesting interface.}",
+    "urls": [],
+    "dois": [
+      "10.4064/aa-21-1-59-64"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "kneser",
+    "text": "Martin Kneser. ``Lineare Abh\\\"angigkeit von Wurzeln.'' \\emph{Acta Arithmetica} \\textbf{26}(3) (1975), 307--308. \\doi{10.4064/aa-26-3-307-308}. Full-text route: \\url{https://matwbn.icm.edu.pl/ksiazki/aa/aa26/aa26313.pdf}. \\status{A}\n\\entrynote{A short but important radical-dependence paper. The journal record identifies 1975; inconsistent dates in secondary bibliographies have been normalized accordingly.}",
+    "urls": [
+      "https://matwbn.icm.edu.pl/ksiazki/aa/aa26/aa26313.pdf"
+    ],
+    "dois": [
+      "10.4064/aa-26-3-307-308"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "perucca",
+    "text": "Antonella Perucca. \\emph{Linear relations among radicals}. arXiv:2511.02498, submitted November 4, 2025. \\url{https://arxiv.org/abs/2511.02498}. \\status{A}\n\\entrynote{Recent structural work on linear relations in radical extensions. Potentially useful for dependency detection and basis design; the abstract does not by itself establish an implemented denesting algorithm.}",
+    "urls": [
+      "https://arxiv.org/abs/2511.02498"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "lll",
+    "text": "A. K. Lenstra, H. W. Lenstra, Jr., and L. Lov\\'asz. ``Factoring polynomials with rational coefficients.'' \\emph{Mathematische Annalen} \\textbf{261} (1982), 515--534. \\doi{10.1007/BF01457454}. \\status{A}\n\\entrynote{The polynomial-time factorization result needed to distinguish rational-polynomial factorization from integer factorization. It supplies the complexity correction to the divisor-enumeration argument discussed in the cubic section.}",
+    "urls": [],
+    "dois": [
+      "10.1007/BF01457454"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "rit",
+    "text": "Nikhil Balaji, Klara Nosan, Mahsa Shirmohammadi, and James Worrell. ``Identity Testing for Radical Expressions.'' In \\emph{37th Annual ACM/IEEE Symposium on Logic in Computer Science}, 2022, article~8, pp.~1--11. \\doi{10.1145/3531130.3533331}. Extended preprint arXiv:2202.07961, version~4 dated October 16, 2024: \\url{https://arxiv.org/html/2202.07961v4}. \\status{F}\n\\entrynote{Modern complexity analysis for succinct expressions involving radicals. The precise circuit class and conditional assumptions matter. Identity testing, sign determination, and depth minimization are not the same computational task.}",
+    "urls": [
+      "https://arxiv.org/html/2202.07961v4"
+    ],
+    "dois": [
+      "10.1145/3531130.3533331"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "gaillard",
+    "text": "Louis Gaillard and Gorav Jindal. ``On the Order of Power Series and the Sum of Square Roots Problem.'' In \\emph{International Symposium on Symbolic and Algebraic Computation}, 2023. \\doi{10.1145/3597066.3597079}. Preprint: \\url{https://arxiv.org/abs/2304.13605}. \\status{A}\n\\entrynote{Connects power-series order bounds with the sum-of-square-roots problem. Relevant to separation and exact comparison, but not a claim that arbitrary nested radicals now have a practical polynomial-time denester.}",
+    "urls": [
+      "https://arxiv.org/abs/2304.13605"
+    ],
+    "dois": [
+      "10.1145/3597066.3597079"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "allender",
+    "text": "Eric Allender, Peter B\\\"urgisser, Johan Kjeldgaard-Pedersen, and Peter Bro Miltersen. ``On the Complexity of Numerical Analysis.'' \\emph{SIAM Journal on Computing} \\textbf{38}(5) (2009), 1987--2006. \\doi{10.1137/070697926}. \\status{A}\n\\entrynote{Background on algebraic computation and comparison complexity. Useful when assessing claims about numerical evaluation, sign testing, and the bit complexity hidden behind an exact algebraic representation.}",
+    "urls": [],
+    "dois": [
+      "10.1137/070697926"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "ramanujan",
+    "text": "Srinivasa Ramanujan. \\emph{Collected Papers}. Edited by G. H. Hardy, P. V. Seshu Aiyar, and B. M. Wilson. Cambridge University Press, 1927; later reprints. See also the published facsimiles of Ramanujan's notebooks. \\status{L}\n\\entrynote{Primary historical material. Modern explanations and reliable attribution of particular radical identities are more readily obtained through Berndt's edited commentary and the focused papers below. No claim is made here to have rechecked every identity against an original notebook page.}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "berndt",
+    "text": "Bruce C. Berndt. \\emph{Ramanujan's Notebooks}. Part~II, Springer, 1989; Part~IV, Springer, 1994; Part~V, Springer, 1998. \\status{A}\n\\entrynote{A major edited and proved source for Ramanujan's formulas, including algebraic identities and their context. The volumes are grouped as a reading family; they should not be counted as several independent proofs of a single repeated identity.}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "berndt97",
+    "text": "Bruce C. Berndt, Heng Huat Chan, and Liang-Cheng Zhang. ``Ramanujan's association with radicals in India.'' \\emph{The American Mathematical Monthly} \\textbf{104}(10) (1997), 905--911. \\doi{10.1080/00029890.1997.11990738}. Author bibliography: \\url{https://faculty.math.illinois.edu/~berndt/publications.html}. \\status{A}\n\\entrynote{Historical and mathematical discussion of Ramanujan's radical identities. A useful bridge from recreational examples to the deeper number-theoretic explanation.}",
+    "urls": [
+      "https://faculty.math.illinois.edu/~berndt/publications.html"
+    ],
+    "dois": [
+      "10.1080/00029890.1997.11990738"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "berndt98",
+    "text": "Bruce C. Berndt, Heng Huat Chan, and Liang-Cheng Zhang. ``Radicals and units in Ramanujan's work.'' \\emph{Acta Arithmetica} \\textbf{87}(2) (1998), 145--158. \\doi{10.4064/aa-87-2-145-158}. Record and text route: \\url{https://eudml.org/doc/207210}. \\status{A}\n\\entrynote{Develops the relation between radical identities and units in number fields. Explains structure that is invisible in a verification obtained merely by raising both sides to a power.}",
+    "urls": [
+      "https://eudml.org/doc/207210"
+    ],
+    "dois": [
+      "10.4064/aa-87-2-145-158"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "shanks",
+    "text": "Daniel Shanks. ``Incredible identities.'' \\emph{The Fibonacci Quarterly} \\textbf{12} (1974), 271 and 280. \\status{A}\n\\entrynote{A classical source of striking radical identities. The nonconsecutive page numbers are part of the citation. Read together with Spohn's correction and Bumby's later explanation.}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "spohn",
+    "text": "W. G. Spohn. ``Letter to the Editor.'' \\emph{The Fibonacci Quarterly} \\textbf{14} (1976), 12. \\status{A}\n\\entrynote{A correction in the ``incredible identities'' lineage. Retaining this short item avoids reproducing a formula from an early version without its published correction.}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "bumby",
+    "text": "Richard T. Bumby. ``Incredible Identities Revisited.'' \\emph{The Fibonacci Quarterly} \\textbf{25}(1) (1987), 62--64. \\doi{10.1080/00150517.1987.12429728}. \\status{A}\n\\entrynote{Revisits and explains the Shanks identities. A 2024 online backfile date is not the paper's original publication year.}",
+    "urls": [],
+    "dois": [
+      "10.1080/00150517.1987.12429728"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "sury",
+    "text": "B. Sury. \\emph{Ramanujan's route to roots of roots}. Expository lecture notes, undated. Author copy: \\url{https://www.isibang.ac.in/~sury/ramanujanday.pdf}. \\status{F}\n\\entrynote{A readable source of identities and elementary explanations. Useful for examples and teaching; the report's exact polynomial checks independently verify the selected identities used here.}",
+    "urls": [
+      "https://www.isibang.ac.in/~sury/ramanujanday.pdf"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "osler",
+    "text": "Thomas J. Osler. ``Cardan polynomials and the reduction of radicals.'' \\emph{Mathematics Magazine} \\textbf{74}(1) (2001), 26--32. \\status{A}\n\\entrynote{Uses Cardan polynomials to organize radical reductions. Particularly relevant to the selected higher-root identities referenced in practical denesting software.}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "oslercubic",
+    "text": "Thomas J. Osler. \\emph{An easy look at the cubic formula}. Expository author manuscript, undated in the inspected copy. University-hosted copy: \\url{https://math.ucr.edu/~res/math153-2019/osler-An_easy_look_at_the_cubic_formula.pdf}. \\status{F}\n\\entrynote{An elementary derivation and examples; the note deliberately restricts its detailed treatment to real cube-root calculations. It points to Cardano's \\emph{Ars Magna}, translated by T. Richard Witmer (Dover reprint, 1993). The 2015 upload date is not asserted to be the original publication year.}",
+    "urls": [
+      "https://math.ucr.edu/~res/math153-2019/osler-An_easy_look_at_the_cubic_formula.pdf"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "witula",
+    "text": "Roman Witu\\l a and Damian S\\l ota. ``Cardano's formula, square roots, Chebyshev polynomials and radicals.'' \\emph{Journal of Mathematical Analysis and Applications} \\textbf{363} (2010), 639--647. \\status{A}\n\\entrynote{Connects cubic formulas, polynomial identities, and radical representations. A useful companion to Osler, not a substitute for unrestricted radical-depth theory.}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "barbero",
+    "text": "Stefano Barbero, Umberto Cerruti, Nadir Murru, and Marco Abrate. ``Identities involving zeros of Ramanujan and Shanks cubic polynomials.'' \\emph{Journal of Integer Sequences} \\textbf{16} (2013), article~13.8.1. \\status{A}\n\\entrynote{Studies structured cubic polynomial families underlying radical identities. The bibliographic identity is also corroborated by the references in Antipov--Pimenov.}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "krepkii",
+    "text": "I. A. Krepkii and K. I. Pimenov. ``Cube root Ramanujan formulas and elementary Galois theory.'' \\emph{Vestnik St. Petersburg University, Mathematics} \\textbf{48}(4) (2015), 214--223. \\doi{10.3103/S106345411504007X}. \\status{A}\n\\entrynote{A field-theoretic explanation of cube-root Ramanujan formulas. The issue year is 2015; a later online publication date should not silently replace it.}",
+    "urls": [],
+    "dois": [
+      "10.3103/S106345411504007X"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "antipov",
+    "text": "M. A. Antipov and K. I. Pimenov. ``Ramanujan Denesting Formulas for Cubic Radicals.'' \\emph{Vestnik St. Petersburg University, Mathematics} \\textbf{53}(2) (2020), 115--121. \\doi{10.1134/S1063454120020028}. Russian publication: \\emph{Vestnik of Saint Petersburg University. Mathematics. Mechanics. Astronomy} \\textbf{7}(65), no.~2 (2020), 187--196, \\doi{10.21638/11701/spbu01.2020.201}. \\status{A}\n\\entrynote{Characterizes a specified pure-cubic-extension setting, including restrictions on summands and a cube-norm condition. The abstract's scope is narrower than a general assertion about every cubic radical identity. Related language versions are grouped.}",
+    "urls": [],
+    "dois": [
+      "10.1134/S1063454120020028",
+      "10.21638/11701/spbu01.2020.201"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "honsbeek99",
+    "text": "Mascha Honsbeek. \\emph{Denesting certain nested radicals of depth two}. Report 9916, University of Nijmegen, 1999. Institutional record: \\url{https://repository.ubn.ru.nl/handle/2066/18722}. \\status{A}\n\\entrynote{An earlier report on selected depth-two families, later developed in the thesis. It should not be confused with the date of the doctoral dissertation.}",
+    "urls": [
+      "https://repository.ubn.ru.nl/handle/2066/18722"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "honsbeek",
+    "text": "Mascha Honsbeek. \\emph{Radical Extensions and Galois Groups}. Ph.D. thesis, Radboud University Nijmegen, 2005. Author-hosted full text: \\url{https://www.math.ru.nl/~bosma/students/honsbeek/M_Honsbeek_thesis.pdf}. \\status{F}\n\\entrynote{A particularly useful extended source on radical extensions, Galois groups, and denesting. Chapter~3 contains the mixed square-root/cube-root family and quartic criterion discussed in this report; later structural material places it in a broader framework. Selected relevant sections were inspected.}",
+    "urls": [
+      "https://www.math.ru.nl/~bosma/students/honsbeek/M_Honsbeek_thesis.pdf"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "gkioulekas",
+    "text": "Eleftherios Gkioulekas. ``On the denesting of nested square roots.'' \\emph{International Journal of Mathematical Education in Science and Technology} \\textbf{48}(6) (2017), 942--953. \\doi{10.1080/0020739X.2017.1290831}. Author manuscript: \\url{https://faculty.utrgv.edu/eleftherios.gkioulekas/papers/submitted/denesting-square-roots.pdf}. \\status{F}\n\\entrynote{A modern elementary treatment of direct and indirect square-root denesting. Helpful for precise assumptions, counterexamples, and pedagogy; it does not replace the earlier general algorithmic literature.}",
+    "urls": [
+      "https://faculty.utrgv.edu/eleftherios.gkioulekas/papers/submitted/denesting-square-roots.pdf"
+    ],
+    "dois": [
+      "10.1080/0020739X.2017.1290831"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "dokmeci",
+    "text": "Kaan Dokmeci. \\emph{Theorems on Field Extensions and Radical Denesting}. MIT PRIMES research report, September 26, 2017. \\url{https://math.mit.edu/research/highschool/primes/materials/2017/Dokmeci.pdf}. \\status{F}\n\\entrynote{An accessible research exposition connecting field extensions and denesting. Identified as a student research report, not a journal article. Useful as a route into the underlying algebra.}",
+    "urls": [
+      "https://math.mit.edu/research/highschool/primes/materials/2017/Dokmeci.pdf"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "campbell",
+    "text": "Geoffrey B. Campbell and Aleksander Zujev. \\emph{Variations on Ramanujan's nested radicals}. arXiv:1511.06865, 2015. \\url{https://arxiv.org/abs/1511.06865}. \\status{F}\n\\entrynote{A collection and development of related identities. Relevant examples were checked algebraically here; the existence of such families is not a general complexity or completeness theorem.}",
+    "urls": [
+      "https://arxiv.org/abs/1511.06865"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "cavallo",
+    "text": "Alberto Cavallo. \\emph{Denesting cubic radicals}. arXiv:2403.04776, submitted February 29, 2024; version~2, September 28, 2024. \\url{https://arxiv.org/html/2403.04776v2}. \\status{F}\n\\entrynote{A complete criterion for the restricted output shape $A+B\\sqrt p$ considered in Section~\\ref{sec:cubicquadratic}. The report gives a trace--norm proof and an exact implementation. The preprint's claimed equivalence with integer factorization is not accepted: divisor enumeration does not prove that equivalence. The author advertises a companion program, but it was not executed here.}",
+    "urls": [
+      "https://arxiv.org/html/2403.04776v2"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "osipov97",
+    "text": "N. N. Osipov. ``On the simplification of nested real radicals.'' \\emph{Programming and Computer Software} \\textbf{23}(3) (1997), 142--146. \\status{A}\n\\entrynote{An earlier source on real radical simplification. Metadata were corroborated by the authors' 2021 bibliography; the original full text was not inspected for this synthesis.}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "osipov21",
+    "text": "Nikolay N. Osipov and Alexey A. Kytmanov. ``Simplification of Nested Real Radicals Revisited.'' In \\emph{Computer Algebra in Scientific Computing---CASC 2021}, Lecture Notes in Computer Science \\textbf{12865}, pp.~293--313. \\doi{10.1007/978-3-030-85165-1_17}. \\status{A}\n\\entrynote{Treats triply nested real radicals over $\\Q$ and includes nonsimplifiable examples. The publisher abstract was checked; this report does not infer unrestricted polynomial-time completeness from that abstract.}",
+    "urls": [],
+    "dois": [
+      "10.1007/978-3-030-85165-1_17"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "girstmair",
+    "text": "Kurt Girstmair. ``Reducing radicals in the spirit of Euclid.'' \\emph{Journal of Symbolic Computation} \\textbf{104} (2021), 356--365. Preprint arXiv:2004.06039 (2020), \\url{https://arxiv.org/abs/2004.06039}; journal record: \\url{https://www.sciencedirect.com/science/article/pii/S0747717120300742}. \\status{A}\n\\entrynote{Links classical reduction ideas with algebraic formulations of radical reduction. The preprint and journal dates are 2020 and 2021 respectively, not competing dates for two distinct works.}",
+    "urls": [
+      "https://arxiv.org/abs/2004.06039",
+      "https://www.sciencedirect.com/science/article/pii/S0747717120300742"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "tonien",
+    "text": "Joseph Tonien. ``Nested fifth root radical identities from elliptic curves.'' \\emph{Journal of Computational Algebra} \\textbf{13--14} (2025), article~100032. \\doi{10.1016/j.jaca.2025.100032}. \\status{A}\n\\entrynote{A recent higher-index contribution using elliptic curves to construct fifth-root identities. Publisher metadata and abstract were inspected; no claim is made here to have independently verified the full elliptic-curve construction or to have obtained a general fifth-root denester from it.}",
+    "urls": [],
+    "dois": [
+      "10.1016/j.jaca.2025.100032"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "osipov26",
+    "text": "N. N. Osipov. ``On Ramanujan's identities with nested cubic radicals.'' \\emph{Programmirovanie}, no.~2 (2026), 71--77. \\doi{10.7868/S3034584726020081}. Publisher record: \\url{https://journals.rcsi.science/0132-3474/article/view/446083}. \\status{A}\n\\entrynote{An addition absent from the supplied reports. The English abstract describes universality results for specified nested-cubic families over $\\Q$ and their limitations over more general real base fields. The full Russian text required access unavailable in this session; no translated-journal volume is invented.}",
+    "urls": [
+      "https://journals.rcsi.science/0132-3474/article/view/446083"
+    ],
+    "dois": [
+      "10.7868/S3034584726020081"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "elia",
+    "text": "Michele Elia. ``Observations on Some Algebraic Equations Associated with Ramanujan's Work.'' In \\emph{Number Theory and Discrete Mathematics}, Trends in Mathematics, 2002, pp.~101--111. \\doi{10.1007/978-3-0348-8223-1_11}. \\status{A}\n\\entrynote{Adjacent material on algebraic equations associated with Ramanujan. The chapter is by Elia, not by Berndt or Andrews. Equations arising from an iterated or self-referential expression must be distinguished from denesting a finite expression.}",
+    "urls": [],
+    "dois": [
+      "10.1007/978-3-0348-8223-1_11"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "herschfeld",
+    "text": "Aaron Herschfeld. ``On infinite radicals.'' \\emph{The American Mathematical Monthly} \\textbf{42} (1935), 419--429. \\doi{10.1080/00029890.1935.11987745}. \\status{A}\n\\entrynote{The classical convergence theorem for nonnegative infinite square-root nests. The relevant condition is boundedness of $a_n^{2^{-n}}$, not of $a_n$. A complete elementary proof of the needed square-root case is supplied in this report.}",
+    "urls": [],
+    "dois": [
+      "10.1080/00029890.1935.11987745"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "borweinradicals",
+    "text": "Jonathan M. Borwein and G. de Barra. ``Nested Radicals.'' \\emph{The American Mathematical Monthly} \\textbf{98} (1991), 735--739. \\status{A}\n\\entrynote{A useful expository source on infinite nests and their interpretation. Placed in an adjacent section because convergence and evaluation of a limiting nest are not identical to finite denesting.}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "gutin",
+    "text": "Ran Gutin. \\emph{Constructive proof of Herschfeld's Convergence Theorem}. arXiv:1907.02700, first submitted July 5, 2019; version~6, May 22, 2020. \\url{https://arxiv.org/abs/1907.02700}. \\status{A}\n\\entrynote{A constructive perspective on the convergence theorem. The version history is recorded to distinguish the first preprint from later revisions.}",
+    "urls": [
+      "https://arxiv.org/abs/1907.02700"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "mitra",
+    "text": "Narendranath Mitra. \\emph{Generalization of Ramanujan's Famous Nested Radicals to the nth Root and their Evaluation}. arXiv:2404.04051, 2024. \\url{https://arxiv.org/abs/2404.04051}. \\status{A}\n\\entrynote{An adjacent source on generalized infinite nests. Any evaluation obtained by solving a formal fixed-point equation still needs an independent convergence and branch argument.}",
+    "urls": [
+      "https://arxiv.org/abs/2404.04051"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "piagm",
+    "text": "Jonathan M. Borwein and Peter B. Borwein. \\emph{Pi and the AGM: A Study in Analytic Number Theory and Computational Complexity}. Wiley, 1987. \\status{L}\n\\entrynote{Background on iterative algebraic transformations and computation. Included as an adjacent book lead, not as a source of a universal finite radical-denesting algorithm.}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "polya",
+    "text": "George P\\'olya and G\\'abor Szeg\\H{o}. \\emph{Problems and Theorems in Analysis I}. Springer, English editions. \\status{L}\n\\entrynote{A classical problem-book route to sequences, limits, and related analytic techniques. The source reports mentioned the book broadly; no unverified exercise number or edition-specific page is assigned.}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "zippelbook",
+    "text": "Richard Zippel. \\emph{Effective Polynomial Computation}. Kluwer Academic Publishers, 1993. \\status{L}\n\\entrynote{Algorithmic background for polynomial arithmetic and symbolic manipulation. Useful for readers implementing denesting infrastructure; not every chapter is specifically about radicals.}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "geddes",
+    "text": "Keith O. Geddes, Stephen R. Czapor, and George Labahn. \\emph{Algorithms for Computer Algebra}. Kluwer Academic Publishers, 1992. \\doi{10.1007/b102438}. \\status{A}\n\\entrynote{A standard background text on exact symbolic computation. Supplies the polynomial, factorization, and algebraic-extension machinery needed to interpret practical denesting algorithms.}",
+    "urls": [],
+    "dois": [
+      "10.1007/b102438"
+    ]
+  },
+  {
+    "report": "report-3",
+    "key": "gathen",
+    "text": "Joachim von zur Gathen and J\\\"urgen Gerhard. \\emph{Modern Computer Algebra}. Third edition, Cambridge University Press, 2013. \\status{L}\n\\entrynote{A broad reference for bit complexity, polynomial algorithms, and factorization. Particularly useful for understanding why complexity must be measured against an explicit input representation.}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "davenport",
+    "text": "James H. Davenport, Yvon Siret, and Evelyne Tournier. \\emph{Computer Algebra: Systems and Algorithms for Algebraic Computation}. Academic Press, English edition, 1988. French original: \\emph{Calcul formel}, Masson, 1987. \\status{L}\n\\entrynote{A classical computer-algebra text. Grouping the language editions avoids duplicating one book in the reading list.}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "cohen",
+    "text": "Henri Cohen. \\emph{A Course in Computational Algebraic Number Theory}. Graduate Texts in Mathematics \\textbf{138}, Springer, 1993. \\status{L}\n\\entrynote{Background for number-field arithmetic, exact representations, and computational algebraic number theory. An infrastructure reference rather than a specialized denesting monograph.}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "cox",
+    "text": "David A. Cox. \\emph{Galois Theory}. Second edition, Wiley, 2012. \\status{L}\n\\entrynote{A route to the algebraic prerequisites: field extensions, roots of unity, solvable groups, and radical solutions. Useful before reading Landau or Honsbeek.}",
+    "urls": [],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "sympy",
+    "text": "SymPy development team. ``Simplify,'' official documentation, especially \\texttt{sqrtdenest}, \\texttt{radsimp}, and \\texttt{nthroot}. \\url{https://docs.sympy.org/latest/modules/simplify/simplify.html}. \\status{D}\n\\entrynote{Documents the purpose, parameters, examples, and limitations of the public routines. The local experiments used SymPy 1.14.0; a moving ``latest'' page is not a substitute for recording that exact version.}",
+    "urls": [
+      "https://docs.sympy.org/latest/modules/simplify/simplify.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "sympysource",
+    "text": "SymPy development team. Source code and tests for \\texttt{sqrtdenest}. \\url{https://github.com/sympy/sympy/blob/master/sympy/simplify/sqrtdenest.py}; \\url{https://github.com/sympy/sympy/blob/master/sympy/simplify/tests/test_sqrtdenest.py}. \\status{D}\n\\entrynote{Primary implementation evidence, including algorithmic references, special cases, and test examples. These links track the development branch; the attached execution transcript fixes the version actually run.}",
+    "urls": [
+      "https://github.com/sympy/sympy/blob/master/sympy/simplify/sqrtdenest.py",
+      "https://github.com/sympy/sympy/blob/master/sympy/simplify/tests/test_sqrtdenest.py"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "sympyissues",
+    "text": "SymPy issue tracker. Denesting-related discussions, issues \\#2415 and \\#27082. \\url{https://github.com/sympy/sympy/issues/2415}; \\url{https://github.com/sympy/sympy/issues/27082}. \\status{D}\n\\entrynote{Useful historical and practical test-case leads. An issue report alone does not prove that a defect persists in a later release, and an issue's example should be rerun before making a current capability claim.}",
+    "urls": [
+      "https://github.com/sympy/sympy/issues/2415",
+      "https://github.com/sympy/sympy/issues/27082"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "maxima",
+    "text": "\\texttt{gschintgen/raddenest}. Maxima add-on package, documentation, and source. \\url{https://github.com/gschintgen/raddenest}. \\status{D}\n\\entrynote{The README describes substantial lineage from SymPy 1.0, while the package documentation includes selected additional higher-root routines. Thus ``only a square-root port'' is incomplete. Maxima was not executed during this synthesis.}",
+    "urls": [
+      "https://github.com/gschintgen/raddenest"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "wolframroot",
+    "text": "Wolfram Research. \\texttt{RootReduce}, Wolfram Language documentation. \\url{https://reference.wolfram.com/language/ref/RootReduce.html}. \\status{D}\n\\entrynote{Documents algebraic-number reduction to a root representation. This is a powerful equality and representation tool, but its stated objective is not minimum radical nesting depth.}",
+    "urls": [
+      "https://reference.wolfram.com/language/ref/RootReduce.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "wolframradicals",
+    "text": "Wolfram Research. \\texttt{ToRadicals}, Wolfram Language documentation. \\url{https://reference.wolfram.com/language/ref/ToRadicals.html}. \\status{D}\n\\entrynote{Converts suitable algebraic root objects to radical expressions. Such conversion may introduce nesting or a longer expression; it is not synonymous with denesting. Branch-sensitive output requires its documented conventions.}",
+    "urls": [
+      "https://reference.wolfram.com/language/ref/ToRadicals.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "wolframresource",
+    "text": "Swastik Banerjee. \\texttt{RadicalDenest}, Wolfram Function Repository. \\url{https://resources.wolframcloud.com/FunctionRepository/resources/RadicalDenest}. \\status{D}\n\\entrynote{A contributed resource function rather than a kernel built-in. Its time-constrained heuristic search should not be interpreted as a proof of optimality or of non-denestability after failure. The function was not executed here.}",
+    "urls": [
+      "https://resources.wolframcloud.com/FunctionRepository/resources/RadicalDenest"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "wolframcommunity",
+    "text": "Wolfram Community. ``Radical Denest: an ancient difficult task in symbolic computation,'' \\url{https://community.wolfram.com/groups/-/m/t/2120629}; ``Heuristic package to denest radicals,'' \\url{https://community.wolfram.com/groups/-/m/t/980264}. \\status{D}\n\\entrynote{Author/developer discussions of practical approaches, examples, and heuristic packages. Valuable implementation leads, but distinct from official kernel guarantees and from peer-reviewed completeness theorems.}",
+    "urls": [
+      "https://community.wolfram.com/groups/-/m/t/2120629",
+      "https://community.wolfram.com/groups/-/m/t/980264"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "maple",
+    "text": "Maplesoft. \\texttt{radnormal} and \\texttt{simplify/radical}, official Maple documentation. \\url{https://www.maplesoft.com/support/help/Maple/view.aspx?path=radnormal}; \\url{https://www.maplesoft.com/support/help/Maple/view.aspx?path=simplify%2Fradical}. \\status{D}\n\\entrynote{Documents radical normalization and simplification, including the importance of assumptions. Public documentation was used instead of speculation about proprietary internals. No Maple session was run for this report.}",
+    "urls": [
+      "https://www.maplesoft.com/support/help/Maple/view.aspx?path=radnormal",
+      "https://www.maplesoft.com/support/help/Maple/view.aspx?path=simplify%2Fradical"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "sage",
+    "text": "SageMath development team. ``Algebraic numbers'' and symbolic-expression documentation. \\url{https://doc.sagemath.org/html/en/reference/qqbar/sage/rings/qqbar.html}; \\url{https://doc.sagemath.org/html/en/reference/calculus/sage/symbolic/expression.html}. \\status{D}\n\\entrynote{Documents exact algebraic real and complex number types and symbolic radical operations. Exact evaluation in \\texttt{AA}/\\texttt{QQbar} should not be conflated with a shortest radical expression; symbolic identities can depend on assumptions.}",
+    "urls": [
+      "https://doc.sagemath.org/html/en/reference/qqbar/sage/rings/qqbar.html",
+      "https://doc.sagemath.org/html/en/reference/calculus/sage/symbolic/expression.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "pari",
+    "text": "PARI/GP development team. ``General number fields,'' official manual. \\url{https://pari.math.u-bordeaux.fr/dochtml/html/General_number_fields.html}. \\status{D}\n\\entrynote{Number-field factorization and arithmetic supply useful infrastructure for membership tests and algebraic certificates. The manual does not imply a one-command general minimum-depth denester.}",
+    "urls": [
+      "https://pari.math.u-bordeaux.fr/dochtml/html/General_number_fields.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "flint",
+    "text": "FLINT development team. ``\\texttt{qqbar.h} -- algebraic numbers,'' documentation served as FLINT 3.7.0-dev at inspection. \\url{https://flintlib.org/doc/qqbar.html}. \\status{D}\n\\entrynote{Exact algebraic numbers represented using minimal polynomials and isolating enclosures. The documentation distinguishes heuristically finding an expression in a specified field from rigorous validation of a successful candidate; failed searches do not establish nonmembership.}",
+    "urls": [
+      "https://flintlib.org/doc/qqbar.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "calcium",
+    "text": "FLINT/Calcium development team. ``\\texttt{ca.h} -- exact complex numbers,'' especially \\texttt{ca\\_sqrt\\_factor}, documentation served as FLINT 3.7.0-dev. \\url{https://flintlib.org/doc/ca.html}. \\status{D}\n\\entrynote{Documents square-root simplification by factorization and extraction of square parts, together with branch selection. This is useful denesting-adjacent machinery, not an advertised global minimum-depth procedure.}",
+    "urls": [
+      "https://flintlib.org/doc/ca.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "fricas",
+    "text": "FriCAS developer discussion. Radical simplification, \\texttt{recursiveRootSimplification}, and \\texttt{rsimp}. \\url{https://groups.google.com/g/fricas-devel/c/7Kp0vVbPXJE}. \\status{D}\n\\entrynote{A developer-level implementation lead retained from the reports. It supports the existence of relevant routines and discussion, not an independent benchmark or a complete public specification of all supported inputs.}",
+    "urls": [
+      "https://groups.google.com/g/fricas-devel/c/7Kp0vVbPXJE"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "honda",
+    "text": "Yasuaki Honda. \\texttt{GaloisGroupSolver}, Maxima package. \\url{https://github.com/YasuakiHonda/GaloisGroupSolver}. \\status{D}\n\\entrynote{The author's README describes computing radical solutions using Galois groups and field extensions. This is adjacent to denesting: solving a polynomial by radicals does not ensure a minimum-depth representation of a chosen root. The package was not executed here.}",
+    "urls": [
+      "https://github.com/YasuakiHonda/GaloisGroupSolver"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "brownmath",
+    "text": "Stan Brown. ``Denesting Radicals (or Unnesting Radicals).'' \\url{https://brownmath.com/alge/nestrad.htm}. \\status{D}\n\\entrynote{An accessible tutorial on elementary surds and worked calculations. Appropriate for a first reading path; advanced impossibility and complexity statements should be sourced to the research papers.}",
+    "urls": [
+      "https://brownmath.com/alge/nestrad.htm"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "wikipedia",
+    "text": "Wikipedia contributors. ``Nested radical,'' especially ``Denesting.'' \\url{https://en.wikipedia.org/wiki/Nested_radical#Denesting}. \\status{D}\n\\entrynote{The starting point named in the user-supplied research prompt. Used for navigation and identifying leads, not as the decisive authority for the general algorithmic claims reconciled in this report.}",
+    "urls": [
+      "https://en.wikipedia.org/wiki/Nested_radical#Denesting"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "mathworld",
+    "text": "Eric W. Weisstein. ``Nested Radical.'' \\emph{MathWorld---A Wolfram Web Resource}. \\url{https://mathworld.wolfram.com/NestedRadical.html}. \\status{D}\n\\entrynote{A compact reference for examples, infinite nests, and bibliographic routes. Its coverage complements, but does not replace, the finite-denesting literature.}",
+    "urls": [
+      "https://mathworld.wolfram.com/NestedRadical.html"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "mse",
+    "text": "Mathematics Stack Exchange. Discussions on denesting radicals, including threads 4680, 16331, and 871639. \\url{https://math.stackexchange.com/questions/4680}; \\url{https://math.stackexchange.com/questions/16331}; \\url{https://math.stackexchange.com/questions/871639}. \\status{D}\n\\entrynote{Community explanations and useful references, including contributions by Bill Dubuque and other authors. Grouped as discussion resources rather than counted as independent papers. Exact identities used in this report have their own algebraic verification.}",
+    "urls": [
+      "https://math.stackexchange.com/questions/4680",
+      "https://math.stackexchange.com/questions/16331",
+      "https://math.stackexchange.com/questions/871639"
+    ],
+    "dois": []
+  },
+  {
+    "report": "report-3",
+    "key": "mo",
+    "text": "MathOverflow. Research discussions on radical denesting and related algorithms, threads 319874, 410388, and 344478. \\url{https://mathoverflow.net/questions/319874}; \\url{https://mathoverflow.net/questions/410388}; \\url{https://mathoverflow.net/questions/344478}. \\status{D}\n\\entrynote{Useful for locating research literature, understanding practical questions, and identifying caveats. Statements that something is ``open'' or ``unimplemented'' require a precise scope and cannot automatically be promoted to a universal current claim.}",
+    "urls": [
+      "https://mathoverflow.net/questions/319874",
+      "https://mathoverflow.net/questions/410388",
+      "https://mathoverflow.net/questions/344478"
+    ],
+    "dois": []
+  }
+]

@@ -1,0 +1,25 @@
+{
+  "id": "sury",
+  "title": "Ramanujan's route to roots of roots",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "sury",
+      "entry_latex": "B. Sury, \\emph{Ramanujan's Route to Roots of Roots}, lecture notes, Indian Statistical Institute, Bangalore, for a talk at IIT Madras.\n\\access{https://www.isibang.ac.in/~sury/ramanujanday.pdf}{Institutional PDF}. \\status{T}\nAccessible treatment of the Galois-theoretic criterion, rational quartic test, and explicit formulas. The sign of $\\beta$ in one printed example needs care; this report uses $(28,-27)$."
+    },
+    {
+      "report": "report-2",
+      "key": "sury",
+      "entry_latex": "B. Sury.\n\\emph{Ramanujan's route to roots of roots}.\nLecture notes, 2007.\n\\sourceurl{https://www.isibang.ac.in/~sury/ramanujanday.pdf}.\n\\textbf{FT.} Readable field-theoretic exposition of Ramanujan's radicals, including the Honsbeek criterion. The ratio-versus-integral-parametrization distinction is important when interpreting its examples."
+    },
+    {
+      "report": "report-3",
+      "key": "sury",
+      "entry_latex": "B. Sury. \\emph{Ramanujan's route to roots of roots}. Expository lecture notes, undated. Author copy: \\url{https://www.isibang.ac.in/~sury/ramanujanday.pdf}. \\status{F}\n\\entrynote{A readable source of identities and elementary explanations. Useful for examples and teaching; the report's exact polynomial checks independently verify the selected identities used here.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "id": "antipov",
+  "title": "Ramanujan denesting formulas for cubic radicals",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "antipov",
+      "entry_latex": "M.~A. Antipov and K.~I. Pimenov, ``Ramanujan denesting formulas for cubic radicals,'' \\emph{Vestnik St. Petersburg University: Mathematics} \\textbf{53}(2) (2020), 115--121. \\doi{10.1134/S1063454120020028}. \\status{A}\nA classification in a specified pure-cubic setting, including a three-summand bound and a norm condition. Its qualified uniqueness statement should not be generalized beyond that setting."
+    },
+    {
+      "report": "report-2",
+      "key": "antipov",
+      "entry_latex": "M. A. Antipov and K. I. Pimenov.\n\\emph{Ramanujan denesting formulas for cubic radicals}.\nVestnik St. Petersburg University: Mathematics \\textbf{53}(2), 115--121, 2020.\n\\doi{10.1134/S1063454120020028}.\n\\textbf{M.} Classification and uniqueness within a defined Ramanujan-type class, including summand and norm restrictions. Not a universal three-term theorem for every cubic radical expression."
+    },
+    {
+      "report": "report-3",
+      "key": "antipov",
+      "entry_latex": "M. A. Antipov and K. I. Pimenov. ``Ramanujan Denesting Formulas for Cubic Radicals.'' \\emph{Vestnik St. Petersburg University, Mathematics} \\textbf{53}(2) (2020), 115--121. \\doi{10.1134/S1063454120020028}. Russian publication: \\emph{Vestnik of Saint Petersburg University. Mathematics. Mechanics. Astronomy} \\textbf{7}(65), no.~2 (2020), 187--196, \\doi{10.21638/11701/spbu01.2020.201}. \\status{A}\n\\entrynote{Characterizes a specified pure-cubic-extension setting, including restrictions on summands and a cube-norm condition. The abstract's scope is narrower than a general assertion about every cubic radical identity. Related language versions are grouped.}"
+    }
+  ],
+  "notes": [
+    "A MathNet PDF (vspua180) surfaced for a related cubic-Ramanujan paper, but exact correspondence to the cited Antipov--Pimenov work has not been established; it is not included as a download asset.",
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

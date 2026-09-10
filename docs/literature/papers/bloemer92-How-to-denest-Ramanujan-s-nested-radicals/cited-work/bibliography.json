@@ -1,0 +1,25 @@
+{
+  "id": "bloemer92",
+  "title": "How to denest Ramanujan's nested radicals",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "bloemer92",
+      "entry_latex": "J. Bl\\\"omer, ``How to denest Ramanujan's nested radicals,'' \\emph{FOCS 1992}, 447--456. \\doi{10.1109/SFCS.1992.267807}. \\status{A}\nA key depth-two result avoiding unnecessary construction of full minimal-polynomial and splitting-field data. Relates structure and size bounds to denesting by real or bounded-degree radicals."
+    },
+    {
+      "report": "report-2",
+      "key": "blomer1992",
+      "entry_latex": "Johannes Bl\\\"omer.\n\\emph{How to denest Ramanujan's nested radicals}.\nProceedings of the 33rd IEEE Symposium on Foundations of Computer Science, 447--456, 1992.\n\\doi{10.1109/SFCS.1992.267807}.\n\\textbf{FT.} Structural and algorithmic work on depth-two denesting, avoiding the general splitting-field construction in its target cases. The thesis supplies much more detailed size accounting."
+    },
+    {
+      "report": "report-3",
+      "key": "blomer92",
+      "entry_latex": "Johannes Bl\\\"omer. ``How to Denest Ramanujan's Nested Radicals.'' In \\emph{33rd Annual Symposium on Foundations of Computer Science}, 1992, pp.~447--456. \\doi{10.1109/SFCS.1992.267807}. \\status{A}\n\\entrynote{Conditions and algorithms for depth-two radical expressions using real radicals or radicals of bounded degree. This is the correct title of the 1992 FOCS paper; it is not the later paper titled ``Denesting by Bounded Degree Radicals.''}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

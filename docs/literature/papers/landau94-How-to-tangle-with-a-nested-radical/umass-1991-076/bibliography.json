@@ -1,0 +1,25 @@
+{
+  "id": "landau94",
+  "title": "How to tangle with a nested radical",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "landau94",
+      "entry_latex": "S. Landau, ``How to tangle with a nested radical,'' \\emph{The Mathematical Intelligencer} \\textbf{16}(2) (1994), 49--55. \\doi{10.1007/BF03024284}. \\status{T}\nThe most useful short orientation to the mathematical and algorithmic landscape before the general technical papers."
+    },
+    {
+      "report": "report-2",
+      "key": "landausurvey",
+      "entry_latex": "Susan Landau.\n\\emph{How to tangle with a nested radical}.\nThe Mathematical Intelligencer \\textbf{16}(2), 49--55, 1994.\n\\doi{10.1007/BF03024284}.\n\\textbf{FT.} Accessible synthesis connecting identities, Galois theory, denesting, and computational cost. Especially useful before the more technical SIAM paper."
+    },
+    {
+      "report": "report-3",
+      "key": "landau94",
+      "entry_latex": "Susan Landau. ``How to Tangle with a Nested Radical.'' \\emph{The Mathematical Intelligencer} \\textbf{16}(2) (1994), 49--55. \\doi{10.1007/BF03024284}. \\status{A}\n\\entrynote{An accessible entry point into the relationship between striking identities and general algebraic algorithms. Best paired with the technical SIAM paper for exact hypotheses and complexity claims.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

@@ -1,0 +1,419 @@
+\documentclass[11pt,oneside]{article}
+
+\usepackage[a4paper,margin=27mm,headheight=15pt]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\IfFileExists{libertinus.sty}{\usepackage{libertinus}}{\usepackage{lmodern}}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools,mathrsfs}
+\usepackage{bm}
+\usepackage{booktabs,longtable,array,tabularx}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{listings}
+\usepackage{xurl}
+\usepackage{ragged2e,needspace}
+\usepackage{hyperref}
+\usepackage{bookmark}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\definecolor{linkblue}{RGB}{25,75,135}
+\definecolor{shadegray}{RGB}{246,247,249}
+\definecolor{rulegray}{RGB}{195,201,208}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=linkblue,
+  citecolor=linkblue,
+  urlcolor=linkblue,
+  pdftitle={Radical Denesting with Strad.wl: Third Unified Analysis and the Third Corrected Version},
+  pdfauthor={Analysis session for Vladimir Reshetnikov},
+  pdfsubject={Three reviews of StradFixed2.wl and StradFixed3.wl}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Strad.wl: third unified analysis}
+\fancyhead[R]{\small\nouppercase{\leftmark}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\titleformat{\section}{\Large\bfseries}{\thesection}{0.7em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.7em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{0.7em}{}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+\setlist[itemize]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+\setlist[enumerate]{leftmargin=2.3em,itemsep=0.25em,topsep=0.4em}
+\setlength{\emergencystretch}{3em}
+\numberwithin{equation}{section}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\code}[1]{\texttt{\detokenize{#1}}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\RVII}{\textsf{R7}}
+\newcommand{\RVIII}{\textsf{R8}}
+\newcommand{\RIX}{\textsf{R9}}
+\newcommand{\Cc}[1]{\hyperref[c:#1]{\textsf{C#1}}}
+\DeclareMathOperator{\Arg}{Arg}
+\DeclareMathOperator{\depth}{depth}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\Tr}{Tr}
+\DeclareMathOperator{\Nm}{N}
+
+\newenvironment{boxedremark}{%
+  \par\smallskip\noindent\begin{center}\begin{minipage}{0.94\textwidth}%
+  \color{black}\hrule\vspace{0.6em}\small
+}{%
+  \vspace{0.6em}\hrule\end{minipage}\end{center}\smallskip
+}
+
+\lstdefinelanguage{WL}{
+  morekeywords={Block,Module,With,If,For,While,Which,Switch,Return,Function,True,False,Null,
+    Power,Times,Plus,List,Rule,RuleDelayed,Set,SetDelayed,MinimalPolynomial,PolynomialGCD,
+    RootReduce,FactorList,FactorInteger,Sort,SortBy,Select,DeleteDuplicates,DeleteCases,Cases,
+    Replace,ReplaceAll,TrueQ,Check,Quiet,TimeConstrained,MemoryConstrained,Failure,Catch,Throw,
+    Print,Simplify,Expand,Together,Solve,Factor,ToRadicals,Discriminant,Do,Break,Continue,
+    BeginPackage,Begin,End,EndPackage,Options,OptionValue,OptionsPattern,PossibleZeroQ,
+    MemberQ,FreeQ,MatchQ,AtomQ,NumericQ,Precision,LeafCount,Count,Sqrt,Root,AlgebraicNumber,
+    FindIntegerNullVector},
+  sensitive=true,morecomment=[s]{(*}{*)},morestring=[b]"
+}
+\lstdefinestyle{pseudo}{
+  language=WL,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{linkblue},
+  commentstyle=\itshape\color{black!60},
+  backgroundcolor=\color{shadegray},
+  frame=single,
+  rulecolor=\color{rulegray},
+  columns=fullflexible,
+  keepspaces=true,
+  breaklines=true,
+  showstringspaces=false,
+  tabsize=4,
+  xleftmargin=0.7em,
+  xrightmargin=0.7em,
+  aboveskip=0.8em,
+  belowskip=0.8em
+}
+\lstset{style=pseudo}
+
+\title{\bfseries Radical Denesting with \texttt{Strad.wl}\\[0.35em]
+\large Third unified analysis: three reviews of the second corrected version\\
+\large and the third corrected version \texttt{StradFixed3.wl}}
+\author{Analysis session for Vladimir Reshetnikov\\
+\small \texttt{RadicalDenest} repository, \texttt{src/code-review/unified-C}}
+\date{5 September 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The second corrected version of the radical denester, \code{StradFixed2.wl}, was reviewed three times (\code{src/code-review/review-7}, \code{review-8}, \code{review-9}). Each review pinned the same commit, read the complete source, wrote a proposed \code{StradFixed3.wl} and a native test suite that it could not run, and executed SymPy checks of the mathematics it relied on. This document compares the three reviews, consolidates their findings with the observations of this session into a catalogue of 23 issues, and presents \code{src/corrected/StradFixed3.wl}, which addresses them. The main changes are a sound admission test for \code{Root} and \code{AlgebraicNumber} objects; an equality classifier that is exact in every branch, with the numeric prefilter reduced to optional pruning inside the search; incumbents threaded through every proposal stage; index reductions offered before recursion; a budget-aware memo that never lets a weak recursive search suppress a stronger one; every kernel operation, the classification of the input and the report costs inside the resource region; a discriminant batch cap enforced in the inner loop; malformed calls rejected with a \code{Failure}; recursive cost accounting; labelled certificate records; and three coverage extensions: the trace--norm criterion for every odd index up to a bound, a Honsbeek recognizer that accepts every term with a rational cube, and a square-class coset search for multi-surd square roots that closes the gap all three reviews proved.
+
+Everything reported here was executed in Wolfram~15.0.1. The unified-A battery (116 rows, now with 33 round-3 cases) and fourteen randomized families (430 inputs) produce no wrong value; the fifteen inputs of \code{KNOWN_GAPS.md} stay denested; the 230 regression tests, which translate the three reviews' suites, pass; the reviews' own native suites were executed against their own proposals (Section~\ref{sec:reviewsuites}); and review-8's differential corpus was run against both versions. Remaining limitations are stated in Section~\ref{sec:limits}.
+\end{abstract}
+
+\begin{boxedremark}\textbf{Evidence.}\space
+All executions were performed in \emph{15.0.1 for Microsoft Windows (64-bit) (July 2, 2026)} through \code{wolframscript}, one kernel at a time. Every table is generated mechanically from the recorded runs in \code{logs/} by \code{harness/export_tables3.wl}. Statements about the reviews cite their finding identifiers; statements about \code{StradFixed2.wl} cite the second unified analysis in \code{src/code-review/unified-B} (``unified-B'' below). The reviewed file is \code{StradFixed2.wl} at commit \code{9000d6f}, Git blob \code{0bdeded3}, SHA-256 \code{e2a885da\ldots}; the new file \code{StradFixed3.wl} has SHA-256 \code{ee647bee\ldots}.
+\end{boxedremark}
+
+\tableofcontents
+\newpage
+
+\section{Scope, material, and method}\label{sec:intro}
+
+\subsection{The object under analysis}
+\code{src/corrected/StradFixed2.wl} (745 lines, context \code{RadicalDenest2`}) is the second corrected version of \code{src/original/Strad.wl}, produced in unified-B. It has one acceptance gate for every candidate, a session with a shared deadline and bounded kernel operations, validated options, a congruence walk over arithmetic hosts, exact fast paths for the quadratic, Gaussian, cubic-in-quadratic, Honsbeek and multi-surd square roots, negative-radicand separation, Kummer linear factors and index reduction, and a capped multiplier queue. Unified-B evaluated it on 116 battery rows and 340 randomized inputs with no wrong value, and on the fifteen previously missed inputs, all denested.
+
+Three independent reviews of it were written on 5~September 2026; they are kept under \code{src/code-review/} as \code{review-7}, \code{review-8} and \code{review-9} and are called \RVII, \RVIII\ and \RIX\ below. Unlike the previous round, all three could read the complete source at a pinned commit (Table~\ref{tab:reviewsummary}). None could run a Wolfram kernel; each says so and supplies native probes, a native suite and a proposed implementation for execution here.
+
+\begin{table}[h]\centering\small
+\begin{tabularx}{\textwidth}{@{}l X X X@{}}
+\toprule
+ & \RVII & \RVIII & \RIX\\\midrule
+Title & A second-generation audit of \code{StradFixed2} & Radical denesting after the second repair & A contract-oriented review of \code{StradFixed2}\\
+Source seen & complete, pinned \code{9000d6f}, blob checked & complete, web-rendered views of the pinned commit & complete, pinned \code{9000d6f}, blob checked\\
+Findings & F01--F12 & F01--F14 & F1--F10\\
+Executed checks & 14\,190 SymPy assertions & 3\,412 SymPy, control-flow and structural checks & 396 SymPy and structural checks\\
+Wolfram execution & none & none & none\\
+Proposed code & 816 lines, 36 checked edit groups & 613 lines, a rewrite with eight new options & 875 lines, four new options\\
+Native tests supplied & 50 & 52 & 40\\
+Distinctive content & Dickson recurrences for every odd index; Honsbeek test family; cost of the transcendental \code{Root} & coset enumeration (\code{cosetBases}, \code{surdSystem}); opt-in list and inexact-host policies & character reconstruction over $\F_2^r$; discriminant batch loop model (24 nominal, 46 actual); differential corpus\\
+\bottomrule
+\end{tabularx}
+\caption{The three reviews of \code{StradFixed2.wl} at a glance.}\label{tab:reviewsummary}
+\end{table}
+
+\subsection{What this document adds}
+\begin{enumerate}
+\item A finding-by-finding comparison of the three reviews, with an assessment of each finding against the source and, where the finding is about executable behaviour, against a kernel run of the review's own probe (Section~\ref{sec:reviews}).
+\item A consolidated catalogue of 23 issues \Cc{01}--\Cc{23}, each with its sources, its disposition in \code{StradFixed3.wl} and, where the new version departs from a review's recommendation, the reason (Section~\ref{sec:catalogue}).
+\item The design changes of \code{StradFixed3.wl}, read by responsibility (Section~\ref{sec:design}), and the mathematics of the three coverage extensions (Section~\ref{sec:math}).
+\item Executed experiments: the battery of unified-A/B and a group of round-3 cases on both versions side by side, fourteen randomized families, the fifteen previously missed inputs, a regression suite of 230 tests, the reviews' own suites against their own proposals, and review-8's differential corpus (Section~\ref{sec:experiments}).
+\item Remaining limitations, compatibility changes, and future work (Sections~\ref{sec:limits} and \ref{sec:future}).
+\end{enumerate}
+
+\section{The three reviews}\label{sec:reviews}
+
+\subsection{Where they agree}
+The three reviews converge to a degree the previous round did not: eight of their findings are shared by all three, and every review states explicitly that it found no wrong value returned by \code{StradFixed2.wl} on an admitted, genuinely algebraic, parameter-free input. Their shared findings are the following.
+
+\begin{itemize}
+\item \textbf{The admission test is not sound} (\RVII\ F01, \RVIII\ F01, \RIX\ F1). \code{ExactAlgebraicQ} accepts any \code{Root} or \code{AlgebraicNumber} object of infinite precision, so \code{Root[#^5 + # - Pi &, 1]} and \code{Root[#^3 - # + parameter &, 1]} pass; exactness of a representation is not algebraicity. Confirmed in the kernel (Section~\ref{sec:repro}). No wrong value follows, because a non-algebraic ``island'' can never be certified equal to a radical candidate, but the public predicate lies and \code{EqualityStatus} of such an object could in principle be decided by \code{RootReduce} in an undefined way.
+\item \textbf{A numeric hint produces the public status \code{"Different"}} (\RVII\ F02, \RVIII\ F05, \RIX\ F7). \code{certify} rejects a difference of reported accuracy at least 25 digits before the exact steps, so \code{EqualityStatus} is not the exact classifier its usage string describes, and \code{CertificatesDifferent} counts heuristic rejections. Unified-B had documented the prefilter as a heuristic rejection; the reviews are right that a public exact status cannot rest on it. Confirmed (Section~\ref{sec:repro}).
+\item \textbf{Later stages reset the incumbent} (\RVII\ F03, \RVIII\ F02, \RIX\ F2). In \code{powerProposals} the lines \code{best = negativeRadicandCandidate[target, rho, p, q]} and \code{best = kummerCandidates[target, rho, p, q]} assign the stage result, and both helpers start from \code{target}, so a cheaper incumbent found by the fast paths is lost when the later stage finds nothing. Confirmed with \RVIII's probe (Section~\ref{sec:repro}). The public pipeline usually recovers the value through a later stage, which is why no battery row showed it.
+\item \textbf{Index reduction demands recursive progress} (\RVII\ F04, \RVIII\ F03, \RIX\ F3). \code{kummerCandidates} offers $\gamma^{1/(q/k)}$ only if the recursive call changes it \emph{and} lowers its depth, so $(3+2\sqrt2)^{1/4}\to\sqrt{1+\sqrt2}$ and $(3+2\sqrt2)^{1/6}\to(1+\sqrt2)^{1/3}$, which are cheaper without being shallower, depend on a different route. Confirmed: with \code{recurse} replaced by the identity, the helper returns the input (Section~\ref{sec:repro}).
+\item \textbf{The memo caches failures without their budget} (\RVII\ F06, \RVIII\ F04, \RIX\ F4). An island first met inside a recursive call, which has a quarter of the trials, is memoized as unchanged and the memo answers a later top-level visit with the full budget.
+\item \textbf{Some work escapes the resource wrappers} (\RVII\ F05, \RVIII\ F06, \RIX\ F5). \code{FactorInteger} of a discriminant, \code{Together} in \code{linearRoots}, \code{Expand} of the multiplier ansatz and the fast-path dispatcher run outside \code{bounded[]}; the classification of the input and the two \code{RadicalCost} calls of the report run outside the \code{TimeConstrained} region, so a report can spend unbudgeted time and a disabled call still computes costs.
+\item \textbf{Malformed calls stay unevaluated} (\RVII\ F07, \RVIII\ F14, \RIX\ F8). \code{Strad[Sqrt[2], 17]} and \code{Strad[]} do not match \code{OptionsPattern[]} and return unevaluated instead of the documented \code{Failure}. Confirmed.
+\item \textbf{The multi-surd solver misses square-class cosets} (\RVII\ F10, \RVIII\ F07, \RIX\ F10). The two unknown sets $\{1\}\cup P$ and $\{1\}\cup P\cup D$ cannot express $\sqrt6+\sqrt{35}+\sqrt{77}$, whose square is $118+2\sqrt{210}+14\sqrt{55}+2\sqrt{462}$, because the support $\{6,35,77\}$ is a coset of the group generated by the radicands. All three reviews prove this; \RIX\ proves further that closing the prime basis does not suffice. Confirmed: the fast path misses, and in unified-B the identity was found by the multiplier search in about five seconds (Section~\ref{sec:repro}).
+\end{itemize}
+
+\subsection{Findings unique to one or two reviews}
+\RIX\ F6 models the discriminant batch of \code{multiplierSearch}: the check \code{batch >= 24} sits in the outer loop over primes, so with eight primes and $q=7$ one prime can push the batch to 46 proposals before the check. The global admission cap holds, so the effect is a quota overrun, not an unbounded loop. \RVIII\ F12 makes the same observation and adds that multiplier keys are syntactic, so $2\sqrt2$ and $\sqrt8$ count as different multipliers. \RVII\ F08 notes that \code{FastPathAccepted} is incremented when the fast paths \emph{proposed} something, not when a proposal was accepted; \RVII\ F09 and \RVIII\ F13 ask that the \code{Certificates} list be labelled as a truncated sample of accepted proposals rather than a proof chain of the final result, and that the result-changed fact be separated from the termination status. \RVII\ F11 and \RIX\ F9 examine the cost: \code{bitSize} prices integers and rationals but not the components of a \code{Complex}, so $1+2^{100}i$ costs the same as $1+i$; and \code{radicalNodes} subtracts a count inside opaque payloads from a global count, which is brittle when payloads overlap. Confirmed for the Gaussian case (Section~\ref{sec:repro}).
+
+\RVIII\ F08 shows that the Honsbeek recognizer of unified-B is narrower than the identity it implements: the term pattern requires two cube-root terms of the form $c\,r^{1/3}$, so $\sqrt{28^{1/3}-3}$, whose second term is a rational, and $\sqrt{5^{1/3}-4^{1/3}}$, whose second term the kernel writes as $2^{2/3}$, are not recognized (both are found by the multiplier search instead). \RVIII\ F09 and \RVII\ (Section~6 of its report) derive the trace--norm criterion for every odd index through the Dickson polynomials and propose it as a fast path; \RIX\ verifies the cubic case and states the general criterion in its mathematical audit. \RVIII\ F10 and F11 are policy proposals: an independent progress test for list elements and processing of exact islands inside inexact hosts, both opt-in. \RIX's Section~9 proposes a character-reconstruction kernel over $\F_2^r$ for the multi-surd gap, exponential in the square-class rank $r$, capped at rank 2 by default.
+
+\subsection{Claims that we weigh differently}
+\begin{itemize}
+\item \textbf{No negative caching at all.} All three reviews want the memo to store improvements only. We adopt the diagnosis, not the remedy: with no negative memo, the recursive index-reduction search re-runs the same unchanged sub-problem several times per island (the values $\gamma\zeta_k^j$ for every $\gamma$ and $j$, the even-index split, and the multiplier search's equal-depth candidates all recurse into the same few islands). In a development run of \code{StradFixed3.wl} with a positive-only memo, $(3+2\sqrt2)^{1/4}$ took 64\,s and $(3+2\sqrt2)^{1/6}$ 85\,s, and with \code{"MaxRecursion" -> 1} the quartic case exhausted the 120\,s budget and returned its input. The memo of \code{StradFixed3.wl} therefore stores, with every result, the budget of the search that produced it (the trials and recursion levels available) and whether it completed; a stored negative is reused only by a search with no more budget than the stored one. This gives the reviews' guarantee that a weak recursive search never suppresses a stronger top-level one (tested), at the cost they were worried about only when the budgets are equal (\Cc{05}).
+\item \textbf{The numeric prefilter.} The reviews want it off by default and diagnostic only. We agree on both, and in addition remove it from \code{certify} altogether: it now lives in the search gate \code{accept}, before the exact certificate, where a rejection can lose a candidate but cannot produce a status. Measured on the battery, the default \code{False} costs nothing measurable: the eight slowest rows of the battery, timed with the prefilter off and on (log \code{prefilter_timing.txt}), show identical certificate counts and zero numeric rejections, because every candidate that reaches the exact certificate has already passed the cost comparison, which rejects the wrong-branch orbit candidates first; the switch is kept for callers whose custom solver produces many expensive equal-cost candidates (Section~\ref{sec:timing}).
+\item \textbf{The coset search.} \RVIII\ implements the coset enumeration but leaves it off by default (\code{"SquareClassSearch" -> False}) because of the cost of the rational systems; \RIX\ implements a character transform capped at rank~2. We enable the coset search by default but make it cheap: for each coset an integer relation between $\sqrt\rho$ and the square roots of the coset is looked for numerically with \code{FindIntegerNullVector}, and the resulting candidate is kept only if its square reduces exactly to $\rho$. The rational \code{Solve} systems remain as a fallback. The four three-surd examples of the reviews are found in 0.3--0.6\,s each (Table~\ref{tab:cmpN}); the previous version needed the multiplier search and 2--17\,s.
+\item \textbf{Optional list and inexact-host policies (\RVIII\ F10, F11).} Not adopted. Both are alternative semantics rather than defects; the previous round considered and declined the inexact-host processing, and an ``independent'' list progress that accepts a cheaper element while the whole list becomes costlier contradicts the single cost order the rest of the design relies on. Both remain documented policies (\Cc{16}).
+\item \textbf{Canonical multiplier keys (\RVIII\ F12).} Not adopted: the syntactic key was chosen in unified-B precisely because \code{RootReduce} of every proposed multiplier dominated the search time; duplicates cost one dictionary lookup each (\Cc{15}).
+\item \textbf{Character reconstruction (\RIX).} The coset enumeration of \RVIII\ and the character transform of \RIX\ search the same space (the single-coset theorem, Section~\ref{sec:math:coset}); the character transform needs $2^r$ conjugate square roots and up to $2^{2^r-1}$ sign patterns, whereas an integer relation per coset needs one numeric vector of length $|H|+1$. We adopt the coset enumeration with the relation stage (\Cc{17}).
+\end{itemize}
+
+\subsection{Kernel reproductions of the reviews' probes}\label{sec:repro}
+The reviews' probes against \code{StradFixed2.wl} were run (\code{harness/probe_reviews2.wl}, log \code{logs/probe_reviews2.txt}): \code{ExactAlgebraicQ[Root[#^5 + # - Pi &, 1]]} and \code{ExactAlgebraicQ[Root[#^3 - # + parameter &, 1]]} are \code{True} (\Cc{01}, confirmed; \code{AlgebraicNumber[Pi, {1, 1}]} was already rejected because its first argument is not exact algebraic in the grammar). With \code{numericallyDifferentQ} forced to \code{True}, \code{EqualityStatus[Sqrt[5 + 2 Sqrt[6]], Sqrt[2] + Sqrt[3]]} returns \code{"Different"} (\Cc{02}, confirmed). \code{powerProposals[(3 + 2 Sqrt[2])^(1/6), (1 + Sqrt[2])^(1/3)]} with no recursion and no trials returns the target, discarding the certified cheaper incumbent (\Cc{03}, confirmed with \RVIII's probe); \code{kummerCandidates[(3 + 2 Sqrt[2])^(1/4), 3 + 2 Sqrt[2], 1, 4]} with \code{recurse} replaced by the identity returns the target (\Cc{04}, confirmed); the public calls still find $\sqrt{1+\sqrt2}$ and $(1+\sqrt2)^{1/3}$, through the multiplier search, in 8.1 and 11.7\,s. After a failed search with no budget the memo holds an entry for $\sqrt{1+\sqrt2}$ (\Cc{05}, confirmed). \code{Strad[Sqrt[2], 17]} and \code{Strad[]} return unevaluated, and \code{DenestReport[1, "TimeBudget" -> 0]} reports a computed \code{InitialCost} (\Cc{06}, \Cc{08}, confirmed). \code{RadicalCost[1 + 2^100 I]} equals \code{RadicalCost[1 + I]} (\Cc{09}, confirmed). With \code{"MaxTrials" -> 0} the three-surd examples $\sqrt{118+2\sqrt{210}+14\sqrt{55}+2\sqrt{462}}$ and $\sqrt{37+4\sqrt{15}+6\sqrt{14}+2\sqrt{210}}$ are returned unchanged, so the fast path misses them; with the default budget the multiplier search finds them in 2.2 and 0.4\,s (\Cc{12}, confirmed). The fifth, seventh and ninth roots and Ramanujan's $\sqrt{28^{1/3}-3}$ are already denested by \code{StradFixed2.wl} in 0.02--0.16\,s through the Kummer linear factors and the multiplier search, so \Cc{13} and \Cc{14} are fast paths for identities the search already covered, not coverage gaps in the public function.
+
+\section{The consolidated catalogue}\label{sec:catalogue}
+
+Table~\ref{tab:catalogue} lists every issue addressed by \code{StradFixed3.wl}: the reviews' findings merged where they describe the same defect, and the observations made during this session (marked ``this session''). ``Disposition'' says what the new version does; the section references point to the design description.
+
+\begin{small}
+\begin{longtable}{@{}p{0.05\textwidth}>{\RaggedRight\arraybackslash}p{0.39\textwidth}>{\RaggedRight\arraybackslash}p{0.15\textwidth}>{\RaggedRight\arraybackslash}p{0.32\textwidth}@{}}
+\caption{Consolidated catalogue of the issues addressed by \code{StradFixed3.wl}.}\label{tab:catalogue}\\
+\toprule ID & Issue & Sources & Disposition\\\midrule\endfirsthead
+\toprule ID & Issue & Sources & Disposition\\\midrule\endhead
+\bottomrule\endfoot
+\label{c:01}C01 & \code{ExactAlgebraicQ} admits every exact \code{Root} and \code{AlgebraicNumber}, including \code{Root[#^5 + # - Pi &, 1]} and parametric roots. & \RVII\ F01, \RVIII\ F01, \RIX\ F1 & Fixed. \code{rootPolynomial} validates the defining polynomial (single or triangular-system form), its coefficients, degree and index; \code{AlgebraicNumber} needs an admitted generator and Gaussian-rational coefficients (\S\ref{sec:design:grammar}).\\
+\label{c:02}C02 & The numeric prefilter decides the public status \code{"Different"} and is counted as a certificate. & \RVII\ F02, \RVIII\ F05, \RIX\ F7 & Fixed. \code{certify} is exact in every branch; any nonzero exact algebraic result of \code{RootReduce} proves inequality; the prefilter is search-layer pruning in \code{accept}, off by default, counted separately (\S\ref{sec:design:certify}).\\
+\label{c:03}C03 & \code{negativeRadicandCandidate} and \code{kummerCandidates} start from the target and overwrite a cheaper incumbent. & \RVII\ F03, \RVIII\ F02, \RIX\ F2 & Fixed. Both take the incumbent as a fifth argument and return it unchanged when they find nothing (\S\ref{sec:design:stages}).\\
+\label{c:04}C04 & The reduced presentation $\gamma^{1/(q/k)}$ is offered only when recursion changes it and lowers its depth. & \RVII\ F04, \RVIII\ F03, \RIX\ F3 & Fixed. The raw reduced presentation and its orbit are offered first, recursion afterwards; the same for the even-index split; the values $\gamma\zeta_k^j$ are processed once each (\S\ref{sec:design:stages}).\\
+\label{c:05}C05 & Unchanged results are memoized without the budget of the search; a quarter-budget recursive failure answers a full-budget visit. & \RVII\ F06, \RVIII\ F04, \RIX\ F4 & Adopted differently. Memo entries carry result, budget and completeness; a negative entry is reused only by a search with no more budget; \code{$inProgress} cuts cycles (\S\ref{sec:design:memo}).\\
+\label{c:06}C06 & \code{FactorInteger}, \code{Together}, \code{Expand} and the fast-path dispatcher run unwrapped; input classification and report costs run outside the region. & \RVII\ F05, \RVIII\ F06, \RIX\ F5 & Fixed. All wrapped in \code{bounded[]}; classification and both costs inside the region; \code{Missing["NotComputed"]} when disabled or interrupted (\S\ref{sec:design:budget}).\\
+\label{c:07}C07 & The discriminant batch limit of 24 is checked in the outer loop; one prime can raise a batch to 46. & \RIX\ F6, \RVIII\ F12 & Fixed. Checked in the inner loop; option \code{"DiscriminantBatchCap"} (\S\ref{sec:design:budget}).\\
+\label{c:08}C08 & \code{Strad[e, 17]} and \code{Strad[]} stay unevaluated instead of returning a \code{Failure}. & \RVII\ F07, \RVIII\ F14, \RIX\ F8 & Fixed. Catch-all argument sequences reach the validator; the no-argument call is a \code{Failure} (\S\ref{sec:design:dispatch}).\\
+\label{c:09}C09 & Cost: Gaussian components are not priced; the opaque node count is subtractive. & \RVII\ F11, \RIX\ F9 & Fixed. Recursive \code{bitSize}, \code{radicalNodes} and \code{opaqueCount} that stop at opaque objects (\S\ref{sec:design:cost}).\\
+\label{c:10}C10 & \code{FastPathAccepted} counts proposals, not acceptances. & \RVII\ F08 & Fixed. Compared before and after the fast-path stage.\\
+\label{c:11}C11 & Certificate records are a truncated sample of accepted proposals but read as a proof chain; the result-changed fact is folded into the status. & \RVII\ F09, \RVIII\ F13 & Fixed. \code{CertificateKind}, \code{CertificatesTruncated}, \code{ResultChanged}; each record names its \code{EqualityMethod} and \code{Scope} (\S\ref{sec:design:report}).\\
+\label{c:12}C12 & The multi-surd unknown sets miss the cosets of the square-class group of the radicands ($\sqrt6+\sqrt{35}+\sqrt{77}$ and three more examples). & \RVII\ F10, \RVIII\ F07, \RIX\ F10 & Fixed. Coset enumeration over the primes of radicands and coefficients, an integer-relation stage per coset, rational systems as fallback; \code{"MaxCosets"} (\S\ref{sec:design:coset}, \S\ref{sec:math:coset}).\\
+\label{c:13}C13 & Honsbeek recognizer requires two terms of the form $c\,r^{1/3}$; rational summands and terms like $2^{2/3}7^{1/3}$ are not recognized. & \RVIII\ F08; this session & Fixed. Any depth-one term with radical indices dividing 3 whose cube reduces to a nonzero rational; both signs; negative denominators give complex candidates for the gate (\S\ref{sec:design:honsbeek}).\\
+\label{c:14}C14 & The trace--norm fast path stops at index 3. & \RVIII\ F09, \RVII\ \S6, \RIX\ \S8.6 & Fixed. \code{quadraticOddRoots} for every odd $q\le$ \code{"MaxOddIndex"} (default 9) by the Dickson recurrences (\S\ref{sec:math:odd}).\\
+\label{c:15}C15 & Syntactic multiplier keys count equal multipliers twice. & \RVIII\ F12 & Not adopted; documented. Canonicalizing every proposal was the dominant cost removed in unified-B.\\
+\label{c:16}C16 & Independent list progress; exact islands inside inexact hosts. & \RVIII\ F10, F11 & Not adopted; documented policies (\S\ref{sec:limits}).\\
+\label{c:17}C17 & Character reconstruction over $\F_2^r$ as the multi-surd repair. & \RIX\ \S9 & Adopted in the coset form (\Cc{12}); the equivalence is Section~\ref{sec:math:coset}.\\
+\label{c:18}C18 & \code{Solve[..., Rationals]} may return conditional or parametric solutions; only fully rational solutions are candidates. & this session & Fixed in the new \code{surdSystem}; unified-B's version relied on the gate rejecting them.\\
+\label{c:19}C19 & Multi-surd terms with rational radicands ($\sqrt{3/2}$, which the kernel writes for $\sqrt6/2$) are not parsed, so $\sqrt{(5+\sqrt6+\sqrt{10}+\sqrt{15})/2}$ misses the fast path. & this session & Fixed. \code{surdTerm} reads $c\sqrt{a/b}$ as $\sqrt{ab}$ with coefficient $c/b$ (\S\ref{sec:design:coset}).\\
+\label{c:20}C20 & An untagged \code{Throw} from a user solver escapes \code{Catch[..., _]} and aborts the call. & \RVII\ (native test, first failing run); this session & Fixed. Nested plain and tagged \code{Catch}.\\
+\label{c:21}C21 & \code{acceptWithPolish} polishes candidates that are already too large or after the deadline. & this session & Fixed. Size and expiry checks before the polish variants.\\
+\label{c:22}C22 & In the first build of the coset search, a negative coefficient put $-1$ into the prime universe (\code{FactorInteger[-48]} starts with $\{-1,1\}$), so the cosets contained negative radicands, the relation stage failed and the rational systems ran to their operation limit: 12--30\,s per input in families F8, F10 and F11. & this session (randomized families) & Fixed. \code{classPrimes} factors absolute values and keeps primes only; the six slow inputs take 0.1--0.3\,s; two regression tests (negative coefficients; relation stage suffices).\\
+\label{c:23}C23 & The patience rule of the multiplier search counted trials only since an improvement found \emph{inside} the search, so an island already improved by index reduction (\Cc{04}) ran all 120 trials: $(3+2\sqrt2)^{1/6}$ with \code{"MaxRecursion" -> 0} took 31\,s against 1.7\,s in unified-B. & this session (battery timing) & Fixed. Patience counts from the last improvement whatever stage produced it; one regression test.\\
+\end{longtable}
+\end{small}
+
+\section{The design changes of \texttt{StradFixed3.wl}}\label{sec:design}
+
+The package lives in the context \code{RadicalDenest3`}; it can be loaded next to \code{RadicalDenest2`} and \code{RadicalDenest`} for differential testing, which Section~\ref{sec:differential} does. The public interface and the option names of \code{StradFixed2.wl} are unchanged; three options are added and one default changes:
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}llX@{}}
+\toprule Option & Default & Meaning\\\midrule
+\code{"MaxOddIndex"} & 9 & largest odd index handled by the trace--norm recipe in a real quadratic field\\
+\code{"DiscriminantBatchCap"} & 24 & proposals generated from one discriminant, checked in the inner loop\\
+\code{"MaxCosets"} & 16 & cosets tried by the multi-surd search\\
+\code{"NumericPrefilter"} & \code{False} (was \code{True}) & optional numeric pruning of search candidates; never decides a status\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+The complete source (939 lines) is reproduced in Appendix~\ref{app:source}. The following subsections describe what changed relative to unified-B.
+
+\subsection{Grammar}\label{sec:design:grammar}
+\code{algebraicFormQ} still admits rationals, Gaussian rationals and their \code{Plus}, \code{Times} and rational-\code{Power} combinations. A \code{Root} object is admitted only through \code{rootPolynomial}: the head must be \code{Root} with two or three arguments; the third, if present, is $0$ or $1$; the first argument is either a pure function whose value at a fresh variable expands to a nonconstant polynomial with coefficients in the radical grammar and whose index is between $1$ and the degree, or a list of pure functions with a list of indices of the same length, the triangular-system form the kernel uses for a root of a polynomial with algebraic coefficients (\code{Root[#^3 + Sqrt[2] # + 1 &, 1]} evaluates to \code{Root[{-2 + #1^2 &, 1 + #1 #2 + #2^3 &}, {2, 1}]}), each polynomial in the system having coefficients in the radical grammar. An \code{AlgebraicNumber} needs an admitted first argument and a list of Gaussian rationals. \code{Root[#^5 + # - Pi &, 1]}, \code{Root[#^3 - # + a &, 1]} and \code{AlgebraicNumber[Pi, {1, 1}]} are rejected; a rejected object inside a host is an opaque host node, so \code{Strad[Root[#^5 + # - Pi &, 1] + Sqrt[5 + 2 Sqrt[6]]]} still denests the radical and leaves the root alone (tested).
+
+\subsection{Certification and the gate}\label{sec:design:certify}
+\code{certify[a, b]} returns \code{"Unknown"} unless both arguments are admitted; \code{"Equal"} if they are identical or \code{RootReduce[a - b]} is $0$ or \code{PossibleZeroQ[a - b, Method -> "ExactAlgebraics"]} is \code{True}; \code{"Different"} if the reduced difference is a nonzero exact algebraic number (\code{canonicalNonzeroQ} now accepts any admitted nonzero expression free of an unevaluated \code{RootReduce}, so $2\sqrt2$ proves $\sqrt2\ne-\sqrt2$) or \code{PossibleZeroQ} answers \code{False}; and \code{"Unknown"} otherwise. Every step is bounded. The method that decided is recorded in \code{$lastCertificateMethod} and copied into the certificate record. \code{numericallyDifferentQ} is called only by \code{accept}, before \code{certify}, and only when \code{"NumericPrefilter"} is \code{True}; its rejections are counted in \code{NumericRejections} and no longer in \code{CertificatesDifferent}. \code{acceptWithPolish} returns immediately after the deadline or for oversized candidates.
+
+\subsection{Proposal stages and incumbents}\label{sec:design:stages}
+\code{powerProposals} passes its incumbent to \code{negativeRadicandCandidate[target, rho, p, q, incumbent]} and \code{kummerCandidates[target, rho, p, q, incumbent]}; both default the fifth argument to the target for standalone use and return the incumbent when they find nothing. \code{kummerCandidates} collects the distinct values $\gamma\zeta_k^j$ over all linear factors $\gamma$ and all $j$ first, then for each such $\delta$ offers $(\delta^{1/(q/k)}\zeta_{q/k}^l)^p$ for every $l$ through the gate before it recurses into $\delta^{1/(q/k)}$; the even-index split likewise offers $(\sqrt\rho)^{2/q}$ before recursing. Since the gate compares costs, $\sqrt{1+\sqrt2}$ replaces $(3+2\sqrt2)^{1/4}$ and $(1+\sqrt2)^{1/3}$ replaces $(3+2\sqrt2)^{1/6}$ with \code{"MaxRecursion" -> 0} (tested). \code{FastPathAccepted} is incremented only when the fast-path stage changed the incumbent.
+
+\subsection{The memo}\label{sec:design:memo}
+\code{improveNumber} stores for every island $\langle$result, budget, complete$\rangle$ with budget $=\{$\code{"MaxTrials"} in force, remaining recursion levels$\}$ and complete $=$ not expired. On a later visit a stored improvement becomes the incumbent; the visit returns it without searching only if the stored search was complete and had at least the current budget componentwise. Islands on the current recursion path (\code{$inProgress}) are not re-entered. The reviews' tests translate to: a failed search at recursion level 1 followed by two visits at level 0 runs the multiplier search twice, not three times; an in-progress island returns its incumbent (tested).
+
+\subsection{Budgets}\label{sec:design:budget}
+\code{FactorInteger} (discriminants, square classes), \code{Together} in \code{linearRoots}, the \code{Expand} calls of the ansatz and the fast-path dispatcher run inside \code{bounded[]}. In \code{run}, the classification of the input (inexact, not algebraic) and the initial cost are computed inside the \code{TimeConstrained}/\code{MemoryConstrained} region; the committed pass carries its cost, so no cost is computed after an interruption; a disabled or interrupted call reports \code{Missing["NotComputed"]} where no cost was computed. The discriminant batch counter is checked before every proposal, in the inner loop over exponents as well as the outer loop over primes, against \code{"DiscriminantBatchCap"}.
+
+\subsection{Dispatch}\label{sec:design:dispatch}
+Each public head has two definitions, \code{head[e_, all:(True|False), args___]} and \code{head[e_, args___]}, both forwarding \code{{args}} to \code{resolveOptions}, which flattens nested lists and requires every element to be a rule; \code{head[]} returns \code{Failure["InvalidArguments", ...]}. \code{Strad[e, 17]}, \code{Strad[]}, \code{DenestReport[1, 2, 3]} are all \code{Failure}s (tested).
+
+\subsection{Cost}\label{sec:design:cost}
+\code{opaqueCount}, \code{radicalNodes} and \code{bitSize} are recursive traversals that stop at \code{Root} and \code{AlgebraicNumber} objects; \code{bitSize} prices a \code{Complex} as the sum of its parts, so $1+2^{100}i$ is costlier than $1+i$. The five-tuple \code{RadicalCost} is otherwise unchanged.
+
+\subsection{The coset search}\label{sec:design:coset}
+\code{multiSurdSquareRoots} expands the radicand, parses every summand with \code{surdTerm} into a squarefree radicand and a rational coefficient (reading $c\sqrt{a/b}$ as $\sqrt{ab}$ with coefficient $c/b$), and needs at least two and at most fifteen radicands. \code{cosetBases[radicands, primes]} enumerates the cosets of the group $H$ generated by the radicands' square classes over the primes of the radicands and of the coefficients (\code{classPrimes}), at most \code{"MaxCosets"} of them, each as a sorted list of squarefree integers. Stage one runs \code{surdRelation} on every coset $U$: \code{FindIntegerNullVector} on $(\sqrt{|\rho|},\sqrt{u_1},\ldots)$ at $80+10|U|$ digits gives an integer vector $(n_0,n_u)$; if $n_0\ne0$ the candidate $-\sum n_u\sqrt u/n_0$ (times $i$ for negative $\rho$) is kept only when \code{RootReduce} of its square minus $\rho$ is exactly $0$, so a spurious relation costs one bounded \code{RootReduce}. Stage two, reached only if stage one finds nothing, solves the rational systems of unified-B for the two classical unknown sets and then for the cosets (\code{surdSystem}), keeping only solutions that assign a rational to every unknown (\Cc{18}). \RVIII's names \code{cosetBases} and \code{surdSystem} were adopted so that its tests translate literally.
+
+\subsection{Honsbeek and odd indices}\label{sec:design:honsbeek}
+\code{honsbeekSquareRoots} accepts a two-term sum whose terms have depth at most one, are real, have radical indices dividing 3, and whose cubes reduce to nonzero rationals $a$, $b$ (a rational summand is its own cube root; at least one term must be irrational); it offers $\pm N/\sqrt{b-s^3a}$ for every rational root $s$ of $x^4+4x^3+8(b/a)x-4b/a$ with $b-s^3a\ne0$, the gate selecting the branch. \code{quadraticOddRoots[{a, b, c}, q]} implements Section~\ref{sec:math:odd} for odd $3\le q\le$ \code{"MaxOddIndex"}; \code{cubicInQuadratic} is now its $q=3$ instance, and \code{rootCandidates} dispatches every odd index in range to it.
+
+\subsection{Reporting}\label{sec:design:report}
+\code{DenestReport} adds \code{ResultChanged}, \code{CertificateKind} (a sentence stating that the records are kernel-checked accepted proposals, a bounded sample and not a proof chain), and \code{CertificatesTruncated} (\code{CandidatesAccepted} exceeds the number of records); every record carries \code{EqualityMethod} (\code{"SameQ"}, \code{"RootReduce"} or \code{"PossibleZeroQ/ExactAlgebraics"}) and \code{Scope -> "AcceptedProposal"}. \code{Statistics} gains \code{CosetSystems}.
+
+\section{The mathematics of the coverage extensions}\label{sec:math}
+
+\subsection{Odd roots in a real quadratic field}\label{sec:math:odd}
+Let $K=\Q(\sqrt c)$ with $c>1$ squarefree, $\rho=a+b\sqrt c\in K$ with $b\ne0$, $q\ge3$ odd. Write $\bar\rho=a-b\sqrt c$, $\Nm\rho=\rho\bar\rho=a^2-b^2c$. For $\beta=A+B\sqrt c\in K$ let $T=\Tr\beta=2A$ and $n=\Nm\beta=A^2-B^2c$. The Dickson polynomials $D_q(T,n)$ and $S_q(T,n)$ are defined by $D_q(u+v,uv)=u^q+v^q$ and $S_q(u+v,uv)=(u^q-v^q)/(u-v)$, equivalently by $D_0=2$, $D_1=T$, $D_{k+1}=TD_k-nD_{k-1}$ and $S_0=0$, $S_1=1$, $S_{k+1}=TS_k-nS_{k-1}$.
+
+\begin{proposition}\label{prop:odd}
+The real $q$-th root $\rho^{1/q}$ lies in $K$ if and only if $n:=\sgn(\Nm\rho)\,|\Nm\rho|^{1/q}$ is rational and the polynomial $D_q(T,n)-2a$ has a rational root $T$. In that case $S_q(T,n)\ne0$ and
+\[\rho^{1/q}=\frac T2+\frac{b\sqrt c}{S_q(T,n)}.\]
+\end{proposition}
+\begin{proof}
+If $\beta=A+B\sqrt c\in K$ satisfies $\beta^q=\rho$, then $\Nm\beta^q=\Nm\rho$, so $n=\Nm\beta$ is the real $q$-th root of $\Nm\rho$ (odd $q$, sign preserved) and is rational; and with $u=\beta$, $v=\bar\beta$, $u+v=T$, $uv=n$, we get $D_q(T,n)=\beta^q+\bar\beta^q=\rho+\bar\rho=2a$, so $T$ is a rational root. Conversely, given rational $n$ and $T$ with $T^2-4n\ge0$ or not, let $u,v$ be the roots of $X^2-TX+n$; then $u^q+v^q=2a$ and $u^qv^q=n^q=\Nm\rho$, so $\{u^q,v^q\}=\{\rho,\bar\rho\}$; choosing $u^q=\rho$ gives $u\in\R$ with $u^q=\rho$, hence $u=\rho^{1/q}$, and $u-v=(u^q-v^q)/S_q(T,n)=2b\sqrt c/S_q(T,n)$ provided $S_q(T,n)\ne0$. If $S_q(T,n)=0$ then $u^q=v^q$, so $\rho=\bar\rho$ and $b=0$, excluded. Hence $u=(T+(u-v))/2$, the displayed formula, and $u\in K$.
+\end{proof}
+The implementation computes $D_q$ and $S_q$ by the recurrences, finds the rational roots of $D_q(x,n)-2a$ with \code{rationalRoots}, and certifies each candidate by \code{RootReduce} of $\beta^q-\rho$ before offering it. For $q=3$, $D_3=T^3-3nT$ and $S_3=T^2-n$ recover the cubic recipe of unified-B. A negative radicand is handled by the caller: $\rho<0$ gives $(-1)^{1/q}(-\rho)^{1/q}$.
+
+\subsection{Square roots of multi-surd sums: the single-coset theorem}\label{sec:math:coset}
+Let $\rho=\sum_{d\in D}a_d\sqrt d$ with $a_d\in\Q$, $D$ a finite set of squarefree positive integers including $1$, and let $H\le\Q^\times/\Q^{\times2}$ be the group generated by the classes of $D$; identify each class with its squarefree representative. Let $L=\Q(\sqrt h:h\in H)$, a multiquadratic field of degree $|H|$ with $\Q$-basis $\{\sqrt h:h\in H\}$.
+
+\begin{theorem}[single-coset support]\label{thm:coset}
+Suppose $\sqrt\rho=\sum_{u\in U}x_u\sqrt u$ with $x_u\in\Q^\times$ and $U$ a set of squarefree positive integers. Then $U$ is contained in a single coset $dH$ of $H$ in $\Q^\times/\Q^{\times2}$.
+\end{theorem}
+\begin{proof}
+Let $G$ be the group generated by $H$ and the classes of $U$, $M=\Q(\sqrt g:g\in G)\supseteq L$, with basis $\{\sqrt g:g\in G\}$; $\mathrm{Gal}(M/\Q)\cong\mathrm{Hom}(G,\{\pm1\})$ acts by $\sigma_\chi(\sqrt g)=\chi(g)\sqrt g$. Take $\chi$ trivial on $H$, so $\sigma_\chi$ fixes $L\ni\rho$. Then $\sigma_\chi(\sqrt\rho)^2=\rho$, so $\sigma_\chi(\sqrt\rho)=\pm\sqrt\rho$, i.e. $\sum\chi(u)x_u\sqrt u=\pm\sum x_u\sqrt u$; by linear independence of the $\sqrt u$, $\chi(u)=\epsilon_\chi$ is the same sign for all $u\in U$. Hence for $u,u'\in U$, $\chi(u/u')=1$ for every $\chi$ trivial on $H$, so $u/u'\in H$ (characters of the finite group $G/H$ separate points).
+\end{proof}
+
+\begin{corollary}
+If $\sqrt\rho$ is a rational combination of square roots of positive integers, then it is a rational combination of $\{\sqrt u:u\in dH\}$ for one coset $dH$, and $d$ can be taken as a product of primes dividing some element of $D$ or the numerator or denominator of some $a_d$.
+\end{corollary}
+\begin{proof}
+The first statement is the theorem. For the second, $\sqrt\rho\in M=L(\sqrt d)$ and $\sqrt\rho^2=\rho\in L$; the field $L(\sqrt\rho)$ is unramified outside the primes dividing $2$, the elements of $D$ and the numerators and denominators of the $a_d$ (the discriminant of $X^2-\rho$ over $L$ is $4\rho$), and $L(\sqrt\rho)=L(\sqrt d)$ forces the class $d$ to be supported on those primes.
+\end{proof}
+
+This is the gap the reviews proved: for $\rho=118+2\sqrt{210}+14\sqrt{55}+2\sqrt{462}$, $H=\{1,55,210,462\}$ and $\sqrt\rho=\sqrt6+\sqrt{35}+\sqrt{77}$ has support in the coset $6H=\{6,35,77,330\}$, which neither $\{1,2,3,5,7,11\}$ nor $\{1,2,3,5,7,11,55,210,462\}$ contains. \code{cosetBases} enumerates the cosets $dH$ for $d$ ranging over the classes generated by the prime set, so by the corollary a rational-combination square root, if one exists, is a rational combination of one of the enumerated bases (subject to the cap \code{"MaxCosets"}). Within a coset, the coefficient vector is a solution of a system of $|H|$ quadratic equations in $|H|$ unknowns (stage two), or, more cheaply, an integer relation between $\sqrt\rho$ and the basis (stage one): if $\sqrt\rho=\sum x_u\sqrt u$ with $x_u=p_u/s$, then $(s,-p_{u_1},\ldots)$ is an integer null vector of $(\sqrt\rho,\sqrt{u_1},\ldots)$, and \code{FindIntegerNullVector} finds a null vector of small height when one exists at the working precision. The numeric step is a proposal only: the candidate is offered after \code{RootReduce} has verified its square, and the gate certifies it against the island. \RIX's character reconstruction computes the same coefficients as $F_g=\frac1{|H|}\sum_\sigma\chi_g(\sigma)\epsilon_\sigma\sqrt{\sigma\rho}$ over the $|H|$ conjugates and $2^{|H|-1}$ sign patterns; the two methods search the same space, and the relation stage is the cheaper of the two.
+
+\subsection{Honsbeek with a rational summand}\label{sec:math:honsbeek}
+Honsbeek's identity: for $\alpha,\beta$ with $\alpha^3=a$, $\beta^3=b$ rational nonzero and $s$ a rational root of $x^4+4x^3+8(b/a)x-4b/a$ with $b-s^3a\ne0$,
+\[\sqrt{\alpha+\beta}=\pm\frac{-\tfrac{s^2}{2}\alpha^2+s\alpha\beta+\beta^2}{\sqrt{b-s^3a}}.\]
+Unified-B proved it for two irrational cube roots; the proof is an identity in $\alpha,\beta$ subject to $\alpha^3=a$, $\beta^3=b$ and the quartic, and does not use irrationality, so a rational summand $\beta=-3$ (that is $b=-27$) is admissible. With $\alpha=28^{1/3}$, $\beta=-3$, $b/a=-27/28$, the quartic is $x^4+4x^3-\frac{54}{7}x+\frac{27}{7}=\frac17(x+3)(7x^3+7x^2-21x+9)$, with the single rational root $s=-3$; then $b-s^3a=-27+27\cdot28=729=27^2$ and the numerator is $-\frac92\,28^{2/3}+9\cdot28^{1/3}+9$, so the candidate is $\mp\frac13(98^{1/3}-28^{1/3}-1)$ (using $28^{2/3}=2\cdot98^{1/3}$), and the gate keeps the positive sign: Ramanujan's $\sqrt{28^{1/3}-3}=\frac13(98^{1/3}-28^{1/3}-1)$, recovered in 0.07\,s (log \code{logs/exp_battery3.txt}, row N16). The term $4^{1/3}$ of the classical $\sqrt{5^{1/3}-4^{1/3}}$ is written $2^{2/3}$ by the kernel; the new recognizer accepts it because its cube reduces to $4$. When $b-s^3a<0$ the denominator is imaginary and the candidates are complex; they are offered and the gate discards them for a real target.
+
+\section{Experiments}\label{sec:experiments}
+
+\subsection{Setup}
+All runs use the scripts in \code{harness/}, which load \code{src/corrected/StradFixed3.wl} (or, for the side-by-side columns, \code{StradFixed2.wl} through unified-B's \code{runner2.wl}) and record every result as unified-A did: \code{runCase} captures the value, the messages, the wall time, exact equality with the expected value by \code{RootReduce}, and the radical depth before and after. The transcripts are in \code{logs/}; the tables are produced by \code{harness/export_tables3.wl} from the recorded rows. One kernel ran at a time; \code{harness/run_all.sh} is the chain.
+
+\subsection{The battery}\label{sec:battery}
+Tables~\ref{tab:cmpA}--\ref{tab:cmpLQ} repeat the battery of unified-A/B on \code{StradFixed3.wl}, next to the depth and time recorded in unified-B for \code{StradFixed2.wl}. Every output is exactly equal to its input and no kernel message was emitted. Of the 116 rows, 71 reduce the radical depth, the same 71 as before, and every result is syntactically identical to the result of \code{StradFixed2.wl} (except the private marker symbol of row E09, which carries the new context). The total wall time fell from 108.8\,s to 59.7\,s; the rows that took more than five seconds before (A27, A30, K04, L09) take 2.4, 6.2, 0.6 and 26.2\,s now. The one row that became slower is L09, $(5+2\sqrt6)^{1/6}$, which is not denestable: the index-reduction stage now searches the sub-islands $\pm(5+2\sqrt6)^{1/3}$ and $\pm(5+2\sqrt6)^{1/2}$ before the multiplier search runs on the target (\Cc{04}), and the budget-aware memo does not let a recursive failure shorten the top-level search (\Cc{05}).
+\input{tables/cmp_A}
+\input{tables/cmp_BC}
+\input{tables/cmp_DE}
+\input{tables/cmp_JK}
+\input{tables/cmp_LQ}
+
+\subsection{The round-3 cases}\label{sec:newcases}
+Table~\ref{tab:cmpN} runs the inputs that the three reviews used to motivate their findings, plus controls, through both versions (\code{harness/cases_new.wl}; \code{exp_new2.wl} for the previous version). All 33 outputs of \code{StradFixed3.wl} are exactly equal to their inputs. The four three-surd coset identities N01--N04 and the rational-coefficient case N05 are found by the fast path in 0.1--0.3\,s (N06 and N07 repeat two of them with \code{"MaxTrials" -> 0}: the previous version returns them unchanged, the new one denests them); the previous version needed the multiplier search, between 0.3 and 5.5\,s, and N33, a five-surd square, took 31.8\,s against 0.27\,s. The odd-index rows N08--N14 and the Honsbeek rows N16--N17 are found by both versions; N15 asks for \code{"MaxOddIndex" -> 11}, which the previous version rejects as an unknown option (the \textbf{WRONG} mark of its column records that the returned \code{Failure} is not equal to the expected value), and which lets the new one denest an eleventh root without the search. The index reductions N18--N20 take 2--4\,s now against 3--10\,s. N26 shows the transcendental \code{Root} object left unchanged by both versions and N27 shows it left unchanged as a host while the radical next to it is denested; N28 is the malformed call, unevaluated before and a \code{Failure} now. The controls N29--N32 behave as before.
+\input{tables/cmp_N}
+
+\subsection{Randomized families}\label{sec:fuzz}
+The ten structured families of unified-A, with the same seed \code{SeedRandom[20260905]} and the same 60-second limit per input, plus four new families for the round-3 methods, were run on the new version (Table~\ref{tab:fuzz}). All 430 inputs were processed in 85\,s; 0 results differ from the true value; no input reached its 60-second limit; every constructed identity (families F1, F2, F4--F14) is denested, and the generic family F3 yields the same six denestings and the same 34 unchanged or equal-rewritten controls as before. The three-surd squares of F8 and the products of F10 are four times faster than before because the coset search replaces the multiplier search; the new families F11--F14 exercise the coset search with mixed signs and composite radicands and the odd-index recipe for $q=5,7$ and the even index $6$. The first run of the new families exposed \Cc{22}: with a negative coefficient in the radicand, six inputs of F8, F10 and F11 took 12--30\,s each (\code{harness/repro_fuzz_slow.wl} replays the random inputs and times them one by one; after the fix no input of these families exceeds two seconds, log \code{repro_fuzz_slow.txt}).
+\begin{table}[h]\centering\scriptsize\setlength{\tabcolsep}{3pt}
+\input{tables/fuzz}
+\caption{Randomized families: second corrected version (from unified-B) against \code{StradFixed3}. ``unchanged'' includes equal rewritten outputs. F1 $\sqrt{(p+q\sqrt c)^2}$; F2 $((p+q\sqrt c)^3)^{1/3}$; F3 $\sqrt{a+b\sqrt c}$ with random $a$; F4 $\sqrt{(p+qi\sqrt c)^2}$; F5 $((p+qi\sqrt c)^2)^{3/2}$; F6 $\sqrt{u^2}\sqrt{v^2}$ with complex $u,v$; F7 $((p+q\sqrt c)^4)^{1/4}$; F8 $\sqrt{(p+q\sqrt c+r\sqrt d)^2}$; F9 $((p+q\sqrt c)^2)^{3/2}$, real; F10 $\sqrt{-u^2}\sqrt{-v^2}$, real; F11 $\sqrt{(\pm\sqrt a\pm\sqrt b\pm\sqrt c)^2}$, three surds; F12 $((p+q\sqrt c)^5)^{1/5}$; F13 $((p+q\sqrt c)^7)^{1/7}$; F14 $((p+q\sqrt c)^6)^{1/6}$.}\label{tab:fuzz}
+\end{table}
+
+\subsection{The fifteen previously missed inputs}\label{sec:gaps}
+The four probe scripts of the probing session were rerun against \code{StradFixed3.wl} (the four scripts \code{harness/probe_gaps3_*.wl}, transcripts of the same names in \code{logs/}). All fifteen inputs of \code{KNOWN_GAPS.md} are denested to the expected depth, in between 0.06\,s and 3.3\,s (the slowest is Landau's cancellation sum Q21, which reduces to $0$; the five-surd square root P13 takes 2.0\,s). The controls and kernel-evaluated inputs of the probe scripts give the same outcomes as in unified-B (the \code{non-ok} lists of the four logs are identical to those of \code{unified-B/logs/}).
+
+\subsection{The regression suite}\label{sec:suite}
+\code{tests/StradFixed3.wlt} contains 230 \code{VerificationTest}s: the 144 tests of unified-B (the translated suites of review-4/5/6, the fifteen gaps, the unified-A contracts) rebound to the new context, and 86 new tests: the 50 of \RVII, the 52 of \RVIII\ and the 40 of \RIX\ translated, merged where they coincide, onto the names and arities of \code{StradFixed3.wl}, plus seventeen controls of this document. The translation maps \RVIII's \code{surdSystem}, \code{cosetBases}, \code{honsbeekSquareRoots} and \code{quadraticOddRoots} literally; replaces options that do not exist here (\code{"SquareClassSearch"}, \code{"ListProgress"}, \code{"ProcessExactIslands"}, \code{"MaxCharacterRank"}) by validation tests of the new options; replaces \RIX's \code{no-negative-cache} (two identical visits, two searches) by the budget-aware contract (a weak search followed by two full visits, two searches); rewrites two tests whose premise the kernel defeats (\code{Sqrt[-rho]} for a positive sum evaluates to \code{I Sqrt[rho]}, so the negative-radicand stage is exercised on $(-7-5\sqrt2)^{1/3}$ instead; $(3+2\sqrt2)^{1/4}\to\sqrt{1+\sqrt2}$ is an improvement in cost, not in depth); and drops \RVIII's two opt-in policy tests. Two tests failed on the first run against \code{StradFixed3.wl} and led to fixes: \RVII's throwing solver (\Cc{20}) and \RVIII's grammar test with \code{Root[#^3 + Sqrt[2] # + 1 &, 1]}, which exposed the triangular-system \code{Root} form (\Cc{01}). \code{tests/run_tests.wls} runs the suite in a fresh kernel: 230 of 230 tests succeed and 0 fail, in 28\,s (log \code{regression_suite.txt}).
+
+\subsection{The reviews' own suites against their own proposals}\label{sec:reviewsuites}
+None of the reviews could execute its own proposed implementation. The runner script \code{run_review_suite3.wl} in \code{harness/} loads each proposal in a fresh kernel and runs the review's own suite unchanged (logs \code{review*_suite.txt}). \RVII: 49 of 50 tests pass; the failure is \code{throwing-solver-quarantined}, whose own proposal has the \code{Catch[..., _]} defect of \Cc{20} (an untagged \code{Throw} from the solver escapes and the call returns \code{Hold[Throw[0]]}). \RVIII: 52 of 52 tests pass. \RIX: 38 of 40 pass; its character-depth-reduction test fails because its character-reconstruction kernel returns the input $\sqrt{37+4\sqrt{15}+6\sqrt{14}+2\sqrt{210}}$ at depth 2 with \code{"MaxTrials" -> 0} (its character-missing-coset test passes only because \code{CertifiedEqualQ} of an unchanged result is \code{True}), and its partial-negative-improvement test fails because the kernel evaluates \code{Sqrt[-rho]} for the positive sum $\rho$ to \code{I Sqrt[rho]}, so the helper under test never sees a negative radicand (the same premise had to be rewritten for the suite of Section~\ref{sec:suite}). All three proposals load without messages in Wolfram 15.0.1, which the reviews could not establish. The suites are modest in coverage and none of them measures time; \RVIII's coset search is off by default in its proposal and its suite tests the helpers directly.
+
+\subsection{Review-8's differential corpus}\label{sec:differential}
+\RVIII\ supplied \code{tests/differential.wls}, an 18-input corpus to be run against the previous and the proposed version. \code{harness/differential3.wl} runs it against \code{StradFixed2.wl} and \code{StradFixed3.wl} in one kernel with a 60\,s budget each (Table~\ref{tab:diff}). All 18 outputs of both versions are exactly equal to their inputs and reach the same depth; the new version takes 6.8\,s for the corpus against 12.0\,s, the largest differences being the coset identity (0.24\,s against 2.2\,s) and $(3+2\sqrt2)^{1/6}$ (3.4\,s against 6.0\,s).
+\input{tables/differential}
+
+\subsection{Timing}\label{sec:timing}
+The classical identities take between 0.01 and 0.1 seconds each (Table~\ref{tab:cmpA}), a little less than before because the coset search and the odd-index recipe replace multiplier trials, and because the patience rule now counts from any improvement (\Cc{23}). Non-denestable inputs still run the multiplier search to its trial limit and take 0.5--3\,s; the composite-index controls that need sub-island searches take 2--4\,s, and the one non-denestable composite-index row of the battery, L09, takes 26\,s, more than before, for the reasons given in Section~\ref{sec:battery}. Every run stayed far below its \code{"TimeBudget"} of 120 seconds. The budget-aware memo was necessary: the positive-only memo the reviews asked for made $(3+2\sqrt2)^{1/4}$ take 64\,s and, with one recursion level, exhaust the budget.
+
+\section{Compatibility changes and remaining limitations}\label{sec:limits}
+\begin{itemize}
+\item \textbf{Grammar.} A \code{Root} object whose defining polynomial has coefficients outside the radical grammar, or an \code{AlgebraicNumber} with non-Gaussian coefficients, is no longer an exact algebraic island: it is an opaque host node, left unchanged, and \code{EqualityStatus} of it is \code{"Unknown"}. Genuinely algebraic numbers in such presentations are therefore conservatively rejected, as all three reviews recommended.
+\item \textbf{Equality.} \code{EqualityStatus} is exact in every branch. \code{"NumericPrefilter"} defaults to \code{False}; when \code{True} it prunes search candidates and can lose one, never accept one, and never changes a status. \code{CertificatesDifferent} counts exact rejections only.
+\item \textbf{Memo.} Negative results are reused only by searches of no larger budget; a top-level island is never answered by a recursive failure. Equal-budget reuse is kept for the reasons of Section~\ref{sec:reviews}.
+\item \textbf{Cost.} Gaussian components are priced and opaque counting is structural, so tie-breaks between equal outputs can change relative to \code{StradFixed2}.
+\item \textbf{Reports.} A disabled or interrupted report contains \code{Missing["NotComputed"]} costs; \code{ResultChanged} is separate from \code{Status}; the certificate list is labelled.
+\item \textbf{Dispatch.} Malformed calls return a \code{Failure} instead of staying unevaluated.
+\item \textbf{Policies kept.} Inexact hosts are left untouched; list progress is judged by the cost of the whole list; \code{"MaxTrials"} is per island; multiplier keys are syntactic.
+\item \textbf{Completeness.} There is none. The coset search is complete for rational combinations of square roots of positive integers only up to \code{"MaxCosets"} and the working precision of the relation stage (with the rational systems as a bounded fallback); the odd-index recipe covers real quadratic radicands up to \code{"MaxOddIndex"}; the Honsbeek recognizer needs exactly two terms; the multiplier family is heuristic; sums are still treated component by component except for the whole-island proposals.
+\item \textbf{Resources.} The kernel limits are cooperative. Argument evaluation before the call is outside the region. A pass interrupted by the deadline is lost; the committed result is the last complete pass.
+\end{itemize}
+
+\section{Future work}\label{sec:future}
+\begin{enumerate}
+\item \textbf{Commit partial work on interruption.} Publish the best certified island rewrites of an interrupted pass instead of the input; the gate already certifies each island, so the pass structure is a checkpoint, not a soundness requirement.
+\item \textbf{Field-theoretic multiplier generation.} Replace the discriminant heuristic by the classes of $K^\times/(K^\times)^q$ for the extension at hand, as \RVII\ and unified-B recommend.
+\item \textbf{Integer relations beyond square roots.} The relation stage of the coset search generalizes to $q$-th roots over a Kummer basis; it would give a cheap proposal stage for sums of cube roots.
+\item \textbf{Independent certificates.} Record defining polynomials, field maps and isolating intervals so that an accepted identity can be rechecked without \code{RootReduce}.
+\item \textbf{A Pareto frontier} of certified alternatives per island, so that a shallower but longer form and a deeper but shorter form both survive until the containing expression decides.
+\item \textbf{Cross-session caches} of minimal polynomials and factorizations keyed by canonical values, with the budget-aware status of the memo.
+\end{enumerate}
+
+\appendix
+\section{Source of \texttt{StradFixed3.wl}}\label{app:source}
+\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,numberstyle=\tiny\color{black!50},stepnumber=1,frame=none,backgroundcolor=\color{white},xleftmargin=22pt]{../../corrected/StradFixed3.wl}
+
+\section{Files of this directory}\label{app:files}
+\begin{longtable}{@{}p{0.47\textwidth}>{\RaggedRight\arraybackslash}p{0.46\textwidth}@{}}
+\toprule File & Purpose\\\midrule\endfirsthead
+\toprule File & Purpose\\\midrule\endhead
+\bottomrule\endfoot
+\code{unified_analysis_C.tex}, \code{.pdf} & This document and its source; the appendix reads \code{../../corrected/StradFixed3.wl}.\\[3pt]
+\code{tables/*.tex} & Result tables generated by \code{harness/export_tables3.wl}.\\[3pt]
+\code{harness/runner3.wl} & Runner for the battery (loads the package, captures values, messages, times, depths).\\[3pt]
+\code{harness/exp_battery3.wl} & The unified-A/B battery and the round-3 cases on the new version.\\[3pt]
+\code{harness/cases_new.wl} & The round-3 cases (group N), shared by both versions' runs.\\[3pt]
+\code{harness/exp_new2.wl} & The round-3 cases on \code{StradFixed2.wl} (uses unified-B's \code{runner2.wl}).\\[3pt]
+\code{harness/exp_fuzz3.wl} & The fourteen randomized families, same seed.\\[3pt]
+\code{harness/probe_gaps3_1..4.wl} & The probing scripts of \code{KNOWN_GAPS.md} on the new version.\\[3pt]
+\code{harness/probe_reviews2.wl} & The reviews' probes against \code{StradFixed2.wl}, executed.\\[3pt]
+\code{harness/differential3.wl} & Review-8's differential corpus on both versions.\\[3pt]
+\code{harness/repro_fuzz_slow.wl} & Replays the randomized inputs and times the slow ones of chosen families (used to find \Cc{22}).\\[3pt]
+\code{harness/run_review_suite3.wl} & Runs a review's own suite against its own proposal (argument 7, 8 or 9).\\[3pt]
+\code{harness/export_tables3.wl} & Generates \code{tables/} from the recorded rows.\\[3pt]
+\code{harness/run_all.sh} & The sequential chain that produced \code{logs/}.\\[3pt]
+\code{tests/StradFixed3.wlt} & The regression suite (230 tests).\\[3pt]
+\code{tests/run_tests.wls} & Its fresh-kernel runner.\\[3pt]
+\code{logs/*.txt} & Raw transcripts of every run reported here.\\
+\end{longtable}
+
+\end{document}

@@ -1,0 +1,25 @@
+{
+  "id": "krepkii",
+  "title": "Cube root Ramanujan formulas and elementary Galois theory",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "krepkii",
+      "entry_latex": "I.~A. Krepkii and K.~I. Pimenov, ``Cube root Ramanujan formulas and elementary Galois theory,'' \\emph{Vestnik St. Petersburg University: Mathematics} \\textbf{48} (2015), 214--223. \\doi{10.3103/S106345411504007X}. \\status{A}\nNormal closures of pure cubic extensions over cyclic cubic fields, Hilbert's Theorem~90, and a prime-degree extension of the method. Online publication was in March 2016; the issue year is 2015."
+    },
+    {
+      "report": "report-2",
+      "key": "krepkii",
+      "entry_latex": "I. A. Krepkii and K. I. Pimenov.\n\\emph{Cube root Ramanujan formulas and elementary Galois theory}.\nVestnik St. Petersburg University: Mathematics \\textbf{48}, 214--223, 2015.\n\\doi{10.3103/S106345411504007X}.\n\\textbf{M.} Explains specified cubic identities using elementary Galois theory; preserve the pure-cubic setting."
+    },
+    {
+      "report": "report-3",
+      "key": "krepkii",
+      "entry_latex": "I. A. Krepkii and K. I. Pimenov. ``Cube root Ramanujan formulas and elementary Galois theory.'' \\emph{Vestnik St. Petersburg University, Mathematics} \\textbf{48}(4) (2015), 214--223. \\doi{10.3103/S106345411504007X}. \\status{A}\n\\entrynote{A field-theoretic explanation of cube-root Ramanujan formulas. The issue year is 2015; a later online publication date should not silently replace it.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

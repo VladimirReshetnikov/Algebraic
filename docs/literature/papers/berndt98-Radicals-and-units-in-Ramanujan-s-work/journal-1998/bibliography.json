@@ -1,0 +1,25 @@
+{
+  "id": "berndt98",
+  "title": "Radicals and units in Ramanujan's work",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "berndt98",
+      "entry_latex": "B.~C. Berndt, H.~H. Chan, and L.-C. Zhang, ``Radicals and units in Ramanujan's work,'' \\emph{Acta Arithmetica} \\textbf{87}(2) (1998), 145--158.\n\\access{https://eudml.org/doc/207210}{EuDML record and access}. \\status{A}\nExplains the number-theoretic role of units in the identities. Distinct from the preceding historical article."
+    },
+    {
+      "report": "report-2",
+      "key": "berndtchan1998",
+      "entry_latex": "Bruce C. Berndt, Heng Huat Chan, and Liang-Cheng Zhang.\n\\emph{Radicals and units in Ramanujan's work}.\nActa Arithmetica \\textbf{87}(2), 145--158, 1998.\n\\sourceurl{https://eudml.org/doc/207210}.\n\\textbf{M.} Algebraic units explain families of identities that otherwise appear accidental."
+    },
+    {
+      "report": "report-3",
+      "key": "berndt98",
+      "entry_latex": "Bruce C. Berndt, Heng Huat Chan, and Liang-Cheng Zhang. ``Radicals and units in Ramanujan's work.'' \\emph{Acta Arithmetica} \\textbf{87}(2) (1998), 145--158. \\doi{10.4064/aa-87-2-145-158}. Record and text route: \\url{https://eudml.org/doc/207210}. \\status{A}\n\\entrynote{Develops the relation between radical identities and units in number fields. Explains structure that is invisible in a verification obtained merely by raising both sides to a power.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

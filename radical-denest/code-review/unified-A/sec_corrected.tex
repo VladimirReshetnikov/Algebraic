@@ -1,0 +1,110 @@
+\section{The corrected version}
+\label{sec:corrected}
+\code{src/corrected/StradFixed.wl} (Appendix~\ref{app:fixed}, about 480 lines)
+is a package in the context \code{RadicalDenest`}. It deliberately keeps the
+original architecture (wrapper, markers, grouping, multiplier search,
+history and stack, discriminant batches, the post-first-pass product batch)
+so that the search behaviour stays recognizable, and changes only what the
+catalogue requires. The design rule is the one all three reviews recommend:
+\emph{heuristics propose, exact algebra disposes}.
+
+\subsection{Interface}
+\begin{lstlisting}
+Strad[expr]                      (* single level, as before *)
+Strad[expr, True]                (* all levels, as before *)
+Strad[expr, "AllLevels" -> True, "Verbose" -> True]
+DenestCore[problem, "Multipliers" -> {2}]   (* the engine, formerly denest11 *)
+\end{lstlisting}
+Options: \code{"AllLevels"} (\code{False}), \code{"Verbose"} (\code{False}),
+\code{"Multipliers"} (\code{Automatic} or an initial list),
+\code{"MaxTrials"} (400), \code{"TimeBudget"} (120\,s), \code{"MultiplierCap"}
+(1000), \code{"CertifyTime"} (20\,s per exact decision), \code{"Solver"}
+(\code{Automatic} or a function replacing the engine), \code{"Factor"}
+(\code{True}). Lists are mapped over. Public helpers:
+\code{RationalizeDenominator}, \code{Factorc}, \code{RadicalDepth},
+\code{RadicalCost}, \code{ExactAlgebraicQ}, \code{CertifiedEqualQ}.
+
+\subsection{Change list}
+\begin{enumerate}[label=\arabic*.]
+\item \textbf{Certification} (\U{1}, \U{3}). \code{CertifiedEqualQ[a, b]}
+      returns \code{True} only if $a-b$ is proved zero: exact inputs, a
+      30-digit numeric rejection, \code{RootReduce}, then
+      \code{PossibleZeroQ} with \code{Method -> "ExactAlgebraics"}; every step
+      is time limited and ``undecided'' is ``not equal''. The engine's filter
+      is \code{Select[possibilities, CertifiedEqualQ[#, problem] &]}. The
+      wrapper certifies its whole result against the whole input whenever the
+      input is an exact number.
+\item \textbf{Branch-safe factorizer} (\U{2}). \code{fullfactor} merges
+      $\{a^b,c\}$ into $\{a,bc\}$ only if \code{powerMergeSafeQ[b, c]}
+      (Proposition~\ref{prop:power}(1)); \code{combine} extracts common factors
+      from a sum under exponent $p$ only if $p\in\Z$, the extracted product is
+      a positive real, or the remaining sum is a positive real
+      (Proposition~\ref{prop:power}(2)); \code{Factorc} certifies its own
+      output; the wrapper factors only maximal exact numeric non-atomic
+      subexpressions. The useful rewrites survive: J10
+      $\sqrt{-3-2\sqrt2}\to i\sqrt{3+2\sqrt2}$ and J11 $\sqrt{8+4\sqrt3}\to2\sqrt{2+\sqrt3}$.
+\item \textbf{Validation} (\U{4}, \U{15}). Exact algebraic nonzero multipliers;
+      integer root order $\ge2$; polynomial-type checks after
+      \code{MinimalPolynomial}, \code{PolynomialGCD} and \code{Solve}; empty
+      candidate sets are ordinary; inexact input is returned; \code{Root}
+      input goes through \code{ToRadicals} first; lists are mapped.
+\item \textbf{Search control} (\U{5}, \U{6}, \U{7}, \U{12}, \U{16}).
+      \code{SortBy[..., First]}; delete-then-take; the cap
+      $q^t-1\le\text{cap}$ in integer arithmetic; the GCD attempted for
+      $d_m\le d_{\text{best}}$; a visited set; \code{"MaxTrials"} and
+      \code{"TimeBudget"} checked before every trial; the product batch after
+      the first pass truncated to the cap; \code{Throw[Null, ...]}.
+\item \textbf{Objective} (\U{9}, \U{20}, \U{27}). \code{RadicalCost} and
+      \code{cheaperQ}; the engine keeps the cheapest certified candidate and
+      only replaces a solution by a cheaper one; the wrapper returns the
+      cheapest of \{input, result, \code{Simplify[result]}, inner-surd
+      variant\} that is certified equal to the input, and never anything more
+      expensive than the input.
+\item \textbf{Candidate polishing} (\U{23}, \U{27}). Each certified candidate
+      is offered in the variants \{as is, \code{Simplify}, rationalized
+      denominator, inner surds denested by Proposition~\ref{prop:surd}, both\},
+      and the cheapest is kept.
+\item \textbf{Quadratic-surd fast path} (\RIII's proposal). A problem of the
+      form $\sqrt{a+b\sqrt c}$ with rational $a,b,c$ is tried with
+      Proposition~\ref{prop:surd} before any minimal polynomial is computed;
+      the result is certified anyway.
+\item \textbf{One recursive pass} (\U{22}). A partial solution of depth $\ge2$
+      is sent once through an all-level pass (recursion depth at most 2), so
+      $(49+20\sqrt6)^{1/4}\to\sqrt{5+2\sqrt6}\to\sqrt2+\sqrt3$.
+\item \textbf{Hygiene} (\U{8}, \U{10}, \U{11}, \U{17}, \U{18}, \U{19}, \U{21}).
+      Package context; private marker; \code{Module} variables; no
+      \code{Unprotect}; \code{log[...]} instead of \code{Print}; dead code
+      removed; the trailing unit entry cleaned.
+\end{enumerate}
+
+\subsection{What was deliberately kept}
+The initial-multiplier heuristic, the degree-based ``progress'' logic, the
+history ordering, the stack discipline (split-and-insert for partial batches,
+deferred insertion for full-set batches), the discriminant batches with
+prime-gap trimming, the product batch after the first pass, and the early
+stopping rule are all retained. They are heuristics that the experiments show
+to be effective on the classical corpus, and replacing them was not the goal
+of a \emph{corrected} version. Their remaining weaknesses are listed in
+Section~\ref{sec:future}.
+
+\subsection{Guarantees and their limits}
+\label{sec:guarantees}
+For an exact algebraic input $E$ the corrected version guarantees: (i) the
+result is certified equal to $E$ by \code{RootReduce} or exact
+\code{PossibleZeroQ}; (ii) the result is strictly cheaper than $E$ under
+\code{RadicalCost}, or is $E$ itself; (iii) no kernel message is produced on
+the normal path; (iv) the search stops after \code{"MaxTrials"} trials or
+\code{"TimeBudget"} seconds. For an input with symbolic parts, (i) holds for
+every replaced numeric subexpression individually and the symbolic host is
+left untouched. There is no completeness guarantee: an unchanged result means
+that the bounded search found nothing cheaper, not that nothing exists.
+Certification can time out on very large expressions, in which case candidates
+are rejected and the input is returned; this is the conservative direction.
+
+\subsection{Cost}
+The corrected version is two to three times slower than the original on the
+small inputs of the battery (Table~\ref{tab:fixedA} versus
+Table~\ref{tab:origA}): almost all of the difference is \code{RootReduce}
+inside \code{CertifiedEqualQ}, called for the Factorc check, for each
+candidate that passes the numeric prefilter, and once more for the whole
+result. The slowest probe, $\sqrt{5+2\sqrt6}^{1/5}$, takes 7\,s (20\,s in the original).

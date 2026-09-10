@@ -1,0 +1,31 @@
+{
+  "record_id": "sympyissues",
+  "title": "SymPy radical-denesting issues and discussion",
+  "asset_id": "resource-02",
+  "version": "web-resources",
+  "kind": "web",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://github.com/sympy/sympy/issues/27082",
+    "resolved_url": "https://github.com/sympy/sympy/issues/27082",
+    "retrieved_at": "2026-09-05T20:28:04+00:00",
+    "http_status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "content_encoding": "",
+    "bytes": 253776,
+    "sha256": "8177d5fe0c6fe8bb73178dd63e54d1b389b76e2d85e9e7c7747b79d960802b84"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "cited_web_resource",
+  "note": "URL cited in an input report. Not all web pages have been independently reopened. HTML is saved as HTML; software code is not labelled as article TeX.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "web_resources/sympyissues-SymPy-radical-denesting-issues-and-discussion/web-resources/resource-02.html",
+      "role": "web",
+      "bytes": 253776,
+      "sha256": "8177d5fe0c6fe8bb73178dd63e54d1b389b76e2d85e9e7c7747b79d960802b84"
+    }
+  ],
+  "prior_candidate_errors": []
+}

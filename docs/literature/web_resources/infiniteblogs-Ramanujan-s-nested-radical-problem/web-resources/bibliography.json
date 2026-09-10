@@ -1,0 +1,14 @@
+{
+  "id": "infiniteblogs",
+  "title": "Ramanujan's nested radical problem",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "infiniteblogs",
+      "entry_latex": "Ancillary infinite-radical exposition: ``Ramanujan's nested radical problem,'' \\emph{Cantor's Paradise},\n\\access{https://www.cantorsparadise.com/ramanujans-nested-radical-problem-f14c3060e495}{article}; A.~G. Smith, ``Calculus of infinite nested radicals,''\n\\access{https://medium.com/@ArchieGSmith/calculus-of-infinite-nested-radicals-1ab3e1d26774}{Medium article}; and\n\\access{https://math.stackexchange.com/questions/4049946/the-infinitely-nested-radicals-problem-and-ramanujans-wondrous-formula}{Math StackExchange discussion 4049946}. \\status{B}\nInformal leads retained from the supplied material. They are not used to support the finite-denesting criteria or complexity claims.\n\n\\bibgroup{VI. Official software documentation, source, and development discussions}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

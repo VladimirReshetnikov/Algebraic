@@ -1,0 +1,61 @@
+{
+  "record_id": "gutin",
+  "title": "Constructive proof of Herschfeld's Convergence Theorem",
+  "asset_id": "tex-source",
+  "version": "arxiv-1907.02700v6",
+  "kind": "source",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://arxiv.org/src/1907.02700v6",
+    "resolved_url": "https://arxiv.org/src/1907.02700v6",
+    "retrieved_at": "2026-09-05T20:27:19+00:00",
+    "http_status": 200,
+    "content_type": "application/gzip",
+    "content_encoding": "",
+    "bytes": 62985,
+    "sha256": "e5d32aee69214cb364d83a1580ad94b9d8404e731f8e6ddf014727dfdf2afb83"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "repository_pdf_and_source_links",
+  "note": "arXiv advertises TeX Source; actual bytes and archive contents have NOT been retrieved in this environment.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/gutin-Constructive-proof-of-Herschfeld-s-Convergence-Theorem/arxiv-1907.02700v6/tex-source.tar.gz",
+      "role": "original_source_response",
+      "bytes": 62985,
+      "sha256": "e5d32aee69214cb364d83a1580ad94b9d8404e731f8e6ddf014727dfdf2afb83"
+    },
+    {
+      "path": "papers/gutin-Constructive-proof-of-Herschfeld-s-Convergence-Theorem/arxiv-1907.02700v6/source/constructive-herschfeld.bbl",
+      "role": "source_member",
+      "bytes": 2341,
+      "sha256": "5e28431a8d175ca5cca01e7791038dbf7e2382479bb51b231b2fb0fef10fc820"
+    },
+    {
+      "path": "papers/gutin-Constructive-proof-of-Herschfeld-s-Convergence-Theorem/arxiv-1907.02700v6/source/constructive-herschfeld.bib",
+      "role": "source_member",
+      "bytes": 11730,
+      "sha256": "a9259046a2df37d93dd139e24b94a26e181e4370ac080660fd0abecf2d99c9e3"
+    },
+    {
+      "path": "papers/gutin-Constructive-proof-of-Herschfeld-s-Convergence-Theorem/arxiv-1907.02700v6/source/constructive-herschfeld.tex",
+      "role": "tex",
+      "bytes": 37026,
+      "sha256": "71e1f4b6d36200ebf0c016257f06276dc35e77d1ec4a786ff84130d6cfbd98fe"
+    },
+    {
+      "path": "papers/gutin-Constructive-proof-of-Herschfeld-s-Convergence-Theorem/arxiv-1907.02700v6/source/u_derivative_values.png",
+      "role": "source_member",
+      "bytes": 26778,
+      "sha256": "7b361f7676a86b7ec2c8128eaf746fa7fc8095741580a38f9f15cdabdae410cc"
+    },
+    {
+      "path": "papers/gutin-Constructive-proof-of-Herschfeld-s-Convergence-Theorem/arxiv-1907.02700v6/source/u_values.png",
+      "role": "source_member",
+      "bytes": 26014,
+      "sha256": "8bf628d31082ce1f4a7e08d0a78d1f6dc9c218fd1203d30f0c31f4053db3b05e"
+    }
+  ],
+  "prior_candidate_errors": []
+}

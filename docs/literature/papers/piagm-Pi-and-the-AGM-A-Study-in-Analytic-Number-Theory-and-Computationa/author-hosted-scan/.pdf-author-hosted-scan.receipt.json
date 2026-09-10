@@ -1,0 +1,31 @@
+{
+  "record_id": "piagm",
+  "title": "Pi and the AGM: A Study in Analytic Number Theory and Computational Complexity",
+  "asset_id": "pdf-author-hosted-scan",
+  "version": "author-hosted-scan",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://carmamaths.org/jon/Preprints/Papers/Submitted%20Papers/Elliptic%20moments/pi-agm.pdf",
+    "resolved_url": "https://carmamaths.org/resources/jon/Preprints/Papers/Submitted%20Papers/Elliptic%20moments/pi-agm.pdf",
+    "retrieved_at": "2026-09-05T20:27:24+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 2951284,
+    "sha256": "2ea662124501c5a1604c96c705da10049e0dd81824562f3b48853672bb53ca71"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "browser_fulltext",
+  "note": "Author archive; 214 PDF pages with two book pages per scan. Copyright/edition page inspected.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/piagm-Pi-and-the-AGM-A-Study-in-Analytic-Number-Theory-and-Computationa/author-hosted-scan/pdf-author-hosted-scan.pdf",
+      "role": "pdf",
+      "bytes": 2951284,
+      "sha256": "2ea662124501c5a1604c96c705da10049e0dd81824562f3b48853672bb53ca71"
+    }
+  ],
+  "prior_candidate_errors": []
+}

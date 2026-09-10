@@ -1,0 +1,25 @@
+{
+  "id": "herschfeld",
+  "title": "On infinite radicals",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "herschfeld",
+      "entry_latex": "A. Herschfeld, ``On infinite radicals,'' \\emph{American Mathematical Monthly} \\textbf{42} (1935), 419--429. \\status{A}\nClassical convergence criterion for nonnegative nested square roots. The bounded sequence is $a_n^{2^{-n}}$, not necessarily $a_n$ itself."
+    },
+    {
+      "report": "report-2",
+      "key": "herschfeld",
+      "entry_latex": "Aaron Herschfeld.\n\\emph{On infinite radicals}.\nAmerican Mathematical Monthly \\textbf{42}, 419--429, 1935.\n\\textbf{R.} Classical convergence criterion: boundedness of $a_n^{2^{-n}}$ for nonnegative inputs, not boundedness of $a_n$ itself. Analytic convergence is separate from finite denesting."
+    },
+    {
+      "report": "report-3",
+      "key": "herschfeld",
+      "entry_latex": "Aaron Herschfeld. ``On infinite radicals.'' \\emph{The American Mathematical Monthly} \\textbf{42} (1935), 419--429. \\doi{10.1080/00029890.1935.11987745}. \\status{A}\n\\entrynote{The classical convergence theorem for nonnegative infinite square-root nests. The relevant condition is boundedness of $a_n^{2^{-n}}$, not of $a_n$. A complete elementary proof of the needed square-root case is supplied in this report.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

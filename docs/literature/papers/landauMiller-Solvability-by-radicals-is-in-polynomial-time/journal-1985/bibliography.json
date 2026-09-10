@@ -1,0 +1,25 @@
+{
+  "id": "landauMiller",
+  "title": "Solvability by radicals is in polynomial time",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "landauMiller",
+      "entry_latex": "S. Landau and G.~L. Miller, ``Solvability by radicals is in polynomial time,'' \\emph{Journal of Computer and System Sciences} \\textbf{30}(2) (1985), 179--208. \\status{A}\nAlgorithmic Galois-theory infrastructure. Deciding radical solvability of a polynomial is not identical to constructing a shortest or shallowest formula for an already given radical expression."
+    },
+    {
+      "report": "report-2",
+      "key": "landaumiller",
+      "entry_latex": "Susan Landau and Gary L. Miller.\n\\emph{Solvability by radicals is in polynomial time}.\nJournal of Computer and System Sciences \\textbf{30}(2), 179--208, 1985.\n\\doi{10.1016/0022-0000(85)90013-3}.\nPreliminary STOC 1983 version: \\doi{10.1145/800061.808743}.\n\\textbf{M.} Decides solvability by radicals; this is not a minimum-depth output theorem. The conference and journal appearances are grouped as versions of one line of work."
+    },
+    {
+      "report": "report-3",
+      "key": "landaumiller",
+      "entry_latex": "Susan Landau and Gary L. Miller. ``Solvability by radicals is in polynomial time.'' \\emph{Journal of Computer and System Sciences} \\textbf{30}(2) (1985), 179--208. \\status{A}\n\\entrynote{A foundational computational Galois-theory result. Its problem is deciding solvability by radicals from a polynomial, not minimizing the depth of an already supplied radical expression. It helps explain the theoretical infrastructure of later denesting algorithms.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

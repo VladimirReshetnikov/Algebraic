@@ -1,0 +1,25 @@
+{
+  "id": "caviness76",
+  "title": "Simplification of radical expressions",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "caviness76",
+      "entry_latex": "B.~F. Caviness and R.~J. Fateman, ``Simplification of radical expressions,'' in \\emph{Proceedings of the 1976 ACM Symposium on Symbolic and Algebraic Computation}, 329--338.\n\\access{https://people.eecs.berkeley.edu/~fateman/papers/radcan.pdf}{Author-hosted paper}. \\status{T}\nFoundational RADCAN-style normalization and exact treatment of radical expressions. Essential for understanding why canonicalization in a field basis and minimum-depth denesting are different tasks."
+    },
+    {
+      "report": "report-2",
+      "key": "cavinessfateman",
+      "entry_latex": "B. F. Caviness and R. J. Fateman.\n\\emph{Simplification of radical expressions}.\nProceedings of the 1976 ACM Symposium on Symbolic and Algebraic Computation (SYMSAC), 329--338, 1976.\n\\sourceurl{https://people.eecs.berkeley.edu/~fateman/papers/radcan.pdf}.\n\\textbf{R.} Foundational radical normalization and the Macsyma/RADCAN lineage; distinguish canonical representation from depth minimization."
+    },
+    {
+      "report": "report-3",
+      "key": "caviness",
+      "entry_latex": "B. F. Caviness and R. J. Fateman. ``Simplification of radical expressions.'' In \\emph{Proceedings of the 1976 ACM Symposium on Symbolic and Algebraic Computation}, pp.~329--338, 1976. Author copy: \\url{https://people.eecs.berkeley.edu/~fateman/papers/radcan.pdf}. \\status{F}\n\\entrynote{A foundational treatment of normal forms and simplification of radical expressions. Important for the historical development of \\texttt{radcan}; normal-form objectives and radical-depth minimization must still be distinguished.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

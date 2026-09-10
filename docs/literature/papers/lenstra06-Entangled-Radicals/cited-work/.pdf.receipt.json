@@ -1,0 +1,31 @@
+{
+  "record_id": "lenstra06",
+  "title": "Entangled Radicals",
+  "asset_id": "pdf",
+  "version": "cited-work",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://www.math.leidenuniv.nl/~hwl/papers/rad.pdf",
+    "resolved_url": "https://pub.math.leidenuniv.nl/~lenstrahw//papers/rad.pdf",
+    "retrieved_at": "2026-09-05T20:25:42+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 456836,
+    "sha256": "5d26e4bd9369e7481ab75cedeff1e487fe3d297bd4ab77c680f66a101a4bc404"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "candidate_unverified",
+  "note": "Author URL supplied in reports; bytes not verified.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/lenstra06-Entangled-Radicals/cited-work/paper.pdf",
+      "role": "pdf",
+      "bytes": 456836,
+      "sha256": "5d26e4bd9369e7481ab75cedeff1e487fe3d297bd4ab77c680f66a101a4bc404"
+    }
+  ],
+  "prior_candidate_errors": []
+}

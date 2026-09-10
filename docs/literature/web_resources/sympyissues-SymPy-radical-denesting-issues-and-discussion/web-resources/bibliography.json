@@ -1,0 +1,24 @@
+{
+  "id": "sympyissues",
+  "title": "SymPy radical-denesting issues and discussion",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "sympyissue",
+      "entry_latex": "SymPy development discussions:\n\\access{https://github.com/sympy/sympy/issues/2415}{issue 2415} and\n\\access{https://github.com/sympy/sympy/issues/27082}{issue 27082, ``simplify roots with base having surds''}. \\status{D}\nRegression and feature-discussion leads. They are not evidence that the reported behavior persists in every current API; \\texttt{nthroot} handles examples that a square-root-only route does not."
+    },
+    {
+      "report": "report-2",
+      "key": "sympyissues",
+      "entry_latex": "SymPy contributors.\nHistorical issue discussions 2415 and 27082.\n\\sourceurl{https://github.com/sympy/sympy/issues/2415};\n\\sourceurl{https://github.com/sympy/sympy/issues/27082}.\n\\textbf{R.} Version-specific behavior and development history. An old issue is not evidence that the same defect persists in the currently installed release."
+    },
+    {
+      "report": "report-3",
+      "key": "sympyissues",
+      "entry_latex": "SymPy issue tracker. Denesting-related discussions, issues \\#2415 and \\#27082. \\url{https://github.com/sympy/sympy/issues/2415}; \\url{https://github.com/sympy/sympy/issues/27082}. \\status{D}\n\\entrynote{Useful historical and practical test-case leads. An issue report alone does not prove that a defect persists in a later release, and an issue's example should be rerun before making a current capability claim.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

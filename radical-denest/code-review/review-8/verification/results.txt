@@ -1,0 +1,28 @@
+Independent verification: PASS
+Python 3.13.5; SymPy 1.14.0
+Assertions: 3412
+  Dickson polynomial identities: 5
+  Odd-root parameter checks: 1280
+  Direct quadratic checks: 144
+  Indirect quadratic checks: 270
+  Gaussian checks: 80
+  Honsbeek checks: 48
+  Square-class checks: 9
+  Square-class multiplication checks: 1024
+  Polynomial inverse checks: 6
+  Principal-branch checks: 6
+  Root-of-unity arithmetic checks: 527
+  Control-flow model checks: 3
+  Lexical checks: 5
+  Structural checks: 5
+Cases:
+  Odd-root parameter cases: 320
+  Direct quadratic cases: 72
+  Indirect quadratic cases: 90
+  Gaussian cases: 40
+  Honsbeek parameter cases: 22
+  Polynomial inverse cases: 6
+Native Wolfram execution: NOT RUN
+Exact mathematical checks, a stated control-flow model, and lexical/structural checks only.
+Package SHA-256: 61e10f81f96e7485415b7c3ea40e3a0c1bc127607d2eeab535e816e03a2da9e6
+Elapsed: 0.226 seconds

@@ -1,0 +1,114 @@
+{
+  "review_date": "2026-09-05",
+  "repository": "https://github.com/VladimirReshetnikov/RadicalDenest",
+  "pinned_commit": "9000d6f533a68ee7659a6830ad25bba401f800a5",
+  "reviewed_implementation": {
+    "path": "src/corrected/StradFixed2.wl",
+    "git_blob": "0bdeded347385a55a044fdd35883006d053685dc",
+    "bytes": 41416,
+    "lines": 745,
+    "local_copy": "code/StradFixed2.pinned.wl",
+    "git_blob_verified": true,
+    "read_scope": "Complete source."
+  },
+  "repository_context": [
+    {
+      "path": "src/code-review/unified-B/unified_analysis_B.tex",
+      "git_blob": "31e1b39fe4c42ad8c9b5b0a52da5b9964ec00c56",
+      "read_scope": "Design, mathematical recipes, prior findings, experiments and limitations. Upstream native execution claims were not reproduced."
+    },
+    {
+      "path": "docs/report/radical_denesting_unified.tex",
+      "git_blob": "cf128f66df61c9f5f5660bfd98665aa777c67a1c",
+      "read_scope": "Definitions, quadratic denesting, field/branch qualifications, classical examples and higher-index trace--norm material."
+    },
+    {
+      "path": "docs/literature/RETYPESET_ARTICLES.md",
+      "git_blob": "50ff1c7167c7491d409bd4ff0c99264be4b5e985",
+      "read_scope": "Editorial status and correction descriptions."
+    },
+    {
+      "path": "docs/literature/papers/bfht-Decreasing-the-nesting-depth-of-expressions-involving-square-root/retypeset-2026/CORRECTIONS.md",
+      "git_blob": "e101349d9bb14ff22d444c2434aca714e7995e26",
+      "read_scope": "Complete correction ledger; not treated as original authorship."
+    },
+    {
+      "path": "docs/literature/papers/gkioulekas-On-the-denesting-of-nested-square-roots/retypeset-2026/gkioulekas2017.tex",
+      "git_blob": "6b5b8fd05ca4ea0a329befebb333124b6a53f7b8",
+      "read_scope": "Relevant denesting definitions and theorem material."
+    },
+    {
+      "path": "docs/literature/papers/landau92-Simplification-of-nested-radicals/retypeset-2026/landau1989.tex",
+      "read_scope": "Extended-abstract introduction and structural statements, including explicit editorial qualifications."
+    },
+    {
+      "path": "LICENSE",
+      "git_blob": "77fc476abd477a27dd08801d16ed623e0c37a1ab",
+      "read_scope": "Complete license, copied to code/LICENSE."
+    }
+  ],
+  "external_sources": [
+    {
+      "title": "BFHT, Decreasing the Nesting Depth of Expressions Involving Square Roots (1985)",
+      "url": "https://www.cs.toronto.edu/~bor/Papers/decreasing-nesting-depth-for-expressions.pdf",
+      "access": "Relevant original PDF text and page images inspected."
+    },
+    {
+      "title": "Gkioulekas, On the Denesting of Nested Square Roots",
+      "url": "https://faculty.utrgv.edu/eleftherios.gkioulekas/papers/submitted/denesting-square-roots.pdf",
+      "access": "Author manuscript; relevant PDF text and direct/indirect theorem pages inspected."
+    },
+    {
+      "title": "Jeffrey and Rich, Simplifying Square Roots of Square Roots by Denesting",
+      "url": "https://www.uwo.ca/apmaths/faculty/jeffrey/pdfs/wester.pdf",
+      "access": "Author PDF, including chapter identification and page image."
+    },
+    {
+      "title": "Cavallo, Denesting cubic radicals, arXiv:2403.04776v2",
+      "url": "https://arxiv.org/html/2403.04776v2",
+      "access": "HTML primary paper inspected for the cubic criterion."
+    },
+    {
+      "title": "Landau, Simplification of nested radicals (1992)",
+      "url": "https://doi.org/10.1137/0221009",
+      "access": "Publisher abstract; full journal proof not independently inspected."
+    },
+    {
+      "title": "Honsbeek, Denesting certain nested radicals of depth two (1999)",
+      "url": "https://repository.ubn.ru.nl/handle/2066/18722",
+      "access": "Bibliographic record. External PDF retrieval unsuccessful; identity derived explicitly using repository exposition and independent exact algebra."
+    },
+    {
+      "title": "Wolfram Language documentation: Root",
+      "url": "https://reference.wolfram.com/language/ref/Root.html",
+      "access": "Official documentation consulted; not a native execution transcript."
+    },
+    {
+      "title": "Wolfram Language documentation: RootReduce",
+      "url": "https://reference.wolfram.com/language/ref/RootReduce.html",
+      "access": "Official documentation consulted; not a native execution transcript."
+    },
+    {
+      "title": "Wolfram Language documentation: PossibleZeroQ",
+      "url": "https://reference.wolfram.com/language/ref/PossibleZeroQ.html",
+      "access": "Official documentation consulted; not a native execution transcript."
+    },
+    {
+      "title": "Wolfram Language documentation: Accuracy",
+      "url": "https://reference.wolfram.com/language/ref/Accuracy.html",
+      "access": "Official documentation consulted; not a native execution transcript."
+    },
+    {
+      "title": "Wolfram Language documentation: TimeConstrained",
+      "url": "https://reference.wolfram.com/language/ref/TimeConstrained.html",
+      "access": "Official documentation consulted; not a native execution transcript."
+    }
+  ],
+  "limitations": [
+    "No claim that every paper in the literature collection was read.",
+    "Repository edited re-typesettings are distinguished from original publications.",
+    "The complete revised Wolfram package was not natively executed.",
+    "No public repository write was performed.",
+    "Third-party literature PDFs are not redistributed in this archive."
+  ]
+}

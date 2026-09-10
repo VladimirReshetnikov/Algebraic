@@ -1,0 +1,31 @@
+{
+  "record_id": "tiwari",
+  "title": "Complete elementary analysis of Ramanujan's nested radicals",
+  "asset_id": "resource-01",
+  "version": "web-resources",
+  "kind": "web",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://gauravtiwari.org/projects-ramanujan-nested-radical/",
+    "resolved_url": "https://gauravtiwari.org/projects-ramanujan-nested-radical/",
+    "retrieved_at": "2026-09-05T20:28:43+00:00",
+    "http_status": 200,
+    "content_type": "text/html; charset=UTF-8",
+    "content_encoding": "",
+    "bytes": 307294,
+    "sha256": "f5325b9d929e13031ef047314f23af059c50c7ea5819aaf7af5ddbd15684f4c0"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "cited_web_resource",
+  "note": "URL cited in an input report. Not all web pages have been independently reopened. HTML is saved as HTML; software code is not labelled as article TeX.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "web_resources/tiwari-Complete-elementary-analysis-of-Ramanujan-s-nested-radicals/web-resources/resource-01.html",
+      "role": "web",
+      "bytes": 307294,
+      "sha256": "f5325b9d929e13031ef047314f23af059c50c7ea5819aaf7af5ddbd15684f4c0"
+    }
+  ],
+  "prior_candidate_errors": []
+}

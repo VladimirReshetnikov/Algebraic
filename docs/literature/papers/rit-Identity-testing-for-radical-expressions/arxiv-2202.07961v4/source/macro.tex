@@ -1,0 +1,35 @@
+% urls and references
+%\usepackage[hyphens]{url}
+%\usepackage{hyperref}
+% figures etc.
+%\usepackage[pdftex]{graphicx}
+%\usepackage{float}
+% colours
+\usepackage{xcolor}
+% tables
+\usepackage{multirow}
+\usepackage{tabularx}
+% tikz
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+% enumerate
+\usepackage{enumitem}
+\setlist[enumerate]{noitemsep, topsep=0pt}
+% test for a better sqrt
+\newcommand{\mysqrt}[2]{\sqrt[\leftroot{2}\uproot{5}#1]{ #2}}
+% itemize
+\renewcommand\labelitemi{$-$}
+\setlist[itemize]{noitemsep, topsep=0pt}
+% math
+\input{mymath}
+% tables
+\renewcommand{\arraystretch}{1.6}
+\usepackage{color, colortbl}
+%Light gray:
+\definecolor{Gray}{gray}{0.9}
+%Light cyan:
+\definecolor{LightCyan}{rgb}{0.88,1,1}
+
+
+
+\newcommand{\bpp}{\mbox{{\sf BPP}}}

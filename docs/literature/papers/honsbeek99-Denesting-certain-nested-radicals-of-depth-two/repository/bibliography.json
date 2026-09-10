@@ -1,0 +1,25 @@
+{
+  "id": "honsbeek99",
+  "title": "Denesting certain nested radicals of depth two",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "honsbeek99",
+      "entry_latex": "M. Honsbeek, \\emph{Denesting Certain Nested Radicals of Depth Two}, Report 9916, University of Nijmegen, 1999.\n\\access{https://repository.ubn.ru.nl/handle/2066/18722}{Institutional repository record}. \\status{A}\nThe early report on the square root of a sum of cube roots. The repository identifier must not be relabelled as the later dissertation."
+    },
+    {
+      "report": "report-2",
+      "key": "honsbeek1999",
+      "entry_latex": "Mascha Honsbeek.\n\\emph{Denesting certain nested radicals of depth two}.\nUniversity of Nijmegen, Report 9916, 1999.\n\\sourceurl{https://repository.ubn.ru.nl/handle/2066/18722}.\n\\textbf{M.} Earlier report in the Honsbeek line of research. The frequently circulated repository item 18722 is this report, not the complete 2005 doctoral thesis."
+    },
+    {
+      "report": "report-3",
+      "key": "honsbeek99",
+      "entry_latex": "Mascha Honsbeek. \\emph{Denesting certain nested radicals of depth two}. Report 9916, University of Nijmegen, 1999. Institutional record: \\url{https://repository.ubn.ru.nl/handle/2066/18722}. \\status{A}\n\\entrynote{An earlier report on selected depth-two families, later developed in the thesis. It should not be confused with the date of the doctoral dissertation.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

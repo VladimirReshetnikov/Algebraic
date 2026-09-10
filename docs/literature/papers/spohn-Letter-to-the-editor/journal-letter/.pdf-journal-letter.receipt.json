@@ -1,0 +1,31 @@
+{
+  "record_id": "spohn",
+  "title": "Letter to the editor",
+  "asset_id": "pdf-journal-letter",
+  "version": "journal-letter",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://www.fq.math.ca/Scanned/14-1/letter1.pdf",
+    "resolved_url": "https://www.fq.math.ca/Scanned/14-1/letter1.pdf",
+    "retrieved_at": "2026-09-05T20:26:01+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 240063,
+    "sha256": "a796f357de2e6dba60799dd0b85c9f5a5aa17a820cd3f99759332b72515b100a"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "browser_fulltext",
+  "note": "Fibonacci Quarterly letter, one scanned page.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/spohn-Letter-to-the-editor/journal-letter/pdf-journal-letter.pdf",
+      "role": "pdf",
+      "bytes": 240063,
+      "sha256": "a796f357de2e6dba60799dd0b85c9f5a5aa17a820cd3f99759332b72515b100a"
+    }
+  ],
+  "prior_candidate_errors": []
+}

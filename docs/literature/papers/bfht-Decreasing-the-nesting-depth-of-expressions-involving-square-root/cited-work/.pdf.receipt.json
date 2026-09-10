@@ -1,0 +1,31 @@
+{
+  "record_id": "bfht",
+  "title": "Decreasing the nesting depth of expressions involving square roots",
+  "asset_id": "pdf",
+  "version": "cited-work",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://www.cs.toronto.edu/~bor/Papers/decreasing-nesting-depth-for-expressions.pdf",
+    "resolved_url": "https://www.cs.toronto.edu/~bor/Papers/decreasing-nesting-depth-for-expressions.pdf",
+    "retrieved_at": "2026-09-05T20:25:09+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 971817,
+    "sha256": "806178596a741d0abd314cf2b4e42697e3c0d7437b56333b7f8561d5e0c66d73"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "candidate_unverified",
+  "note": "Author URL supplied in reports; not independently opened.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/bfht-Decreasing-the-nesting-depth-of-expressions-involving-square-root/cited-work/paper.pdf",
+      "role": "pdf",
+      "bytes": 971817,
+      "sha256": "806178596a741d0abd314cf2b4e42697e3c0d7437b56333b7f8561d5e0c66d73"
+    }
+  ],
+  "prior_candidate_errors": []
+}

@@ -1,0 +1,25 @@
+{
+  "id": "siegel",
+  "title": "Algebraische Abhängigkeit von Wurzeln",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "siegel",
+      "entry_latex": "C.~L. Siegel, ``Algebraische Abh\\\"angigkeit von Wurzeln,'' \\emph{Acta Arithmetica} \\textbf{21} (1972), 59--64. \\doi{10.4064/aa-21-1-59-64}. \\status{A}\nAlgebraic dependence of roots; part of the structural foundation used in later denesting algorithms."
+    },
+    {
+      "report": "report-2",
+      "key": "siegel",
+      "entry_latex": "Carl Ludwig Siegel.\n\\emph{Algebraische Abh\\\"angigkeit von Wurzeln}.\nActa Arithmetica \\textbf{21}, 59--64, 1972.\n\\doi{10.4064/aa-21-1-59-64}.\n\\textbf{R.} Structural independence of real radicals; Bl\\\"omer's thesis is an accessible route to its role in algorithms."
+    },
+    {
+      "report": "report-3",
+      "key": "siegel",
+      "entry_latex": "C. L. Siegel. ``Algebraische Abh\\\"angigkeit von Wurzeln.'' \\emph{Acta Arithmetica} \\textbf{21} (1972), 59--64. \\doi{10.4064/aa-21-1-59-64}. \\status{A}\n\\entrynote{Structural results on dependence among radicals. Part of the number-theoretic background to the algorithmic literature, rather than a stand-alone CAS denesting interface.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

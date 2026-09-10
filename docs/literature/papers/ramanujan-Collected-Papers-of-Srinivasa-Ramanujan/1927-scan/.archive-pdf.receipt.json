@@ -1,0 +1,33 @@
+{
+  "record_id": "ramanujan",
+  "title": "Collected Papers of Srinivasa Ramanujan",
+  "asset_id": "archive-pdf",
+  "version": "1927-scan",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://archive.org/download/pli.kerala.rare.28155/pli.kerala.rare.28155.pdf",
+    "resolved_url": "https://ia902805.us.archive.org/14/items/pli.kerala.rare.28155/pli.kerala.rare.28155.pdf",
+    "retrieved_at": "2026-09-05T20:25:55+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 9617944,
+    "sha256": "858af6247df93916a2ef7cedfe774782e95acbb9c06fe40a876c06ff0add41a7"
+  },
+  "resolution": {
+    "internet_archive_id": "pli.kerala.rare.28155"
+  },
+  "catalog_evidence_level": "download_link_listed",
+  "note": "1927 collection, Kerala State Library scan, PDF download listed. This is not a controlled-lending modern edition.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/ramanujan-Collected-Papers-of-Srinivasa-Ramanujan/1927-scan/archive-pdf.pdf",
+      "role": "pdf",
+      "bytes": 9617944,
+      "sha256": "858af6247df93916a2ef7cedfe774782e95acbb9c06fe40a876c06ff0add41a7"
+    }
+  ],
+  "prior_candidate_errors": []
+}

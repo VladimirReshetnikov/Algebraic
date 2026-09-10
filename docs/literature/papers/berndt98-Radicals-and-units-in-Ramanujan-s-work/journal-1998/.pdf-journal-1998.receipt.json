@@ -1,0 +1,31 @@
+{
+  "record_id": "berndt98",
+  "title": "Radicals and units in Ramanujan's work",
+  "asset_id": "pdf-journal-1998",
+  "version": "journal-1998",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://matwbn.icm.edu.pl/ksiazki/aa/aa87/aa8725.pdf",
+    "resolved_url": "https://matwbn.icm.edu.pl/ksiazki/aa/aa87/aa8725.pdf",
+    "retrieved_at": "2026-09-05T20:25:58+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 218655,
+    "sha256": "6ce8e9e871bbc0b80191dd945095a976d3f7b6cf316dd9da68e1feb8e53225f2"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "download_link_listed",
+  "note": "Archival PDF linked by OEIS; file bytes not retrieved here.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/berndt98-Radicals-and-units-in-Ramanujan-s-work/journal-1998/pdf-journal-1998.pdf",
+      "role": "pdf",
+      "bytes": 218655,
+      "sha256": "6ce8e9e871bbc0b80191dd945095a976d3f7b6cf316dd9da68e1feb8e53225f2"
+    }
+  ],
+  "prior_candidate_errors": []
+}

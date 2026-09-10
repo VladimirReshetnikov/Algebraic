@@ -1,0 +1,33 @@
+{
+  "record_id": "antipov",
+  "title": "Ramanujan denesting formulas for cubic radicals",
+  "asset_id": "pdf-mathnet",
+  "version": "mathnet-vspua-180",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://www.mathnet.ru/php/getFT.phtml?jrnid=vspua&option_lang=rus&paperid=180&what=fullt",
+    "resolved_url": "https://www.mathnet.ru/links/d69f3740ff219d56fe1d88733bba4c6d/vspua180.pdf",
+    "retrieved_at": "2026-09-05T20:30:28+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36",
+    "content_encoding": "",
+    "bytes": 325913,
+    "sha256": "6164aaff612a9f1f0cace71a037f287fd3bd9c46ae3b4ab0ae65d999ca4cdceb",
+    "tls_verification": "SKIPPED by --insecure"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "candidate_unverified",
+  "note": "MathNet full text vspua180 (route from the download kit). The kit and this package differ on whether it is the cited Antipov--Pimenov paper; verify the title after download.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/antipov-Ramanujan-denesting-formulas-for-cubic-radicals/mathnet-vspua-180/pdf-mathnet.pdf",
+      "role": "pdf",
+      "bytes": 325913,
+      "sha256": "6164aaff612a9f1f0cace71a037f287fd3bd9c46ae3b4ab0ae65d999ca4cdceb"
+    }
+  ],
+  "prior_candidate_errors": []
+}

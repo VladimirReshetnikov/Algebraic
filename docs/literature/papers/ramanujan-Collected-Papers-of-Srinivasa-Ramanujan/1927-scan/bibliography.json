@@ -1,0 +1,25 @@
+{
+  "id": "ramanujan",
+  "title": "Collected Papers of Srinivasa Ramanujan",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "ramanujan",
+      "entry_latex": "S. Ramanujan, \\emph{Collected Papers of Srinivasa Ramanujan}, G.~H. Hardy, P.~V. Seshu Aiyar, and B.~M. Wilson (eds.), Cambridge University Press, 1927. \\status{B}\nPrimary historical collection. Individual finite identities and infinite-radical questions should be distinguished when following later references back to their origin."
+    },
+    {
+      "report": "report-2",
+      "key": "ramanujan",
+      "entry_latex": "Srinivasa Ramanujan.\n\\emph{Collected Papers of Srinivasa Ramanujan}.\nEdited by G. H. Hardy, P. V. Seshu Aiyar, and B. M. Wilson.\nCambridge University Press, 1927; later reprints.\n\\textbf{R.} Primary historical collection for identities and problems. Original publication, later reprint, and online scan are not three independent research sources."
+    },
+    {
+      "report": "report-3",
+      "key": "ramanujan",
+      "entry_latex": "Srinivasa Ramanujan. \\emph{Collected Papers}. Edited by G. H. Hardy, P. V. Seshu Aiyar, and B. M. Wilson. Cambridge University Press, 1927; later reprints. See also the published facsimiles of Ramanujan's notebooks. \\status{L}\n\\entrynote{Primary historical material. Modern explanations and reliable attribution of particular radical identities are more readily obtained through Berndt's edited commentary and the focused papers below. No claim is made here to have rechecked every identity against an original notebook page.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

@@ -1,0 +1,107 @@
+15.0.1 for Microsoft Windows (64-bit) (July 2, 2026)
+
+Syntax::com: Warning: comma encountered with no adjacent expression. The expression will be treated as Null.  (line 320 of "original.wl").
+
+Get::noopen: Cannot open \original.wl.
+problem  -Sqrt[3 + 2*Sqrt[2]]
+outer root: 2  extra root: 1
+
+multiplier count: 1
+multiplier: 1   minpoly degree: 2
+success: {1, 2, {{1, 1}}}
+history: {{0, Infinity}, {1, 2}}
+1 + Sqrt[2]
+
+{f[(-1 + (2*I)*Sqrt[2])^(3/2)]}
+
+problem  (-1 + (2*I)*Sqrt[2])^(3/2)
+outer root: 2  extra root: 1
+
+multiplier count: 2  multipliers: {1, I/5/Sqrt[2]}
+multiplier: 1   minpoly degree: 2
+success: {1, 2, {{1, 1}}}
+history: {{0, Infinity}, {1, 2}}
+5 - I*Sqrt[2]
+
+{f[Sqrt[-2 + (4*I)*Sqrt[2]]*Sqrt[-1 + I*Sqrt[3]]]}
+
+problem  Sqrt[-2 + (4*I)*Sqrt[2]]*Sqrt[-1 + I*Sqrt[3]]
+outer root: 2  extra root: 1
+
+multiplier count: 4  multipliers: {1, I/2/Sqrt[2], I/2*Sqrt[3], Sqrt[6]}
+multiplier: 1   minpoly degree: 4
+success: {1, 4, {{1, 1}}}
+history: {{0, Infinity}, {1, 4}}
+(-I + Sqrt[2])*(-I + Sqrt[3])
+
+{f[1]}
+
+{f[Sqrt[5 + 2*Sqrt[6]]]}
+
+problem  Sqrt[5 + 2*Sqrt[6]]
+outer root: 2  extra root: 1
+
+multiplier count: 2  multipliers: {1, Sqrt[6]}
+multiplier: 1   minpoly degree: 4
+adding new multipliers from: 1
+multiplier: Sqrt[6]   minpoly degree: 4
+adding new multipliers from: Sqrt[6]
+multiplier count: 3  from: {1, 4}
+multiplier: 2   minpoly degree: 2
+success: {2, 2, {{2, 1}}}
+history: {{0, Infinity}, {1, 4}, {2, 2}}
+Sqrt[2] + Sqrt[3]
+
+{f[Sqrt[2]], f[Sqrt[3 + 2*f[Sqrt[2]]]], f[Sqrt[3 + 2*f[Sqrt[3 + 2*f[Sqrt[2]]]]]]}
+
+problem  Sqrt[3 + 2*Sqrt[2]]
+outer root: 2  extra root: 1
+
+multiplier count: 2  multipliers: {1, Sqrt[2]}
+multiplier: 1   minpoly degree: 2
+success: {1, 2, {{1, 1}}}
+history: {{0, Infinity}, {1, 2}}
+1 + Sqrt[2]
+
+problem  Sqrt[3 + 2*(1 + Sqrt[2])]
+outer root: 2  extra root: 1
+
+multiplier count: 2  multipliers: {1, Sqrt[2]}
+multiplier: 1   minpoly degree: 4
+adding new multipliers from: 1
+multiplier: Sqrt[2]   minpoly degree: 4
+adding new multipliers from: Sqrt[2]
+multiplier count: 3  from: {1, 4}
+multiplier: 2   minpoly degree: 4
+multiplier: 17   minpoly degree: 4
+multiplier: 34   minpoly degree: 4
+multiplier count: 7  from: {Sqrt[2], 4}
+multiplier: 2*Sqrt[2]   minpoly degree: 4
+multiplier: 5*Sqrt[2]   minpoly degree: 4
+multiplier: 10*Sqrt[2]   minpoly degree: 4
+multiplier: 17*Sqrt[2]   minpoly degree: 4
+multiplier: 34*Sqrt[2]   minpoly degree: 4
+multiplier: 85*Sqrt[2]   minpoly degree: 4
+multiplier: 170*Sqrt[2]   minpoly degree: 4
+history: {{0, Infinity}, {1, 4}}
+no progress
+
+
+Get::noopen: Cannot open \safer_core.wl.
+succeeded: 4 failed: 11
+Loading must not change Print attributes -> Success
+Prime comparator must compare the two primes -> Failure   actual: HoldForm[False]
+Direct denest11 must preserve a negative original branch -> Failure   actual: HoldForm[False]
+Public wrapper must preserve a complex 3/2 power -> Failure   actual: HoldForm[False]
+Merged square roots must preserve the original product branch -> Failure   actual: HoldForm[False]
+Factorc must not flatten a symbolic square under a square root -> Failure   actual: HoldForm[-1]
+Caller function f must not be consumed as an internal marker -> Failure   actual: HoldForm[1]
+Rationalization must preserve a numerator named x -> Failure   actual: HoldForm[False]
+Positive real worked example preserves value -> Success
+Minimal-polynomial denominator rationalization -> Success
+All-level traversal preserves nested value -> Success
+Guarded step rejects zero multiplier -> Failure   actual: HoldForm[False]
+Guarded step rejects root order one -> Failure   actual: HoldForm[False]
+Guarded step certifies the original negative target -> Failure   actual: HoldForm[False]
+Guarded step certifies the original complex target -> Failure   actual: HoldForm[False]
+Null

@@ -1,0 +1,1068 @@
+% Corrected re-typesetting of the PDF supplied in articles.zip.
+% See CORRECTIONS.md for transcription repairs and substantive editorial notes.
+% Compile twice with: pdflatex -interaction=nonstopmode -halt-on-error symb85.tex
+\documentclass[11pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=0.88in,headheight=15pt,headsep=18pt]{geometry}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{microtype}
+\usepackage{graphicx,booktabs,array,longtable}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{xurl}
+\usepackage[hidelinks,unicode,pdfencoding=auto]{hyperref}
+\usepackage{fancyhdr}
+\usepackage{needspace}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+\urlstyle{same}
+\setlength{\emergencystretch}{2em}
+\setlength{\parskip}{2pt}
+\setlength{\parindent}{1.2em}
+\linespread{1.025}
+\allowdisplaybreaks[1]
+\setlist{itemsep=3pt,topsep=6pt,parsep=1pt}
+\lstset{basicstyle=\ttfamily\small,columns=fullflexible,keepspaces=true,
+  breaklines=true,breakatwhitespace=true,showstringspaces=false,
+  aboveskip=9pt,belowskip=9pt,xleftmargin=0.6em}
+\newcommand{\editorialnote}[1]{\begin{quote}\small\noindent
+  \textbf{Editorial note.} #1\end{quote}}
+\newcommand{\transcriptionnote}{\par\smallskip\noindent{\footnotesize
+  Corrected re-typesetting. Original numbering retained; pagination reset.
+  Substantive editorial changes are identified in the accompanying correction log.}\par\medskip}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\Gal}{Gal}
+\DeclareUnicodeCharacter{27F8}{\ensuremath{\Longleftarrow}}
+\DeclareUnicodeCharacter{27F9}{\ensuremath{\Longrightarrow}}
+\DeclareUnicodeCharacter{21D2}{\ensuremath{\Rightarrow}}
+\DeclareUnicodeCharacter{21D4}{\ensuremath{\Leftrightarrow}}
+\DeclareUnicodeCharacter{25A1}{\ensuremath{\square}}
+\DeclareUnicodeCharacter{2264}{\ensuremath{\leq}}
+\DeclareUnicodeCharacter{2265}{\ensuremath{\geq}}
+\DeclareUnicodeCharacter{2212}{\ensuremath{-}}
+\DeclareUnicodeCharacter{00B1}{\ensuremath{\pm}}
+\DeclareUnicodeCharacter{00D7}{\ensuremath{\times}}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\itshape Borodin et al.: Decreasing the Nesting Depth}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\small\thepage}\renewcommand{\headrulewidth}{0pt}}
+\hypersetup{pdftitle={Decreasing the Nesting Depth of Expressions Involving Square Roots},pdfauthor={Allan Borodin; Ronald Fagin; John E. Hopcroft; Martin Tompa},pdfsubject={Corrected re-typesetting of the supplied article}}
+\title{Decreasing the Nesting Depth of Expressions Involving Square Roots}
+\author{Allan Borodin\thanks{Department of Computer Science, University of Toronto, Toronto, Ontario, Canada M5S 1A4.}\and Ronald Fagin\thanks{IBM Research Laboratory, 5600 Cottle Road, San Jose, California 95193, U.S.A.}\and John E. Hopcroft\thanks{Department of Computer Science, Cornell University, Ithaca, New York 14853, U.S.A.}\and Martin Tompa\thanks{Department of Computer Science, University of Washington, Seattle, Washington 98195, U.S.A.}}
+\date{\small \emph{Journal of Symbolic Computation} 1 (1985), 169--188.}
+
+\begin{document}
+\maketitle
+\transcriptionnote
+
+\begin{abstract}
+We develop the theory for decreasing the depth of nesting in expressions that contain square roots. We show exactly when fourth roots enable denesting of expressions not denestable with square roots only. When we restrict our attention to denesting over the real numbers, we show in fact that no roots other than square roots or fourth roots are ever useful for denesting expressions containing square roots only, thus characterising the denestable expressions in this case.
+We then proceed to describe new algorithms that accomplish such denesting.
+\end{abstract}
+
+\section*{Algebraic Simplification and Denesting}
+Algebraic simplification is an important component of any symbolic manipulation system. In a general setting the simplification problem is undecidable (Richardson, 1968). For important special cases, however, simplification may be feasible. Here we are concerned with simplification of expressions containing nested radicals; in particular, we wish to decrease the depth of nesting whenever possible. This process is called denesting. Two simple examples of formulas that denest are
+
+\[
+\sqrt{5+2 \sqrt{6}}=\sqrt{2}+\sqrt{3}
+\]
+and
+\[
+\sqrt{3+2 \sqrt{3}}=\frac{1}{4} \sqrt[4]{12}(2+\sqrt{12}) .
+\]
+
+Earlier work was done by Caviness \& Fateman (1976) and Zippel (1977). Zippel showed how to denest certain expressions containing square roots using only square roots in the denesting, but left open the question of whether arbitrary roots are of any use in denesting such expressions. In section 1 we develop the theory for denesting expressions that contain square roots. We show exactly when fourth roots enable denesting of expressions not denestable with square roots only. When we restrict our attention to denesting over the real numbers, we show in fact that no roots other than square roots or fourth roots are ever useful for denesting expressions containing square roots only, thus characterising the denestable expressions in this important case.
+
+\footnote{This research was funded in part by the Natural Sciences and Engineering Research Council of Canada under operating grant A-7631, and by the National Science Foundation under grants MCS-8101220, MCS-8110089, and MCS-8301212.}In sections 2--6 we then proceed to describe new algorithms that denest these expressions. The algorithm of section 2 handles certain simple expressions of arbitrary nesting depth, such as the following example of depth 3
+
+\[
+\sqrt{16-2 \sqrt{29}+2 \sqrt{55-10 \sqrt{29}}}=\sqrt{5}+\sqrt{11-2 \sqrt{29}} .
+\]
+
+Section 4 adds the capability of fourth roots to the denested formulas. Section 5 extends the algorithm to handle rational combinations of such nested expressions, for instance
+
+\[
+\sqrt{1+\sqrt{3}}+\sqrt{3+3 \sqrt{3}}-\sqrt{10+6 \sqrt{3}},
+\]
+
+which denests to 0, despite the fact that no individual term denests. Finally, section 6 presents an algorithm that denests more complicated doubly nested formulas, such as
+
+\[
+\sqrt{(112+70 \sqrt{2})+(46+34 \sqrt{2}) \sqrt{5}}=(5+4 \sqrt{2})+(3+\sqrt{2}) \sqrt{5} .
+\]
+
+If $K$ is a field, then $K\left(a_{1}, \ldots, a_{n}\right)$ denotes the smallest field containing $K$ and $a_{1}, \ldots, a_{n}$, and is called an extension of $K$. If $K\left(a_{1}, \ldots, a_{n}\right) \subseteq R$, where $R$ is the field of real numbers, then the extension is called a real extension. The degree of $K\left(a_{1}, \ldots, a_{n}\right)$ over $K$, denoted $\left[K\left(a_{1}, \ldots, a_{n}\right): K\right]$, is the dimension of $K\left(a_{1}, \ldots, a_{n}\right)$ as a vector space over $K$. The reader is referred to Herstein (1975) for basic facts concerning extension fields.
+
+A formula over a field $K$ and its depth of nesting over $K$ are defined as follows:
+
+\begin{itemize}
+  \item[1.] an element of $K$ is a formula of depth 0 over $K$,
+  \item[2.] an arithmetic combination of formulas $A$ and $B$ is a formula whose depth over $K$ is $\max (\operatorname{depth}(A), \operatorname{depth}(B))$, and
+  \item[3.] a root of a formula $A$ is a formula whose depth over $K$ is $1+\operatorname{depth}(A)$.
+\end{itemize}
+
+For a nonnegative real radicand, a root means the nonnegative real root. The explicitly nonreal examples use compatible complex roots; field-membership statements are independent of changing the sign of a square root. In the real denesting algorithms, signed auxiliary radicands are formal records until they are combined into a nonnegative radicand. Products of their separate principal complex roots must not be substituted for the square root of the product. Divisions always require a nonzero denominator. A formula can be denested over $K$ if it is equal to another formula of lesser depth over $K$. If $K$ is not explicitly mentioned, the words depth and denest refer respectively to depth over $Q$, and denest over $Q$, where $Q$ is the field of rational numbers.
+
+\section*{1. Basic Theorems for Denesting}
+In this section we ask when a formula of depth 2 over some field $K$ can be rewritten as a formula of depth 1 over $K$. Theorem 1, most of which is implicit in Zippel (1977), shows that if $\sqrt{a+b \sqrt{r}}$ can be denested using only square roots, then it can be denested introducing only one new square root. In addition, Theorem 1 gives a necessary and sufficient condition describing when such a formula can be denested.
+
+\noindent\textbf{Theorem 2.} is analogous to Theorem 1 and covers the case when fourth roots help in denesting. Theorem 3 shows that roots other than square roots or fourth roots never help if all roots involved are real.
+
+\noindent\textbf{Theorem 1.} Let $Q \subseteq K$ and let $a, b, r \in K$ with $\sqrt{r} \notin K$. Then the following three statements are equivalent.
+
+\begin{itemize}
+  \item[(1)] $\sqrt{a+b \sqrt{\mathrm{r}}} \in K\left(\sqrt{r}, \sqrt{a_{1}}, \ldots, \sqrt{a_{k}}\right)$, for some $a_{1}, \ldots, a_{k} \in K$.
+  \item[(2)] $\sqrt{s(a+b \sqrt{r})} \in K(\sqrt{r})$, for some $s \in K-\{0\}$.
+  \item[(3)] $\sqrt{a^{2}-b^{2} r} \in K$.
+\end{itemize}
+
+\noindent\textit{Proof.} (1) ⇒ (2): This part is by induction on $k$.
+
+Basis $(k=0)$ : Choose $s=1$.
+
+Induction $(k>0)$ : Without loss of generality assume
+
+\[
+\sqrt{a_{k}} \notin K\left(\sqrt{r}, \sqrt{a_{1}}, \ldots, \sqrt{a_{k-1}}\right) .
+\]
+
+Let
+
+\[
+\sqrt{a+b \sqrt{r}}=c+d \sqrt{a_{k}},
+\]
+
+where $c$ and $d$ are in $K\left(\sqrt{r}, \sqrt{a_{1}}, \ldots, \sqrt{a_{k-1}}\right)$. Then
+
+\[
+a+b \sqrt{r}=\left(c^{2}+d^{2} a_{k}\right)+2 c d \sqrt{a_{k}} .
+\]
+
+Since $a+b \sqrt{r}, c^{2}+d^{2} a_{k}$ and $2 c d$ are each in $K\left(\sqrt{r}, \sqrt{a_{1}}, \ldots, \sqrt{a_{k-1}}\right)$ but $\sqrt{a_{k}}$ is not, $2 c d=0$.
+
+Case $1(c=0)$ : Then $\sqrt{a_k(a+b\sqrt r)}=\pm a_kd$ is an element of $K\left(\sqrt{r}, \sqrt{a_{1}}, \ldots, \sqrt{a_{k-1}}\right)$. By the induction hypothesis there is an $s$ in $K-\{0\}$ such that $\sqrt{s a_{k}(a+b \sqrt{r})}$ is an element of $K(\sqrt{r})$. Let $\hat{s}=s a_{k}$. Then $\sqrt{\hat{s}(a+b \sqrt{r})}$ is in $K(\sqrt{r})$ and $\hat{s}$ is in $K-\{0\}$.
+
+Case $2(d=0)$ : Then $\sqrt{a+b \sqrt{r}}=c \in K\left(\sqrt{r}, \sqrt{a_{1}}, \ldots, \sqrt{a_{k-1}}\right)$. By the induction hypothesis there is an $s$ in $K-\{0\}$ such that $\sqrt{s(a+b \sqrt{r})}$ is in $K(\sqrt{r})$.
+
+(2) ⇒ (3):
+
+Let $s(a+b \sqrt{r})=(c+d \sqrt{r})^{2}=\left(c^{2}+d^{2} r\right)+2 c d \sqrt{r}$, where $c, d \in K$. Since $\sqrt{r}$ is not in $K$, $s a=c^{2}+d^{2} r$ and $s b=2 c d$. If $d=0$, then $b=0$ and so $\sqrt{a^2-b^2r}\in\{a,-a\}\subseteq K$. Otherwise, eliminating $c$,
+
+\[
+s a=\frac{s^{2} b^{2}}{4 d^{2}}+d^{2} r,
+\]
+
+or
+
+\[
+b^{2} s^{2}-4 a d^{2} s+4 d^{4} r=0 .
+\]
+
+Since $s \in K$, the discriminant $16 a^{2} d^{4}-16 b^{2} d^{4} r$ must be a perfect square in $K$, or $\sqrt{a^{2}-b^{2} r} \in K$.
+
+(3) ⇒ (1):
+
+Let $d=\sqrt{a^{2}-b^{2} r} \in K$ and $s=2(a+d)$. If $s=0$, then $a=-d=-\sqrt{a^{2}-b^{2} r}$, so $a^{2}=a^{2}-b^{2} r$, from which $b=0$ follows, and (1) holds. Therefore, assume $s\ne0$. With the sign chosen to match the selected square root,
+
+\[
+\sqrt{a+b\sqrt r}=\pm\frac{s+2b\sqrt r}{2\sqrt s}\in K(\sqrt r,\sqrt s),
+\]
+
+\[
+\begin{aligned}
+\left(\frac{s+2 b \sqrt{r}}{2 \sqrt{s}}\right)^{2} & =\frac{s^{2}+4 b^{2} r+4 b s \sqrt{r}}{4 s}=\frac{4(a+d)^{2}+4\left(a^{2}-d^{2}\right)+8 b(a+d) \sqrt{r}}{8(a+d)} \\
+& =\frac{1}{2}[(a+d)+(a-d)+2 b \sqrt{r}]=a+b \sqrt{r} .
+\end{aligned}
+\]
+\hfill$\square$
+
+It is possible that a doubly nested expression $\sqrt{a+b \sqrt{r}}$ may not denest using only square roots but may denest if the fourth root of $r$ is introduced. An example is
+
+\[
+\sqrt{4+3 \sqrt{2}}=\sqrt[4]{2}(1+\sqrt{2}) .
+\]
+
+Applying the test " $\sqrt{a^{2}-b^{2} r} \in Q$ " of Theorem 1 to $\sqrt{4+3 \sqrt{2}}$ shows that it cannot be denested using square roots only. Theorem 2 gives the conditions under which the fourth root of $r$ helps.
+
+\noindent\textbf{Theorem 2.} Let $Q \subseteq K$ and let $a, b, r \in K$ with $\sqrt{r} \notin K$. Then the following three statements are equivalent.
+
+\begin{itemize}
+  \item[(1)] $\sqrt{a+b \sqrt{r}} \in K\left(\sqrt[4]{r}, \sqrt{a_{1}}, \ldots, \sqrt{a_{k}}\right)$, for some $a_{1}, \ldots, a_{k} \in K$.
+  \item[(2)] $\sqrt[4]{r} \sqrt{s} \sqrt{a+b \sqrt{r}} \in K(\sqrt{r})$ or $\sqrt{s} \sqrt{a+b \sqrt{r}} \in K(\sqrt{r})$, for some $s \in K-\{0\}$.
+  \item[(3)] $\sqrt{r\left(b^{2} r-a^{2}\right)} \in K$ or $\sqrt{a^{2}-b^{2} r} \in K$.
+\end{itemize}
+
+\noindent\textit{Proof.} (1) ⇒ (2):
+
+Assume $\sqrt{a+b \sqrt{r}}$ is not in $K\left(\sqrt{r}, \sqrt{a_{1}}, \ldots, \sqrt{a_{k}}\right)$, since otherwise $\sqrt{s} \sqrt{a+b \sqrt{r}}$ $\in K(\sqrt{r})$ follows from Theorem 1. Let $a+b \sqrt{r}=\left(c^{2}+d^{2} \sqrt{r}\right)+2 c d \sqrt[4]{r}$, where $c$ and $d$ are in $K\left(\sqrt{r}, \sqrt{a_{1}}, \ldots, \sqrt{a_{k}}\right)$. Furthermore, we can assume $d \neq 0$ and $\sqrt[4]{r} \notin K\left(\sqrt{r}, \sqrt{a_{1}}, \ldots, \sqrt{a_{k}}\right)$, since $\sqrt{a+b \sqrt{r}}$ is in $K\left(\sqrt[4]{r}, \sqrt{a_{1}}, \ldots, \sqrt{a_{k}}\right)-$ $K\left(\sqrt{r}, \sqrt{a_{1}}, \ldots, \sqrt{a_{k}}\right)$. Hence $c=0$ and $\sqrt{a+b \sqrt{r}}=d \sqrt[4]{r}$. Multiplication by $\sqrt[4]{r}$ yields
+
+\[
+d \sqrt{r}=\sqrt[4]{r} \sqrt{a+b \sqrt{r}}=\sqrt{b r+a \sqrt{r}} .
+\]
+
+This means $\sqrt{b r+a \sqrt{r}}$ is in $K\left(\sqrt{r}, \sqrt{a_{1}}, \ldots, \sqrt{a_{k}}\right)$. By Theorem $1, \sqrt{s(b r+a \sqrt{r})}$ is in $K(\sqrt{r})$ for some $s$ in $K-\{0\}$. That is $\sqrt[4]{r} \sqrt{s} \sqrt{a+b \sqrt{r}}$ is in $K(\sqrt{r})$.
+
+(2) ⇒ (3):
+
+If $\sqrt{s} \sqrt{a+b \sqrt{r}}$ is in $K(\sqrt{r})$, then $\sqrt{a^{2}-b^{2} r}$ is in $K$ by Theorem 1. Otherwise $\sqrt[4]{r} \sqrt{s} \sqrt{a+b \sqrt{r}}$ is in $K(\sqrt{r})$, or equivalently $\sqrt{s(b r+a \sqrt{r})}$ is in $K(\sqrt{r})$. By Theorem 1, $\sqrt{b^{2} r^{2}-a^{2} r}$ is in $K$.
+
+(3) ⇒ (1):
+
+If $\sqrt{a^{2}-b^{2} r}$ is in $K$, then $\sqrt{a+b \sqrt{r}}$ is in $K(\sqrt{r}, \sqrt{s})$, by Theorem 1. By Theorem 1, $\sqrt{b^{2} r^{2}-a^{2} r}$ in $K$ implies $\sqrt{b r+a \sqrt{r}}=\sqrt[4]{r} \sqrt{a+b \sqrt{r}}$ is in $K(\sqrt{r}, \sqrt{s})$ for some $s$ in $K$, so $\sqrt{a+b \sqrt{r}}$ is in $K(\sqrt[4]{r}, \sqrt{s})$. \(\square\)
+
+Theorems 1 and 2 will be used in algorithms that denest formulas. Theorem 2 raises the possibility that roots other than square roots may be useful. In Theorem 3 we show that, with the exception of the fourth root of $r$, no additional roots are useful and that Theorems 1 and 2 cover all possible denestings.
+
+Whereas Theorems 1 and 2 hold for arbitrary extensions, Theorem 3 holds only for real extensions of $K$. For example, $\sqrt{1+\sqrt{-1}}$ does not denest using only square roots and fourth roots, but can be denested using an eighth root: $\sqrt{1+\sqrt{-1}}=\sqrt[8]{-4}$. One may question whether this is really a simplification, or whether one would prefer to treat $\sqrt[8]{-4}$ as $\sqrt{\sqrt{\sqrt{-4}}}$ and denest to $\sqrt{1+\sqrt{-1}}$.
+
+To simplify the proof of Theorem 3 we first prove five lemmas. Given a real extension of $K$ in a particular normal form, Lemma 1 states that for any $x$ in $K$ with $\sqrt{x}$ in the extension, $\sqrt{x}$ can be expressed in a simple form. Again, given the normal form, Lemma 2 states that certain roots of elements of $K$ are not in the extension. Lemmas 3 and 4
+
+establish that certain real extensions of $K$ can be placed in the normal form. Lemma 5 deals with the degree of an extension obtained by adding a prime root.
+
+For similar results in the case when the underlying field $K$ is $Q$, the reader is referred to Besicovitch (1940) and Richards (1974).
+
+\noindent\textbf{Lemma 1.} Let $K$ be a real extension of $Q$, and let $a_{1}, \ldots, a_{n+1}$ be positive elements of $K$. Let $r_{1}, \ldots, r_{n} \geqslant 2$ be powers of 2 , where $r_{i} \neq 1$ for $1 \leqslant i \leqslant n$. Suppose that
+
+\[
+\left[K\left(\sqrt[r_{1}]{a_{1}}, \ldots, \sqrt[r_{n}]{a_{n}}\right): K\right]=\prod_{i=1}^{n} r_{i}
+\]
+
+and that the $r_{i}$ are minimal powers of 2 such that $\sqrt{a_{n+1}}$ is in $K\left(\sqrt[r_{1}]{a_{1}}, \ldots, \sqrt[r_{n}]{a_{n}}\right)$. Then
+
+\[
+r_{1}=r_{2}=\cdots=r_{n}=2 \text { and } \sqrt{a_{n+1}}=a \sqrt{a_{1} \cdots a_{n}} \text {, }
+\]
+
+for some $a$ in $K$.
+
+\noindent\textit{Proof.} The lemma is proved by induction on $n$.
+
+Basis $(n=0)$ : Let $a=\sqrt{a_{n+1}}$.
+
+Induction $(n>0)$ : Let $L=K\left(a_{1}^{1 / r_{1}}, \ldots, a_{n-1}^{1/r_{n-1}}, a_{n}^{2 / r_{n}}\right)$ and write $\sqrt{a_{n+1}}=b a_{n}^{1 / r_{n}}+c$, with $b$ and $c$ in $L$. By the minimality of $r_{n}, b \neq 0$. By squaring,
+
+\[
+a_{n+1}=b^{2} a_{n}^{2 / r_{n}}+c^{2}+2 b c a_{n}^{1 / r_{n}} .
+\]
+
+Since $b \neq 0$ and $a_{n}^{1 / r_{n}}$ is not in $L$, we conclude that $c=0$. Assume now that $r_{n}=2$. Then $\sqrt{a_{n+1} a_{n}}=b a_{n}$, so
+
+\[
+\sqrt{a_{n+1} a_{n}} \in K\left(a_{1}^{1 / r_{1}}, \ldots, a_{n-1}^{1 / r_{n-1}}\right) .
+\]
+
+Therefore, by the induction hypothesis, each $r_{i}=2$, and there is $a \in K$ such that
+
+\[
+\sqrt{a_{n+1} a_{n}}=a \sqrt{a_{1} \cdots a_{n-1}} .
+\]
+
+Hence
+
+\[
+\sqrt{a_{n+1}}=a a_{n}^{-1} \sqrt{a_{1} \cdots a_{n}} .
+\]
+
+Thus assume $r_{n} \geqslant 4$. Let $\hat{L}=K\left(a_{1}^{1 / r_{1}}, \ldots, a_{n-1}^{1 / r_{n-1}}, a_{n}^{4 / r_{n}}\right)$ and write
+
+\[
+\sqrt{a_{n+1}}=b a_{n}^{1 / r_{n}}=\left(d+e a_{n}^{2 / r_{n}}\right) a_{n}^{1 / r_{n}},
+\]
+
+where $d, e \in \hat{L}$. Again, by squaring
+
+\[
+a_{n+1}=\left(d^{2}+e^{2} a_{n}^{4 / r_{n}}\right) a_{n}^{2 / r_{n}}+2 d e a_{n}^{4 / r_{n}} .
+\]
+
+Since $[L: \hat{L}]=2, a_{n}^{2 / r_{n}}$ is not in $\hat{L}$, and therefore $d^{2}+e^{2} a_{n}^{4 / r_{n}}=0$. This contradicts the hypothesis that $a_{n}$ is positive, so the assumption $r_{n} \geqslant 4$ is false. \(\square\)
+
+Observe that the hypothesis that $K$ is a real extension is needed, since
+
+\[
+\sqrt{2}=(1-\sqrt{-1}) \sqrt[4]{-1} \in Q(\sqrt[4]{-1})-Q(\sqrt{-1}) .
+\]
+
+\noindent\textbf{Lemma 2.} Let $K$ be a real extension of $Q$ and let $a$ be a positive element of $K$. Let $r \geqslant 2$ be a power of 2. Suppose $\left[K\left(a^{1 / r}\right): K\right]=r$. Then $a^{1/(2r)} \notin K\left(a^{1 / r}\right)$.
+
+\noindent\textit{Proof.} Suppose that $a^{1/(2r)}$ is in $K\left(a^{1 / r}\right)$. Write $a^{1/(2r)}=b a^{1 / r}+c$, where $b$ and $c$ are in $K\left(a^{2 / r}\right)$.
+
+By squaring we get
+
+\[
+a^{1 / r}=b^{2} a^{2 / r}+c^{2}+2 b c a^{1 / r} .
+\]
+
+Since $a^{1 / r}$ is not in $K\left(a^{2 / r}\right)$ we conclude that $2 b c=1$, so $b^{2} a^{2 / r}+c^{2}=0$. Thus either $b=c=0$ or $a^{2 / r}=-(c / b)^{2}$, in either case a contradiction. \(\square\)
+
+\noindent\textbf{Lemma 3.} Let $K$ be a real extension of $Q$. Let $n_{1}, \ldots, n_{k}$ be powers of 2 and let
+
+\[
+n=\prod_{i=1}^{k} n_{i} .
+\]
+
+Let $a_{1}, \ldots, a_{k}$ be positive elements of $K$. Let
+
+\[
+L=K\left(\sqrt[n_{1}]{a_{1}}, \ldots, \sqrt[n_{k}]{a_{k}}\right) .
+\]
+
+If $[L: K] \neq n$, then we can find positive $b_{1}, \ldots, b_{k}$ in $K$, and integers $m_{1}, \ldots, m_{k}$, each a power of 2 , such that
+
+\[
+L=K\left(\sqrt[m_{1}]{b_{1}}, \ldots, \sqrt[m_{k}]{b_{k}}\right) \quad \text { and } \quad m=\prod_{i=1}^{k} m_{i}<n .
+\]
+
+\noindent\textit{Proof.} Renumber so that $n_{1} \geqslant n_{2} \geqslant \ldots \geqslant n_{k}$. Consider the sequence of extensions
+
+\[
+K, K\left(\sqrt{a_{1}}\right), K\left(\sqrt[4]{a_{1}}\right), \ldots, K\left(\sqrt[n_{1}]{a_{1}}\right), K\left(\sqrt[n_{1}]{a_{1}}, \sqrt{a_{2}}\right), K\left(\sqrt[n_{1}]{a_{1}}, \sqrt[4]{a_{2}}\right), \ldots .
+\]
+
+Consider the first step at which the extension is not proper. Then by Lemma 2 we must be adding $\sqrt{a_{i}}$ for some $i$ and
+
+\[
+\sqrt{a_{i}} \in K\left(a_{1}^{1 / n_{1}}, \ldots, a_{i-1}^{1/n_{i-1}}\right) .
+\]
+
+By Lemma $1, \sqrt{a_{i}}=b \sqrt{a_{i_{1}} \cdots a_{i_{r}}}$ for some $b \in K$ and $i_{1}, \ldots, i_{r} \in\{1,2, \ldots, i-1\}$. Let
+
+\[
+\hat{L}=K\left(a_{1}^{1 / n_{1}}, \ldots, a_{i-1}^{1/n_{i-1}}, b^{2 / n_{i}}, a_{i+1}^{1/n_{i+1}}, \ldots, a_{k}^{1 / n_{k}}\right) .
+\]
+
+Since
+
+\[
+b^{2 / n_{i}}=\left(\frac{a_{i}}{a_{i_{1}} \cdots a_{i_{r}}}\right)^{1 / n_{i}},
+\]
+
+it is clear that $L=\hat{L}$ and $m=n / 2$. \(\square\)
+
+\noindent\textbf{Lemma 4.} Given $L$ as in Lemma 3 we can find positive $b_{1}, \ldots, b_{k}$ in $K$ and integers $m_{1}, \ldots, m_{k}$, each a power of 2, such that
+
+\[
+L=K\left(\sqrt[m_{1}]{b_{1}}, \ldots, \sqrt[m_{k}]{b_{k}}\right) \quad \text { and } \quad[L: K]=\prod_{i=1}^{k} m_{i} .
+\]
+
+\noindent\textit{Proof.} This follows from repeated application of Lemma 3. \(\square\)
+
+\noindent\textbf{Lemma 5.} (Abel (Schinzel, 1982, p. 91)). Let $L$ be a real extension of the rationals, $p$ an odd prime, $b$ a real number, and $b^{p}$ an element of $L$. Then, provided $b \notin L,[L(b): L]=p$.
+
+\noindent\textit{Proof.} Any irreducible factor of $x^{p}-b^{p}$ over the reals is $x-b$ or of the form $x^{2}-(\omega+\bar{\omega}) b x+b^{2}$, where $\omega$ and $\bar{\omega}$ are complex conjugates. This is because the complex roots of $x^{p}-b^{p}=0$ are of the form $\omega b$, where $\omega$ is a $p$ th root of 1 , and because
+
+\[
+(x-\omega b)(x-\bar\omega b)=x^2-(\omega+\bar\omega)bx+b^2.
+\]
+
+Suppose $x^{p}-b^{p}$ could be factored over $L$. Since $L$ is a real extension, any proper factor of $x^{p}-b^{p}$ over $L$ must be a product of some proper subset of its factors over the reals, and hence have a constant term of the form $\pm b^i$, where $1\leq i<p$. Since $b^p\in L$, $b\ne0$, and $\gcd(i,p)=1$, Bézout's identity shows that $b^i\in L$ implies $b\in L$, a contradiction. Thus we conclude that $x^{p}-b^{p}$ is irreducible over $L$ and hence $[L(b): L]=p$ (see Herstein, 1975). \(\square\)
+
+As an example of the importance of the real assumptions, let
+
+\[
+b=\frac{1+\sqrt{-3}}{2},
+\]
+
+and $p=3$. Then $b^{p}=-1$, but $Q(b)=Q(\sqrt{-3})$, so $[Q(b): Q]=2$.
+
+\noindent\textbf{Theorem 3.} Let $K$ be a real extension of $Q$ and let $a,b,r\in K$, with $r>0$, $a+b\sqrt r>0$, and $\sqrt r\notin K$. Let $n_{1}, \ldots, n_{k} \geqslant 1$ and $a_{1}, \ldots, a_{k} \in K$ be positive. If
+
+\[
+\sqrt{a+b \sqrt{r}} \in K\left(\sqrt[n_{1}]{a_{1}}, \ldots, \sqrt[n_{k}]{a_{k}}\right)
+\]
+then
+\[
+\sqrt{a+b \sqrt{r}} \in K\left(\sqrt[4]{r}, \sqrt{p_{1}}, \ldots, \sqrt{p_{k}}\right)
+\]
+
+for some positive $p_{1}, \ldots, p_{k}$ in $K$.
+
+\noindent\textit{Proof.} If $b=0$, the conclusion is immediate (use the single square root of $a$); discard redundant generators as necessary. Assume $b\ne0$. Let $n_{1},\ldots,n_k$ be minimal such that $\sqrt{a+b \sqrt{r}}$ is in $K\left(a_{1}^{1 / n_{1}}, \ldots, a_{k}^{1 / n_{k}}\right)$. Suppose $n_{k}$ were divisible by an odd prime $p$. Let $L=K\left(a_{1}^{1 / n_{1}}, \ldots, a_{k-1}^{1/n_{k-1}}\right)$. By the minimality of $n_{k}$,
+
+\[
+L\left(a_{k}^{p / n_{k}}\right) \varsubsetneqq L\left(a_{k}^{p / n_{k}}, \sqrt{a+b \sqrt{r}}\right) \subseteq L\left(a_{k}^{1 / n_{k}}\right) .
+\]
+
+But $\left[L\left(a_{k}^{p / n_{k}}, \sqrt{a+b \sqrt{r}}\right): L\left(a_{k}^{p / n_{k}}\right)\right]$ is 2 or 4 and $\left[L\left(a_{k}^{1 / n_{k}}\right): L\left(a_{k}^{p / n_{k}}\right)\right]=p$ (by Lemma 5), a contradiction (see Herstein, 1975). Thus each $n_{i}$ is a power of 2.
+
+Now let $L=K\left(a_{1}^{1 / n_{1}}, \ldots, a_{k}^{1 / n_{k}}\right)$. By Lemma 4 there exist positive $b_{1}, \ldots, b_{k}$ in $K$ and integers $m_{1}, \ldots, m_{k}$, each a power of 2, such that $L=K\left(b_{1}^{1 / m_{1}}, \ldots, b_{k}^{1 / m_{k}}\right)$ and
+
+\[
+[L: K]=\prod_{i=1}^{k} m_{i} .
+\]
+
+Omit generators with $m_i=1$ and reindex. Assume $m_{1}, \ldots, m_{k}$ are the least powers of 2 such that $\sqrt{a+b \sqrt{r}}$ is still in $K\left(b_{1}^{1 / m_{1}}, \ldots, b_{k}^{1 / m_{k}}\right)$; if not, decrease them accordingly and redefine $L$. Since $\sqrt{r} \in L$, Lemma 1 states that $\sqrt{r}=c \sqrt{b_{1} \cdots b_{j}}$ for some positive $c\in K$. Assume that $m_1 \leqslant m_{2} \leqslant \ldots \leqslant m_{j}$, possibly renumbering the $b_{i}$. Let $r_{1}=b_{1} \cdots b_{j}$. Now $L=K\left(r_{1}^{1 / m_{1}}, b_{2}^{1 / m_{2}}, \ldots, b_{k}^{1 / m_{k}}\right)$. Suppose by way of contradiction that $m_{1} \geqslant 8$, or $i>1$ and $m_{i} \geqslant 4$, and denote $r_{1}^{1 / m_{1}}$ (in the first case) or $b_{i}^{1 / m_{i}}$ (in the second) by $p^{1 / m}$. Let $\hat{L}=K\left(b_{2}^{1 / m_{2}}, \ldots, b_{k}^{1 / m_{k}}\right)$ (in the first case) and
+
+\[
+\hat{L}=K\left(r_{1}^{1 / m_{1}}, \ldots, b_{i-1}^{1 / m_{i-1}}, b_{i+1}^{1 / m_{i+1}}, \ldots, b_{k}^{1 / m_{k}}\right)
+\]
+
+(in the second). Observe that $\sqrt{r}=c \sqrt{r_{1}}$ is in $\hat{L}\left(p^{4 / m}\right)$.
+
+By the minimality of $m, \sqrt{a+b \sqrt{r}}$ is in $\hat{L}\left(p^{1 / m}\right)-\hat{L}\left(p^{2 / m}\right)$. That is,
+
+\[
+\sqrt{a+b \sqrt{r}}=c+d p^{1 / m}
+\]
+
+where $c$ and $d$ are in $\hat{L}\left(p^{2 / m}\right)$ and $d \neq 0$. By squaring,
+
+\[
+a+b \sqrt{r}=c^{2}+d^{2} p^{2 / m}+2 c d p^{1 / m}
+\]
+
+Since all but the last term $2 c d p^{1 / m}$ are in $\hat{L}\left(p^{2 / m}\right)$, it follows that $c d=0$, so $c=0$. Write
+
+\[
+\sqrt{a+b \sqrt{r}}=d p^{1 / m}=\left(e+f p^{2 / m}\right) p^{1 / m},
+\]
+
+where $e$ and $f$ are in $\hat{L}\left(p^{4 / m}\right)$. Again, by squaring,
+
+\[
+a+b \sqrt{r}=\left(e^{2}+f^{2} p^{4 / m}\right) p^{2 / m}+2 e f p^{4 / m}
+\]
+
+All subformulas of this equation are in $\hat{L}\left(p^{4 / m}\right)$ except for $p^{2 / m}$, since
+
+\[
+[L: K]=\prod_{i=1}^{k}m_i .
+\]
+
+Thus $e^{2}+f^{2} p^{4 / m}=0$ implying that $e=f=0$ or $p^{4 / m}=-e^{2} / f^{2}$, a contradiction. Thus, $m_{1}$ is in $\{2,4\}$ and $m_{i}=2$ for $i>1$, i.e.
+
+\[
+\sqrt{a+b \sqrt{r}} \in K\left(\sqrt[4]{r_{1}}, \sqrt{b_{2}}, \ldots, \sqrt{b_{k}}\right) .
+\]
+Since
+\[
+\sqrt[4]{r}=\sqrt{c} \sqrt[4]{r_{1}}, \sqrt{a+b \sqrt{r}} \in K\left(\sqrt[4]{r}, \sqrt{c}, \sqrt{b_{2}}, \ldots, \sqrt{b_{k}}\right) .
+\] \(\square\)
+
+\section*{2. Denesting Using Square Roots Only}
+The goal of the remaining sections is to present new algorithms that, whenever possible, rewrite a given formula with positive radicands as one that has a lower nesting depth over $Q$. (The algorithms will sometimes, but not always, denest formulas that have negative radicands.) Consider the following tower of fields:
+
+\[
+K_{0}=Q \quad \text { and, for all } i \geqslant 0, K_{i+1}=K_{i}\left(\sqrt{r_{i}}\right),
+\]
+
+where $r_{i} \in K_{i}$. Every element of $K_{i}$ has depth at most $i$ over $Q$. Consider $\sqrt{r_{n}}$, where $r_{n} \in K_{n}$. This section presents an algorithm, based on Theorem 1, that rewrites $\sqrt{r_{n}}$ as a formula of depth at most $n$ over $Q$ involving only square roots, whenever such a formula exists (even if the formulas have negative radicands).
+
+Although the fundamental ideas appear in this algorithm, it is incomplete in three respects. Firstly, it does not permit the fourth roots of Theorem 2; this is rectified in Section 4. Secondly, the algorithm denests only single radicals from $K_{n+1}$ rather than arbitrary elements of $K_{n+1}$; this is rectified in section 5. Finally, not every formula of depth $n$ over $Q$ can be expressed in the form of elements of $K_{n}$; in particular, elements of $K_{n}$ can be written using only $n$ distinct radicals. Section 6 rectifies this only partially, by describing how to denest arbitrary formulas of depth 2 over $Q$, and explaining why this technique does not generalise to depths greater than 2 .
+
+Let $r_{n}=a+b \sqrt{r_{n-1}}$, where $a, b, r_{n-1} \in K_{n-1}$. There are two ways in which $\sqrt{r_{n}}$ might denest using square roots only. The first way is that $\sqrt{r_{n-1}}$ might denest. The second possibility is to find some field $K$ containing only elements of depth $n-1$, containing $a, b$, and $r_{n-1}$, and in which $a^{2}-b^{2} r_{n-1}$ is a perfect square. Then $\sqrt{r_{n}}$ denests by Theorem 1. In order to find the $K$ in which $a^{2}-b^{2} r_{n-1}$ is a perfect square we attempt to denest $\sqrt{a^{2}-b^{2} r_{n-1}}$. If we are successful we will find a field $\hat{K}$, all of whose elements have depth at most $n-2$ and an element $s$ in $\hat{K}$ such that $\sqrt{a^{2}-b^{2} r_{n-1}}$ is in $\hat{K}\left(\sqrt{s}, \sqrt{r_{n-2}}\right)$. The desired $K$ is then $\hat{K}\left(\sqrt{s}, \sqrt{r_{n-2}}\right)$.
+
+Since $\sqrt{r_{n-1}}$ and $\sqrt{a^{2}-b^{2} r_{n-1}}$ each have depth less than $\sqrt{r_{n}}$, this suggests a recursive algorithm: to denest $\sqrt{r_{n}}$, try to denest each of $\sqrt{r_{n-1}}$ and $\sqrt{a^{2}-b^{2} r_{n-1}}$. If either
+
+succeeds, then $\sqrt{r_{n}}$ can be denested. If neither succeeds, $\sqrt{r_{n}}$ cannot be denested using square roots alone.
+
+This algorithm has a serious shortcoming: it requires exponentially many recursive invocations. However, closer inspection reveals that there are not $2^i$ distinct arguments at the $i$ th level of recursion, but only $i+1$, as $\sqrt{r_{n-i}}$ recurs repeatedly. Continuing the previous discussion of denesting $\sqrt{r_{n}}$, the first level of recursion attempted to denest $\sqrt{r_{n-1}}$ and $\sqrt{a^{2}-b^{2} r_{n-1}}$. Each of these radicands is in $K_{n-1}$, so
+
+\[
+r_{n-1}=c+d \sqrt{r_{n-2}}, \quad \text { and } \quad a^{2}-b^{2} r_{n-1}=e+f \sqrt{r_{n-2}},
+\]
+
+for some $c, d, e, f, r_{n-2} \in K_{n-2}$. Thus, the only formulas that need be denested at the second level of recursion are $\sqrt{r_{n-2}}, \sqrt{c^{2}-d^{2} r_{n-2}}$, and $\sqrt{e^{2}-f^{2} r_{n-2}}$. In general, only one more argument will be added at each level of recursion.
+
+This motivates the algorithm of this section. We assume for the remainder of this paper that there is an appropriate data type formula for representing formulas. The recursive algorithm takes as input 2 integers, $n$ and $m$, and a list of $m$ formulas, each of depth $n$ over $Q$. The algorithm attempts to denest each of these, returning for each input formula either a denested version, or the input formula itself if it was unsuccessful.
+
+Notice in the algorithm that it is assumed that each input formula shares the same value of $\sqrt{r}$ if $n \geqslant 2$; that is, the $i$ th formula is of the form $\sqrt{a_{i}+b_{i} \sqrt{r}}$.
+
+\begin{lstlisting}[mathescape=true]
+function DENEST(n, m, nested[1..m]) returns result[1..m];
+begin
+  if n = 1 then
+    for i = 1..m do
+      if nested[i] has radicand $x^2$ with rational $x\geq0$
+        then result[i] := x
+        else result[i] := nested[i]
+  else begin
+    assume nested[i] = $\sqrt{a_i+b_i\sqrt r}$;
+    for i = 1..m do N[i] := $\sqrt{a_i^2-b_i^2r}$;
+    N[m+1] := $\sqrt r$;
+    d := DENEST(n-1, m+1, N);
+    if lower_depth(d[m+1], N[m+1]) then
+      for i = 1..m do result[i] := $\sqrt{a_i+b_i d[m+1]}$
+    else
+      for i = 1..m do
+        if not lower_depth(d[i], N[i]) then result[i] := nested[i]
+        else begin
+          s := $2(a_i+d[i])$;
+          if s = 0 then handle the trivial $b_i=0$ case
+          else result[i] := the branch-correct value of
+                         $(s+2b_i\sqrt r)/(2\sqrt s)$
+        end
+  end;
+  return result
+end.
+\end{lstlisting}
+\editorialnote{The original tests comparing input and output formulas mean a \emph{change of expression/depth}, not numerical inequality: their values must be equal. The corrected listing makes that distinction explicit, fixes the misread multiplication by $b_i$, admits zero in the rational-square test, and checks the exceptional denominator and root branch. As throughout the paper, exact field arithmetic and simplification of degenerate inputs are required; this is mathematical pseudocode, not a complete implementation of an algebraic-number system.}
+
+Consider the following example due to Shanks, see Zippel (1977), the object of which is to denest
+
+\[
+\sqrt{16-2 \sqrt{29}+2 \sqrt{55-10 \sqrt{29}}}
+\]
+Here
+
+\[
+K_1=Q(\sqrt{29})
+\]
+and
+\[
+K_{2}=K_{1}(\sqrt{55-10 \sqrt{29}}),
+\]
+
+satisfying $16-2 \sqrt{29} \in K_{1}, 2 \in K_{1}$, and $55-10 \sqrt{29} \in K_{1}$. The first call is
+
+\[
+\operatorname{denest}(3,1,[\sqrt{16-2 \sqrt{29}+2 \sqrt{55-10 \sqrt{29}}}]) .
+\]
+
+This produces the two formulas
+
+\[
+\sqrt{(16-2 \sqrt{29})^{2}-2^{2}(55-10 \sqrt{29})}=\sqrt{152-24 \sqrt{29}} \text { and } \sqrt{55-10 \sqrt{29}},
+\]
+
+resulting in the second call of
+
+\[
+\operatorname{DENEST}(2,2,[\sqrt{152-24 \sqrt{29}}, \sqrt{55-10 \sqrt{29}}]) .
+\]
+
+This in turn produces the three formulas
+
+\[
+\sqrt{152^{2}-24^{2} \times 29}=\sqrt{6400}, \quad \sqrt{55^{2}-10^{2} \times 29}=\sqrt{125}, \quad \text { and } \quad \sqrt{29},
+\]
+
+resulting in the third call of denest $(1,3,[\sqrt{6400}, \sqrt{125}, \sqrt{29}])$. The basis portion of the algorithm succeeds in denesting the first of these, returning the list $[80, \sqrt{125}, \sqrt{29}]$. The invoking procedure can use this to denest its first input $\sqrt{152-24 \sqrt{29}}$ as follows
+
+\[
+\begin{gathered}
+s=2(152+80)=464 \\
+\sqrt{152-24 \sqrt{29}}=\frac{464-2 \times 24 \sqrt{29}}{2 \sqrt{464}}=2 \sqrt{29}-6 .
+\end{gathered}
+\]
+
+(The last simplification would not be done by the algorithm, but it makes the example clearer. Notice that it does not affect the depth of nesting.)
+
+Thus, this invocation returns the list $[2 \sqrt{29}-6, \sqrt{55-10 \sqrt{29}}]$. Finally, the initial invocation completes as follows
+
+\[
+\begin{gathered}
+s=2((16-2\sqrt{29})+(2\sqrt{29}-6))=20, \\
+\sqrt{16-2 \sqrt{29}+2 \sqrt{55-10 \sqrt{29}}}=\frac{20+2 \times 2 \sqrt{55-10 \sqrt{29}}}{2 \sqrt{20}}=\sqrt{5}+\sqrt{11-2 \sqrt{29}},
+\end{gathered}
+\]
+
+returning the singleton list $[\sqrt{5}+\sqrt{11-2 \sqrt{29}}]$.
+
+The correctness of this section's algorithm is the subject of the next theorem.
+
+\noindent\textbf{Theorem 4.} Let $m \geqslant 1$ and $n \geqslant 1$. Given $m$ formulas $\sqrt{f_{1}}, \sqrt{f_{2}}, \ldots, \sqrt{f_{m}}$, where $f_{1}, f_{2}, \ldots, f_{m} \in K_{n-1}$, procedure denest will denest $\sqrt{f_{i}}$ correctly, whenever $\sqrt{f_{i}}$ can be denested using square roots only, for all $1 \leqslant i \leqslant m$.
+
+\noindent\textit{Proof.} The proof is by induction on $n$.
+
+Basis $(n=1): f_{i} \in Q$, so $\sqrt{f_{i}}$ denests if and only if $f_{i}$ is a perfect square.
+
+Induction $(n>1)$ : Let $f_{i}=a_{i}+b_{i} \sqrt{r_{n-2}}$, where $a_{i}, b_{i}, r_{n-2} \in K_{n-2}$, and suppose $\sqrt{f_{i}}$ can be denested to depth $n-1$ over $Q$ using square roots only, that is,
+
+\[
+\sqrt{a_{i}+b_{i} \sqrt{r_{n-2}}} \in K\left(\sqrt{c_{1}}, \sqrt{c_{2}}, \ldots, \sqrt{c_{k}}\right),
+\]
+
+for some $K$ all of whose elements are of depth at most $n-2$ over $Q$, such depth achieved using only square roots, and some $c_{1}, c_{2}, \ldots, c_{k} \in K$. We can assume that $K_{n-2} \subseteq K$. By Theorem 1, either $\sqrt{r_{n-2}} \in K$ or $\sqrt{a_{i}^{2}-b_{i}^{2} r_{n-2}} \in K$, that is, one of these two formulas denests. Each of these two radicands is in $K_{n-2}$, and each of these two formulas is passed in the recursive invocation so, by the induction hypothesis, denest will denest one or both of them correctly. If $\sqrt{r_{n-2}}$ is denested to $r \in K$, then surely $\sqrt{a_{i}+b_{i} r}$ is a correct denesting of $\sqrt{a_{i}+b_{i} \sqrt{r_{n-2}}}$. Otherwise, suppose $\sqrt{a_{i}^{2}-b_{i}^{2} r_{n-2}}$ is denested to $d_{i} \in K$. Then the correctness of the denesting
+
+\[
+\sqrt{a_{i}+b_{i} \sqrt{r_{n-2}}}=\frac{s+2b_i\sqrt{r_{n-2}}}{2 \sqrt{s}} \in K\left(\sqrt{r_{n-2}}, \sqrt{s}\right),
+\]
+
+where $s=2\left(a_{i}+d_{i}\right)$ is supplied in the proof of Theorem 1, part (3) ⇒ (1). \(\square\)
+
+What remains is a discussion of the running time of the procedure denest. Inspection of the procedure reveals that, as long as the formulas have size polynomial in $n$, the number of arithmetic operations will also be polynomial in $n$. Unfortunately, in general the formulas have size exponential in $n$, as is clear from the last two lines of the procedure: $s$ depends on $d[i]$, the result of the recursive invocation, and there are two occurrences of $s$ in denest[i], the result of the current invocation. We alleviate this problem in an (unfortunately) asymmetric way: although we require the inputs to be represented as trees, we represent the outputs as acyclic directed graphs (i.e. straight-line programs). This is unfortunate in the sense that the output cannot be given as an input for another level of denesting. Notice also that, unlike the arithmetic complexity, the bit complexity is not polynomially bounded, as the number of bits doubles at each recursive call due to the squaring involved in $\sqrt{a^{2}-b^{2} r}$.
+
+\section*{3. Finding a Perfect Square Among Products of a Set of Numbers}
+Before proceeding with the next algorithm we present a straightforward technique for finding a perfect square among all nonempty subset products of a set of rational numbers. The result is used as the basis for the recursive algorithm in the next section.
+
+Let $r_{1}, \ldots, r_{n}$ be rational numbers. Let $\hat{r}_{i}=r_{i} d_{i}^{2}$, where $d_{i}$ is the denominator of $r_{i}$. (Note that $\hat{r}_{i}$ is the product of the numerator and denominator of $r_{i}$.) Then $\prod_{i\in S}\hat r_i$ is a perfect square if and only if $\prod_{i \in S} r_{i}$ is a perfect square. Thus, without loss of generality, let $r_{1}, \ldots, r_{n}$ be integers.
+
+In order to find a perfect square among products of $r_{1}, r_{2}, \ldots, r_{n}$ first handle a zero input separately (its singleton subset is a square). For nonzero inputs, repeatedly split common factors by gcd computations until a pairwise relatively prime positive basis is obtained. Write the absolute values of the inputs as products of powers of the basis elements. Reduce those exponents modulo two and discard square basis elements. Track a negative sign as a separate parity coordinate $-1$; the sign parity must be even for a rational square. A single pass over the original pairs is not in general sufficient to obtain a gcd-free basis.
+
+Next, for $i=1,2, \ldots, n$, replace $r_{i}$ by $p_{i} a_{i}$, where $a_{i}$ is a product of $p_{j}$ 's, $j>i$. (This may involve renumbering the $p_{i}$ 's.) In order to do this, if $r_{i}$ contains $p_{j}, j<i$, then for the least such $j$ replace $r_{i}$ by $r_{i} r_{j}$, remove any $p_{k}^{2}$ from this product, and iterate the process until $r_{i}$ contains $p_{j}$ only for $j \geqslant i$. (At this point renumber one such $p_{j}$ to be $p_{i}$, if $p_{i}$ does not
+
+already occur in $r_{i}$.) It is straightforward to verify that such a replacement does not change the existence of a subset whose product is a perfect square, and that such a subset exists if and only if some $r_{i}$ eventually takes on the value 1 . The subset can be identified easily by retracing the steps.
+
+The following application of this algorithm will be used in section 6. In the case where all $r_{i}>0$ we can determine if $\sqrt{r_{n}}$ is in $Q\left(\sqrt{r_{1}}, \ldots, \sqrt{r_{n-1}}\right)$ by locating perfect squares among products of $r_{1}, \ldots, r_{n}$. On encountering a perfect square, if $r_{n}$ is involved, then $\sqrt{r_{n}}$ is in $Q\left(\sqrt{r_{1}}, \ldots, \sqrt{r_{n-1}}\right)$. Otherwise delete some $r_{i}$ from the product, and repeat the process until $\sqrt{r_{n}}$ is discovered to be in $Q\left(\sqrt{r_{1}}, \ldots, \sqrt{r_{n-1}}\right)$ or there are no perfect squares remaining. In the latter case $\sqrt{r_{n}}$ is not in $Q\left(\sqrt{r_{1}}, \ldots, \sqrt{r_{n-1}}\right)$ by Lemma 1.
+
+\section*{4. Denesting Using Arbitrary Roots}
+Consider again the tower of fields presented in section 2 (but in this section restricted to be subfields of the reals)
+
+\[
+K_{0}=Q,
+\]
+
+and
+
+\[
+\text { for all } i \geqslant 0, K_{i+1}=K_{i}\left(\sqrt{r_{i}}\right),
+\]
+
+where $r_{i} \in K_{i}$ is positive. The goal of this section is to generalise the algorithm of section 2 so that it rewrites its input $\sqrt{r_{n}}$ as a formula of depth at most $n$ over $Q$, whenever such a denesting is possible, yet still has arithmetic complexity polynomial in $n$. By Theorem 3, the only useful additions to the algorithm of section 2 are the fourth roots of Theorem 2 (provided all subexpressions that arise are real).
+
+Let $r_{n}=a+b \sqrt{r_{n-1}}$, where $a, b, r_{n-1} \in K_{n-1}$. By Theorems $1-3, \sqrt{r_{n}}$ denests if and only if
+
+\begin{itemize}
+  \item[(i)] $\sqrt{r_{n-1}}$ denests, or
+  \item[(ii)] $\sqrt{a^{2}-b^{2} r_{n-1}}$ denests, or
+  \item[(iii)] $\sqrt{-r_{n-1}\left(a^{2}-b^{2} r_{n-1}\right)}$ denests.
+\end{itemize}
+
+Unfortunately, the obvious generalisation of the algorithm of section 2 has exponential complexity, since each formula $\sqrt{a+b \sqrt{r_{n-1}}}$ in the input list gives rise to two formulas, $\sqrt{a^{2}-b^{2} r_{n-1}}$ and $\sqrt{-r_{n-1}\left(a^{2}-b^{2} r_{n-1}\right)}$ in the recursive input list, in addition to the one extra formula $\sqrt{r_{n-1}}$.
+
+The solution is to deal with the formulas of the form $\sqrt{-r_{n-1}\left(a^{2}-b^{2} r_{n-1}\right)}$ implicitly, rather than generating them explicitly, by observing that the radicand can be expressed as the product (with a possible sign change) of the radicands of $\sqrt{r_{n-1}}$ and $\sqrt{a^{2}-b^{2} r_{n-1}}$. Thus, the algorithm of this section will invoke itself with exactly the same lists of formulas as the one of section 2, but rather than trying to denest each individually, it will determine whether there is a subset of the formulas whose radicand product (with a possible sign change), under a single square root, denests. The justification for looking at all subsets is given below in Lemma 6, which states that a product
+
+\[
+\prod_{i=1}^{k} \sqrt{a_{i}+b_{i} \sqrt{r}}
+\]
+
+of input formulas denests if and only if $\sqrt{r}$ denests, or the corresponding product
+
+\[
+\sqrt{\prod_{i=1}^k(a_i^2-b_i^2r)}
+\]
+
+of formulas denests, or
+
+\[
+\sqrt{-r\prod_{i=1}^k(a_i^2-b_i^2r)}
+\]
+
+denests.
+
+In the basis, when all formulas have depth 1 over $Q$ , the algorithm applies the procedure of section 3 to determine whether any subset of its input radicands has a product(with a possible sign change)that is a perfect square.If it finds such a subset it will identify it in the global array factor by setting
+
+\[
+\text { factor }[i]=\left\{\begin{array}{l}
+1, \text { if the } i \text { th formula is in the subset } \\
+0, \text { otherwise }
+\end{array}\right.
+\]
+
+The pending invocations will then use Theorems 1 and 2 and Lemma 6 to denest the product specified in the array factor.
+
+\editorialnote{The following listing reconstructs the intended radicand-selection algorithm. For signed auxiliary radicands, $\sqrt u\,\sqrt v$ is replaced by the \emph{formal record} $\sqrt{uv}$ only before evaluation. Thus the example $(-12)(-3)=36$ returns $+6$, whereas the product of the two principal complex roots would be $-6$. Every returned real candidate must pass nonnegativity, branch, and depth checks. If a recursive choice does not lift to an admissible real candidate, alternatives must be retained or searched rather than silently declaring failure. The original listing does not implement this bookkeeping; its polynomial arithmetic claim does not establish a polynomial bound for such a complete fallback search.}
+
+\begin{lstlisting}[mathescape=true,basicstyle=\ttfamily\footnotesize]
+function DENEST(n, m, nested[1..m]) returns formula;
+begin
+  // nested[i] stores a radicand; factor[] records a chosen subset.
+  if n = 1 then
+    search nonempty subset products for a nonnegative square $x^2$;
+    when index m occurs with another index, negate its radicand;
+    on success: set the selected flags and return $x\geq0$;
+    on failure: clear all flags and return nested[m];
+  else begin
+    assume nested[i] = $\sqrt{a_i+b_i\sqrt r}$;
+    for i = 1..m do N[i] := $\sqrt{a_i^2-b_i^2r}$;
+    N[m+1] := $\sqrt r$;
+    d := DENEST(n-1, m+1, N);
+    if factor[i] = 0 for every i = 1..m then begin
+      if factor[m+1] = 0 then return nested[m]; // no success
+      candidate := $\sqrt{a_m+b_m d}$;
+      clear factor[1..m+1]; factor[m] := 1;
+      return candidate
+    end;
+    let $I=\{i:1\leq i\leq m,\ \mathrm{factor}[i]=1\}$;
+    define a,b by $a+b\sqrt r=\prod_{i\in I}(a_i+b_i\sqrt r)$;
+    if $m\in I$ and $|I|>1$ then begin a := -a; b := -b end;
+    if factor[m+1] = 0 then begin
+      s := $2(a+d)$;
+      candidate := $(s+2b\sqrt r)/(2\sqrt s)$
+    end else begin
+      s := $2(br+d)$;
+      candidate := $(s+2a\sqrt r)/(2\sqrt s\sqrt[4]r)$
+    end;
+    // Handle zero/degenerate cases before the displayed divisions.
+    // Require a nonnegative target, s>0, the correct square-root
+    // branch and lower depth; otherwise try another recursive witness.
+    // Keep factor[1..m]; factor[m+1] is local to this invocation.
+    return the verified candidate
+  end
+end.
+\end{lstlisting}
+
+Consider denesting the formula $\sqrt{3+\sqrt{5+2 \sqrt{7}}}$. The depth of this formula over $Q$ is 3 , so the global declaration needed is
+
+\[
+\text { declare factor: array }[1\ldots3] \text { of }\{0,1\} \text {, }
+\]
+
+and the first invocation is $\operatorname{DENEST}(3,1,[\sqrt{3+\sqrt{5+2 \sqrt{7}}}])$. This gives rise to the two formulas
+
+\[
+\sqrt{3^{2}-(5+2 \sqrt{7})}=\sqrt{4-2 \sqrt{7}} \text { and } \sqrt{5+2 \sqrt{7}},
+\]
+
+resulting in the second invocation denest $(2,2,[\sqrt{4-2 \sqrt{7}}, \sqrt{5+2 \sqrt{7}}]$ ). This in turn produces the three formulas
+
+\[
+\sqrt{4^{2}-2^{2} \times 7}=\sqrt{-12}, \quad \sqrt{5^{2}-2^{2} \times 7}=\sqrt{-3}, \quad \text { and } \quad \sqrt{7},
+\]
+
+resulting in the third invocation DENEST $(1,3,[\sqrt{-12}, \sqrt{-3}, \sqrt{7}]$ ). The algorithm of section 3 determines that $(-12)(-3)$ is a perfect square, sets factor to $[1,1,0]$, and returns 6. In the second invocation, $a=8$ and $b=2$, since
+
+\[
+\sqrt{(-1)(4-2 \sqrt{7})(5+2 \sqrt{7})}=\sqrt{8+2 \sqrt{7}} .
+\]
+
+Since factor[3] $=0$ (i.e. the $-r$ radicand factor was not involved), $s=2(8+6)=28$ and
+
+\[
+\sqrt{8+2 \sqrt{7}}=\frac{28+4 \sqrt{7}}{2 \sqrt{28}}=1+\sqrt{7}
+\]
+
+so $1+\sqrt{7}$ is returned to the first invocation. In this invocation, $a=3$ and $b=1$. Since factor $[2] \neq 0$ (i.e. the $-r$ radicand factor was involved), a fourth root is needed as follows
+
+\[
+\begin{aligned}
+s&=2((5+2\sqrt7)+(1+\sqrt7))=12+6\sqrt7 \\
+\sqrt{3+\sqrt{5+2 \sqrt{7}}} & =((12+6 \sqrt{7})+6 \sqrt{5+2 \sqrt{7}}) /(2 \sqrt{12+6 \sqrt{7}} \sqrt[4]{5+2 \sqrt{7}}) \\
+& =\frac{6+3 \sqrt{7}+3 \sqrt{5+2 \sqrt{7}}}{\sqrt{12+6 \sqrt{7}} \sqrt[4]{5+2 \sqrt{7}}}
+\end{aligned}
+\]
+
+\needspace{16\baselineskip}
+
+The correctness of this section's algorithm hinges largely on the following lemma.
+
+\noindent\textbf{Lemma 6.} Let $k \geqslant 1$ and $n \geqslant 0$. Let $r\in K_n$ be positive and, for all $1\leq i\leq k$, let $a_i,b_i\in K_n$ with $a_i+b_i\sqrt r>0$. Then
+
+\[
+\prod_{i=1}^{k} \sqrt{a_{i}+b_{i} \sqrt{r}}
+\]
+
+denests using only reals if and only if at least one of the following holds:
+
+\begin{itemize}
+  \item[(i)] $\sqrt{r}$ denests using only reals, or
+  \item[(ii)] $\sqrt{\prod_{i=1}^k(a_i^2-b_i^2r)}$ denests using only reals, or
+\end{itemize}
+
+\begin{itemize}
+  \item[(iii)] $\sqrt{-r\prod_{i=1}^k(a_i^2-b_i^2r)}$ denests using only reals.
+\end{itemize}
+
+\noindent\textit{Proof.} Let $a, b \in K_{n}$ satisfy
+
+\[
+a+b \sqrt{r}=\prod_{i=1}^{k}\left(a_{i}+b_{i} \sqrt{r}\right) .
+\]
+
+By Theorems 1-3, $\sqrt{a+b \sqrt{r}}$ denests using only reals if and only if at least one of the following holds:
+
+\begin{itemize}
+  \item[(i)] $\sqrt{r}$ denests using only reals, or
+  \item[(ii)] $\sqrt{a^{2}-b^{2} r}$ denests using only reals, or
+  \item[(iii)] $\sqrt{-r(a^2-b^2r)}$ denests using only reals.
+\end{itemize}
+
+Hence it suffices to show that, under the hypothesis $\sqrt{r} \notin K_{n}$,
+
+\[
+a^{2}-b^{2} r=\prod_{i=1}^{k}\left(a_{i}^{2}-b_{i}^{2} r\right) .
+\]
+
+This is done by a straightforward induction on $k$. \(\square\)
+
+The correctness of a successful lift for the original target follows by taking $m=1$ in the next theorem; completeness has the qualification stated there.
+
+\noindent\textbf{Theorem 5.} Let $m\geq1$, $n\geq1$, and $f_1,\ldots,f_m\in K_{n-1}$, with the distinguished last radicand $f_m>0$. With exact radicand-record arithmetic and the admissibility/alternative-witness conditions specified above, the intended procedure seeks a real denesting of one of
+\begin{equation*}
+\begin{aligned}
+\text{(i)}\quad&\sqrt{f_m},\\
+\text{(ii)}\quad&\sqrt{\prod_{i\in I}f_i},\\
+\text{(iii)}\quad&\sqrt{-f_m\prod_{i\in I}f_i},
+\end{aligned}\qquad
+\varnothing\ne I\subseteq\{1,\ldots,m-1\}.
+\end{equation*}
+Only candidates with nonnegative total radicand are admissible. The argument below verifies the algebraic lifting formulas. To infer completeness for a concrete implementation, recursive alternatives must not be discarded merely because one of them fails to lift; the original pseudocode does not supply that extra implementation argument.
+
+Proof of the lifting formulas. We distinguish the base case and the recursive step.
+
+Basis. ( $n=1$ ): This is precisely what the algorithm's basis does.
+
+Recursive step $(n>1)$: Let one of the products that denests be rewritten as
+
+\[
+\sqrt{a+b \sqrt{r_{n-2}}}=\sqrt{\prod_{i\in I}(c_i+d_i\sqrt{r_{n-2}})},
+\]
+
+where $r_{n-2} \in K_{n-2}$, and $c_{i}, d_{i} \in K_{n-2}$ for all $i \in I$. By Theorems 1--3, applied to this positive total radicand, and the norm-product identity in the proof of Lemma 6, this product denests using only reals if and only if at least one of the following products denests using only reals:
+
+\begin{equation*}
+\begin{aligned}
+\text{(i)}\quad&\sqrt{r_{n-2}},\\
+\text{(ii)}\quad&\sqrt{\prod_{i\in I}(c_i^2-d_i^2r_{n-2})},\\
+\text{(iii)}\quad&\sqrt{-r_{n-2}\prod_{i\in I}(c_i^2-d_i^2r_{n-2})}.
+\end{aligned}\tag{4.1}\label{eq:4.1}
+\end{equation*}
+
+
+The radicands $r_{n-2}$ and $c_i^2-d_i^2r_{n-2}$ occur in the recursive invocation. To verify a lift, suppose one of the corresponding real quantities in (4.1) has been denested. Searching or retaining suitable alternatives is the additional implementation requirement stated above. If $d=\sqrt{r_{n-2}}$ is denested and real, then surely
+
+\[
+\sqrt{f_{m}}=\sqrt{a_{m}+b_{m} d}
+\]
+
+is a correct denesting and is real. If
+
+\[
+d=\sqrt{\prod_{i\in I}(c_i^2-d_i^2r_{n-2})}=\sqrt{a^{2}-b^{2} r_{n-2}}
+\]
+
+denested and is real, then the correctness of the denesting
+
+\[
+\sqrt{a+b \sqrt{r_{n-2}}}=\frac{s+2 b \sqrt{r_{n-2}}}{2 \sqrt{s}}
+\]
+
+where $s=2(a+d)$ is as in Theorem 4. For a positive target and a real norm root in this branch, $a>0$ and $d\geq0$, so $s=2(a+d)>0$. Finally, if
+
+\[
+d=\sqrt{-r_{n-2}\prod_{i\in I}(c_i^2-d_i^2r_{n-2})}=\sqrt{-r_{n-2}\left(a^{2}-b^{2} r_{n-2}\right)}
+\]
+
+denested, then the correctness of
+
+\[
+\sqrt{a+b \sqrt{r_{n-2}}}=\frac{s+2 a \sqrt{r_{n-2}}}{2 \sqrt{s} \sqrt[4]{r_{n-2}}},
+\]
+
+where $s=2\left(b r_{n-2}+d\right)$ is most easily seen by squaring both sides. For a positive target and the real fourth-root case, $b>0$ and $d\geq0$, so $s=2(br+d)>0$. The sign of the final quotient must still match the positive square root. \(\square\)
+
+\section*{5. Denesting Rational Combinations of Radicals}
+So far we have developed the theory needed to denest certain single (possibly multiply nested) radicals. Suppose we have a linear combination of several radicals, none of which denests individually. Is it possible that the entire expression could denest? The answer is yes. For example, none of $\sqrt{1+\sqrt{3}}, \sqrt{3+3 \sqrt{3}}$, and $\sqrt{10+6 \sqrt{3}}$ denests, but
+
+\[
+\sqrt{1+\sqrt{3}}+\sqrt{3+3 \sqrt{3}}-\sqrt{10+6 \sqrt{3}}
+\]
+
+equals 0 and hence clearly denests.
+
+Let $K$ be a real extension of $Q$, and let $l_{i}, a_{i}, b_{i}, \sqrt{r_{i}} \in K$ for $1 \leqslant i \leqslant h$, with $a_{i}+b_{i} \sqrt{r_{i}}>0$. (In fact, this last condition turns out to be unnecessary: although we need it in order to apply Lemma 1 in what follows, a weaker version of Lemma 1 involving only square roots could have been used.)
+
+Suppose that the linear combination
+
+\[
+\sum_{i=1}^{h} l_{i} \sqrt{a_{i}+b_{i} \sqrt{r_{i}}}
+\]
+
+denests in $K$. Then it can be denested as follows. First discard zero coefficients and denest any individual radical that denests. After each combination, discard any coefficient that becomes zero. As we shall see, it suffices to determine, for each pair of remaining radicals $\sqrt{a_{i}+b_{i} \sqrt{r_{i}}}$ and $\sqrt{a_{j}+b_{j} \sqrt{r_{j}}}$, if their product denests in $K$. If the procedures of sections 2-4 show that $\sqrt{a_{i}+b_{i} \sqrt{r_{i}}} \sqrt{a_{j}+b_{j} \sqrt{r_{j}}}$ denests as $k \in K$, then replace $l_{i} \sqrt{a_{i}+b_{i} \sqrt{r_{i}}}+l_{j} \sqrt{a_{j}+b_{j} \sqrt{r_{j}}}$ by
+
+\[
+\left(l_{i}+\frac{k l_{j}}{a_{i}+b_{i} \sqrt{r_{i}}}\right) \sqrt{a_{i}+b_{i} \sqrt{r_{i}}} \in K\left(\sqrt{a_{i}+b_{i} \sqrt{r_{i}}}\right),
+\]
+
+and iterate the process of looking for a pair of radicals that denests.
+
+If nonzero-coefficient radicals remain and no product of a pair denests, then the remaining linear combination cannot lie in $K$. If no terms remain, the result is zero and is already denested. For let $I=\left\{i_{1}, i_{2}, \ldots, i_{m}\right\}$ be a maximal set that satisfies
+
+\[
+\left[K\left(\sqrt{a_{i_{1}}+b_{i_{1}} \sqrt{r_{i_{1}}}}, \ldots, \sqrt{a_{i_{m}}+b_{i_{m}} \sqrt{r_{i_{m}}}}\right): K\right]=2^{m} .
+\]
+
+By Lemma 1, for every $j$ in $\{1,2, \ldots, h\}-I$,
+
+\[
+\sqrt{a_{j}+b_{j} \sqrt{r_{j}}}=a \prod_{i \in I_{j}} \sqrt{a_{i}+b_{i} \sqrt{r_{i}}},
+\]
+
+for some $I_{j} \subseteq I$ and some $a \in K$. But the $2^{m}$ distinct products are linearly independent, so the linear dependence can occur only if $I_{j}=I_{k}$ for some $j \neq k$, in which case $\sqrt{a_{j}+b_{j} \sqrt{r_{j}}} \sqrt{a_{k}+b_{k} \sqrt{r_{k}}}$ denests in $K$.
+
+Note that linear combinations of radicals is as general as rational combinations, since a product of radicals is itself a radical, and quotients of radicals can be eliminated using conjugates.
+
+Consider the example
+
+\[
+\sqrt{1+\sqrt{3}}+\sqrt{3+3 \sqrt{3}}-\sqrt{10+6 \sqrt{3}} .
+\]
+
+The product $\sqrt{1+\sqrt{3}} \sqrt{3+3 \sqrt{3}}$ denests as $\sqrt{3}(1+\sqrt{3})$. Thus we simplify the expression to
+
+\[
+\sqrt{1+\sqrt{3}}(1+\sqrt{3})-\sqrt{10+6 \sqrt{3}} .
+\]
+
+Next the product $\sqrt{1+\sqrt{3}} \sqrt{10+6 \sqrt{3}}$ denests as $4+2 \sqrt{3}$. Thus we can simplify further.
+
+\[
+\begin{aligned}
+\sqrt{1+\sqrt{3}}+\sqrt{3+3 \sqrt{3}}-\sqrt{10+6 \sqrt{3}} & =\sqrt{1+\sqrt{3}}\left[1+\sqrt{3}-\frac{4+2 \sqrt{3}}{1+\sqrt{3}}\right] \\
+& =\sqrt{1+\sqrt{3}}\left[\frac{(4+2 \sqrt{3})-(4+2 \sqrt{3})}{1+\sqrt{3}}\right] \\
+& =0
+\end{aligned}
+\]
+
+\section*{6. Denesting Arbitrary Formulas of Depth 2}
+In this section we consider a slightly different tower of fields
+
+\[
+Q_{0}=Q,
+\]
+
+and
+
+\[
+\text { for } i \geqslant 0, Q_{i+1}=Q_{i}\left(\sqrt{r_{i}}\right),
+\]
+
+where $r_{i} \in Q$ is positive. Using the procedure of section 3 , we can assume that $\sqrt{r_{i}} \notin Q_{i}$ for all $i$. What makes the field $Q_{h}$ different from the field $K_{h}$ considered in section 4 is that any element of $Q_{h}$ has depth at most 1 over $Q$, for all $h$.
+
+Let $f \in Q_{h}$. In this section we describe an algorithm that denests $\sqrt{f}$ using square roots only, whenever such a denesting is possible. As a formula over $Q, f$ is the linear combination of as many as $2^{h}$ different square roots, so the algorithm of section 2 is inapplicable to $\sqrt{f}$. As a formula over $Q_{h-1}$, however, $f$ can be written as
+
+\[
+f=a+b \sqrt{r_{h-1}},
+\]
+
+where $a, b \in Q_{h-1}$. Thus, we can use the algorithm of section 2 to denest
+
+$\sqrt{f}=\sqrt{a+b \sqrt{r_{h-1}}}$ over $\mathrm{Q}_{h-1}$. (The reader is referred back to the introductory definitions (original p.\ 170) for a reminder of the definitions of "depth over $Q_{h-1}$ " and "denest over $Q_{h-1}$ ".)
+
+Since $\sqrt{r_{h-1}}$ is not an element of $Q_{h-1}, \sqrt{a+b \sqrt{r_{h-1}}}$ has depth 2 over $Q_{h-1}$. When the algorithm of section 2 denests $\sqrt{a+b \sqrt{r_{h-1}}}$ over $Q_{h-1}$, it will be rewritten as a formula of depth 1 over $Q_{h-1}$, that is
+
+\[
+\sqrt{a+b \sqrt{r_{h-1}}} \in Q_{h-1}\left(\sqrt{r_{h-1}}, \sqrt{a_{1}}, \sqrt{a_{2}}, \ldots, \sqrt{a_{k}}\right),
+\]
+
+for some $a_{1}, a_{2}, \ldots, a_{k} \in Q_{h-1}$. Notice that this "denested" version, like $\sqrt{a+b \sqrt{r_{h-1}}}$, still has depth 2 over $Q$, since $a_{1}, a_{2}, \ldots, a_{k}$ in general have depth 1 over $Q$. The progress we have made is that we have eliminated one radical, $\sqrt{r_{h-1}}$, from all depth 2 subformulas, since $a_{1}, a_{2}, \ldots, a_{k}$ are elements of $Q_{h-1}$, but $\sqrt{r_{h-1}}$ is not. Thus, we can denest $\sqrt{a_{1}}, \sqrt{a_{2}}, \ldots, \sqrt{a_{k}}$ recursively.
+
+For $h>0$ the target is a formula of depth at most one over $Q$; an input already of depth one is simply retained or re-expressed, rather than promised a further reduction. For $h=0$ the target is rational. Given a positive $f\in Q_h$, the procedure that denests $\sqrt{f}$ over $Q$ will return $d \in Q_{h}$ and positive $s \in Q$ satisfying $\sqrt{f}=d \sqrt{s}$. The procedure itself is as follows:
+
+\begin{itemize}
+  \item[1.] If $h=0$, return the pair $(d,1)$ if $f=d^2$ with $d\in Q$, $d\geq0$, and fail otherwise. If $h>0$, then write $f=a+b \sqrt{r_{h-1}}$, where $a, b \in Q_{h-1}$.
+  \item[2.] Compute $a^2-b^2r_{h-1}\in Q_{h-1}$. If this is negative, fail: a real denesting using only square roots requires a real norm root. For a positive input and a proper quadratic extension the norm cannot be zero.
+  \item[3.] Recursively denest $\sqrt{a^{2}-b^{2} r_{h-1}}$ over $Q$. If this fails to denest, then $\sqrt{f}$ fails to denest. Otherwise, the recursive invocation returns $e \in Q_{h-1}$ and $s \in Q$ satisfying $\sqrt{a^{2}-b^{2} r_{h-1}}=e \sqrt{s}$.
+  \item[4.] Use the procedure of section 3 to determine whether $\sqrt{s} \in Q_{h-1}$. If not, $\sqrt{f}$ fails to denest. If so, the procedure expresses $\sqrt{s}$ as an element of $Q_{h-1}$.
+  \item[5.] Let $d=e \sqrt{s} \in Q_{h-1}$, and $t=2(a+d) \in Q_{h-1}$. Then
+\[
+\sqrt{a+b \sqrt{r_{h-1}}}=\frac{t+2 b \sqrt{r_{h-1}}}{2 \sqrt{t}}
+\]
+If $t \in Q$, then return
+\[
+\frac{1}{2}+\frac{b \sqrt{r_{h-1}}}{t} \in Q_{h} \text { and } t \text {, }
+\]
+and halt.
+  \item[6.] Recursively denest $\sqrt{t}$ over $Q$. If this fails to denest, then $\sqrt{f}$ fails to denest. Otherwise, the recursive invocation returns $j \in Q_{h-1}$ and $u \in Q$ satisfying $\sqrt{t}=j \sqrt{u}$.
+  \item[7.] $\sqrt{a+b \sqrt{r_{h-1}}}=\frac{t+2 b \sqrt{r_{h-1}}}{2 j \sqrt{u}}$, so return $\frac{t+2 b \sqrt{r_{h-1}}}{2 u j} \in Q_{h}$ and $u \in Q$.
+\end{itemize}
+
+Unlike all of the previous procedures, this one has exponential arithmetic complexity (measured as a function of $h$ ). Notice, though, that some formulas $f$ in $Q_{h}$ may have size $2^{h}$; for these, the arithmetic complexity is polynomial in the length of $f$.
+
+The correctness of the procedure is the subject of the next theorem.
+
+\noindent\textbf{Theorem 6.} Given a positive $f \in Q_{h}$, the procedure will denest $\sqrt{f}$ over $Q$ correctly whenever $\sqrt{f}$ can be denested using square roots only. Furthermore, when it succeeds $\sqrt{f}$ will be expressed as $\sqrt{f}=d \sqrt{s}$, for some $d \in Q_{h}$ and positive $s \in Q$.
+
+\noindent\textit{Proof.} The proof is by induction on $h$.
+
+Basis $(h=0): \sqrt{f}$ has depth 1 over $Q$, so $\sqrt{f}$ can be denested if and only if $f=d^{2}$ for some $d \in Q$. (In this case, $s=1$ in the statement of the theorem.)
+
+Induction $(h>0)$ : Let $f=a+b \sqrt{r_{h-1}}$, where $a, b \in Q_{h-1}$ and $r_{h-1} \in Q$. Suppose $\sqrt{f}$ can be denested over $Q$ using square roots only. Then certainly $\sqrt{f}$ can be denested over $Q_{h-1}$ using square roots only, that is,
+
+\[
+\sqrt{a+b \sqrt{r_{h-1}}} \in Q_{h-1}\left(\sqrt{r_{h-1}}, \sqrt{a_{1}}, \ldots, \sqrt{a_{k}}\right),
+\]
+
+for some $a_{1}, a_{2}, \ldots, a_{k} \in Q_{h-1}$. Take $K=Q_{h-1}$ in Theorem 1, and recall that $\sqrt{r_{h-1}}$ $\notin Q_{h-1}$. Hence, applying Theorem $1, \sqrt{a^{2}-b^{2} r_{h-1}} \in Q_{h-1}$. The displayed nested presentation of this norm root has depth at most two over $Q$, while its value lies in $Q_{h-1}$ and hence has depth at most one. Thus it can be reduced to the target depth (or is already there). When $h-1=0$, the norm root must be rational. By the induction hypothesis, the recursive invocation in step (3) will denest this correctly as $\sqrt{a^{2}-b^{2} r_{h-1}}=e \sqrt{s}$, for some $e \in Q_{h-1}$ and positive $s \in Q$.
+
+Since $e \sqrt{s}=\sqrt{a^{2}-b^{2} r_{h-1}} \in Q_{h-1}$ and $e \in Q_{h-1}, \sqrt{s} \in Q_{h-1}$. The procedure of section 3 will succeed in expressing $\sqrt{s}$ as an element of $Q_{h-1}$.
+
+The correctness of
+
+\[
+\sqrt{a+b \sqrt{r_{h-1}}}=\frac{t+2 b \sqrt{r_{h-1}}}{2 \sqrt{t}}
+\]
+
+in step (5) is as in Theorem 4. If $t \in Q$, then the right-hand side has depth 1 over $Q$, so $\sqrt{f}$ has been denested over $Q$. In this case, the only point to verify is that $t$ is positive. The positive target and nonnegative norm root give $a>0$, hence $t=2(a+d)>0$; consistently, the following quantity is real:
+
+\[
+\sqrt{t}=\frac{t+2 b \sqrt{r_{h-1}}}{2 \sqrt{a+b \sqrt{r_{h-1}}}}
+\]
+
+Assume, then, that $t \in Q_{h-1}-Q$, that is, $\sqrt{t}$ has depth 2 over $Q$, so the denesting is not completed. Note that
+
+\[
+\sqrt{t}=\frac{t+2 b \sqrt{r_{h-1}}}{2 \sqrt{a+b \sqrt{r_{h-1}}}}
+\]
+
+Since by hypothesis $\sqrt{a+b \sqrt{r_{h-1}}}$ can be denested over $Q$ using square roots only, and since $t+2 b \sqrt{r_{h-1}} \in Q_{h}$ has depth 1 over $Q, \sqrt{t}$ can be denested over $Q$ using square roots only. By the induction hypothesis, the recursive invocation of step (6) will return $j \in Q_{h-1}$ and positive $u \in Q$ satisfying $\sqrt{t}=j \sqrt{u}$. The correctness of step (7) is then simple to verify. □
+
+Consider the example of denesting
+
+\[
+\sqrt{a+b \sqrt{r_{1}}}=\sqrt{(112+70 \sqrt{2})+(46+34 \sqrt{2}) \sqrt{5}} .
+\]
+
+Here $h=2, \quad a=112+70 \sqrt{2}, \quad b=46+34 \sqrt{2}, \quad$ and $\quad r_{1}=5$. Furthermore, $Q_{0}=Q$, $Q_{1}=Q(\sqrt{2})$, and $Q_{2}=Q(\sqrt{2}, \sqrt{5})$. The first task is to denest
+
+\[
+\sqrt{a^{2}-b^{2} r_{1}}=\sqrt{(112+70 \sqrt{2})^{2}-(46+34 \sqrt{2})^{2} \times 5}=\sqrt{204+40 \sqrt{2}}
+\]
+
+recursively. This proceeds as in section 2, with the resulting denesting
+
+\[
+d=\sqrt{204+40 \sqrt{2}}=2+10 \sqrt{2}
+\]
+
+Step (4) would express $d$ as an element of $Q_{1}=Q(\sqrt{2})$, which it already is. In step (5), $t=228+160 \sqrt{2}$ and
+
+\[
+\sqrt{a+b \sqrt{r_{1}}}=\frac{(228+160 \sqrt{2})+2(46+34 \sqrt{2}) \sqrt{5}}{2 \sqrt{228+160 \sqrt{2}}} .
+\]
+
+The numerator is now denested, but $\sqrt{t}$ in the denominator is not. However, $\sqrt{t}$ contains no occurrence of $\sqrt{5}$, so we proceed to denest $\sqrt{t}$ recursively in step (6). This proceeds again as in section 2 , with the resulting denesting
+
+\[
+\sqrt{t}=\sqrt{228+160 \sqrt{2}}=8 \sqrt{2}+10 .
+\]
+
+Finally, in step (7),
+
+\[
+\begin{aligned}
+\sqrt{a+b \sqrt{r_{1}}} & =\frac{(228+160 \sqrt{2})+2(46+34 \sqrt{2}) \sqrt{5}}{2(8 \sqrt{2}+10)} \\
+& =(5+4 \sqrt{2})+(3+\sqrt{2}) \sqrt{5}
+\end{aligned}
+\]
+
+Why does this approach not work if the input formula has depth $n>2$ over $Q$ ? The problem is that $\sqrt{t}$ computed in step (5) in general has depth $n-1$ over $Q_{h-1}$, which in turn will have elements of depth $n-1$ over $Q$. Hence, $\sqrt{t}$ will have depth $2 n-2$ over $Q$, so the formula's depth over $Q$ actually increases if $n>2$.
+
+The authors are indebted to Clifford Earle and Oscar Rothaus for the proof of Lemma 5.
+
+\section*{References}
+
+\begingroup\small\setlength{\parindent}{0pt}
+\hangindent=1.4em\hangafter=1 Besicovitch, A. S. (1940). On the linear independence of fractional powers of integers. J. London Math. Soc. 15, 3-6.
+
+\hangindent=1.4em\hangafter=1 Caviness, B. F., Fateman, R. J. (1976). Simplification of radical expressions. Proc. 1976 ACM Symposium on Symbolic and Algebraic Computation. New York.
+
+\hangindent=1.4em\hangafter=1 Herstein, I. N. (1975). Topics in Algebra. New York: John Wiley \& Sons, Inc.
+
+\hangindent=1.4em\hangafter=1 Richards, I. (1974). An application of Galois theory to elementary arithmetic. Adv. Math. 13, 268-273.
+
+\hangindent=1.4em\hangafter=1 Richardson, D. (1968). Some unsolved problems involving elementary functions of a real variable. J. Symbolic Logic 33, 514-520.
+
+\hangindent=1.4em\hangafter=1 Schinzel, A. (1982). Selected Topics on Polynomials. Michigan: The University of Michigan Press.
+
+\hangindent=1.4em\hangafter=1 Zippel, R. E. B. (1977). Simplification of Radicals with Applications to Solving Polynomial Equations. M.Sc.. thesis, Massachusetts Inst. of Technology.
+\endgroup
+
+\end{document}

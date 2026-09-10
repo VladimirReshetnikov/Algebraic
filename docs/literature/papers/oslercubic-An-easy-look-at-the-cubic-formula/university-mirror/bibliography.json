@@ -1,0 +1,15 @@
+{
+  "id": "oslercubic",
+  "title": "An easy look at the cubic formula",
+  "citations": [
+    {
+      "report": "report-3",
+      "key": "oslercubic",
+      "entry_latex": "Thomas J. Osler. \\emph{An easy look at the cubic formula}. Expository author manuscript, undated in the inspected copy. University-hosted copy: \\url{https://math.ucr.edu/~res/math153-2019/osler-An_easy_look_at_the_cubic_formula.pdf}. \\status{F}\n\\entrynote{An elementary derivation and examples; the note deliberately restricts its detailed treatment to real cube-root calculations. It points to Cardano's \\emph{Ars Magna}, translated by T. Richard Witmer (Dover reprint, 1993). The 2015 upload date is not asserted to be the original publication year.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

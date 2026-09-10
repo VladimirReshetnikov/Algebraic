@@ -1,0 +1,31 @@
+{
+  "record_id": "fricas",
+  "title": "RadicalSolvePackage",
+  "asset_id": "resource-02",
+  "version": "web-resources",
+  "kind": "web",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://groups.google.com/g/fricas-devel/c/7Kp0vVbPXJE",
+    "resolved_url": "https://groups.google.com/g/fricas-devel/c/7Kp0vVbPXJE",
+    "retrieved_at": "2026-09-05T20:28:35+00:00",
+    "http_status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "content_encoding": "",
+    "bytes": 1014061,
+    "sha256": "94b667777f6a89c3f66b0ef5e2c387b221852da5ca87cd2fb0f604e620c9b3e4"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "cited_web_resource",
+  "note": "URL cited in an input report. Not all web pages have been independently reopened. HTML is saved as HTML; software code is not labelled as article TeX.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "web_resources/fricas-RadicalSolvePackage/web-resources/resource-02.html",
+      "role": "web",
+      "bytes": 1014061,
+      "sha256": "94b667777f6a89c3f66b0ef5e2c387b221852da5ca87cd2fb0f604e620c9b3e4"
+    }
+  ],
+  "prior_candidate_errors": []
+}

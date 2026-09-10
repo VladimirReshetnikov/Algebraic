@@ -1,0 +1,7 @@
+wrote cmp_A.tex (31 rows)
+wrote cmp_BC.tex (17 rows)
+wrote cmp_DE.tex (24 rows)
+wrote cmp_JK.tex (26 rows)
+wrote cmp_LQ.tex (18 rows)
+wrote fuzz.tex
+DONE

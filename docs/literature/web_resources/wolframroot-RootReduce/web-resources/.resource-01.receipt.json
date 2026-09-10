@@ -1,0 +1,31 @@
+{
+  "record_id": "wolframroot",
+  "title": "RootReduce",
+  "asset_id": "resource-01",
+  "version": "web-resources",
+  "kind": "web",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://reference.wolfram.com/language/ref/RootReduce.html",
+    "resolved_url": "https://reference.wolfram.com/language/ref/RootReduce.html",
+    "retrieved_at": "2026-09-05T20:28:10+00:00",
+    "http_status": 200,
+    "content_type": "text/html",
+    "content_encoding": "",
+    "bytes": 231641,
+    "sha256": "cf95fd57f90a5d40c72c5abe59c262f1bfab8a0b047091ccd314743d33872a57"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "cited_web_resource",
+  "note": "URL cited in an input report. Not all web pages have been independently reopened. HTML is saved as HTML; software code is not labelled as article TeX.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "web_resources/wolframroot-RootReduce/web-resources/resource-01.html",
+      "role": "web",
+      "bytes": 231641,
+      "sha256": "cf95fd57f90a5d40c72c5abe59c262f1bfab8a0b047091ccd314743d33872a57"
+    }
+  ],
+  "prior_candidate_errors": []
+}

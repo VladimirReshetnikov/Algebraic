@@ -1,0 +1,24 @@
+{
+  "id": "wolframcommunity",
+  "title": "Radical denest: an ancient difficult task in symbolic computation",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "wolframcommunity",
+      "entry_latex": "Wolfram Community, ``Heuristic package to denest radicals'' and ``Radical Denest: an ancient difficult task in symbolic computation.''\n\\access{https://community.wolfram.com/groups/-/m/t/980264}{Discussion 980264};\n\\access{https://community.wolfram.com/groups/-/m/t/2120629}{discussion 2120629}. \\status{D}\nDevelopment discussion and examples underlying the contributed heuristic tools. Useful for provenance and design trade-offs, not as a replacement for formal completeness proofs."
+    },
+    {
+      "report": "report-2",
+      "key": "wolframcommunity",
+      "entry_latex": "Wolfram Community contributors, including Swastik Banerjee, Bill Gosper, and Daniel Lichtblau.\n\\emph{Radical denest: an ancient difficult task in symbolic computation} and \\emph{Heuristic package to denest radicals}.\n\\sourceurl{https://community.wolfram.com/groups/-/m/t/2120629};\n\\sourceurl{https://community.wolfram.com/groups/-/m/t/980264}.\n\\textbf{R.} Implementation history, notebooks, and examples. Grouped as related developer resources, not used to infer a completeness theorem."
+    },
+    {
+      "report": "report-3",
+      "key": "wolframcommunity",
+      "entry_latex": "Wolfram Community. ``Radical Denest: an ancient difficult task in symbolic computation,'' \\url{https://community.wolfram.com/groups/-/m/t/2120629}; ``Heuristic package to denest radicals,'' \\url{https://community.wolfram.com/groups/-/m/t/980264}. \\status{D}\n\\entrynote{Author/developer discussions of practical approaches, examples, and heuristic packages. Valuable implementation leads, but distinct from official kernel guarantees and from peer-reviewed completeness theorems.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

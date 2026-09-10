@@ -1,0 +1,34 @@
+Pocklington's algorithm is a technique for solving congruences of the form $x^2 \equiv a \mod p$, where $x$ and $a$ are integers and $a$ is a quadratic residue modulo $p$. Given an integer $a$ and odd prime $p$ as input, the algorithm separates three cases for $p$, and then computes $x$ accordingly. We are interested in the case where  $p = 8m + 5$ for some $m\in\NN$, as we note that $x$ can be computed deterministically as follows:
+
+\begin{figure}[H]
+    \centering
+    \begin{tabularx}{0.82\textwidth}{ p{0.1\textwidth} p{0.72\textwidth} }
+   \rowcolor{Gray}
+    \multicolumn{2}{c}{\textbf{Pocklington's algorithm for $p=8m+5$}}
+    \\
+    \textbf{Input:} & Prime $p \equiv 5 \mod 8$ and integer $a$ that is a quadratic residue modulo $p$ \\ 
+    \rowcolor{Gray}
+    \textbf{Output:} & Solution of the equation $x^2 \equiv a \pmod{p}$
+    \\ 
+    \textbf{Step 1:} &
+            Write $p = 8m + 5$ with $m\in\NN$.
+  \\
+    \textbf{Step 2:} &
+       If $a^{2m+1} \equiv 1 \pmod{p}$:
+    \\ & $\qquad$ Return $x = \pm a^{m+1}$.
+    \\ & If $a^{2m+1} \equiv -1 \pmod{p}$:
+    \\ & $\qquad$ Write $y = \pm(4a)^{m+1}$ and return $x=\pm\frac{y}{2}$ if $y$ is even, and
+    $x=\pm\frac{p+y}{2}$ if $y$ is odd.\\
+   \hline
+       \end{tabularx}
+    \caption{Procedure to solve the congruence $x^2\equiv a \mod p$ for prime $p \equiv 5 \mod 8$.}
+    \label{fig:pocklington}
+\end{figure}
+
+Let us briefly elaborate on the correctness of the above procedure. Given $p = 8m + 5$ with $m\in\NN$, following Fermat's little theorem, we have $x^{8m+4} \equiv 1 \mod p$. Since $x^2\equiv a \mod p$, we can rewrite it as $a^{4m+2} \equiv 1 \mod p$. Now, let us look at two separate cases for $a$:
+\begin{enumerate}
+    \item $a^{2m+1} \equiv 1 \mod p$ \\
+    Then $a^{2m+2} \equiv a \mod p$, that is $(a^{m+1})^2 \equiv a \mod p$, hence $x = \pm a^{m+1}$.
+    \item $a^{2m+1} \equiv -1 \mod p$ \\
+    Note that 2 is a quadratic non-residue, so $4^{2m+1}\equiv -1 \mod p$, hence $4^{2m+1}a^{2m+1}\equiv 1 \mod p$. That is $(4a)^{2m+1}\equiv 1 \mod p$ and following the reasoning from the previous case $y = \pm(4a)^{m+1}$ is a solution of $y^2=4a$, hence $x=\pm\frac{y}{2}$, or if $y$ is odd, $x=\pm\frac{p+y}{2}$.
+\end{enumerate}

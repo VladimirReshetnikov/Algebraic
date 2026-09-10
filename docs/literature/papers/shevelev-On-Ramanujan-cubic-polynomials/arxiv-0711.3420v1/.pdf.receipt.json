@@ -1,0 +1,31 @@
+{
+  "record_id": "shevelev",
+  "title": "On Ramanujan cubic polynomials",
+  "asset_id": "pdf",
+  "version": "arxiv-0711.3420v1",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://arxiv.org/pdf/0711.3420v1",
+    "resolved_url": "https://arxiv.org/pdf/0711.3420v1",
+    "retrieved_at": "2026-09-05T20:26:07+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 146145,
+    "sha256": "bf054ecda5baeecdcf4d4e6c2299df5f146a9293ec118ac1530d66a07c662992"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "repository_pdf_and_source_links",
+  "note": "Pinned arXiv version; PDF and source requests use the identical version identifier.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/shevelev-On-Ramanujan-cubic-polynomials/arxiv-0711.3420v1/paper.pdf",
+      "role": "pdf",
+      "bytes": 146145,
+      "sha256": "bf054ecda5baeecdcf4d4e6c2299df5f146a9293ec118ac1530d66a07c662992"
+    }
+  ],
+  "prior_candidate_errors": []
+}

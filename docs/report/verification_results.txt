@@ -1,0 +1,77 @@
+Python: 3.14.4
+SymPy: 1.14.0
+All arithmetic below is exact.
+
+PASS  direct example (sqrt(2)+sqrt(3))^2
+PASS  indirect example [2^(1/4)*(1+sqrt(2))]^2
+PASS  sqrt(2+sqrt(2)): direct norm not a rational square
+PASS  sqrt(2+sqrt(2)): indirect norm negative
+PASS  sign example: (1-sqrt(2))^2 = 3-2*sqrt(2)
+PASS  sign example: 1-sqrt(2) is negative, so sqrt(3-2*sqrt(2)) = sqrt(2)-1
+PASS  multiquadratic identity: (5+4*sqrt(2)+3*sqrt(5)+sqrt(10))^2
+PASS  cancellation: sqrt(3+3*sqrt(3)) = sqrt(3)*sqrt(1+sqrt(3)) (squares)
+PASS  cancellation: sqrt(10+6*sqrt(3)) = (1+sqrt(3))*sqrt(1+sqrt(3)) (squares)
+PASS  partial denesting: cross term squared, 5*(11-2*sqrt(29)) = 55-10*sqrt(29)
+PASS  partial denesting: remaining terms 5+11-2*sqrt(29) = 16-2*sqrt(29)
+PASS  partial denesting: 11-2*sqrt(29) > 0
+PASS  Ramanujan cubic: (1-t+t^2)^3=9(t-1)
+PASS  Ramanujan cubic: positive quadratic decomposition
+PASS  sqrt(cbrt(28)-3): square identity
+PASS  sqrt(cbrt(28)-3): candidate sign by rational bounds
+PASS  sqrt(cbrt(5)-cbrt(4)): square identity
+PASS  sqrt(cbrt(5)-cbrt(4)): candidate positive by rational bounds
+PASS  Honsbeek quartic identity
+PASS  Honsbeek certificate as a polynomial identity in the ratio g
+PASS  Honsbeek (-4,5) ratio has rational quartic root 1
+PASS  Honsbeek swapped (5,-4) ratio has rational quartic root -2
+PASS  Honsbeek (28,-27) ratio has rational quartic root -3
+PASS  Ramanujan fourth-root identity: cross multiplication
+PASS  Ramanujan fourth-root identity: rationalized form
+PASS  Ramanujan fourth-root identity: denominator positive
+PASS  Ramanujan sixth-root identity
+PASS  Ramanujan sixth-root identity: positive candidate
+PASS  Ramanujan sixth-root identity (integral form): (u-2)^6=144(7u-19), u=cbrt(20)
+PASS  real fifth root of 41-29*sqrt(2)
+PASS  real fifth-root candidate is negative
+PASS  Cardan-Dickson D_5(2,-1) = 82 = 2*41
+PASS  phi^3 = 2+sqrt(5)
+PASS  (phi-1)^3 = sqrt(5)-2
+PASS  trace-norm certificate polynomial
+PASS  restricted cubic denesting 7+5*sqrt(2)
+PASS  restricted cubic denesting 85+62*sqrt(7)
+PASS  restricted cubic denesting 90+34*sqrt(7)
+PASS  restricted cubic denesting -7-5*sqrt(2)
+PASS  cube norm alone is insufficient (1+sqrt(2))
+PASS  cube norm alone is insufficient (3+sqrt(10))
+PASS  rational root helper: (-8/27)^(1/3) = -2/3
+PASS  rational root helper: sqrt(2) not rational
+PASS  rational root helper: 0
+PASS  constructed quadratic-field examples recovered exactly: 210 cases
+PASS  minimal polynomial of sqrt(2)+sqrt(3)
+PASS  that quartic is irreducible over Q
+PASS  different conjugate has same minimal polynomial
+
+Observed SymPy outputs (reproducibility checks, not completeness claims):
+PASS  sqrtdenest agrees with the certified value: direct square roots
+ sqrtdenest: sqrt(2*sqrt(6) + 5) -> sqrt(2) + sqrt(3)
+PASS  sqrtdenest agrees with the certified value: principal-root sign
+ sqrtdenest: sqrt(3 - 2*sqrt(2)) -> -1 + sqrt(2)
+PASS  sqrtdenest agrees with the certified value: fourth roots
+ sqrtdenest: sqrt(4 + 3*sqrt(2)) -> 2**(3/4)*(sqrt(2) + 2)/2
+PASS  sqrtdenest agrees with the certified value: depth three to two
+ sqrtdenest: sqrt(-2*sqrt(29) + 2*sqrt(55 - 10*sqrt(29)) + 16) -> sqrt(11 - 2*sqrt(29)) + sqrt(5)
+PASS  sqrtdenest agrees with the certified value: multiquadratic input
+ sqrtdenest: sqrt(70*sqrt(2) + 112 + sqrt(5)*(46 + 34*sqrt(2))) -> sqrt(10) + 5 + 4*sqrt(2) + 3*sqrt(5)
+PASS  sqrtdenest agrees with the certified value: cancellation across terms
+ sqrtdenest: -sqrt(10 + 6*sqrt(3)) + sqrt(1 + sqrt(3)) + sqrt(3 + 3*sqrt(3)) -> 0
+PASS  sqrtdenest leaves sqrt(2+sqrt(2)) unchanged (observation, not a proof)
+PASS  nthroot agrees with the certified value: cubic in quadratic 1
+ nthroot: (7 + 5*sqrt(2), 3) -> 1 + sqrt(2)
+PASS  nthroot agrees with the certified value: cubic in quadratic 2
+ nthroot: (85 + 62*sqrt(7), 3) -> 1 + 2*sqrt(7)
+PASS  nthroot agrees with the certified value: cubic in quadratic 3
+ nthroot: (34*sqrt(7) + 90, 3) -> sqrt(7) + 3
+PASS  nthroot agrees with the certified value: negative real fifth root
+ nthroot: (41 - 29*sqrt(2), 5) -> 1 - sqrt(2)
+
+59 exact checks passed.

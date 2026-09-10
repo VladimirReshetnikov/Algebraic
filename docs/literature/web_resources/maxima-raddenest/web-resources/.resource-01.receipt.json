@@ -1,0 +1,31 @@
+{
+  "record_id": "maxima",
+  "title": "raddenest",
+  "asset_id": "resource-01",
+  "version": "web-resources",
+  "kind": "web",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://github.com/gschintgen/raddenest",
+    "resolved_url": "https://github.com/gschintgen/raddenest",
+    "retrieved_at": "2026-09-05T20:28:04+00:00",
+    "http_status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "content_encoding": "",
+    "bytes": 243041,
+    "sha256": "63f1175ad735426505dafdf88aaef68a5a296d3a69d4e96d50bebbc6c94f59fd"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "cited_web_resource",
+  "note": "URL cited in an input report. Not all web pages have been independently reopened. HTML is saved as HTML; software code is not labelled as article TeX.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "web_resources/maxima-raddenest/web-resources/resource-01.html",
+      "role": "web",
+      "bytes": 243041,
+      "sha256": "63f1175ad735426505dafdf88aaef68a5a296d3a69d4e96d50bebbc6c94f59fd"
+    }
+  ],
+  "prior_candidate_errors": []
+}

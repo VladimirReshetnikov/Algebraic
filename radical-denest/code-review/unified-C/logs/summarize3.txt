@@ -1,0 +1,78 @@
+battery v3: rows 116  depth reduced 71  wrong 0  messages 0  total 59.7 s  slowest L09 26.22 s
+battery v2: rows 116  depth reduced 71  wrong 0  messages 0  total 108.80000000000001 s  slowest L09 17.5 s
+N v3: rows 33  depth reduced 26  wrong 0  messages 0  total 21.400000000000002 s  slowest N19 4.14 s
+N v2: rows 33  depth reduced 23  wrong 1  messages 0  total 82.60000000000001 s  slowest N33 31.8 s
+rows slower than 5 s (v3): {{A30, 6.17}, {L09, 26.22}}
+rows slower than 5 s (v2): {{A27, 16.65}, {A30, 11.97}, {K04, 9.96}, {L09, 17.5}}
+depth changes v2 -> v3: {}
+result changes v2 -> v3: {{E09, RadicalDenest2`Private`mark[1], RadicalDenest3`Private`mark[1]}}
+N side by side:
+  N01  v2 {2, 1} 5.53s   v3 {2, 1} 0.26s   Sqrt[6] + Sqrt[35] + Sqrt[77]
+  N02  v2 {2, 1} 1.22s   v3 {2, 1} 0.17s   Sqrt[6] + Sqrt[10] + Sqrt[21]
+  N03  v2 {2, 1} 0.85s   v3 {2, 1} 0.12s   Sqrt[10] + Sqrt[15] + Sqrt[35]
+  N04  v2 {2, 1} 0.74s   v3 {2, 1} 0.16s   Sqrt[30] + Sqrt[42] + Sqrt[70]
+  N05  v2 {2, 1} 0.31s   v3 {2, 1} 0.08s   (Sqrt[2] + Sqrt[3] + Sqrt[5])/2
+  N06  v2 {2, 2} 0.99s   v3 {2, 1} 0.23s   Sqrt[6] + Sqrt[35] + Sqrt[77]
+  N07  v2 {2, 2} 0.34s   v3 {2, 1} 0.14s   Sqrt[30] + Sqrt[42] + Sqrt[70]
+  N08  v2 {2, 1} 0.06s   v3 {2, 1} 0.01s   1 + Sqrt[2]
+  N09  v2 {2, 1} 0.29s   v3 {2, 1} 0.08s   (-1)^(1/5)*(-1 + Sqrt[2])
+  N10  v2 {2, 1} 0.12s   v3 {2, 1} 0.01s   1 + Sqrt[2]
+  N11  v2 {2, 1} 0.49s   v3 {2, 1} 0.12s   (-1)^(1/7)*(1 + Sqrt[2])
+  N12  v2 {2, 1} 0.26s   v3 {2, 1} 0.07s   (-1)^(1/9)*(-1 + Sqrt[2])
+  N13  v2 {2, 1} 0.06s   v3 {2, 1} 0.01s   2 + Sqrt[3]
+  N14  v2 {2, 1} 0.09s   v3 {2, 1} 0.06s   1 + Sqrt[5]
+  N15  v2 {2, 0} 0.s WRONG  v3 {2, 1} 0.02s   1 + Sqrt[5]
+  N16  v2 {2, 1} 0.15s   v3 {2, 1} 0.07s   (-1 - 2^(2/3)*7^(1/3) + 2^(1/3)*7^(2/3))/3
+  N17  v2 {2, 1} 0.33s   v3 {2, 1} 0.49s   (2^(1/3) + 2^(2/3)*5^(1/3) - 5^(2/3))/3
+  N18  v2 {2, 2} 7.24s   v3 {2, 2} 2.23s   Sqrt[1 + Sqrt[2]]
+  N19  v2 {2, 2} 10.13s   v3 {2, 2} 4.14s   (1 + Sqrt[2])^(1/3)
+  N20  v2 {2, 2} 2.62s   v3 {2, 2} 2.71s   (1 + Sqrt[2])^(1/3)
+  N21  v2 {2, 1} 0.9400000000000001s   v3 {2, 1} 0.37s   -(2/3)^(1/3) + (5/3)^(1/3)
+  N22  v2 {2, 1} 0.2s   v3 {2, 1} 0.06s   2^(1/3) + 3^(1/3)
+  N23  v2 {2, 0} 3.72s   v3 {2, 0} 1.77s   0
+  N24  v2 {2, 1} 0.06s   v3 {2, 1} 0.03s   (1 + 2*Sqrt[2])^(-1)
+  N25  v2 {3, 2} 3.36s   v3 {3, 2} 2.46s   I*(Sqrt[5] + Sqrt[11 - 2*Sqrt[29]])
+  N26  v2 {0, 0} 0.s   v3 {0, 0} 0.s   Root[-Pi + #1 + #1^5 & , 1]
+  N27  v2 {2, 2} 0.53s   v3 {2, 2} 0.68s   Sqrt[2] + Sqrt[3] + (-1 + ((25 - 3*Sqrt[69])/2)^(1/3) + ((25 + 3*Sqrt[
+  N28  v2 {1, 1} 0.s   v3 {1, 0} 0.s   Failure["InvalidOption", <|"MessageTemplate" -> "Options must be rules
+  N29  v2 {2, 2} 1.46s   v3 {2, 2} 0.86s   Sqrt[1 + Sqrt[2]]
+  N30  v2 {2, 2} 6.94s   v3 {2, 2} 2.44s   Sqrt[2 + Sqrt[3] + Sqrt[5]]
+  N31  v2 {2, 1} 0.44s   v3 {2, 1} 0.11s   Sqrt[3/2] + 3/Sqrt[2] + Sqrt[3]
+  N32  v2 {2, 1} 1.3s   v3 {2, 1} 1.12s   Sqrt[2] + Sqrt[3] + Sqrt[5] + Sqrt[7]
+  N33  v2 {2, 1} 31.8s   v3 {2, 1} 0.27s   Sqrt[6] + Sqrt[10] + Sqrt[15] + Sqrt[21] + Sqrt[35]
+fuzz v3: families 14 inputs 430 total 85.4 s  wrong 0 timeouts 0 denested 396
+fuzz v2 (F1-F10): inputs 340 total 81.4 s denested 306
+  F1 Sqrt[(p+q Sqrt[c])^2]  v3 <|denested -> 40|> total 0.68 max 0.04   v2 <|denested -> 40|> total 0.99 max 0.07
+  F2 ((p+q Sqrt[c])^3)^(1/3)  v3 <|denested -> 30|> total 1.56 max 0.12   v2 <|denested -> 30|> total 1.81 max 0.11
+  F3 Sqrt[a+b Sqrt[c]] generic  v3 <|unchanged -> 30, equal-rewritten -> 4, denested -> 6|> total 50.57 max 3.35   v2 <|unchanged -> 30, equal-rewritten -> 4, denested -> 6|> total 56.92 max 3.48
+  F4 Sqrt[(p+q I Sqrt[c])^2]  v3 <|denested -> 40|> total 2.32 max 0.1   v2 <|denested -> 40|> total 1.52 max 0.1
+  F5 ((p+q I Sqrt[c])^2)^(3/2)  v3 <|denested -> 40|> total 3.45 max 0.17   v2 <|denested -> 40|> total 1.55 max 0.05
+  F6 Sqrt[u^2] Sqrt[v^2] complex product  v3 <|denested -> 40|> total 6.08 max 0.26   v2 <|denested -> 40|> total 3.76 max 0.12
+  F7 ((p+q Sqrt[c])^4)^(1/4)  v3 <|denested -> 25|> total 1.41 max 0.15   v2 <|denested -> 25|> total 1.4 max 0.08
+  F8 Sqrt[(p+q Sqrt[c]+r Sqrt[d])^2]  v3 <|denested -> 25|> total 1.44 max 0.17   v2 <|denested -> 25|> total 4.79 max 0.49
+  F9 ((p+q Sqrt[c])^2)^(3/2) real  v3 <|denested -> 30|> total 0.73 max 0.04   v2 <|denested -> 30|> total 1.28 max 0.07
+  F10 -Sqrt[..] Sqrt[..] real products w  v3 <|denested -> 30|> total 2.2600000000000002 max 0.11   v2 <|denested -> 30|> total 7.42 max 0.49
+  F11 Sqrt[(Sqrt[a]+Sqrt[b]+Sqrt[c])^2]   v3 <|denested -> 30|> total 3.94 max 0.3
+  F12 ((p+q Sqrt[c])^5)^(1/5)  v3 <|denested -> 25|> total 4.18 max 0.53
+  F13 ((p+q Sqrt[c])^7)^(1/7)  v3 <|denested -> 20|> total 4.97 max 0.52
+  F14 ((p+q Sqrt[c])^6)^(1/6)  v3 <|denested -> 15|> total 1.8 max 0.36
+differential: 18 inputs; v2 equal 18 v3 equal 18; depth v2<v3 0 v3<v2 0; time v2 12. v3 6.800000000000001
+  InputForm[Sqrt[3 + 2*Sqrt[2]]]  v2 d1 0.06s Improved  v3 d1 0.01s Improved
+  InputForm[Sqrt[5 + 2*Sqrt[6]]]  v2 d1 0.02s Improved  v3 d1 0.02s Improved
+  InputForm[Sqrt[4 + 3*Sqrt[2]]]  v2 d1 0.02s Improved  v3 d1 0.01s Improved
+  InputForm[Sqrt[3/2 + Sqrt[3]]]  v2 d1 0.02s Improved  v3 d1 0.03s Improved
+  InputForm[(7 + 5*Sqrt[2])^(1/3)]  v2 d1 0.01s Improved  v3 d1 0.01s Improved
+  InputForm[(41 - 29*Sqrt[2])^(1/5)]  v2 d1 0.15s Improved  v3 d1 0.08s Improved
+  InputForm[(-99 - 70*Sqrt[2])^(1/6)]  v2 d1 0.17s Improved  v3 d1 0.12s Improved
+  InputForm[(-239 - 169*Sqrt[2])^(1/7)]  v2 d1 0.24s Improved  v3 d1 0.11s Improved
+  InputForm[(1393 - 985*Sqrt[2])^(1/9)]  v2 d1 0.15s Improved  v3 d1 0.07s Improved
+  InputForm[(-19 + 7*2^(2/3)*5^(1/3))^(1/6)]  v2 d1 0.36s Improved  v3 d1 0.41000000000000003s Improved
+  InputForm[(133 + 57*2^(2/3)*3^(1/3) + 48*2^(1/3)*3^(2/3))^(1/6)]  v2 d1 0.08s Improved  v3 d1 0.07s Improved
+  InputForm[Sqrt[-2^(2/3) + 5^(1/3)]]  v2 d1 0.19s Improved  v3 d1 0.42s Improved
+  InputForm[Sqrt[-3 + 2^(2/3)*7^(1/3)]]  v2 d1 0.1s Improved  v3 d1 0.07s Improved
+  InputForm[Sqrt[118 + 14*Sqrt[55] + 2*Sqrt[210] + 2*Sqrt[462]]]  v2 d1 2.24s Improved  v3 d1 0.24s Improved
+  InputForm[Sqrt[1 + Sqrt[3]] + Sqrt[3 + 3*Sqrt[3]] - Sqrt[10 + 6*Sqrt[3]]]  v2 d0 1.8900000000000001s Improved  v3 d0 1.48s Improved
+  InputForm[(3 + 2*Sqrt[2])^(1/6)]  v2 d2 5.95s Improved  v3 d2 3.36s Improved
+  InputForm[Sqrt[2 + Sqrt[2]]]  v2 d2 0.31s Unchanged  v3 d2 0.32s Unchanged
+  InputForm[(Sqrt[2] + Sqrt[3 + 2*Sqrt[2]])^(-1)]  v2 d1 0.02s Improved  v3 d1 0.02s Improved
+DONE

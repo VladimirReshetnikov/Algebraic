@@ -1,0 +1,31 @@
+{
+  "record_id": "gkioulekas",
+  "title": "On the denesting of nested square roots",
+  "asset_id": "pdf-author-submitted",
+  "version": "author-submitted",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://faculty.utrgv.edu/eleftherios.gkioulekas/papers/submitted/denesting-square-roots.pdf",
+    "resolved_url": "https://faculty.utrgv.edu/eleftherios.gkioulekas/papers/submitted/denesting-square-roots.pdf",
+    "retrieved_at": "2026-09-05T20:26:13+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 233248,
+    "sha256": "c8511df4676077c6698a42e42e3a89009125689076af708d63eee47a63f09548"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "browser_fulltext",
+  "note": "Author-hosted submitted version, 11 PDF pages.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/gkioulekas-On-the-denesting-of-nested-square-roots/author-submitted/pdf-author-submitted.pdf",
+      "role": "pdf",
+      "bytes": 233248,
+      "sha256": "c8511df4676077c6698a42e42e3a89009125689076af708d63eee47a63f09548"
+    }
+  ],
+  "prior_candidate_errors": []
+}

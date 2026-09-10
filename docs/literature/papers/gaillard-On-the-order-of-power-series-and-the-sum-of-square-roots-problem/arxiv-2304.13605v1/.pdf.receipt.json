@@ -1,0 +1,31 @@
+{
+  "record_id": "gaillard",
+  "title": "On the order of power series and the sum of square roots problem",
+  "asset_id": "pdf",
+  "version": "arxiv-2304.13605v1",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://arxiv.org/pdf/2304.13605v1",
+    "resolved_url": "https://arxiv.org/pdf/2304.13605v1",
+    "retrieved_at": "2026-09-05T20:26:38+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 305696,
+    "sha256": "d05cf44838c9436c17517a329b13bf0f646253db9d6356721b691b1fd753ecbd"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "repository_pdf_and_source_links",
+  "note": "Pinned arXiv version; PDF and source requests use the identical version identifier.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/gaillard-On-the-order-of-power-series-and-the-sum-of-square-roots-problem/arxiv-2304.13605v1/paper.pdf",
+      "role": "pdf",
+      "bytes": 305696,
+      "sha256": "d05cf44838c9436c17517a329b13bf0f646253db9d6356721b691b1fd753ecbd"
+    }
+  ],
+  "prior_candidate_errors": []
+}

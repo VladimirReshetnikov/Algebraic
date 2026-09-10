@@ -1,0 +1,25 @@
+{
+  "id": "zippel1977",
+  "title": "Radical simplification made easy",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "zippel77",
+      "entry_latex": "R. Zippel, \\emph{Simplification of Radicals with Applications to Solving Polynomial Equations}, master's thesis, Massachusetts Institute of Technology, 1977; related contribution, ``Radical simplification made easy,'' \\emph{MACSYMA Users' Conference}, 1977. \\status{B}\nEarly work preceding the 1985 journal article. These related historical records are grouped, without assuming that their texts are identical."
+    },
+    {
+      "report": "report-2",
+      "key": "zippel1977",
+      "entry_latex": "Richard E. B. Zippel.\n\\emph{Radical simplification made easy}.\nMACSYMA Users' Conference contribution, 1977; NASA Technical Reports Server record 19770021838.\n\\sourceurl{https://ntrs.nasa.gov/citations/19770021838}.\n\\textbf{M.} Early account of manipulating nested and unnested radicals. Retained separately from the master's thesis while avoiding repeated treatment of their common historical role."
+    },
+    {
+      "report": "report-3",
+      "key": "zippel77",
+      "entry_latex": "Richard Zippel. \\emph{Simplification of Radicals with Applications to Solving Polynomial Equations}. S.M. thesis, Massachusetts Institute of Technology, 1977. \\status{A}\n\\entrynote{Early thesis treatment of radical simplification. The related 1977 MACSYMA presentation ``Radical simplification made easy'' is a companion discovery lead, not a second independent modern completeness result.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

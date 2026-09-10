@@ -1,0 +1,15 @@
+\begin{longtable}{@{}p{0.055\textwidth}>{\ttfamily\footnotesize\raggedright\arraybackslash}p{0.33\textwidth}>{\ttfamily\footnotesize\raggedright\arraybackslash}p{0.33\textwidth}p{0.05\textwidth}p{0.05\textwidth}p{0.05\textwidth}@{}}
+\caption{Original program on non-denestable and trivial inputs.}\label{tab:origB}\\
+\toprule ID & Input & Output & Equal & Depth & Time (s)\\\midrule\endfirsthead
+\toprule ID & Input & Output & Equal & Depth & Time (s)\\\midrule\endhead
+\bottomrule\endfoot
+B01 & Strad[\allowbreak{}Sqrt[\allowbreak{}2 +\allowbreak{} Sqrt[\allowbreak{}2]\allowbreak{}]\allowbreak{}]\allowbreak{} & 2\textasciicircum{}\allowbreak{}(\allowbreak{}1/\allowbreak{}4)\allowbreak{}*\allowbreak{}Sqrt[\allowbreak{}1 +\allowbreak{} Sqrt[\allowbreak{}2]\allowbreak{}]\allowbreak{} & yes & 2$\to$2 & 0.031\\
+B02 & Strad[\allowbreak{}Sqrt[\allowbreak{}1 +\allowbreak{} Sqrt[\allowbreak{}2]\allowbreak{}]\allowbreak{}]\allowbreak{} & Sqrt[\allowbreak{}1 +\allowbreak{} Sqrt[\allowbreak{}2]\allowbreak{}]\allowbreak{} & yes & 2$\to$2 & 0.022\\
+B03 & Strad[\allowbreak{}(\allowbreak{}1 +\allowbreak{} Sqrt[\allowbreak{}2]\allowbreak{})\allowbreak{}\textasciicircum{}\allowbreak{}(\allowbreak{}1/\allowbreak{}3)\allowbreak{}]\allowbreak{} & (\allowbreak{}1 +\allowbreak{} Sqrt[\allowbreak{}2]\allowbreak{})\allowbreak{}\textasciicircum{}\allowbreak{}(\allowbreak{}1/\allowbreak{}3)\allowbreak{} & yes & 2$\to$2 & 0.085\\
+B04 & Strad[\allowbreak{}Sqrt[\allowbreak{}2]\allowbreak{}]\allowbreak{} & Sqrt[\allowbreak{}2]\allowbreak{} & yes & 1$\to$1 & 0.002\\
+B05 & Strad[\allowbreak{}2]\allowbreak{} & 2 & yes & 0$\to$0 & 0.000\\
+B06 & Strad[\allowbreak{}Sqrt[\allowbreak{}1 +\allowbreak{} I]\allowbreak{}]\allowbreak{} & Sqrt[\allowbreak{}1 +\allowbreak{} I]\allowbreak{} & yes & 1$\to$1 & 0.002\\
+B07 & Strad[\allowbreak{}Root[\allowbreak{}\#1\textasciicircum{}\allowbreak{}4 -\allowbreak{} 10*\allowbreak{}\#1\textasciicircum{}\allowbreak{}2 +\allowbreak{} 1 \& ,\allowbreak{} 4]\allowbreak{}]\allowbreak{} & Sqrt[\allowbreak{}5 +\allowbreak{} 2*\allowbreak{}Sqrt[\allowbreak{}6]\allowbreak{}]\allowbreak{} & yes & 0$\to$2 & 0.006\\
+B08 & Strad[\allowbreak{}Sqrt[\allowbreak{}Sqrt[\allowbreak{}2]\allowbreak{} +\allowbreak{} Sqrt[\allowbreak{}3]\allowbreak{}]\allowbreak{}]\allowbreak{} & Sqrt[\allowbreak{}Sqrt[\allowbreak{}2]\allowbreak{} +\allowbreak{} Sqrt[\allowbreak{}3]\allowbreak{}]\allowbreak{} & yes & 2$\to$2 & 0.074\\
+B09 & Strad[\allowbreak{}(\allowbreak{}2 +\allowbreak{} 2*\allowbreak{}I*\allowbreak{}Sqrt[\allowbreak{}3]\allowbreak{})\allowbreak{}\textasciicircum{}\allowbreak{}(\allowbreak{}1/\allowbreak{}3)\allowbreak{}]\allowbreak{} & (\allowbreak{}2 +\allowbreak{} (\allowbreak{}2*\allowbreak{}I)\allowbreak{}*\allowbreak{}Sqrt[\allowbreak{}3]\allowbreak{})\allowbreak{}\textasciicircum{}\allowbreak{}(\allowbreak{}1/\allowbreak{}3)\allowbreak{} & yes & 2$\to$2 & 0.261\\
+\end{longtable}

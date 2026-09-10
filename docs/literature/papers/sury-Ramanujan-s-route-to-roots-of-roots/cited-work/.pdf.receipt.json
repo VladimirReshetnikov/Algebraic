@@ -1,0 +1,31 @@
+{
+  "record_id": "sury",
+  "title": "Ramanujan's route to roots of roots",
+  "asset_id": "pdf",
+  "version": "cited-work",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://www.isibang.ac.in/~sury/ramanujanday.pdf",
+    "resolved_url": "https://www.isibang.ac.in/~sury/ramanujanday.pdf",
+    "retrieved_at": "2026-09-05T20:26:12+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 154474,
+    "sha256": "b9f847dc87a4b4869673fec7b65c82a64f8b0b0bb90410646df0b57c3cda6aec"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "candidate_unverified",
+  "note": "Author URL supplied in reports; bytes not verified.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/sury-Ramanujan-s-route-to-roots-of-roots/cited-work/paper.pdf",
+      "role": "pdf",
+      "bytes": 154474,
+      "sha256": "b9f847dc87a4b4869673fec7b65c82a64f8b0b0bb90410646df0b57c3cda6aec"
+    }
+  ],
+  "prior_candidate_errors": []
+}

@@ -1,0 +1,15 @@
+PARTIAL COLLECTION
+
+New external HTTP downloads during preparation: 0
+Recovered matching PDFs from the earlier user upload: 5
+Recovered OCR TeX transcriptions: 5 (NOT original author sources)
+Original author/arXiv TeX source files downloaded: 0
+Original bibliography records preserved: 278
+Deduplicated reference groups: 107 (some compound)
+Literature groups with direct PDF/arXiv retrieval candidates: 34
+arXiv PDF/source retrieval jobs: 10
+
+The external file-download network failed during preparation.
+Use README.md and the included downloader to continue the explicit retrieval plan.
+See index.html for included files, candidates, and unresolved references.
+This archive does not claim to contain all freely available cited works.

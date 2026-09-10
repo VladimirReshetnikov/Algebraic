@@ -1,0 +1,24 @@
+{
+  "id": "girstmair",
+  "title": "Reducing radicals in the spirit of Euclid",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "girstmair",
+      "entry_latex": "K. Girstmair, ``Reducing radicals in the spirit of Euclid,'' \\emph{Journal of Symbolic Computation} \\textbf{104} (2021), 356--365. \\doi{10.1016/j.jsc.2020.07.019}; arXiv:2004.06039.\n\\access{https://arxiv.org/abs/2004.06039}{Preprint record}. \\status{T}\nOdd-index radical constructions viewed as algebraic-degree reduction. The 2020 preprint and 2021 journal paper are grouped; degree reduction is not automatically radical-depth reduction."
+    },
+    {
+      "report": "report-2",
+      "key": "girstmair",
+      "entry_latex": "Kurt Girstmair.\n\\emph{Reducing radicals in the spirit of Euclid}.\nJournal of Symbolic Computation \\textbf{104}, 356--365, 2021.\nPreprint: \\sourceurl{https://arxiv.org/abs/2004.06039}.\n\\textbf{M.} Reduction involving lower-degree irrationals and odd prime indices. The 2020 preprint and 2021 journal article are one publication family; degree reduction need not be radical-depth reduction."
+    },
+    {
+      "report": "report-3",
+      "key": "girstmair",
+      "entry_latex": "Kurt Girstmair. ``Reducing radicals in the spirit of Euclid.'' \\emph{Journal of Symbolic Computation} \\textbf{104} (2021), 356--365. Preprint arXiv:2004.06039 (2020), \\url{https://arxiv.org/abs/2004.06039}; journal record: \\url{https://www.sciencedirect.com/science/article/pii/S0747717120300742}. \\status{A}\n\\entrynote{Links classical reduction ideas with algebraic formulations of radical reduction. The preprint and journal dates are 2020 and 2021 respectively, not competing dates for two distinct works.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

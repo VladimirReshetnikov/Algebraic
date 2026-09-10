@@ -1,0 +1,47 @@
+
+Syntax::com: Warning: comma encountered with no adjacent expression. The expression will be treated as Null.  (line 320 of "C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/original/Strad.wl").
+
+PossibleZeroQ::ztest1: Unable to decide whether numeric quantity -6 + 7 Sqrt[10] - Sqrt[2 (263 - 42 Sqrt[10])] is equal to zero. Assuming it is.
+
+PossibleZeroQ::ztest1: Unable to decide whether numeric quantity 3 + Sqrt[5] - Sqrt[2 (7 + 3 Sqrt[5])] is equal to zero. Assuming it is.
+
+PossibleZeroQ::ztest1: Unable to decide whether numeric quantity -1 + 3 Sqrt[11] - Sqrt[2 (50 - 3 Sqrt[11])] is equal to zero. Assuming it is.
+
+General::stop: Further output of PossibleZeroQ::ztest1 will be suppressed during this calculation.
+FAMILY F1 Sqrt[(p+q Sqrt[c])^2]  n=40  total 1.s  max 0.1s
+   <|denested -> 40, msg:PossibleZeroQ::ztest1 -> 14, msg:PossibleZeroQ::ztest1,General::stop -> 1|>
+FAMILY F2 ((p+q Sqrt[c])^3)^(1/3)  n=30  total 2.52s  max 0.37s
+   <|denested -> 13, msg:PossibleZeroQ::ztest1 -> 29, equal-rewritten -> 17|>
+FAMILY F3 Sqrt[a+b Sqrt[c]] generic  n=40  total 3.4s  max 0.3s
+   <|unchanged -> 26, equal-rewritten -> 8, denested -> 6, msg:PossibleZeroQ::ztest1 -> 4|>
+FAMILY F4 Sqrt[(p+q I Sqrt[c])^2]  n=40  total 1.03s  max 0.04s
+   <|denested -> 40, msg:PossibleZeroQ::ztest1 -> 38|>
+FAMILY F5 ((p+q I Sqrt[c])^2)^(3/2)  n=40  total 3.19s  max 0.17s
+   <|WRONGVALUE -> 39, msg:PossibleZeroQ::ztest1 -> 37, denested -> 1|>
+   BAD: (-726 + (42*I)*Sqrt[15])^(3/2)  ->  6588 + (4956*I)*Sqrt[15]  WRONGVALUE {PossibleZeroQ::ztest1}
+   BAD: (13 + (20*I)*Sqrt[3])^(3/2)  ->  55 - (126*I)*Sqrt[3]  WRONGVALUE {PossibleZeroQ::ztest1}
+   BAD: (1 - (8*I)*Sqrt[15])^(3/2)  ->  116 + (33*I)*Sqrt[15]  WRONGVALUE {PossibleZeroQ::ztest1}
+   BAD: (-126 + (70*I)*Sqrt[7])^(3/2)  ->  28*(119 + (5*I)*Sqrt[7])  WRONGVALUE {PossibleZeroQ::ztest1}
+   BAD: (-24 + (24*I)*Sqrt[15])^(3/2)  ->  96*(9 - I*Sqrt[15])  WRONGVALUE {PossibleZeroQ::ztest1}
+   BAD: (-81 + (18*I)*Sqrt[10])^(3/2)  ->  27*(29 + (7*I)*Sqrt[10])  WRONGVALUE {PossibleZeroQ::ztest1}
+   BAD: (-23 + (4*I)*Sqrt[6])^(3/2)  ->  71 + (42*I)*Sqrt[6]  WRONGVALUE {PossibleZeroQ::ztest1}
+   BAD: (-539 - (12*I)*Sqrt[15])^(3/2)  ->  1619 - (3222*I)*Sqrt[15]  WRONGVALUE {PossibleZeroQ::ztest1}
+FAMILY F6 Sqrt[u^2] Sqrt[v^2] complex products  n=40  total 5.25s  max 0.18s
+   <|denested -> 23, msg:PossibleZeroQ::ztest1 -> 40, WRONGVALUE -> 17|>
+   BAD: Sqrt[4 - (6*I)*Sqrt[5]]*Sqrt[-531 - (36*I)*Sqrt[15]]  ->  -9 + 30*Sqrt[3] + (3*I)*(Sqrt[5] + 6*Sqrt[15])  WRONGVALUE {PossibleZeroQ::ztest1}
+   BAD: Sqrt[-95 - (8*I)*Sqrt[6]]*Sqrt[-374 - (10*I)*Sqrt[15]]  ->  -1 + (4*I)*Sqrt[6] + 60*Sqrt[10] + (5*I)*Sqrt[15]  WRONGVALUE {PossibleZeroQ::ztest1}
+   BAD: Sqrt[31 - (42*I)*Sqrt[2]]*Sqrt[-100 - (50*I)*Sqrt[5]]  ->  5*(7*I + 3*Sqrt[2])*(I + Sqrt[5])  WRONGVALUE {PossibleZeroQ::ztest1}
+   BAD: Sqrt[-4 - (2*I)*Sqrt[5]]*Sqrt[5 - (28*I)*Sqrt[11]]  ->  (I + Sqrt[5])*(7*I + 2*Sqrt[11])  WRONGVALUE {PossibleZeroQ::ztest1}
+   BAD: Sqrt[-172 - (48*I)*Sqrt[13]]*Sqrt[-67 - (4*I)*Sqrt[17]]  ->  2*(3*I + 2*Sqrt[13])*(I + 2*Sqrt[17])  WRONGVALUE {PossibleZeroQ::ztest1}
+   BAD: Sqrt[-318 + (70*I)*Sqrt[7]]*Sqrt[-8 + (6*I)*Sqrt[17]]  ->  (-5*I + 7*Sqrt[7])*(-3*I + Sqrt[17])  WRONGVALUE {PossibleZeroQ::ztest1}
+   BAD: Sqrt[-116 + (30*I)*Sqrt[5]]*Sqrt[-51 + (4*I)*Sqrt[13]]  ->  (-3*I + 5*Sqrt[5])*(-I + 2*Sqrt[13])  WRONGVALUE {PossibleZeroQ::ztest1}
+   BAD: Sqrt[-11 + (12*I)*Sqrt[5]]*Sqrt[-109 + (40*I)*Sqrt[5]]  ->  38 - (23*I)*Sqrt[5]  WRONGVALUE {PossibleZeroQ::ztest1}
+FAMILY F7 ((p+q Sqrt[c])^4)^(1/4)  n=25  total 2.16s  max 0.21s
+   <|denested -> 17, msg:PossibleZeroQ::ztest1 -> 24, equal-rewritten -> 8|>
+FAMILY F8 Sqrt[(p+q Sqrt[c]+r Sqrt[d])^2]  n=25  total 2.99s  max 0.16s
+   <|denested -> 25, msg:PossibleZeroQ::ztest1 -> 25|>
+FAMILY F9 ((p+q Sqrt[c])^2)^(3/2) real  n=30  total 2.49s  max 0.16s
+   <|denested -> 30, msg:PossibleZeroQ::ztest1 -> 30|>
+FAMILY F10 -Sqrt[..] Sqrt[..] real products with negative radicands  n=30  total 2.98s  max 0.21s
+   <|denested -> 30, msg:PossibleZeroQ::ztest1 -> 30|>
+DONE

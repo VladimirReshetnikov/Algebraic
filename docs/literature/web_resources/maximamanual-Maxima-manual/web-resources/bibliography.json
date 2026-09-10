@@ -1,0 +1,19 @@
+{
+  "id": "maximamanual",
+  "title": "Maxima manual",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "maximamanual",
+      "entry_latex": "Maxima developers, \\emph{Maxima Manual}.\n\\access{https://maxima.sourceforge.io/docs/manual/maxima_singlepage.html}{Official manual}. \\status{B}\nReference directory for \\texttt{radcan}, radical expansion, and installed package interfaces. Legacy \\texttt{sqdnst}/\\texttt{sqrtdenest} release-history claims were not independently settled here."
+    },
+    {
+      "report": "report-2",
+      "key": "maximamanual",
+      "entry_latex": "Maxima project.\n\\emph{Maxima manual}, radical simplification and contributed packages.\n\\sourceurl{https://maxima.sourceforge.io/docs/manual/}.\n\\textbf{R.} Documentation entry point for \\texttt{radcan}, legacy \\texttt{sqdnst}/\\texttt{sqrtdenest}, and installed package details. Package availability should be checked against the local release."
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

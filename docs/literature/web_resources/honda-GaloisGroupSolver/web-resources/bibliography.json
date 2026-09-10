@@ -1,0 +1,24 @@
+{
+  "id": "honda",
+  "title": "GaloisGroupSolver",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "honda",
+      "entry_latex": "Y. Honda, \\emph{GaloisGroupSolver}, Maxima package.\n\\access{https://github.com/YasuakiHonda/GaloisGroupSolver}{Author's repository}. \\status{B}\nAdjacent solvable-polynomial/Galois-group implementation lead. Not tested here and not asserted to be a minimum-depth denester.\n\n\\bibgroup{VII. Encyclopedias, elementary pages, and question-and-answer resources}"
+    },
+    {
+      "report": "report-2",
+      "key": "honda",
+      "entry_latex": "Yasuaki Honda.\n\\emph{GaloisGroupSolver}, source repository.\n\\sourceurl{https://github.com/YasuakiHonda/GaloisGroupSolver}.\n\\textbf{R.} Adjacent software for solving algebraic equations by radicals; not evaluated here as a denesting engine.\n\n\\item[]\\textbf{G. Encyclopedic entries, discussions, and discovery resources}"
+    },
+    {
+      "report": "report-3",
+      "key": "honda",
+      "entry_latex": "Yasuaki Honda. \\texttt{GaloisGroupSolver}, Maxima package. \\url{https://github.com/YasuakiHonda/GaloisGroupSolver}. \\status{D}\n\\entrynote{The author's README describes computing radical solutions using Galois groups and field extensions. This is adjacent to denesting: solving a polynomial by radicals does not ensure a minimum-depth representation of a chosen root. The package was not executed here.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

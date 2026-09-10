@@ -1,0 +1,33 @@
+{
+  "record_id": "mordell",
+  "title": "On the linear independence of algebraic numbers",
+  "asset_id": "pdf-journal-1953",
+  "version": "journal-1953",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://projecteuclid.org/journals/pacific-journal-of-mathematics/volume-3/issue-3/On-the-linear-independence-of-algebraic-numbers/pjm/1103051334.pdf",
+    "resolved_url": "https://projecteuclid.org/journals/pacific-journal-of-mathematics/volume-3/issue-3/On-the-linear-independence-of-algebraic-numbers/pjm/1103051334.pdf",
+    "retrieved_at": "2026-09-05T20:30:14+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36",
+    "content_encoding": "",
+    "bytes": 409702,
+    "sha256": "84f39935b6619a6e1b5f1772a0fc371c113aa7b2d7983b3ef65f3a2ae627b47f",
+    "tls_verification": "SKIPPED by --insecure"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "search_indexed_fulltext",
+  "note": "Project Euclid journal archive; HTTP byte retrieval not tested successfully.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/mordell-On-the-linear-independence-of-algebraic-numbers/journal-1953/pdf-journal-1953.pdf",
+      "role": "pdf",
+      "bytes": 409702,
+      "sha256": "84f39935b6619a6e1b5f1772a0fc371c113aa7b2d7983b3ef65f3a2ae627b47f"
+    }
+  ],
+  "prior_candidate_errors": []
+}

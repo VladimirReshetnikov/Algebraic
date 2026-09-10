@@ -1,0 +1,374 @@
+Kernel: 15.0.1 for Microsoft Windows (64-bit) (July 2, 2026)
+Print attributes before load: {Protected}  after: {Protected}
+Context symbols: {CertifiedEqualQ, DenestCore, DenestRadicals, DenestReport, EqualityStatus, ExactAlgebraicQ, Factorc, RadicalCost, RadicalDepth, RadicalExpressionQ, RationalizeDenominator, Strad}
+=== A. Classical denesting identities via Strad (fixed) ===
+A01 | HoldForm[Strad[Sqrt[3 + 2*Sqrt[2]]]]
+   -> 1 + Sqrt[2]
+   time 0.438s  numeric=True  exact=True  depth 2->1
+A02 | HoldForm[Strad[Sqrt[5 + 2*Sqrt[6]]]]
+   -> Sqrt[2] + Sqrt[3]
+   time 0.167s  numeric=True  exact=True  depth 2->1
+A03 | HoldForm[Strad[Sqrt[2 + Sqrt[3]]]]
+   -> (1 + Sqrt[3])/Sqrt[2]
+   time 0.20500000000000002s  numeric=True  exact=True  depth 2->1
+A04 | HoldForm[Strad[Sqrt[11 + 6*Sqrt[2]]]]
+   -> 3 + Sqrt[2]
+   time 0.14400000000000002s  numeric=True  exact=True  depth 2->1
+A05 | HoldForm[Strad[Sqrt[3 + Sqrt[5]]]]
+   -> (1 + Sqrt[5])/Sqrt[2]
+   time 0.391s  numeric=True  exact=True  depth 2->1
+A06 | HoldForm[Strad[Sqrt[7 + 2*Sqrt[10]]]]
+   -> Sqrt[2] + Sqrt[5]
+   time 0.132s  numeric=True  exact=True  depth 2->1
+A07 | HoldForm[Strad[Sqrt[6 + 2*Sqrt[2] + 2*Sqrt[3] + 2*Sqrt[6]]]]
+   -> 1 + Sqrt[2] + Sqrt[3]
+   time 0.716s  numeric=True  exact=True  depth 2->1
+A08 | HoldForm[Strad[Sqrt[12 + 2*Sqrt[6] + 2*Sqrt[14] + 2*Sqrt[21]]]]
+   -> Sqrt[2] + Sqrt[3] + Sqrt[7]
+   time 0.29s  numeric=True  exact=True  depth 2->1
+A09 | HoldForm[Strad[(Sqrt[5] - 2)^(1/3)]]
+   -> (-1 + Sqrt[5])/2
+   time 0.098s  numeric=True  exact=True  depth 2->1
+A10 | HoldForm[Strad[(2 + Sqrt[5])^(1/3)]]
+   -> (1 + Sqrt[5])/2
+   time 0.083s  numeric=True  exact=True  depth 2->1
+A11 | HoldForm[Strad[(10 + 6*Sqrt[3])^(1/3)]]
+   -> 1 + Sqrt[3]
+   time 0.068s  numeric=True  exact=True  depth 2->1
+A12 | HoldForm[Strad[(2^(1/3) - 1)^(1/3)]]
+   -> (1 - 2^(1/3) + 2^(2/3))/3^(2/3)
+   time 1.2s  numeric=True  exact=True  depth 2->1
+A13 | HoldForm[Strad[(5^(1/3) - 4^(1/3))^(1/3)]]
+   -> (-2^(2/3) + 5^(1/3))^(1/3)
+   time 4.505s  numeric=True  exact=True  depth 2->2
+A14 | HoldForm[Strad[((11 + 5*Sqrt[5])/2)^(1/5)]]
+   -> (1 + Sqrt[5])/2
+   time 0.121s  numeric=True  exact=True  depth 2->1
+A15 | HoldForm[Strad[Sqrt[1 + 2*2^(1/3) + 2^(2/3)]]]
+   -> 1 + 2^(1/3)
+   time 0.07200000000000001s  numeric=True  exact=True  depth 2->1
+A16 | HoldForm[Strad[(17 + 12*Sqrt[2])^(1/4)]]
+   -> 1 + Sqrt[2]
+   time 0.06s  numeric=True  exact=True  depth 2->1
+A17 | HoldForm[Strad[(99 + 70*Sqrt[2])^(1/6)]]
+   -> 1 + Sqrt[2]
+   time 0.127s  numeric=True  exact=True  depth 2->1
+A18 | HoldForm[Strad[(3 + 2*Sqrt[2])^(3/2)]]
+   -> 7 + 5*Sqrt[2]
+   time 0.039s  numeric=True  exact=True  depth 2->1
+A19 | HoldForm[Strad[(3 + 2*Sqrt[2])^(-2^(-1))]]
+   -> -1 + Sqrt[2]
+   time 0.058s  numeric=True  exact=True  depth 2->1
+A20 | HoldForm[Strad[1/Sqrt[3 + 2*Sqrt[2]]]]
+   -> -1 + Sqrt[2]
+   time 0.061s  numeric=True  exact=True  depth 2->1
+A21 | HoldForm[Strad[Sqrt[3 + 2*Sqrt[2]] + Sqrt[5 + 2*Sqrt[6]]]]
+   -> 1 + 2*Sqrt[2] + Sqrt[3]
+   time 0.128s  numeric=True  exact=True  depth 2->1
+A22 | HoldForm[Strad[Sqrt[3 + 2*Sqrt[2]]*Sqrt[5 + 2*Sqrt[6]]]]
+   -> 2 + Sqrt[2] + Sqrt[3] + Sqrt[6]
+   time 0.264s  numeric=True  exact=True  depth 2->1
+A23 | HoldForm[Strad[Sqrt[2 + Sqrt[3]] + Sqrt[2 - Sqrt[3]]]]
+   -> Sqrt[6]
+   time 0.221s  numeric=True  exact=True  depth 2->1
+A24 | HoldForm[Strad[Sqrt[-1 + 2*I*Sqrt[2]]]]
+   -> 1 + I*Sqrt[2]
+   time 0.155s  numeric=True  exact=True  depth 2->1
+A25 | HoldForm[Strad[Sqrt[2 + 2*I*Sqrt[3]]]]
+   -> I + Sqrt[3]
+   time 0.049s  numeric=True  exact=True  depth 2->1
+A26 | HoldForm[Strad[Sqrt[-3 - 2*Sqrt[2]]]]
+   -> I*(1 + Sqrt[2])
+   time 0.051000000000000004s  numeric=True  exact=True  depth 2->1
+A27 | HoldForm[Strad[(3 + 2*Sqrt[2])^(1/4)]]
+   -> Sqrt[1 + Sqrt[2]]
+   time 16.65s  numeric=True  exact=True  depth 2->2
+A28 | HoldForm[Strad[Sqrt[3 + 2*Sqrt[3 + 2*Sqrt[2]]], True]]
+   -> Sqrt[5 + 2*Sqrt[2]]
+   time 1.492s  numeric=True  exact=True  depth 3->2
+A29 | HoldForm[Strad[Sqrt[3 + 2*Sqrt[3 + 2*Sqrt[2]]]]]
+   -> Sqrt[5 + 2*Sqrt[2]]
+   time 2.1510000000000002s  numeric=True  exact=True  depth 3->2
+A30 | HoldForm[Strad[Sqrt[16 - 2*Sqrt[29] + 2*Sqrt[55 - 10*Sqrt[29]]], True]]
+   -> Sqrt[5] + Sqrt[11 - 2*Sqrt[29]]
+   time 11.966000000000001s  numeric=True  exact=True  depth 3->2
+A31 | HoldForm[Strad[Sqrt[16 - 2*Sqrt[29] + 2*Sqrt[55 - 10*Sqrt[29]]]]]
+   -> Sqrt[5] + Sqrt[11 - 2*Sqrt[29]]
+   time 4.555s  numeric=True  exact=True  depth 3->2
+=== B. Non-denestable / trivial inputs ===
+B01 | HoldForm[Strad[Sqrt[2 + Sqrt[2]]]]
+   -> Sqrt[2 + Sqrt[2]]
+   time 0.96s  numeric=True  exact=True  depth 2->2
+B02 | HoldForm[Strad[Sqrt[1 + Sqrt[2]]]]
+   -> Sqrt[1 + Sqrt[2]]
+   time 1.016s  numeric=True  exact=True  depth 2->2
+B03 | HoldForm[Strad[(1 + Sqrt[2])^(1/3)]]
+   -> (1 + Sqrt[2])^(1/3)
+   time 1.349s  numeric=True  exact=True  depth 2->2
+B04 | HoldForm[Strad[Sqrt[2]]]
+   -> Sqrt[2]
+   time 0.001s  numeric=True  exact=True  depth 1->1
+B05 | HoldForm[Strad[2]]
+   -> 2
+   time 0.002s  numeric=True  exact=True  depth 0->0
+B06 | HoldForm[Strad[Sqrt[1 + I]]]
+   -> Sqrt[1 + I]
+   time 0.002s  numeric=True  exact=True  depth 1->1
+B07 | HoldForm[Strad[Root[#1^4 - 10*#1^2 + 1 & , 4]]]
+   -> Sqrt[2] + Sqrt[3]
+   time 0.081s  numeric=True  exact=True  depth 0->1
+B08 | HoldForm[Strad[Sqrt[Sqrt[2] + Sqrt[3]]]]
+   -> Sqrt[Sqrt[2] + Sqrt[3]]
+   time 1.666s  numeric=True  exact=True  depth 2->2
+B09 | HoldForm[Strad[(2 + 2*I*Sqrt[3])^(1/3)]]
+   -> (2 + (2*I)*Sqrt[3])^(1/3)
+   time 3.043s  numeric=True  exact=True  depth 2->2
+=== C. Branch counterexamples (wrapper) ===
+C01 | HoldForm[Strad[-Sqrt[3 + 2*Sqrt[2]]]]
+   -> -1 - Sqrt[2]
+   time 0.051000000000000004s  numeric=True  exact=True  depth 2->1
+C02 | HoldForm[Strad[(-1 + 2*I*Sqrt[2])^(3/2)]]
+   -> -5 + I*Sqrt[2]
+   time 0.091s  numeric=True  exact=True  depth 2->1
+C03 | HoldForm[Strad[Sqrt[-1 + 2*I*Sqrt[2]]*Sqrt[-2 + 2*I*Sqrt[3]]]]
+   -> -((-I + Sqrt[2])*(-I + Sqrt[3]))
+   time 0.225s  numeric=True  exact=True  depth 2->1
+C04 | HoldForm[Strad[(-3 - 2*Sqrt[2])^(3/2)]]
+   -> -7*I - (5*I)*Sqrt[2]
+   time 0.093s  numeric=True  exact=True  depth 2->1
+C05 | HoldForm[Strad[Sqrt[-2 - 2*Sqrt[2]]*Sqrt[-3 - 2*Sqrt[2]]]]
+   -> -Sqrt[2*(7 + 5*Sqrt[2])]
+   time 3.448s  numeric=True  exact=True  depth 2->2
+C06 | HoldForm[Strad[Sqrt[-3 - 2*Sqrt[2]]*Sqrt[-3 - 2*Sqrt[2]]]]
+   -> -3 - 2*Sqrt[2]
+   time 0.002s  numeric=True  exact=True  depth 1->1
+C07 | HoldForm[Strad[(-1 + 2*I*Sqrt[2])^(5/2)]]
+   -> 1 - (11*I)*Sqrt[2]
+   time 0.069s  numeric=True  exact=True  depth 2->1
+C08 | HoldForm[Strad[(-5 - 2*Sqrt[6])^(3/2)]]
+   -> (-11*I)*Sqrt[2] - (9*I)*Sqrt[3]
+   time 0.088s  numeric=True  exact=True  depth 2->1
+=== D. Direct core probes ===
+D01 | HoldForm[DenestCore[-Sqrt[3 + 2*Sqrt[2]], "Multipliers" -> {1}]]
+   -> -1 - Sqrt[2]
+   time 0.03s  numeric=True  exact=True  depth 2->1
+D02 | HoldForm[DenestCore[Sqrt[3 + 2*Sqrt[2]], "Multipliers" -> {0}]]
+   -> 1 + Sqrt[2]
+   time 0.034s  numeric=True  exact=True  depth 2->1
+D03 | HoldForm[DenestCore[Sqrt[3 + 2*Sqrt[2]], "Multipliers" -> {}]]
+   -> 1 + Sqrt[2]
+   time 0.024s  numeric=True  exact=True  depth 2->1
+D04 | HoldForm[DenestCore[(-1 + 2*I*Sqrt[2])^(3/2), "Multipliers" -> {1}]]
+   -> -5 + I*Sqrt[2]
+   time 0.03s  numeric=True  exact=True  depth 2->1
+D05 | HoldForm[DenestCore[Sqrt[-1 + 2*I*Sqrt[2]]*Sqrt[-2 + 2*I*Sqrt[3]], "Multipliers" -> {1}]]
+   -> -((-I + Sqrt[2])*(-I + Sqrt[3]))
+   time 0.224s  numeric=True  exact=True  depth 2->1
+D06 | HoldForm[DenestCore[Sqrt[5 + 2*Sqrt[6]], "Multipliers" -> {1, 6 - 2*Sqrt[6] - 2*Sqrt[2] + 2*Sqrt[3]}]]
+   -> Sqrt[2] + Sqrt[3]
+   time 0.02s  numeric=True  exact=True  depth 2->1
+D07 | HoldForm[DenestCore[Sqrt[5 + 2*Sqrt[6]], "Multipliers" -> {6 - 2*Sqrt[6] - 2*Sqrt[2] + 2*Sqrt[3]}]]
+   -> Sqrt[2] + Sqrt[3]
+   time 0.017s  numeric=True  exact=True  depth 2->1
+D08 | HoldForm[DenestCore[Sqrt[3 + 2*Sqrt[3 + 2*Sqrt[2]]]]]
+   -> Sqrt[5 + 2*Sqrt[2]]
+   time 1.341s  numeric=True  exact=True  depth 3->2
+D09 | HoldForm[DenestCore[2 + Sqrt[3]]]
+   -> 2 + Sqrt[3]
+   time 0.001s  numeric=True  exact=True  depth 1->1
+D10 | HoldForm[DenestCore[Sqrt[3 + 2*Sqrt[2]], "Multipliers" -> {2.}]]
+   -> 1 + Sqrt[2]
+   time 0.014s  numeric=True  exact=True  depth 2->1
+D11 | HoldForm[DenestCore[Sqrt[3 + 2*Sqrt[2]], "Multipliers" -> {Pi}]]
+   -> 1 + Sqrt[2]
+   time 0.018000000000000002s  numeric=True  exact=True  depth 2->1
+D12 | HoldForm[DenestCore[Sqrt[5 + 2*Sqrt[6]], "Multipliers" -> {1, Sqrt[5]}]]
+   -> Sqrt[2] + Sqrt[3]
+   time 0.024s  numeric=True  exact=True  depth 2->1
+D13 | HoldForm[DenestCore[Sqrt[3 + 2*Sqrt[2]], "Multipliers" -> {-1}]]
+   -> 1 + Sqrt[2]
+   time 0.022s  numeric=True  exact=True  depth 2->1
+D14 | HoldForm[DenestCore[Sqrt[3 + 2*Sqrt[2]], "Multipliers" -> {I}]]
+   -> 1 + Sqrt[2]
+   time 0.018000000000000002s  numeric=True  exact=True  depth 2->1
+D15 | HoldForm[DenestCore[Sqrt[5 + 2*Sqrt[6]], "Multipliers" -> {1}]]
+   -> Sqrt[2] + Sqrt[3]
+   time 0.026000000000000002s  numeric=True  exact=True  depth 2->1
+=== E. Symbolic input ===
+E01 | HoldForm[Strad[Sqrt[z^2]]]
+   -> Sqrt[z^2]
+   time 0.001s  numeric=n/a  exact=n/a  depth 1->1
+E02 | HoldForm[Strad[Sqrt[t + t^2]]]
+   -> Sqrt[t + t^2]
+   time 0.001s  numeric=n/a  exact=n/a  depth 1->1
+E03 | HoldForm[Strad[Sqrt[-x - y]]]
+   -> Sqrt[-x - y]
+   time 0.001s  numeric=n/a  exact=n/a  depth 1->1
+E04 | HoldForm[Strad[Sqrt[a + b]]]
+   -> Sqrt[a + b]
+   time 0.001s  numeric=n/a  exact=n/a  depth 1->1
+E05 | HoldForm[Strad[x]]
+   -> x
+   time 0.001s  numeric=n/a  exact=n/a  depth 0->0
+E06 | HoldForm[Strad[Sqrt[x]*Sqrt[3 + 2*Sqrt[2]]]]
+   -> (1 + Sqrt[2])*Sqrt[x]
+   time 0.013000000000000001s  numeric=n/a  exact=n/a  depth 2->1
+E07 | HoldForm[Strad[f[1]]]
+   -> f[1]
+   time 0.001s  numeric=n/a  exact=n/a  depth 0->0
+E08 | HoldForm[Strad[f[Sqrt[3 + 2*Sqrt[2]]]]]
+   -> f[Sqrt[3 + 2*Sqrt[2]]]
+   time 0.001s  numeric=n/a  exact=n/a  depth 2->2
+E09 | HoldForm[Strad[RadicalDenest2`Private`mark[1]]]
+   -> RadicalDenest2`Private`mark[1]
+   time 0.001s  numeric=n/a  exact=n/a  depth 0->0
+=== J. Numeric branch cases from Factorc ===
+J01 | HoldForm[Strad[Sqrt[-(Sqrt[2] + (-1)^(1/3))]]]
+   -> Sqrt[-(-1)^(1/3) - Sqrt[2]]
+   time 1.67s  numeric=True  exact=True  depth 2->2
+J02 | HoldForm[Strad[Sqrt[-(Sqrt[2] + (-1)^(1/3))] + 1]]
+   -> 1 + Sqrt[-(-1)^(1/3) - Sqrt[2]]
+   time 1.83s  numeric=True  exact=True  depth 2->2
+J06 | HoldForm[Strad[(-(Sqrt[2] + (-1)^(1/3)))^(1/3)]]
+   -> (-(-1)^(1/3) - Sqrt[2])^(1/3)
+   time 2.2840000000000003s  numeric=True  exact=True  depth 2->2
+J09 | HoldForm[Factorc[Sqrt[-(Sqrt[2] + (-1)^(1/3))]]]
+   -> Sqrt[-(-1)^(1/3) - Sqrt[2]]
+   time 0.001s  numeric=True  exact=True  depth 2->2
+J10 | HoldForm[Factorc[Sqrt[-3 - 2*Sqrt[2]]]]
+   -> I*Sqrt[3 + 2*Sqrt[2]]
+   time 0.001s  numeric=True  exact=True  depth 2->2
+J11 | HoldForm[Factorc[Sqrt[8 + 4*Sqrt[3]]]]
+   -> 2*Sqrt[2 + Sqrt[3]]
+   time 0.007s  numeric=True  exact=True  depth 2->2
+J12 | HoldForm[Factorc[Sqrt[z^2]]]
+   -> Sqrt[z^2]
+   time 0.s  numeric=n/a  exact=n/a  depth 1->1
+J13 | HoldForm[Factorc[Sqrt[-x - y]]]
+   -> Sqrt[-x - y]
+   time 0.s  numeric=n/a  exact=n/a  depth 1->1
+J14 | HoldForm[Factorc[Sqrt[t + t^2]]]
+   -> Sqrt[t + t^2]
+   time 0.s  numeric=n/a  exact=n/a  depth 1->1
+J15 | HoldForm[RationalizeDenominator[x/(1 + Sqrt[2])]]
+   -> -x + Sqrt[2]*x
+   time 0.002s  numeric=n/a  exact=n/a  depth 1->1
+J16 | HoldForm[RationalizeDenominator[1/2 + 1/Sqrt[2]]]
+   -> (1 + Sqrt[2])/2
+   time 0.s  numeric=True  exact=True  depth 1->1
+J17 | HoldForm[RationalizeDenominator[1/x]]
+   -> x^(-1)
+   time 0.s  numeric=n/a  exact=n/a  depth 0->0
+=== K. Odd inputs ===
+K01 | HoldForm[Strad[Sqrt[28^(1/3) - 3]]]
+   -> (-1 - 2^(2/3)*7^(1/3) + 2^(1/3)*7^(2/3))/3
+   time 0.20400000000000001s  numeric=True  exact=True  depth 2->1
+K02 | HoldForm[Strad[(1 + 2^(1/3))^3]]
+   -> (1 + 2^(1/3))^3
+   time 0.002s  numeric=True  exact=True  depth 1->1
+K04 | HoldForm[Strad[Strad[Sqrt[16 - 2*Sqrt[29] + 2*Sqrt[55 - 10*Sqrt[29]]], True], True]]
+   -> Sqrt[5] + Sqrt[11 - 2*Sqrt[29]]
+   time 9.961s  numeric=True  exact=True  depth 2->2
+K09 | HoldForm[Strad[Sqrt[5 + 2*Sqrt[6]]/Sqrt[3 + 2*Sqrt[2]]]]
+   -> 2 - Sqrt[2] - Sqrt[3] + Sqrt[6]
+   time 0.128s  numeric=True  exact=True  depth 2->1
+K10 | HoldForm[Strad[Exp[I*(Pi/7)]*Sqrt[3 + 2*Sqrt[2]]]]
+   -> (1 + Sqrt[2])*E^((I/7)*Pi)
+   time 0.017s  numeric=True  exact=True  depth 2->1
+K11 | HoldForm[Strad[Sqrt[3 + 2*Sqrt[2]] + Pi]]
+   -> 1 + Sqrt[2] + Pi
+   time 0.019s  numeric=True  exact=True  depth 2->1
+K12 | HoldForm[Strad[Sqrt[3. + 2*Sqrt[2]]]]
+   -> 2.414213562373095
+   time 0.001s  numeric=True  exact=n/a  depth 0->0
+K14 | HoldForm[Strad[{Sqrt[3 + 2*Sqrt[2]], Sqrt[5 + 2*Sqrt[6]]}]]
+   -> {1 + Sqrt[2], Sqrt[2] + Sqrt[3]}
+   time 0.042s  numeric=n/a  exact=n/a  depth 2->1
+K15 | HoldForm[Strad[Sqrt[3 + 2*Sqrt[2]] == 1 + Sqrt[2]]]
+   -> True
+   time 0.002s  numeric=n/a  exact=n/a  depth 0->0
+K17 | HoldForm[Strad[Sqrt[(3 + 2*Sqrt[2])/(5 + 2*Sqrt[6])]]]
+   -> -2 - Sqrt[2] + Sqrt[3] + Sqrt[6]
+   time 0.135s  numeric=True  exact=True  depth 2->1
+K19 | HoldForm[Strad[Sqrt[Sqrt[2] + 1]^3]]
+   -> (1 + Sqrt[2])^(3/2)
+   time 0.879s  numeric=True  exact=True  depth 2->2
+K20 | HoldForm[Strad[Sqrt[2 + Sqrt[3]]*Sqrt[3 + 2*Sqrt[2]]]]
+   -> ((2 + Sqrt[2])*(1 + Sqrt[3]))/2
+   time 0.197s  numeric=True  exact=True  depth 2->1
+K21 | HoldForm[Strad[Sqrt[3 + 2*Sqrt[2]], "Verbose" -> False, "MaxTrials" -> 1]]
+   -> 1 + Sqrt[2]
+   time 0.032s  numeric=True  exact=True  depth 2->1
+K22 | HoldForm[Strad[Sqrt[5 + 2*Sqrt[6]], "Factor" -> False]]
+   -> Sqrt[2] + Sqrt[3]
+   time 0.038s  numeric=True  exact=True  depth 2->1
+=== L. Higher-order roots / timing ===
+L01 | HoldForm[Strad[(239 + 169*Sqrt[2])^(1/7)]]
+   -> 1 + Sqrt[2]
+   time 0.066s  numeric=True  exact=True  depth 2->1
+L02 | HoldForm[Strad[(2 + Sqrt[2])^(1/5)]]
+   -> (2 + Sqrt[2])^(1/5)
+   time 1.349s  numeric=True  exact=True  depth 2->2
+L03 | HoldForm[Strad[(1 + Sqrt[2])^(1/7)]]
+   -> (1 + Sqrt[2])^(1/7)
+   time 2.023s  numeric=True  exact=True  depth 2->2
+L04 | HoldForm[Strad[Sqrt[17 + 2*Sqrt[6] + 2*Sqrt[10] + 2*Sqrt[14] + 2*Sqrt[15] + 2*Sqrt[21] + 2*Sqrt[35]]]]
+   -> Sqrt[2] + Sqrt[3] + Sqrt[5] + Sqrt[7]
+   time 0.34400000000000003s  numeric=True  exact=True  depth 2->1
+L05 | HoldForm[Strad[Expand[(1 + Sqrt[2] + Sqrt[3])^3]^(1/3)]]
+   -> 1 + Sqrt[2] + Sqrt[3]
+   time 0.135s  numeric=True  exact=True  depth 2->1
+L06 | HoldForm[Strad[Expand[(Sqrt[2] + Sqrt[3])^4]^(1/4)]]
+   -> Sqrt[2] + Sqrt[3]
+   time 0.529s  numeric=True  exact=True  depth 2->1
+L07 | HoldForm[Strad[Sqrt[1000003 + 2*Sqrt[999983]]]]
+   -> Sqrt[1000003 + 2*Sqrt[999983]]
+   time 4.292s  numeric=True  exact=True  depth 2->2
+L08 | HoldForm[Strad[Sqrt[2 + Sqrt[3] + Sqrt[5]]]]
+   -> Sqrt[2 + Sqrt[3] + Sqrt[5]]
+   time 2.033s  numeric=True  exact=True  depth 2->2
+L09 | HoldForm[Strad[(5 + 2*Sqrt[6])^(1/6)]]
+   -> (5 + 2*Sqrt[6])^(1/6)
+   time 17.495s  numeric=True  exact=True  depth 2->2
+L10 | HoldForm[Strad[(11*Sqrt[2] + 9*Sqrt[3])^(1/3)]]
+   -> Sqrt[2] + Sqrt[3]
+   time 0.048s  numeric=True  exact=True  depth 2->1
+L11 | HoldForm[Strad[Expand[(2^(1/3) + 3^(1/3))^3]^(1/3)]]
+   -> 2^(1/3) + 3^(1/3)
+   time 0.094s  numeric=True  exact=True  depth 2->1
+L12 | HoldForm[Strad[Sqrt[Expand[(1 + 2^(1/3) + 3^(1/3))^2]]]]
+   -> 1 + 2^(1/3) + 3^(1/3)
+   time 0.07s  numeric=True  exact=True  depth 2->1
+L13 | HoldForm[Strad[Expand[(1 + 2^(1/5))^5]^(1/5)]]
+   -> 1 + 2^(1/5)
+   time 0.081s  numeric=True  exact=True  depth 2->1
+L14 | HoldForm[Strad[Sqrt[5 + 2*Sqrt[6]]^(1/5)]]
+   -> (5 + 2*Sqrt[6])^(1/10)
+   time 1.838s  numeric=True  exact=True  depth 2->2
+=== Q. Negative-base roots ===
+Q01 | HoldForm[Strad[Expand[(-1 - Sqrt[2])^3]^(1/3)]]
+   -> (-1)^(1/3)*(1 + Sqrt[2])
+   time 0.066s  numeric=True  exact=True  depth 2->1
+Q02 | HoldForm[Strad[Expand[(1 - Sqrt[2])^3]^(1/3)]]
+   -> (-1)^(1/3)*(-1 + Sqrt[2])
+   time 0.062s  numeric=True  exact=True  depth 2->1
+Q07 | HoldForm[Strad[Expand[(2 - 3*Sqrt[2])^3]^(1/3)]]
+   -> (-1)^(1/3)*(-2 + 3*Sqrt[2])
+   time 0.068s  numeric=True  exact=True  depth 2->1
+Q08 | HoldForm[Strad[(-7 - 5*Sqrt[2])^(1/3)]]
+   -> (-1)^(1/3)*(1 + Sqrt[2])
+   time 0.061s  numeric=True  exact=True  depth 2->1
+=== V. Verbose trace of one run ===
+[RadicalDenest2] FastPath: Sqrt[5 + 2*Sqrt[6]] -> Sqrt[2] + Sqrt[3]
+(1 + 2^(1/3))*(Sqrt[2] + Sqrt[3])
+[RadicalDenest2] multiplier 1  minpoly degree 9
+[RadicalDenest2] multiplier 2^(2/3)  minpoly degree 9
+[RadicalDenest2] multiplier 2  minpoly degree 9
+[RadicalDenest2] multiplier 3  minpoly degree 9
+[RadicalDenest2] multiplier 5  minpoly degree 9
+[RadicalDenest2] multiplier 4  minpoly degree 9
+[RadicalDenest2] multiplier 9  minpoly degree 3
+[RadicalDenest2] MultiplierOrbit: (-1 + 2^(1/3))^(1/3) -> (2/3)^(2/3) + 3^(-2/3) - 2^(1/3)/3^(2/3)
+[RadicalDenest2] MultiplierOrbit/Simplify: (-1 + 2^(1/3))^(1/3) -> (1 - 2^(1/3) + 2^(2/3))/3^(2/3)
+(1 - 2^(1/3) + 2^(2/3))/3^(2/3)
+DONE

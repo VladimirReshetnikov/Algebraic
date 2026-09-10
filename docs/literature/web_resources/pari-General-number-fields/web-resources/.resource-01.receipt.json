@@ -1,0 +1,31 @@
+{
+  "record_id": "pari",
+  "title": "General number fields",
+  "asset_id": "resource-01",
+  "version": "web-resources",
+  "kind": "web",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://pari.math.u-bordeaux.fr/dochtml/html-stable/General_number_fields.html",
+    "resolved_url": "https://pari.math.u-bordeaux.fr/dochtml/html-stable/General_number_fields.html",
+    "retrieved_at": "2026-09-05T20:28:27+00:00",
+    "http_status": 200,
+    "content_type": "text/html",
+    "content_encoding": "",
+    "bytes": 429024,
+    "sha256": "497b5a00a5f6731994f603cc3749df673a4d2e0da664eb144c636991ccbde8ec"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "cited_web_resource",
+  "note": "URL cited in an input report. Not all web pages have been independently reopened. HTML is saved as HTML; software code is not labelled as article TeX.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "web_resources/pari-General-number-fields/web-resources/resource-01.html",
+      "role": "web",
+      "bytes": 429024,
+      "sha256": "497b5a00a5f6731994f603cc3749df673a4d2e0da664eb144c636991ccbde8ec"
+    }
+  ],
+  "prior_candidate_errors": []
+}

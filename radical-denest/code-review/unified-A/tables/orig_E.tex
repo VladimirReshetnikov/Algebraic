@@ -1,0 +1,14 @@
+\begin{longtable}{@{}p{0.055\textwidth}>{\ttfamily\footnotesize\raggedright\arraybackslash}p{0.33\textwidth}>{\ttfamily\footnotesize\raggedright\arraybackslash}p{0.33\textwidth}p{0.05\textwidth}p{0.05\textwidth}p{0.05\textwidth}@{}}
+\caption{Original program on symbolic input.}\label{tab:origE}\\
+\toprule ID & Input & Output & Equal & Depth & Time (s)\\\midrule\endfirsthead
+\toprule ID & Input & Output & Equal & Depth & Time (s)\\\midrule\endhead
+\bottomrule\endfoot
+E01 & Strad[\allowbreak{}Sqrt[\allowbreak{}z\textasciicircum{}\allowbreak{}2]\allowbreak{}]\allowbreak{} & z & -- & 1$\to$0 & 0.001\\
+E02 & Strad[\allowbreak{}Sqrt[\allowbreak{}t +\allowbreak{} t\textasciicircum{}\allowbreak{}2]\allowbreak{}]\allowbreak{} & Sqrt[\allowbreak{}t*\allowbreak{}(\allowbreak{}1 +\allowbreak{} t)\allowbreak{}]\allowbreak{} & -- & 1$\to$1 & 0.002\\
+E03 & Strad[\allowbreak{}Sqrt[\allowbreak{}-x -\allowbreak{} y]\allowbreak{}]\allowbreak{} & I*\allowbreak{}Sqrt[\allowbreak{}x +\allowbreak{} y]\allowbreak{} & -- & 1$\to$1 & 0.004\\
+E04 & Strad[\allowbreak{}Sqrt[\allowbreak{}a +\allowbreak{} b]\allowbreak{}]\allowbreak{} & Sqrt[\allowbreak{}a +\allowbreak{} b]\allowbreak{} & -- & 1$\to$1 & 0.002\\
+E05 & Strad[\allowbreak{}x]\allowbreak{} & x & -- & 0$\to$0 & 0.000\\
+E06 & Strad[\allowbreak{}Sqrt[\allowbreak{}x]\allowbreak{}*\allowbreak{}Sqrt[\allowbreak{}3 +\allowbreak{} 2*\allowbreak{}Sqrt[\allowbreak{}2]\allowbreak{}]\allowbreak{}]\allowbreak{} & (\allowbreak{}1 +\allowbreak{} Sqrt[\allowbreak{}2]\allowbreak{})\allowbreak{}*\allowbreak{}Sqrt[\allowbreak{}x]\allowbreak{} & -- & 2$\to$1 & 0.010\\
+E07 & Strad[\allowbreak{}f[\allowbreak{}1]\allowbreak{},\allowbreak{} False,\allowbreak{} Identity]\allowbreak{} & 1 & -- & 0$\to$0 & 0.001\\
+E08 & Strad[\allowbreak{}f[\allowbreak{}Sqrt[\allowbreak{}3 +\allowbreak{} 2*\allowbreak{}Sqrt[\allowbreak{}2]\allowbreak{}]\allowbreak{}]\allowbreak{}]\allowbreak{} & f[\allowbreak{}Sqrt[\allowbreak{}3 +\allowbreak{} 2*\allowbreak{}Sqrt[\allowbreak{}2]\allowbreak{}]\allowbreak{}]\allowbreak{}\newline{\scriptsize\itshape MinimalPolynomial::\allowbreak{}nalg, General::\allowbreak{}stop, Discriminant::\allowbreak{}poly2, FactorInteger::\allowbreak{}exact, Part::\allowbreak{}partd, Union::\allowbreak{}heads, Part::\allowbreak{}pkspec1} & -- & 2$\to$2 & 0.363\\
+\end{longtable}

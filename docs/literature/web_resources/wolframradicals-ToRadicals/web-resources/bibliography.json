@@ -1,0 +1,24 @@
+{
+  "id": "wolframradicals",
+  "title": "ToRadicals",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "wolframradical",
+      "entry_latex": "Wolfram Research, \\emph{ToRadicals}, Wolfram Language documentation.\n\\access{https://reference.wolfram.com/language/ref/ToRadicals.html}{Official reference}. \\status{D}\nLow-degree algebraic-root conversion, higher-degree limitations, and parameter qualifications. Conversion from an algebraic number to radicals is distinct from optimizing a pre-existing radical expression."
+    },
+    {
+      "report": "report-2",
+      "key": "wolframtoradicals",
+      "entry_latex": "Wolfram Research.\n\\emph{ToRadicals}, Wolfram Language documentation.\n\\sourceurl{https://reference.wolfram.com/language/ref/ToRadicals.html}.\n\\textbf{D.} Radical conversion, degree limitations, and parameter-related qualifications. A failure to return radicals is not a non-solvability proof."
+    },
+    {
+      "report": "report-3",
+      "key": "wolframradicals",
+      "entry_latex": "Wolfram Research. \\texttt{ToRadicals}, Wolfram Language documentation. \\url{https://reference.wolfram.com/language/ref/ToRadicals.html}. \\status{D}\n\\entrynote{Converts suitable algebraic root objects to radical expressions. Such conversion may introduce nesting or a longer expression; it is not synonymous with denesting. Branch-sensitive output requires its documented conventions.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "record_id": "bloemer93",
+  "title": "Simplifying Expressions Involving Radicals",
+  "asset_id": "pdf-thesis-1993",
+  "version": "thesis-1993",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://cs.nyu.edu/exact/pap/rootBounds/sumOfSqrts/bloemerThesis.pdf",
+    "resolved_url": "https://cs.nyu.edu/~exact/pap/rootBounds/sumOfSqrts/bloemerThesis.pdf",
+    "retrieved_at": "2026-09-05T20:25:20+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 884745,
+    "sha256": "4f7ca6197c5cc88d0f0427db92a4a62a249032734b991970385b7b713ab7fa57"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "browser_fulltext",
+  "note": "University-hosted thesis; 195 PDF pages, title checked.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/bloemer93-Simplifying-Expressions-Involving-Radicals/thesis-1993/pdf-thesis-1993.pdf",
+      "role": "pdf",
+      "bytes": 884745,
+      "sha256": "4f7ca6197c5cc88d0f0427db92a4a62a249032734b991970385b7b713ab7fa57"
+    }
+  ],
+  "prior_candidate_errors": []
+}

@@ -1,0 +1,33 @@
+{
+  "record_id": "magma",
+  "title": "Handbook",
+  "asset_id": "resource-01",
+  "version": "web-resources",
+  "kind": "web",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://magma.maths.usyd.edu.au/magma/handbook/",
+    "resolved_url": "https://magma.maths.usyd.edu.au/magma/handbook/",
+    "retrieved_at": "2026-09-05T20:31:09+00:00",
+    "http_status": 200,
+    "content_type": "text/html; charset=UTF-8",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36",
+    "content_encoding": "",
+    "bytes": 6221,
+    "sha256": "0a4a524a17cb5a8d9f612612b0c0a98f32cd96b019624523dda76881c25f13db",
+    "tls_verification": "SKIPPED by --insecure"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "cited_web_resource",
+  "note": "URL cited in an input report. Not all web pages have been independently reopened. HTML is saved as HTML; software code is not labelled as article TeX.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "web_resources/magma-Handbook/web-resources/resource-01.html",
+      "role": "web",
+      "bytes": 6221,
+      "sha256": "0a4a524a17cb5a8d9f612612b0c0a98f32cd96b019624523dda76881c25f13db"
+    }
+  ],
+  "prior_candidate_errors": []
+}

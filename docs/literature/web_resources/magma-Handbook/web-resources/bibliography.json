@@ -1,0 +1,14 @@
+{
+  "id": "magma",
+  "title": "Handbook",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "magma",
+      "entry_latex": "Magma Computational Algebra System, \\emph{Handbook} and number-field release notes.\n\\access{https://magma.maths.usyd.edu.au/magma/handbook/}{Handbook};\n\\access{https://magma.maths.usyd.edu.au/magma/releasenotes/pdf/relv210.pdf}{Version 2.10 release notes}. \\status{D}\nOptimized field representations and related operations concern defining data. The record is not used to assert the absence of every radical simplification facility."
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

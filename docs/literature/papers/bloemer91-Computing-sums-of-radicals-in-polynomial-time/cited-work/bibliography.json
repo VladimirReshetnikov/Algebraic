@@ -1,0 +1,25 @@
+{
+  "id": "bloemer91",
+  "title": "Computing sums of radicals in polynomial time",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "bloemer91",
+      "entry_latex": "J. Bl\\\"omer, ``Computing sums of radicals in polynomial time,'' \\emph{FOCS 1991}, 670--677. \\doi{10.1109/SFCS.1991.185434}. \\status{A}\nExact computation and equality of explicitly represented sums of radicals. Kept distinct from the author's denesting and probabilistic zero-testing papers."
+    },
+    {
+      "report": "report-2",
+      "key": "blomer1991",
+      "entry_latex": "Johannes Bl\\\"omer.\n\\emph{Computing sums of radicals in polynomial time}.\nProceedings of the 32nd IEEE Symposium on Foundations of Computer Science, 670--677, 1991.\n\\doi{10.1109/SFCS.1991.185434}.\n\\textbf{M.} Important for radical sums, field membership, and equality-related computation. Its title must not be expanded into an unrestricted compact-input denesting guarantee."
+    },
+    {
+      "report": "report-3",
+      "key": "blomer91",
+      "entry_latex": "Johannes Bl\\\"omer. ``Computing Sums of Radicals in Polynomial Time.'' In \\emph{32nd Annual Symposium on Foundations of Computer Science}, 1991, pp.~670--677. \\doi{10.1109/SFCS.1991.185434}. \\status{A}\n\\entrynote{A key source on effective manipulation and comparison of radical sums. Read its input model carefully: a result for explicitly represented radical sums is not automatically a result for all succinct radical circuits.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

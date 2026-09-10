@@ -1,0 +1,25 @@
+{
+  "id": "osler",
+  "title": "Cardan polynomials and the reduction of radicals",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "osler",
+      "entry_latex": "T.~J. Osler, ``Cardan polynomials and the reduction of radicals,'' \\emph{Mathematics Magazine} \\textbf{74}(1) (2001), 26--32. \\status{A}\nTrace-type recurrence identities that explain some reductions of higher roots. Useful algebraic background for the Cardan route visible in practical denesters."
+    },
+    {
+      "report": "report-2",
+      "key": "osler",
+      "entry_latex": "Thomas J. Osler.\n\\emph{Cardan polynomials and the reduction of radicals}.\nMathematics Magazine \\textbf{74}(1), 26--32, 2001.\n\\sourceurl{https://www.jstor.org/stable/2691150}.\n\\textbf{M.} An elementary polynomial framework for reductions and identities, useful alongside the trace--norm derivation in this report."
+    },
+    {
+      "report": "report-3",
+      "key": "osler",
+      "entry_latex": "Thomas J. Osler. ``Cardan polynomials and the reduction of radicals.'' \\emph{Mathematics Magazine} \\textbf{74}(1) (2001), 26--32. \\status{A}\n\\entrynote{Uses Cardan polynomials to organize radical reductions. Particularly relevant to the selected higher-root identities referenced in practical denesting software.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

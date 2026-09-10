@@ -1,0 +1,31 @@
+{
+  "record_id": "maximamanual",
+  "title": "Maxima manual",
+  "asset_id": "resource-02",
+  "version": "web-resources",
+  "kind": "web",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://maxima.sourceforge.io/docs/manual/",
+    "resolved_url": "https://maxima.sourceforge.io/docs/manual/",
+    "retrieved_at": "2026-09-05T20:28:06+00:00",
+    "http_status": 200,
+    "content_type": "text/html; charset=UTF-8",
+    "content_encoding": "",
+    "bytes": 98382,
+    "sha256": "a68bef3df5e79bba39cf2fe2b54e11cf95bb07df305f09dc83257d9e62b5fb65"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "cited_web_resource",
+  "note": "URL cited in an input report. Not all web pages have been independently reopened. HTML is saved as HTML; software code is not labelled as article TeX.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "web_resources/maximamanual-Maxima-manual/web-resources/resource-02.html",
+      "role": "web",
+      "bytes": 98382,
+      "sha256": "a68bef3df5e79bba39cf2fe2b54e11cf95bb07df305f09dc83257d9e62b5fb65"
+    }
+  ],
+  "prior_candidate_errors": []
+}

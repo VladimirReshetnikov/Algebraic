@@ -1,0 +1,25 @@
+{
+  "id": "kneser",
+  "title": "Lineare Abhängigkeit von Wurzeln",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "kneser",
+      "entry_latex": "M. Kneser, ``Lineare Abh\\\"angigkeit von Wurzeln,'' \\emph{Acta Arithmetica} \\textbf{26}(3) (1975), 307--308. \\doi{10.4064/aa-26-3-307-308}. \\status{A}\nA short, important source on linear dependence and radical extensions. The issue year is recorded here as 1975."
+    },
+    {
+      "report": "report-2",
+      "key": "kneser",
+      "entry_latex": "Martin Kneser.\n\\emph{Lineare Abh\\\"angigkeit von Wurzeln}.\nActa Arithmetica \\textbf{26}(3), 307--308, 1975.\n\\doi{10.4064/aa-26-3-307-308}.\n\\textbf{M.} The publisher dates the article to 1975; some catalog records label the volume 1974/75. Relevant to radical extensions beyond the simplest real setting."
+    },
+    {
+      "report": "report-3",
+      "key": "kneser",
+      "entry_latex": "Martin Kneser. ``Lineare Abh\\\"angigkeit von Wurzeln.'' \\emph{Acta Arithmetica} \\textbf{26}(3) (1975), 307--308. \\doi{10.4064/aa-26-3-307-308}. Full-text route: \\url{https://matwbn.icm.edu.pl/ksiazki/aa/aa26/aa26313.pdf}. \\status{A}\n\\entrynote{A short but important radical-dependence paper. The journal record identifies 1975; inconsistent dates in secondary bibliographies have been normalized accordingly.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "id": "cavallo",
+  "title": "Denesting cubic radicals",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "cavallo",
+      "entry_latex": "A. Cavallo, ``Denesting cubic radicals,'' arXiv:2403.04776, version 2, 28 September 2024.\n\\access{https://arxiv.org/html/2403.04776v2}{Full HTML text}; \\access{https://sites.google.com/view/albertocavallomath/misc}{author's program page, as linked by the paper}. \\status{T}\nThe quadratic-field cubic criterion is useful and is proved in rescaled form in Theorem~\\ref{thm:cubic}. The preprint's integer-factorization inference is not accepted; the linked program's contents were not independently tested."
+    },
+    {
+      "report": "report-2",
+      "key": "cavallo",
+      "entry_latex": "Alberto Cavallo.\n\\emph{Denesting cubic radicals}.\narXiv:2403.04776, 2024; version 2, 28 September 2024.\n\\sourceurl{https://arxiv.org/abs/2403.04776}.\n\\textbf{FT.} Criterion and formulas for cube roots of quadratic surds. This report restates the target-field restriction and does not endorse an unqualified hardness equivalence with integer factorization."
+    },
+    {
+      "report": "report-3",
+      "key": "cavallo",
+      "entry_latex": "Alberto Cavallo. \\emph{Denesting cubic radicals}. arXiv:2403.04776, submitted February 29, 2024; version~2, September 28, 2024. \\url{https://arxiv.org/html/2403.04776v2}. \\status{F}\n\\entrynote{A complete criterion for the restricted output shape $A+B\\sqrt p$ considered in Section~\\ref{sec:cubicquadratic}. The report gives a trace--norm proof and an exact implementation. The preprint's claimed equivalence with integer factorization is not accepted: divisor enumeration does not prove that equivalence. The author advertises a companion program, but it was not executed here.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

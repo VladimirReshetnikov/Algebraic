@@ -1,0 +1,45 @@
+QUALITY CHECKS -- Radical Denesting: A Unified Research Guide
+Edition of September 5, 2026 (second-level merge of the three unified reports)
+
+BUILD
+- pdflatex (MiKTeX, pdfTeX) run three times with -interaction=nonstopmode -halt-on-error:
+  all three passes exited 0. Output: 48 pages, A4.
+- No undefined references, no undefined citations, no multiply-defined labels in the
+  final log. Two overfull boxes remain, both under 5pt, inside long-table cells of the
+  capability map.
+- House style follows ProveIt Analysis/FabiusFunction/docs: 11pt oneside article, A4 with
+  27mm margins, Libertinus text (lmodern fallback) with Computer Modern mathematics,
+  linkblue hyperlinks, fancyhdr running heads with the section mark, titlesec headings,
+  \maketitle title block, boxed scope remark, shaded listings.
+- Embedded fonts checked with pdffonts: LibertinusSerif/Sans/Mono plus CM/AMS math
+  fonts, matching the reference documents.
+
+BIBLIOGRAPHY
+- 103 \bibitem entries; every entry is cited at least once in the text; every \cite key
+  resolves; no duplicate keys (scripted check over the LaTeX source).
+- 17 entries were added from the two merged reports (zippel1977, landaufactor, lenstra06,
+  kluners, exactgeometry, shevelev, rahal, newman, euclid, guin, sympytests, maximamanual,
+  maximathread, magma, oeis, tiwari, infiniteblogs). Grouped versions of one work remain
+  grouped; separate Stack Exchange threads remain one grouped entry.
+- Access labels [F]/[A]/[D]/[L] describe access, not peer-review status.
+
+MERGE AUDIT
+- Base: the former report-3 guide (45 pages, 86 entries). Folded in: report-1 (29 pages,
+  93 entries) and report-2 (39 pages, 99 entries). Section 1.4 of the report lists the
+  material carried over from each and the place where it now appears.
+- Duplicated exposition (quadratic theorem and proof, Ramanujan identities, Honsbeek and
+  cubic-in-quadratic criteria, classical literature, CAS survey, Herschfeld) was kept
+  once, in the base text. All corrections agreed across the three reports; the ledger in
+  Section 15 gained five rows from the merged reports.
+- report-1 and report-2 directories were deleted after the merge.
+
+COMPUTATION
+- verify.py merges the three verification scripts. Executed under Python 3.14.4 with
+  SymPy 1.14.0: 59 exact checks passed (verification_results.txt, verification_results.json).
+- Includes the 210-case constructed sweep of the cubic-in-quadratic criterion, the
+  Honsbeek quartic certificate as a polynomial identity, both cube-norm counterexamples,
+  the multiquadratic and cancellation identities, and recorded sqrtdenest/nthroot outputs.
+- Exact arithmetic only; floats are rejected by the rational-root helper.
+
+PROVENANCE FILES
+- source_inventory.tsv and source_links.tsv unchanged from the previous edition.

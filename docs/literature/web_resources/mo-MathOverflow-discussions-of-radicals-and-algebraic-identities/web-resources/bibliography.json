@@ -1,0 +1,34 @@
+{
+  "id": "mo",
+  "title": "MathOverflow discussions of radicals and algebraic identities",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "mo",
+      "entry_latex": "MathOverflow, \\emph{Relevance of Landau's algorithm for denesting radicals}, question 319874; related discussions 410388 and 344478.\n\\access{https://mathoverflow.net/questions/319874/relevance-of-landaus-algorithm-for-denesting-radicals}{Question 319874};\n\\access{https://mathoverflow.net/questions/410388}{question 410388};\n\\access{https://mathoverflow.net/questions/344478}{question 344478}. \\status{B}\nResearch-level discussion leads on general algorithms, multiple square roots, and rationality/representation. Not treated as independent proof of a theorem already cited from the literature."
+    },
+    {
+      "report": "report-2",
+      "key": "mo319874",
+      "entry_latex": "MathOverflow contributors.\nDiscussion of denesting algorithms, question 319874.\n\\sourceurl{https://mathoverflow.net/questions/319874}.\n\\textbf{R.} A useful route to Landau and related general theory; distinguish an answer's specified root convention from an unrestricted claim."
+    },
+    {
+      "report": "report-2",
+      "key": "mo410388",
+      "entry_latex": "MathOverflow contributors.\nDiscussion of multiquadratic denesting, question 410388.\n\\sourceurl{https://mathoverflow.net/questions/410388}.\n\\textbf{R.} Complements the multiquadratic viewpoint. The report gives its elementary field argument directly, so the discussion is not the sole justification."
+    },
+    {
+      "report": "report-2",
+      "key": "mo344478",
+      "entry_latex": "MathOverflow contributors.\nDiscussion of rationality/equality for nested radicals, question 344478.\n\\sourceurl{https://mathoverflow.net/questions/344478}.\n\\textbf{R.} Useful for distinguishing exact algebraic-number tests from radical reconstruction."
+    },
+    {
+      "report": "report-3",
+      "key": "mo",
+      "entry_latex": "MathOverflow. Research discussions on radical denesting and related algorithms, threads 319874, 410388, and 344478. \\url{https://mathoverflow.net/questions/319874}; \\url{https://mathoverflow.net/questions/410388}; \\url{https://mathoverflow.net/questions/344478}. \\status{D}\n\\entrynote{Useful for locating research literature, understanding practical questions, and identifying caveats. Statements that something is ``open'' or ``unimplemented'' require a precise scope and cannot automatically be promoted to a universal current claim.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "record_id": "maple",
+  "title": "radnormal",
+  "asset_id": "resource-02",
+  "version": "web-resources",
+  "kind": "web",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://www.maplesoft.com/support/help/Maple/view.aspx?path=simplify%2Fradical",
+    "resolved_url": "https://www.maplesoft.com/support/help/Maple/view.aspx?path=simplify%2Fradical",
+    "retrieved_at": "2026-09-05T20:28:21+00:00",
+    "http_status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "content_encoding": "",
+    "bytes": 192082,
+    "sha256": "8c3a753bb1a3fae7e1da614db47fc28ba1a9005e100fef1f21e18858c3629931"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "cited_web_resource",
+  "note": "URL cited in an input report. Not all web pages have been independently reopened. HTML is saved as HTML; software code is not labelled as article TeX.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "web_resources/maple-radnormal/web-resources/resource-02.html",
+      "role": "web",
+      "bytes": 192082,
+      "sha256": "8c3a753bb1a3fae7e1da614db47fc28ba1a9005e100fef1f21e18858c3629931"
+    }
+  ],
+  "prior_candidate_errors": []
+}

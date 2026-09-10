@@ -1,0 +1,24 @@
+{
+  "id": "gaillard",
+  "title": "On the order of power series and the sum of square roots problem",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "gaillard",
+      "entry_latex": "L. Gaillard and G. Jindal, ``On the order of power series and the sum of square roots problem,'' \\emph{ISSAC 2023}. \\doi{10.1145/3597066.3597079}; arXiv:2304.13605.\n\\access{https://arxiv.org/abs/2304.13605}{Preprint and abstract}. \\status{A}\nWronskian/order methods and a succinct-input generalization of the equality problem. Not a general solution of square-root-sum sign comparison."
+    },
+    {
+      "report": "report-2",
+      "key": "gaillard",
+      "entry_latex": "L. Gaillard and G. Jindal.\n\\emph{On the order of power series and the sum of square roots problem}.\nISSAC 2023.\n\\doi{10.1145/3597066.3597079}.\n\\sourceurl{https://arxiv.org/abs/2304.13605}.\n\\textbf{M.} Connects radical-sum questions with orders of power series and algebraic methods. Do not treat its problem formulations as interchangeable with all sign-decision variants of SQRT-SUM."
+    },
+    {
+      "report": "report-3",
+      "key": "gaillard",
+      "entry_latex": "Louis Gaillard and Gorav Jindal. ``On the Order of Power Series and the Sum of Square Roots Problem.'' In \\emph{International Symposium on Symbolic and Algebraic Computation}, 2023. \\doi{10.1145/3597066.3597079}. Preprint: \\url{https://arxiv.org/abs/2304.13605}. \\status{A}\n\\entrynote{Connects power-series order bounds with the sum-of-square-roots problem. Relevant to separation and exact comparison, but not a claim that arbitrary nested radicals now have a practical polynomial-time denester.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

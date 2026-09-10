@@ -1,0 +1,31 @@
+{
+  "record_id": "oslercubic",
+  "title": "An easy look at the cubic formula",
+  "asset_id": "pdf-university-mirror",
+  "version": "university-mirror",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://math.ucr.edu/~res/math153-2019/osler-An_easy_look_at_the_cubic_formula.pdf",
+    "resolved_url": "https://math.ucr.edu/~res/math153-2019/osler-An_easy_look_at_the_cubic_formula.pdf",
+    "retrieved_at": "2026-09-05T20:26:05+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 167128,
+    "sha256": "1727c7a9f769024a96be5ecc14e56369a5e9e1122b8da181e737ef985c41a894"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "search_indexed_pdf",
+  "note": "University-hosted version; title checked.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/oslercubic-An-easy-look-at-the-cubic-formula/university-mirror/pdf-university-mirror.pdf",
+      "role": "pdf",
+      "bytes": 167128,
+      "sha256": "1727c7a9f769024a96be5ecc14e56369a5e9e1122b8da181e737ef985c41a894"
+    }
+  ],
+  "prior_candidate_errors": []
+}

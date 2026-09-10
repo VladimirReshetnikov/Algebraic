@@ -1,0 +1,74 @@
+{
+  "python": "3.14.4",
+  "sympy": "1.14.0",
+  "status": "all exact assertions passed",
+  "checks": 59,
+  "observations": [
+    {
+      "test": "direct square roots",
+      "function": "sqrtdenest",
+      "input": "sqrt(2*sqrt(6) + 5)",
+      "output": "sqrt(2) + sqrt(3)"
+    },
+    {
+      "test": "principal-root sign",
+      "function": "sqrtdenest",
+      "input": "sqrt(3 - 2*sqrt(2))",
+      "output": "-1 + sqrt(2)"
+    },
+    {
+      "test": "fourth roots",
+      "function": "sqrtdenest",
+      "input": "sqrt(4 + 3*sqrt(2))",
+      "output": "2**(3/4)*(sqrt(2) + 2)/2"
+    },
+    {
+      "test": "depth three to two",
+      "function": "sqrtdenest",
+      "input": "sqrt(-2*sqrt(29) + 2*sqrt(55 - 10*sqrt(29)) + 16)",
+      "output": "sqrt(11 - 2*sqrt(29)) + sqrt(5)"
+    },
+    {
+      "test": "multiquadratic input",
+      "function": "sqrtdenest",
+      "input": "sqrt(70*sqrt(2) + 112 + sqrt(5)*(46 + 34*sqrt(2)))",
+      "output": "sqrt(10) + 5 + 4*sqrt(2) + 3*sqrt(5)"
+    },
+    {
+      "test": "cancellation across terms",
+      "function": "sqrtdenest",
+      "input": "-sqrt(10 + 6*sqrt(3)) + sqrt(1 + sqrt(3)) + sqrt(3 + 3*sqrt(3))",
+      "output": "0"
+    },
+    {
+      "test": "unchanged example",
+      "function": "sqrtdenest",
+      "input": "sqrt(sqrt(2) + 2)",
+      "output": "sqrt(sqrt(2) + 2)"
+    },
+    {
+      "test": "cubic in quadratic 1",
+      "function": "nthroot",
+      "input": "(7 + 5*sqrt(2), 3)",
+      "output": "1 + sqrt(2)"
+    },
+    {
+      "test": "cubic in quadratic 2",
+      "function": "nthroot",
+      "input": "(85 + 62*sqrt(7), 3)",
+      "output": "1 + 2*sqrt(7)"
+    },
+    {
+      "test": "cubic in quadratic 3",
+      "function": "nthroot",
+      "input": "(34*sqrt(7) + 90, 3)",
+      "output": "sqrt(7) + 3"
+    },
+    {
+      "test": "negative real fifth root",
+      "function": "nthroot",
+      "input": "(41 - 29*sqrt(2), 5)",
+      "output": "1 - sqrt(2)"
+    }
+  ]
+}

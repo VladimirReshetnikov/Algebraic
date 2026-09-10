@@ -1,0 +1,238 @@
+Kernel: 15.0.1 for Microsoft Windows (64-bit) (July 2, 2026)
+=== Q. quadratic surds and multiquadratic sums ===
+Q01  ok  depth 2->1  0.04 s
+      in : Sqrt[(3 + Sqrt[5])/2]
+      out: (1 + Sqrt[5])/2
+Q02  ok  depth 2->1  0.03 s
+      in : Sqrt[2 - Sqrt[3]]
+      out: (-1 + Sqrt[3])/Sqrt[2]
+Q03  ok  depth 2->1  0.01 s
+      in : Sqrt[4 + 3*Sqrt[2]]
+      out: 2^(1/4) + 2^(3/4)
+Q04  ok  depth 2->1  0.03 s
+      in : Sqrt[1/2 + Sqrt[3]/4]
+      out: (Sqrt[2] + Sqrt[6])/4
+Q05  ok  depth 2->1  0.02 s
+      in : Sqrt[9 + 4*Sqrt[5]]
+      out: 2 + Sqrt[5]
+Q06  ok  depth 2->1  0.01 s
+      in : Sqrt[3 - 2*Sqrt[2]]
+      out: -1 + Sqrt[2]
+Q07  ok  depth 2->1  0.01 s
+      in : Sqrt[7 - 4*Sqrt[3]]
+      out: 2 - Sqrt[3]
+Q08  ok  depth 2->1  0.04 s
+      in : Sqrt[112 + 70*Sqrt[2] + Sqrt[5]*(46 + 34*Sqrt[2])]
+      out: 5 + 4*Sqrt[2] + 3*Sqrt[5] + Sqrt[10]
+Q09  ok  depth 2->1  0.04 s
+      in : Sqrt[12 + 8*Sqrt[2] + 6*Sqrt[3] + 4*Sqrt[6]]
+      out: (1 + Sqrt[2])*(1 + Sqrt[3])
+Q10  ok  depth 2->1  0.06 s
+      in : Sqrt[10 + 2*Sqrt[6] + 2*Sqrt[10] + 2*Sqrt[15]]
+      out: Sqrt[2] + Sqrt[3] + Sqrt[5]
+Q11  ok  depth 2->1  0.71 s
+      in : Sqrt[17 + 2*Sqrt[6] + 2*Sqrt[10] + 2*Sqrt[14] + 2*Sqrt[15] + 2*Sqrt[21] + 2*Sqrt[35]]
+      out: Sqrt[2] + Sqrt[3] + Sqrt[5] + Sqrt[7]
+Q12  ok  depth 2->1  0.7000000000000001 s
+      in : Sqrt[2*Sqrt[2] + Sqrt[6]]
+      out: (1 + Sqrt[3])/2^(1/4)
+Q13  ok  depth 2->1  0.08 s
+      in : Sqrt[(5 + 2*Sqrt[6])/(5 - 2*Sqrt[6])]
+      out: 5 + 2*Sqrt[6]
+Q14  ok  depth 2->1  0.05 s
+      in : Sqrt[(5 + 2*Sqrt[6])/3]
+      out: 1 + Sqrt[2/3]
+Q15  ok  depth 2->1  0.03 s
+      in : Sqrt[2*(2 + Sqrt[3])]
+      out: 1 + Sqrt[3]
+Q16  ok  depth 3->1  0.13 s
+      in : Sqrt[6 + 2*Sqrt[6] + 2*Sqrt[5 + 2*Sqrt[6]]]
+      out: 1 + Sqrt[2] + Sqrt[3]
+Q17  ok  depth 3->1  0.14 s
+      in : Sqrt[6 + 2*Sqrt[3] + 4*Sqrt[2 + Sqrt[3]]]
+      out: 1 + Sqrt[2] + Sqrt[3]
+Q18  ok  depth 2->1  0.03 s
+      in : Sqrt[(3 + 2*Sqrt[2])*(2 - Sqrt[3])*(2 + Sqrt[3])]
+      out: 1 + Sqrt[2]
+Q19  ok  depth 2->0  0.02 s
+      in : Sqrt[(2 - Sqrt[3])*(2 + Sqrt[3])]
+      out: 1
+Q20  ok  depth 2->1  0.05 s
+      in : Sqrt[5 - 2*Sqrt[6]] + Sqrt[5 + 2*Sqrt[6]]
+      out: 2*Sqrt[3]
+Q21  ok  depth 2->0  3.25 s
+      in : Sqrt[1 + Sqrt[3]] + Sqrt[3 + 3*Sqrt[3]] - Sqrt[10 + 6*Sqrt[3]]
+      out: 0
+Q22  ok  depth 2->1  0.04 s
+      in : Sqrt[8 + 2*Sqrt[15]]
+      out: Sqrt[3] + Sqrt[5]
+=== R. Ramanujan-type and Honsbeek-type higher-index identities ===
+R01  ok  depth 2->1  0.22 s
+      in : Sqrt[-3 + 2^(2/3)*7^(1/3)]
+      out: (-1 - 2^(2/3)*7^(1/3) + 2^(1/3)*7^(2/3))/3
+R02  ok  depth 2->1  1.1 s
+      in : Sqrt[-2^(2/3) + 5^(1/3)]
+      out: (2^(1/3) + 2^(2/3)*5^(1/3) - 5^(2/3))/3
+R03  ok  depth 2->1  0.9400000000000001 s
+      in : (-19 + 7*2^(2/3)*5^(1/3))^(1/6)
+      out: -(2/3)^(1/3) + (5/3)^(1/3)
+R04  ok  depth 2->1  0.16 s
+      in : ((3 + 2*5^(1/4))/(3 - 2*5^(1/4)))^(1/4)
+      out: (3 + 5^(1/4) + Sqrt[5] + 5^(3/4))/2
+R05  ok  depth 2->1  0.33 s
+      in : Sqrt[-1 + 2^(2/3)]
+      out: (1 - 2^(1/3) + 2^(2/3))/Sqrt[3]
+R06  ok  depth 2->1  0.14 s
+      in : Sqrt[1 - 2^(-2/3)]
+      out: (-2 + 2*2^(1/3) + 2^(2/3))/(2*Sqrt[3])
+R07  ok  depth 2->1  1.96 s
+      in : Sqrt[-1 + (3*(7/5)^(1/3))/2^(2/3)]
+      out: -1/6*(-10*5^(1/3) - 10*14^(1/3) + 70^(2/3))/5^(5/6)
+R08  ok  depth 2->1  2.32 s
+      in : Sqrt[-1 + 4*(2/7)^(1/3)]
+      out: (14*2^(1/3) + 7*7^(1/3) - 2*14^(2/3))/(3*7^(5/6))
+R09  ok  depth 2->1  0.11 s
+      in : (5 + 3*2^(2/3)*3^(1/3) + 3*2^(1/3)*3^(2/3))^(1/3)
+      out: 2^(1/3) + 3^(1/3)
+R10  ok  depth 2->1  0.09 s
+      in : Sqrt[2^(2/3) + 3^(2/3) + 2*6^(1/3)]
+      out: 2^(1/3) + 3^(1/3)
+R11  ok  depth 2->1  0.08 s
+      in : Sqrt[2 + 2*Sqrt[2]*3^(1/3) + 3^(2/3)]
+      out: Sqrt[2] + 3^(1/3)
+R12  ok  depth 2->1  0.07 s
+      in : (3 + 3*2^(1/3) + 3*2^(2/3))^(1/3)
+      out: 1 + 2^(1/3)
+R13  ok  depth 2->1  0.07 s
+      in : Sqrt[4 + 2*2^(1/3) + 2^(2/3)]
+      out: 2^(1/3) + 2^(2/3)
+R14  ok  depth 2->1  0.06 s
+      in : Sqrt[5 + 4*2^(1/3) + 3*2^(2/3)]
+      out: 1 + 2^(1/3) + 2^(2/3)
+R15  MISS  depth 2->2  26.68 s
+      in : Sqrt[3 + 3*2^(1/3) + 3*2^(2/3) + 2*2^(2/3)*3^(1/3) + 3^(2/3) + 2*6^(1/3)]
+      out: Sqrt[3 + 3*2^(1/3) + 3*2^(2/3) + 2*2^(2/3)*3^(1/3) + 3^(2/3) + 2*6^(1/3)]
+      exp: Sqrt[3 + 3*2^(1/3) + 3*2^(2/3) + 2*2^(2/3)*3^(1/3) + 3^(2/3) + 2*6^(1/3)]  (exp==in: True)
+=== C. cubic, quintic and higher roots in quadratic fields ===
+C01  ok  depth 2->1  0.02 s
+      in : (7 + 5*Sqrt[2])^(1/3)
+      out: 1 + Sqrt[2]
+C02  ok  depth 2->1  0.04 s
+      in : (85 + 62*Sqrt[7])^(1/3)
+      out: 1 + 2*Sqrt[7]
+C03  ok  depth 2->1  0.03 s
+      in : (90 + 34*Sqrt[7])^(1/3)
+      out: 3 + Sqrt[7]
+C04  ok  depth 2->1  0.02 s
+      in : (41 + 29*Sqrt[2])^(1/5)
+      out: 1 + Sqrt[2]
+C05  ok  depth 2->1  0.2 s
+      in : (41 - 29*Sqrt[2])^(1/5)
+      out: (-1)^(1/5)*(-1 + Sqrt[2])
+C06  ok  depth 2->1  0.03 s
+      in : (239 + 169*Sqrt[2])^(1/7)
+      out: 1 + Sqrt[2]
+C07  ok  depth 2->1  0.06 s
+      in : (11*Sqrt[2] + 9*Sqrt[3])^(1/3)
+      out: Sqrt[2] + Sqrt[3]
+C08  ok  depth 2->1  0.05 s
+      in : (56 - 24*Sqrt[5])^(1/4)
+      out: -1 + Sqrt[5]
+C09  ok  depth 2->1  0.07 s
+      in : (28 + 16*Sqrt[3])^(1/4)
+      out: 1 + Sqrt[3]
+C10  ok  depth 2->1  0.04 s
+      in : (7 + 5*Sqrt[2])^(2/3)
+      out: 3 + 2*Sqrt[2]
+C11  ok  depth 2->1  0.04 s
+      in : (7 + 5*Sqrt[2])^(-1/3)
+      out: -1 + Sqrt[2]
+C12  ok  depth 2->1  0.04 s
+      in : (3 + 2*Sqrt[2])^(5/2)
+      out: 41 + 29*Sqrt[2]
+C13  ok  depth 2->1  0.07 s
+      in : (-7 - 5*Sqrt[2])^(1/3)
+      out: (-1)^(1/3)*(1 + Sqrt[2])
+C14  ok  depth 2->1  0.25 s
+      in : (-99 - 70*Sqrt[2])^(1/6)
+      out: (-1)^(1/6)*(1 + Sqrt[2])
+C15  ok  depth 2->0  0.13 s
+      in : -(-2 + Sqrt[5])^(1/3) + (2 + Sqrt[5])^(1/3)
+      out: 1
+C16  ok  depth 2->1  0.11 s
+      in : (109*Sqrt[2] + 89*Sqrt[3])^(1/5)
+      out: Sqrt[2] + Sqrt[3]
+C17  ok  depth 2->1  0.1 s
+      in : (16 + 14*Sqrt[2] + 12*Sqrt[3] + 6*Sqrt[6])^(1/3)
+      out: 1 + Sqrt[2] + Sqrt[3]
+C18  ok  depth 2->1  0.38 s
+      in : (10 + 3*2^(2/3)*3^(1/3) + 3*2^(1/3)*3^(2/3) + 3*2^(2/3)*5^(1/3) + 3*3^(2/3)*5^(1/3) + 3*2^(1/3)*5^(2/3) + 3*3^(1/3)*5^(2/3) + 6*30^(1/3))^(1/3)
+      out: 2^(1/3) + 3^(1/3) + 5^(1/3)
+C19  ok  depth 2->1  0.09 s
+      in : (80 + 48*Sqrt[2] + 40*Sqrt[3] + 32*Sqrt[6])^(1/4)
+      out: 1 + Sqrt[2] + Sqrt[3]
+C20  ok  depth 2->1  0.12 s
+      in : Sqrt[11 + 2*Sqrt[2] + 2*Sqrt[3] + 2*Sqrt[5] + 2*Sqrt[6] + 2*Sqrt[10] + 2*Sqrt[15]]
+      out: 1 + Sqrt[2] + Sqrt[3] + Sqrt[5]
+=== X. complex radicands ===
+X01  MISS  depth 0->0  0. s
+      in : 2 + I
+      out: 2 + I
+      exp: 2 + I  (exp==in: True)
+X02  MISS  depth 0->0  0. s
+      in : 2 + 3*I
+      out: 2 + 3*I
+      exp: 2 + 3*I  (exp==in: True)
+X03  MISS  depth 0->0  0. s
+      in : 1 + I
+      out: 1 + I
+      exp: 1 + I  (exp==in: True)
+X04  MISS  depth 0->0  0. s
+      in : 1 - I
+      out: 1 - I
+      exp: 1 - I  (exp==in: True)
+X05  MISS  depth 0->0  0. s
+      in : 3 - 4*I
+      out: 3 - 4*I
+      exp: 3 - 4*I  (exp==in: True)
+X06  MISS  depth 0->0  0. s
+      in : 1 + I
+      out: 1 + I
+      exp: 1 + I  (exp==in: True)
+X07  MISS  depth 0->0  0. s
+      in : 2 + I
+      out: 2 + I
+      exp: 2 + I  (exp==in: True)
+X08  ok  depth 2->1  0.11 s
+      in : (-5 + I*Sqrt[2])^(1/3)
+      out: 1 + I*Sqrt[2]
+X09  ok  depth 2->1  0.27 s
+      in : Sqrt[1 + I*Sqrt[3]]
+      out: (I + Sqrt[3])/Sqrt[2]
+X10  ok  depth 2->1  0.25 s
+      in : Sqrt[-1 + I*Sqrt[3]]
+      out: (1 + I*Sqrt[3])/Sqrt[2]
+X11  ok  depth 2->1  0.04 s
+      in : Sqrt[2 + (2*I)*Sqrt[3]]
+      out: I + Sqrt[3]
+=== N. expected non-denestable controls ===
+N01  MISS  depth 2->2  0.8300000000000001 s
+      in : Sqrt[2 + Sqrt[2]]
+      out: Sqrt[2 + Sqrt[2]]
+      exp: Sqrt[2 + Sqrt[2]]  (exp==in: True)
+N02  MISS  depth 2->2  3.67 s
+      in : (3 + Sqrt[10])^(1/3)
+      out: (3 + Sqrt[10])^(1/3)
+      exp: (3 + Sqrt[10])^(1/3)  (exp==in: True)
+N03  MISS  depth 2->2  1.04 s
+      in : (1 + Sqrt[2])^(1/3)
+      out: (1 + Sqrt[2])^(1/3)
+      exp: (1 + Sqrt[2])^(1/3)  (exp==in: True)
+N04  MISS  depth 2->2  1.6500000000000001 s
+      in : Sqrt[3 + Sqrt[2] + Sqrt[3]]
+      out: Sqrt[3 + Sqrt[2] + Sqrt[3]]
+      exp: Sqrt[3 + Sqrt[2] + Sqrt[3]]  (exp==in: True)
+
+=== SUMMARY ===
+Grid[{{id, status, din, dout, t}, {Q01, ok, 2, 1, 0.035678}, {Q02, ok, 2, 1, 0.0280341}, {Q03, ok, 2, 1, 0.0133934}, {Q04, ok, 2, 1, 0.0283063}, {Q05, ok, 2, 1, 0.0173369}, {Q06, ok, 2, 1, 0.0120733}, {Q07, ok, 2, 1, 0.0145619}, {Q08, ok, 2, 1, 0.0418969}, {Q09, ok, 2, 1, 0.0447145}, {Q10, ok, 2, 1, 0.0594534}, {Q11, ok, 2, 1, 0.7065414}, {Q12, ok, 2, 1, 0.7015283}, {Q13, ok, 2, 1, 0.081395}, {Q14, ok, 2, 1, 0.0453346}, {Q15, ok, 2, 1, 0.0265618}, {Q16, ok, 3, 1, 0.1270961}, {Q17, ok, 3, 1, 0.1372684}, {Q18, ok, 2, 1, 0.0327985}, {Q19, ok, 2, 0, 0.0161097}, {Q20, ok, 2, 1, 0.0466751}, {Q21, ok, 2, 0, 3.2513472}, {Q22, ok, 2, 1, 0.0401087}, {R01, ok, 2, 1, 0.2249068}, {R02, ok, 2, 1, 1.0991531}, {R03, ok, 2, 1, 0.9413125}, {R04, ok, 2, 1, 0.1580492}, {R05, ok, 2, 1, 0.3327089}, {R06, ok, 2, 1, 0.13683}, {R07, ok, 2, 1, 1.9622729}, {R08, ok, 2, 1, 2.3248979}, {R09, ok, 2, 1, 0.1143821}, {R10, ok, 2, 1, 0.086511}, {R11, ok, 2, 1, 0.0786096}, {R12, ok, 2, 1, 0.0691596}, {R13, ok, 2, 1, 0.0679162}, {R14, ok, 2, 1, 0.0635041}, {R15, MISS, 2, 2, 26.6838734}, {C01, ok, 2, 1, 0.0180267}, {C02, ok, 2, 1, 0.0389229}, {C03, ok, 2, 1, 0.0301567}, {C04, ok, 2, 1, 0.0210762}, {C05, ok, 2, 1, 0.1955183}, {C06, ok, 2, 1, 0.0344307}, {C07, ok, 2, 1, 0.0566462}, {C08, ok, 2, 1, 0.0517343}, {C09, ok, 2, 1, 0.0673584}, {C10, ok, 2, 1, 0.0414013}, {C11, ok, 2, 1, 0.0442786}, {C12, ok, 2, 1, 0.038432}, {C13, ok, 2, 1, 0.0746892}, {C14, ok, 2, 1, 0.2535043}, {C15, ok, 2, 0, 0.13226}, {C16, ok, 2, 1, 0.1128181}, {C17, ok, 2, 1, 0.10017}, {C18, ok, 2, 1, 0.3811961}, {C19, ok, 2, 1, 0.0931045}, {C20, ok, 2, 1, 0.1217224}, {X01, MISS, 0, 0, 0.0007432}, {X02, MISS, 0, 0, 0.000769}, {X03, MISS, 0, 0, 0.0006532}, {X04, MISS, 0, 0, 0.0012005}, {X05, MISS, 0, 0, 0.0014071}, {X06, MISS, 0, 0, 0.001342}, {X07, MISS, 0, 0, 0.000667}, {X08, ok, 2, 1, 0.1104169}, {X09, ok, 2, 1, 0.2745547}, {X10, ok, 2, 1, 0.2495102}, {X11, ok, 2, 1, 0.0376371}, {N01, MISS, 2, 2, 0.829387}, {N02, MISS, 2, 2, 3.6712903}, {N03, MISS, 2, 2, 1.0402247}, {N04, MISS, 2, 2, 1.6470154}}]
+non-ok: {{R15, MISS}, {X01, MISS}, {X02, MISS}, {X03, MISS}, {X04, MISS}, {X05, MISS}, {X06, MISS}, {X07, MISS}, {N01, MISS}, {N02, MISS}, {N03, MISS}, {N04, MISS}}

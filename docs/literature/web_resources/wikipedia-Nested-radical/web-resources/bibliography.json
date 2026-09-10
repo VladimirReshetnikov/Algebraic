@@ -1,0 +1,24 @@
+{
+  "id": "wikipedia",
+  "title": "Nested radical",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "wiki",
+      "entry_latex": "Wikipedia contributors, \\emph{Nested radical}, especially ``Denesting.''\n\\access{https://en.wikipedia.org/wiki/Nested_radical\\#Denesting}{Article section}. \\status{B}\nThe original prompt's starting point; useful for orientation and bibliography. Core results in this report are supported by primary papers or direct proofs rather than this page alone."
+    },
+    {
+      "report": "report-2",
+      "key": "wikipedia",
+      "entry_latex": "Wikipedia contributors.\n\\emph{Nested radical}, especially the denesting section.\n\\sourceurl{https://en.wikipedia.org/wiki/Nested_radical#Denesting}.\n\\textbf{R.} The common starting point supplied in the original research prompt. Useful for orientation and references; theorems in this report are supported by original literature or proofs rather than Wikipedia alone."
+    },
+    {
+      "report": "report-3",
+      "key": "wikipedia",
+      "entry_latex": "Wikipedia contributors. ``Nested radical,'' especially ``Denesting.'' \\url{https://en.wikipedia.org/wiki/Nested_radical#Denesting}. \\status{D}\n\\entrynote{The starting point named in the user-supplied research prompt. Used for navigation and identifying leads, not as the decisive authority for the general algorithmic claims reconciled in this report.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

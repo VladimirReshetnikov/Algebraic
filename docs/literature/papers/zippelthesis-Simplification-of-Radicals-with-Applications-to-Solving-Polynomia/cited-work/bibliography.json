@@ -1,0 +1,25 @@
+{
+  "id": "zippelthesis",
+  "title": "Simplification of Radicals with Applications to Solving Polynomial Equations",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "zippel77",
+      "entry_latex": "R. Zippel, \\emph{Simplification of Radicals with Applications to Solving Polynomial Equations}, master's thesis, Massachusetts Institute of Technology, 1977; related contribution, ``Radical simplification made easy,'' \\emph{MACSYMA Users' Conference}, 1977. \\status{B}\nEarly work preceding the 1985 journal article. These related historical records are grouped, without assuming that their texts are identical."
+    },
+    {
+      "report": "report-2",
+      "key": "zippelthesis",
+      "entry_latex": "Richard E. Zippel.\n\\emph{Simplification of Radicals with Applications to Solving Polynomial Equations}.\nMaster's thesis, Massachusetts Institute of Technology, 1977.\n\\sourceurl{https://dspace.mit.edu/entities/publication/8c890e97-f123-4c57-9278-9c85915cf15c}.\n\\textbf{M.} Institutional record confirms the title, year, and thesis status. It is not the same bibliographic item as the conference contribution immediately below."
+    },
+    {
+      "report": "report-3",
+      "key": "zippel77",
+      "entry_latex": "Richard Zippel. \\emph{Simplification of Radicals with Applications to Solving Polynomial Equations}. S.M. thesis, Massachusetts Institute of Technology, 1977. \\status{A}\n\\entrynote{Early thesis treatment of radical simplification. The related 1977 MACSYMA presentation ``Radical simplification made easy'' is a companion discovery lead, not a second independent modern completeness result.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

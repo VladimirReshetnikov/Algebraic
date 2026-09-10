@@ -1,0 +1,1316 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+\usepackage[margin=25mm,headheight=15pt]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,longtable,array,enumitem}
+\usepackage{xcolor,listings,xurl,hyperref,fancyhdr,needspace}
+\definecolor{ink}{HTML}{24364B}
+\definecolor{link}{HTML}{245B7B}
+\hypersetup{colorlinks=true,linkcolor=link,urlcolor=link,citecolor=link,
+ pdftitle={A Contract-Oriented Review of StradFixed2 and a Proposed Third Revision},
+ pdfauthor={Technical analysis prepared for Vladimir Reshetnikov}}
+\pagestyle{fancy}\fancyhf{}\fancyhead[L]{\small\textsc{Radical denesting: StradFixed2 review}}
+\fancyhead[R]{\small\texttt{9000d6f}}\fancyfoot[C]{\thepage}
+\setlength{\parskip}{4pt}\setlength{\parindent}{0pt}
+\setlist{nosep,leftmargin=1.5em}
+\lstset{basicstyle=\ttfamily\small,breaklines=true,columns=fullflexible,
+ keepspaces=true,showstringspaces=false,frame=single,rulecolor=\color{black!15},
+ backgroundcolor=\color{black!2},aboveskip=9pt,belowskip=9pt}
+\newcommand{\Q}{\mathbb Q}\newcommand{\C}{\mathbb C}
+\newcommand{\cost}{\operatorname{cost}}\newcommand{\depth}{\operatorname{depth}}
+\newcommand{\Gal}{\operatorname{Gal}}\newcommand{\Nrm}{\operatorname{N}}
+\newcommand{\code}[1]{\texttt{\detokenize{#1}}}
+\newcommand{\src}[1]{\cite{source}, lines~#1}
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{theorem}[proposition]{Theorem}
+\newtheorem{lemma}[proposition]{Lemma}
+\theoremstyle{definition}\newtheorem{definition}[proposition]{Definition}
+\theoremstyle{remark}\newtheorem{remark}[proposition]{Remark}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\begin{document}
+\begin{titlepage}
+\vspace*{15mm}
+{\Large\color{ink}\textsc{Radical Denest / Technical Review}\par}
+\vspace{11mm}
+{\huge\bfseries A Contract-Oriented Review\par of \texttt{StradFixed2.wl}\par}
+\vspace{6mm}
+{\Large Correctness boundaries, search-state defects,\par resource contracts, and a proposed third revision\par}
+\vspace{13mm}
+{\large Prepared for Vladimir Reshetnikov\par}
+{\large September 2026\par}
+\vspace{12mm}
+\begin{tabular}{@{}ll@{}}
+Reviewed commit & \texttt{9000d6f533a68ee7659a6830ad25bba401f800a5}\\[3pt]
+Reviewed file & \texttt{src/corrected/StradFixed2.wl}\\[3pt]
+Baseline Git blob & \texttt{0bdeded347385a55a044fdd35883006d053685dc}\\[3pt]
+Proposed package & \texttt{StradFixed3.wl}, context \texttt{RadicalDenest3`}\\[3pt]
+Baseline integrity & 41,416 bytes; Git-blob hash verified\\[3pt]
+Executed checks & 396 independent exact-mathematical and structural checks\\[3pt]
+Native regression suite & 40 Wolfram tests supplied; not executed here
+\end{tabular}
+\vfill
+\begin{minipage}{\textwidth}
+\textbf{Reading the conclusions.} The strongest findings concern domain admission,
+loss of previously accepted improvements, a missed index-reduction opportunity,
+budget-sensitive negative caching, and resource-contract gaps. This review does
+\emph{not} demonstrate an incorrect returned numerical value on the intended
+closed exact-algebraic input class. The proposed package is a reproducible source
+revision, not a claim of completed native-kernel qualification.
+\end{minipage}
+\end{titlepage}
+
+\begin{abstract}
+The second corrected Strad implementation has a valuable architecture: untrusted
+candidate generation is separated from an exact-equality acceptance gate, and
+symbolic hosts are processed through restricted congruence-preserving traversal.
+The important remaining questions are therefore more specific than whether a
+particular radical identity happens to simplify. Does the domain validator really
+establish algebraicity? Can a later unsuccessful search discard a previously
+certified improvement? Do recursive caches remember a mathematical result or
+merely an exhausted budget? Are the advertised operation and batch limits applied
+where the work is performed?
+
+This article audits those questions against the pinned source, the unified-B
+review, the repository survey, selected primary literature, and current Wolfram
+documentation. It develops explicit witnesses for the sparse multiquadratic
+ansatz and for index reduction that is useful without recursive progress. It
+also proves a small-field character-reconstruction method and derives a general
+odd-index trace--norm kernel. The accompanying package preserves the existing
+quadratic, cubic, Honsbeek, Kummer, multiplier, rationalization, and traversal
+machinery while hardening their interfaces. An exact copy of the baseline, a
+hash-checking build script, a source diff, independent executable checks, and a
+native regression suite make the proposal auditable and reproducible.
+\end{abstract}
+\begingroup
+\small
+\setlength{\parskip}{0pt}
+\tableofcontents
+\endgroup
+\newpage
+
+\section{Scope, evidence, and overall assessment}
+
+\subsection{What was reviewed}
+The source under review is the 745-line file \code{src/corrected/StradFixed2.wl}
+at the commit printed on the title page. The copy included with this article
+has the exact Git-blob SHA-1 reported by GitHub. The hash is computed using the
+Git object convention, namely SHA-1 of \code{blob <byte-count>\0} followed by the
+file bytes; it is not merely SHA-1 of the file content. The review is therefore
+about a reproducible version, not a moving \code{main} branch. The preceding
+review is \nolinkurl{src/code-review/unified-B/unified_analysis_B.tex}; the broader
+survey is \nolinkurl{docs/report/radical_denesting_unified.tex}.\cite{source,prior,survey}
+
+The literature reading concentrated on the repository's corrected editions of
+Jeffrey--Rich, Borodin--Fagin--Hopcroft--Tompa, and Landau's 1989 extended
+abstract. These sources are especially relevant to restricted practical
+algorithms, square-root/fourth-root distinctions, partial denesting, and the
+importance of specifying the base field and allowed roots of unity. The
+repository explicitly identifies these files as editorial re-typesettings,
+not facsimiles; this review does not silently attribute the editors'
+qualifications to the original authors.\cite{jeffrey,bfht,landau,editions}
+
+\subsection{Evidence levels}
+The findings use four distinct kinds of evidence. \emph{Static evidence} is an
+implication of the actual source: for example, an assignment overwrites an
+incumbent regardless of its quality. \emph{Mathematical evidence} is an exact
+identity or field-theoretic obstruction proved here. \emph{Documented semantic
+evidence} comes from Wolfram's description of a function. \emph{Native execution}
+would mean running this precise revision in a Wolfram kernel.
+
+The first three kinds are available. The fourth is not: the Wolfram connector
+was attempted but failed, and no local native kernel was available. Consequently,
+none of the 40 supplied Wolfram tests is reported as passed. The 396 executed
+checks are Python/SymPy exact mathematics, finite loop models, baseline-integrity
+checks, and lexical/source checks. They are not a Wolfram emulator and do not
+establish Wolfram evaluation semantics or performance.
+
+This separation matters particularly for two results. The root-domain problem
+is a defect in the predicate's implication, not an observed wrong numerical
+answer. The lost-incumbent problem has a concrete control-flow witness and a
+mathematically natural partial-denesting family, but the default package was
+not run to measure which instances discover that partial denesting first.
+
+\subsection{What the second correction gets right}
+The dominant positive feature is the single acceptance gate. A proposed
+replacement must be an explicit radical expression, fit the size limit, be
+strictly cheaper than the current incumbent, and be certified equal to the
+\emph{original target} of the island. This applies to specialized kernels,
+\code{Simplify}, \code{Factor}, \code{ToRadicals}, and user callbacks. Searching
+heuristically is entirely compatible with this architecture.\src{224--255}
+
+The implementation also keeps \code{Root} objects from masquerading as denested
+radical output, isolates \code{$Assumptions}, restricts traversal through
+symbolic hosts, bounds the overall multiplier queue at its admission point,
+and preserves only completed top-level passes on interruption. The polynomial
+inverse used for denominator rationalization is algebraically correct. The
+indirect square-root criterion and the principal phase for negative cube roots
+are also correct; neither should be undone in another cleanup.\src{261--279,
+301--323,379--396,648--690}
+
+The appropriate conclusion is not that the package should be discarded.
+It is that the separation between discovery and verification should be extended
+to \emph{domain admission, incumbent state, cache state, and resource accounting}.
+
+\section{Architecture and intended contracts}
+
+\subsection{The execution pipeline}
+\begin{longtable}{@{}P{.21\textwidth}P{.72\textwidth}@{}}
+\toprule
+Layer & Role in the baseline\\\midrule\endhead
+Public entry points & \code{Strad}, \code{DenestRadicals}, \code{DenestCore}, and
+\code{DenestReport} resolve per-head options and enter a shared session.\\
+Session & A dynamically scoped configuration, deadline, statistics, trace,
+certificate sample, memo table, and recursion depth are shared across the call.\\
+Traversal & \code{walk} visits supported arithmetic/list hosts;
+\code{island} handles exact algebraic subexpressions and recombination.\\
+Discovery & Shape-specific square/cube kernels, linear factors in radical
+extensions, index reduction, generic CAS proposals, and multiplier search
+produce candidate presentations.\\
+Acceptance & \code{accept} checks grammar, size, cost, and exact equality.
+\code{acceptWithPolish} proposes several alternative presentations.\\
+Publication & A completed pass is committed only after a whole-number equality
+check when the entire input is numeric. Symbolic hosts rely on certified local
+replacements and congruence.\\\bottomrule
+\end{longtable}
+This organization is visible directly in the source and is a substantial
+improvement over a simplifier that assumes its candidate formulas always
+choose the right branch.\cite{source,prior}
+
+\subsection{Four separate invariants}
+For an original island $E$ and incumbent $B$, the desired invariants are:
+\begin{align}
+& B=E, \label{eq:semantic-invariant}\\
+& \cost(B)\leq_{\rm lex}\cost(E),\label{eq:cost-invariant}\\
+& \text{every stage returns either }B\text{ or a certified cheaper candidate},
+\label{eq:stage-invariant}\\
+& \text{an exhausted search is not represented as a proof of nonexistence}.
+\label{eq:search-invariant}
+\end{align}
+The baseline gate is designed to enforce the first two. The later-stage reset
+violates the third while preserving equality. Budget-insensitive negative
+memoization violates the fourth. Conflating these failures with incorrect
+arithmetic would obscure both the diagnosis and the fix.
+
+The cost is a presentation heuristic, not an algebraic invariant:
+\begin{equation}
+\cost(E)=\bigl(o(E),d(E),r(E),\operatorname{LeafCount}(E),b(E)\bigr).
+\end{equation}
+Here $o$ counts opaque algebraic representations, $d$ is radical depth, $r$ is
+radical-node count, and $b$ prices exact coefficients. Equivalent algebraic
+numbers can have very different costs. There is no contradiction in using
+canonical algebraic values for equality and noncanonical radical expressions
+for optimization.
+
+\section{Finding register}
+\small
+\begin{longtable}{@{}P{.06\textwidth}P{.16\textwidth}P{.47\textwidth}P{.22\textwidth}@{}}
+\toprule
+ID & Priority & Finding and evidence & Revision status\\\midrule\endhead
+F1 & High: contract & Exact-looking \code{Root} objects are admitted without
+establishing algebraicity. Static and documented semantic evidence. & Conservative
+rational-polynomial root grammar.\\
+F2 & High: search state & Negative-radicand and Kummer stages can reset a better
+incumbent to the original target. Static witness; partial-denesting example. &
+Incumbent passed through both stages.\\
+F3 & Medium: coverage & Index reduction is discarded unless recursion changes
+its subproblem and reduces depth. Exact fourth-root witness. & Offer reduced
+presentation before recursion.\\
+F4 & Medium: cache & Unchanged results are cached without recursion/trial-budget
+context. Static evidence. & Positive incumbents only; path-local cycle guard.\\
+F5 & Medium: resources & Full integer factorizations and some expansion/
+normalization work bypass the operation wrapper; scans and final costs lie
+outside the outer region. & Explicit wrappers; budgeted scans and cached costs.\\
+F6 & Medium: resources & The nominal 24-proposal discriminant batch can reach
+46, although the global admission cap holds. Exact finite loop model. & Check
+batch limit in the inner loop; configurable cap.\\
+F7 & Medium: API semantics & A numerical diagnostic can produce the public
+status \code{"Different"} despite exact-decision wording. Previously acknowledged
+limitation, not a new discovery. & Numerical evidence is diagnostic only.\\
+F8 & Low/medium: API & Malformed non-rule option tails can remain unevaluated
+instead of reaching the documented \code{Failure} path. & Broader tail patterns,
+central validation retained.\\
+F9 & Low: metric & Gaussian-rational bit payloads are underpriced; subtractive
+opaque-node counting is brittle. & Direct recursive accounting and opaque pruning.\\
+F10 & Coverage opportunity & The sparse multisurd basis omits valid square-class
+cosets; an explicit example proves the kernel's miss. Not a proof of whole-package
+failure. & Small-rank character reconstruction added.\\\bottomrule
+\end{longtable}
+\normalsize
+
+\section{The exact-algebraic boundary}
+
+\subsection{Exact is not the same as algebraic}
+The problematic clause is short:
+\begin{lstlisting}
+opaqueQ[e], TrueQ[Precision[e] === Infinity] && FreeQ[e, _Real]
+\end{lstlisting}
+It occurs inside \code{algebraicFormQ}, where \code{opaqueQ} includes both
+\code{Root} and \code{AlgebraicNumber}. No polynomial or coefficient-domain check
+is performed.\src{143--166}
+
+Wolfram's \code{Root} is more general than a canonical algebraic-number wrapper.
+Its documented representations include roots of general equations, polynomial
+roots with nonrational numeric coefficients, and parameterized polynomial
+roots. Exactness of representation does not establish membership in
+$\overline{\Q}$.\cite{wlroot}
+
+For example, consider an indexed representation of a root $r$ of
+\begin{equation}\label{eq:trans-root}
+ r^5+\pi r+1=0.
+\end{equation}
+The polynomial is strictly increasing on the real line, so it has a unique real
+root, and that root is not zero. If $r$ were algebraic, then
+\begin{equation}
+ \pi=-\frac{r^5+1}{r}
+\end{equation}
+would be algebraic, a contradiction. Thus this is an exact number which is not
+algebraic. An exact-looking indexed \code{Root[#^5 + Pi # + 1 &, 1]} retained by
+the kernel satisfies the old structural acceptance rule without satisfying its
+claimed mathematical conclusion. The native regression suite checks rejection
+of this input; the present review does not claim to have observed its exact
+internal form on a running kernel.
+
+A parameterized \code{Root[#^5 + a # + 1 &, 1]} exposes a second issue: the input
+need not even denote a closed numeric constant. The existing precision/no-
+\code{Real} test cannot serve as a proof that parameters are absent.
+
+\subsection{Why this matters even without a demonstrated wrong answer}
+The exact method in \code{PossibleZeroQ} has a documented guarantee for
+\emph{explicit algebraic numbers}. The source chooses that method after
+\code{exactQ} succeeds. Therefore the validator is part of the proof boundary,
+not a cosmetic input filter. A validator that admits a larger domain weakens
+the justification for the subsequent certification call.\cite{wlzero}
+
+The failure mode should nevertheless be stated narrowly. Unsupported roots may
+simply remain unchanged, cause a timeout, or make the equality oracle return
+\code{"Unknown"}. Those outcomes are plausible and safe. This review has not
+shown that the baseline accepts a false equality on such an input. The finding
+is that its promised implication
+\begin{equation}
+\code{ExactAlgebraicQ[e]}=\code{True}\ \Longrightarrow\ e\in\overline{\Q}
+\end{equation}
+is not established by the implementation.
+
+\subsection{A conservative repair}
+The revision accepts indexed univariate roots only when the defining function
+produces a nonconstant polynomial with rational coefficients and the index is
+an integer in the degree range. The supported optional root-isolation flag is
+also checked. An \code{AlgebraicNumber} must have an admitted generator and a
+Gaussian-rational coefficient list. Plus, Times, rational Power, and Gaussian
+rationals retain their previous recursive treatment.
+
+This is deliberately a \emph{sufficient grammar}. It rejects some genuinely
+algebraic objects, including more general triangular representations and roots
+with algebraic coefficients that have not been reduced to a rational-polynomial
+form. Such inputs may first be normalized with a bounded \code{RootReduce} and
+then rechecked. The revision does not claim to decide algebraicity of arbitrary
+Wolfram expressions. Root-defining functions are ordinary Wolfram code, so this
+validator is not a sandbox for hostile evaluation or side effects.
+
+\subsection{Make all three equality statuses honest}
+The baseline evaluates a difference numerically at 40 digits and, when its
+reported accuracy and magnitude exceed thresholds, returns
+\code{"Different"}. This branch never accepts a candidate, which is an important
+safety distinction. But it is not the same as an exact proof of inequality, and
+its existence conflicts with the public exact-decision wording.\src{186--212}
+
+The proposed revision keeps the option for compatibility but changes its role.
+Numerical evidence may increment a diagnostic statistic; it neither returns
+\code{"Different"} nor prevents exact certification. Exact zero from
+\code{RootReduce} proves equality. A rational or Gaussian-rational nonzero
+normal form proves inequality. A validated polynomial root with nonzero
+constant coefficient cannot be zero. Remaining cases go through the exact
+algebraic method; interruption or uncertainty produces \code{"Unknown"}.
+\cite{wlreduce,wlzero}
+
+The record for an accepted candidate now identifies which exact equality route
+succeeded. This is useful provenance, but it is still not an independent proof
+object: both discovery and certification depend on the same kernel.
+
+\begin{proposition}[Conditional soundness of the acceptance gate]
+Assume that domain admission implies a finite exact algebraic value and that
+all equality-oracle answers \code{"Equal"} are correct. If a gate returns the
+incumbent unchanged or replaces it only by a cheaper radical expression
+certified equal to the original target, then every sequence of successful
+stage transitions preserves equality to that target and never increases cost.
+\end{proposition}
+\begin{proof}
+The initial incumbent equals the target. An unchanged transition preserves both
+properties. A replacing transition establishes equality to the original target
+and strict cost decrease by its explicit tests. Induction proves the claim.
+The hypotheses explain why domain validation and exact-oracle semantics belong
+to the trusted core, whereas discovery formulas need not be trusted.
+\end{proof}
+
+\section{Search-state defects and concrete witnesses}
+
+\subsection{Later no-op stages can erase earlier success}
+In \code{powerProposals}, the assignments
+\begin{lstlisting}
+best = negativeRadicandCandidate[target, rho, p, q];
+...
+best = kummerCandidates[target, rho, p, q];
+\end{lstlisting}
+do not pass \code{best}. Both callees initialize or fall back to
+\code{target}. A later no-op is thus interpreted as ``replace the incumbent by
+the original input,'' rather than ``retain the incumbent.''\src{435--464,598--620}
+
+An important qualification is that the specialized fast kernels usually return
+depth-one candidates, after which \code{powerProposals} exits early. It would
+therefore overstate the problem to claim that every successful quadratic
+simplification is subsequently lost. The exposed case is a \emph{partial}
+improvement, notably one found while separating a negative radicand.
+
+Consider the positive numbers
+\begin{align}
+ t&=11-2\sqrt{29}, & w&=\sqrt{55-10\sqrt{29}},\\
+ \rho&=16-2\sqrt{29}+2w, & B&=\sqrt5+\sqrt t.
+\end{align}
+Since $11>2\sqrt{29}$, $t>0$, and $w=\sqrt{5t}$. Hence
+\begin{equation}\label{eq:partial}
+ B^2=5+t+2\sqrt{5t}=\rho,\qquad B>0.
+\end{equation}
+This is the partial-denesting example discussed in the square-root
+literature.\cite{bfht} The negative-radicand target is
+\begin{equation}
+ E=\sqrt{-\rho}=iB.
+\end{equation}
+Its original presentation has depth three, while $iB$ has depth two.
+If recursive processing of the positive modulus discovers $B$, the negative
+stage can accept $iB$. A subsequent Kummer stage which returns its original
+target discards that certified improvement.
+
+There is also a field-theoretic reason that a linear-factor search need not
+rediscover the improvement. Put $F=\Q(\sqrt{29})$ and $K=F(w)$. This is a real
+field, so $iB\notin K$. Moreover $B=\sqrt5(1+w/5)$, and $\sqrt5\notin K$:
+$5$ is not a square in $F$, and $5/(5t)=1/t$ is not a square in $F$, since
+$\Nrm_{F/\Q}(t)=5$ is not a rational square. Thus even the positive square root
+is outside the displayed radicand field. This does not prove how every kernel
+factorization is represented; it explains why retaining independent discoveries
+is mathematically necessary.
+
+The supplied white-box regression injects the partial modulus result and an
+empty linear-factor result. It tests the stage interface directly without
+pretending that default CAS discovery was observed. The repair is simply to
+pass an incumbent through both functions and to return it on every no-op path.
+
+\subsection{Useful index reduction does not require recursive progress}
+The baseline takes a root $\gamma$ of $x^k-\rho$, writes $q=k\,r$, and recursively
+processes $\gamma^{1/r}$. It offers the result only if recursion changed the
+expression and reduced radical depth.\src{443--452}
+
+Both requirements are too strong. Set
+\begin{equation}\label{eq:index-witness}
+ \rho=3+2\sqrt2=(1+\sqrt2)^2,\qquad
+ E=\rho^{1/4}=\sqrt{1+\sqrt2}.
+\end{equation}
+The reduced expression already has a smaller presentation even though both
+forms have radical depth two and two nonintegral-power nodes. The coefficient
+and multiplication in $2\sqrt2$ disappear. With recursion disabled, the old
+condition necessarily rejects this opportunity.
+
+The example fits the Kummer search exactly. For $k=2$, the radical field
+$\Q(\sqrt2)$ contains $\gamma=1+\sqrt2$. It does not contain the positive square
+root of $\gamma$: the conjugate $1-\sqrt2$ is negative, while the conjugate of a
+square in this real quadratic field must be nonnegative. Thus asking for a
+linear factor of $x^4-\rho$ first does not make the $k=2$ step redundant.
+
+The revised stage first offers the unmodified reduced presentation, with the
+necessary root-of-unity phases and the original numerator exponent. It then
+optionally recurses and offers those results too. The global acceptance gate,
+not a separate depth-only predicate, decides whether each proposal is useful.
+This also admits equal-depth improvements in node count or coefficient size.
+
+\subsection{A failed bounded search is not a reusable negative fact}
+The baseline memo key is the target expression alone. On completion it stores
+\code{best}, including the case \code{best === target}; a later visit returns
+that entry immediately. Recursive calls, however, use fewer remaining recursion
+levels and divide the trial allowance by four. Local operation failures can
+also occur without exhausting the session deadline.\src{430--433,628--639}
+
+Suppose a target is first visited near the recursion limit. It may return
+unchanged because the remaining search is weak, and that unchanged result is
+cached. A later shallower visit has more opportunities, but the memo lookup
+prevents them from being tried. The cache has confused ``this search found
+nothing'' with ``nothing useful remains to be found.''
+
+One repair is a resource-aware search-state key. Another is to store only
+certified successes and use them as incumbents rather than terminal answers.
+The revision chooses the latter. It also maintains a path-local in-progress
+set, so removing negative entries does not invite immediate recursive cycles.
+A revisit on the current path returns the best already known representation;
+a later visit off that path is allowed to search again.
+
+This policy can perform repeated unsuccessful work. That is a conscious tradeoff
+for simpler correctness of search-state reuse. A more advanced implementation
+could store an incumbent plus a resumable frontier and a clearly specified
+coverage descriptor, but an undifferentiated memoized expression is insufficient.
+
+\section{Resource contracts, option dispatch, and metric details}
+
+\subsection{An overall timeout does not enforce every local timeout}
+The header promises a bounded region for every expensive kernel operation.
+The source nevertheless performs \code{FactorInteger} directly while building
+multisurd bases and discriminant-prime lists. It also expands an ansatz square
+and normalizes some extracted linear roots outside \code{bounded}.\src{357,
+364,425--426,564}
+
+These calls are usually inside the \emph{outer} session constraint. Therefore
+it would be incorrect to say that the code has no time limit at all. The defect
+is that \code{"OperationTime"} does not govern the operations in question.
+A full factorization of a large discriminant can consume most of the session,
+even though only eight resulting primes will be retained. Taking a prefix
+\emph{after} complete factorization does not bound factorization effort.
+
+The revision wraps these explicit calls and treats failure as absence of that
+proposal source. It also bounds the combined shape-specific proposal call and
+rejects oversized candidates before polishing. These are practical safeguards,
+not a proof that expression evaluation has constant overhead or that every
+internal arithmetic step is separately interruptible.
+
+\subsection{The discriminant batch bound is misplaced}
+In the old prime-power loop, the batch counter is checked before entering each
+prime, but not before each exponent:
+\begin{lstlisting}
+Do[If[batch >= 24, Break[]];
+   Do[batch++; admit[m prime^e], {e, 1, q - 1}],
+   {prime, primes}]
+\end{lstlisting}
+For $q=24$, one prime contributes 23 proposals. Because $23<24$, a second prime
+is entered and contributes another 23. The batch reaches 46. For $q=32$, the
+first prime alone reaches 31. Among $2\le q\le32$ and up to eight primes, the
+largest such overshoot is 46. The independent loop-model checks exhaust this
+finite range.\src{565--572}
+
+The queue's separate admission guard still prevents more than
+\code{"MultiplierCap"} entries from being admitted. It is the local generation
+budget, not the global queue bound, that fails. The revision checks all relevant
+bounds in the exponent loop and exposes the old constant as
+\code{"DiscriminantBatchCap"}, defaulting to 24. A value of zero disables that
+expansion source without disabling seed multipliers.
+
+\subsection{Budgeted work should include preflight and report metrics}
+The original outer region contains the pass loop, but input scans before it and
+\code{RadicalCost} evaluations used to assemble the final report lie outside
+it. A zero time budget therefore still permits full cost traversal of the input.
+For large trees, this contradicts a literal whole-call budget.\src{692--728}
+
+In the revision, input scans and initial/candidate costs are performed inside
+the outer region. The committed snapshot carries its already-computed cost.
+When the initial cost was never computed, the report uses
+\code{Missing["NotComputed"]} instead of performing expensive post-timeout work.
+The zero-budget path does not scan the expression merely to populate cosmetics.
+
+Ordinary argument evaluation, option resolution, final association construction,
+and front-end serialization are not claimed to be covered. A real hard boundary
+requires a parent process supervising a worker kernel; the parent can enforce
+wall-clock and operating-system memory limits and recover a previously serialized
+checkpoint. That is an architectural extension, not something accomplished by
+adding another \code{TimeConstrained} around the same kernel expression.
+
+Wolfram documents interrupt granularity and abort protection for time constraints,
+and states that their accounting concerns main-kernel CPU time rather than all
+threads/processes. Memory constraints are likewise not a process-RSS sandbox.
+The revision's report therefore describes its limits as cooperative kernel
+limits.\cite{wltime,wlmemory}
+
+\subsection{Degree limits are output filters, not complexity certificates}
+The package computes a minimal polynomial and then checks its degree against
+\code{"MaxDegree"}. That is a sensible acceptance filter, but a polynomial of
+unacceptable degree may already have been expensive to compute. The same
+observation applies to extension construction and algebraic normalization.
+The revision retains this behavior rather than falsely promising a cheap
+pre-computation degree bound.
+
+A future preflight may multiply upper bounds for independent radical degrees,
+reduce known square-class relations, and stop when the bound becomes too large.
+Such a bound must be conservative: naive multiplication often dramatically
+overestimates the true field degree. A pessimistic bound is useful for resource
+policy, not a reason to claim that a denesting is mathematically unavailable.
+
+\subsection{Malformed options should reach the validator}
+The validator checks that option items are rules and returns a structured
+\code{Failure}. But the baseline public definitions use \code{OptionsPattern[]}
+for the tail. A non-rule argument such as 123 need not match those definitions,
+so it may remain an unevaluated public call rather than reaching the validator.
+This is a dispatch gap between the documented API and its error path.
+\src{120--138,736--742}
+
+The proposed public definitions accept an arbitrary option tail and pass it to
+the same validator. The more specific legacy Boolean overload remains. Unknown
+rule names, invalid values, and malformed non-rule tails consequently share a
+consistent error mechanism. Missing required positional arguments remain an
+ordinary arity issue; this change does not purport to define every malformed
+call imaginable.
+
+\subsection{Cost accounting should be direct}
+The original radical-node counter counts all powers and then subtracts powers
+inside opaque algebraic objects. A pruned recursive traversal is simpler and
+cannot double-subtract a radical if an opaque representation contains another
+opaque object. This review treats the latter as a representation-dependent
+robustness issue, not a demonstrated negative count for a particular native
+canonical input.\src{173--181}
+
+There is a more direct coefficient issue: exact complex numbers are atomic to
+ordinary expression traversal. Searching for integer/rational atoms therefore
+does not reliably price their real and imaginary components. The replacement
+\code{bitSize} handles \code{Complex} explicitly, then recurses through other
+non-atomic payloads. Opaque counts and radical-node counts prune opaque bodies;
+bit size still prices their stored data. The revised cost documentation states
+this distinction rather than leaving it implicit.
+
+Even a perfectly implemented lexicographic metric is noncompositional under
+all Wolfram evaluations. A local simplification can change sharing, cancellation,
+or a parent's final representation. The package still checks whole-pass cost
+before commitment. A future DAG-aware metric or a small Pareto frontier could
+improve coverage, but neither is implemented here.
+
+\section{Verification of the retained algebraic kernels}
+
+This section records the mathematical contracts that the implementation should
+preserve. It also separates a formula being a valid \emph{proposal} from it
+already being the correct principal value. The exact gate remains the final
+authority for the latter.
+
+\subsection{Direct square-root denesting}
+Let $a,b,c\in\Q$, $c>0$, $\sqrt c\notin\Q$, and suppose
+$\rho=a+b\sqrt c>0$. Put $D=a^2-b^2c$. When $D\ge0$ and $s=\sqrt D\in\Q$,
+set
+\begin{equation}
+ u=\frac{a+s}{2},\qquad v=\frac{a-s}{2}.
+\end{equation}
+Under $a>0$, both $u$ and $v$ are nonnegative, because $s\le a$. Moreover
+$uv=b^2c/4$, so
+\begin{equation}
+ \left(\sqrt u+\operatorname{sgn}(b)\sqrt v\right)^2
+ =a+b\sqrt c.
+\end{equation}
+Since $u\ge v$, the displayed candidate is nonnegative even when $b<0$.
+It is therefore the principal square root. The source absorbs $|b|$ into the
+radicand before applying the recipe, which changes its internal representation
+but not this argument. The norm/discriminant mechanism is the familiar
+quadratic denesting criterion discussed in the literature.\cite{bfht,jeffrey}
+
+\subsection{Indirect denesting with a fourth root}
+Suppose $D<0$ and $b>0$. Define
+\begin{equation}
+ h=\sqrt{b^2-a^2/c}.
+\end{equation}
+When $h\in\Q$, let $u=(b+h)/2$ and $v=(b-h)/2$. Here $0\le h\le b$, so
+$u,v\ge0$, and $uv=a^2/(4c)$. Consequently,
+\begin{align}
+ \left[c^{1/4}\left(\sqrt u+\operatorname{sgn}(a)\sqrt v\right)\right]^2
+ &=\sqrt c\left(b+\frac a{\sqrt c}\right)\\
+ &=a+b\sqrt c.
+\end{align}
+The candidate is nonnegative because $u\ge v$. This proves the source's recipe.
+The rational-square condition is
+\begin{equation}
+ h^2=-D/c,\qquad
+ h\in\Q\ \Longleftrightarrow\ -cD\text{ is a rational square}.
+\end{equation}
+It is not the condition that $-D$ alone be a rational square. For instance,
+\begin{equation}
+ \sqrt{4+3\sqrt2}=2^{1/4}(1+\sqrt2),
+\end{equation}
+where $D=-2$ and $-cD=4$. This distinction is already emphasized in the survey
+and preceding correction and is retained here.\cite{survey,prior,bfht}
+
+\subsection{Principal roots on the negative real axis}
+Wolfram rational powers use a principal complex value. For $r>0$ and rational
+$p/q$ in lowest terms,
+\begin{equation}
+ (-r)^{p/q}=e^{i\pi p/q}r^{p/q}=(-1)^{p/q}r^{p/q}.
+\end{equation}
+For odd $q$, this generally differs from the signed real $q$th root convention.
+In particular,
+\begin{equation}
+ (-7-5\sqrt2)^{1/3}=(-1)^{1/3}(1+\sqrt2),
+\end{equation}
+not $-1-\sqrt2$. A power identity alone does not choose the correct root:
+all $q$ root-of-unity multiples have the same $q$th power. The implementation's
+phase enumeration and final exact comparison against the original principal
+expression are therefore essential.
+
+Similarly, unrestricted transformations such as
+$(uv)^{1/q}=u^{1/q}v^{1/q}$ or $(u^k)^{1/k}=u$ must not be made into trusted
+rewrite rules. They can be used to organize a finite candidate orbit whose
+members are checked individually.
+
+\subsection{Odd roots in a quadratic field}
+The cubic kernel admits a clean generalization. Suppose
+\begin{equation}
+ \beta=A+B\sqrt c,\qquad A,B,c\in\Q,
+\end{equation}
+with conjugate $\bar\beta=A-B\sqrt c$. Define the trace and norm
+\begin{equation}
+ T=\beta+\bar\beta=2A,\qquad n=\beta\bar\beta=A^2-cB^2.
+\end{equation}
+Both roots satisfy $x^2-Tx+n=0$. Thus the polynomial sequences
+\begin{align}
+ D_0&=2,&D_1&=T,&D_j&=T D_{j-1}-nD_{j-2},\\
+ S_0&=0,&S_1&=1,&S_j&=T S_{j-1}-nS_{j-2}
+\end{align}
+satisfy
+\begin{equation}\label{eq:D-S-meaning}
+ D_j=\beta^j+\bar\beta^j,\qquad
+ (\beta-\bar\beta)S_j=\beta^j-\bar\beta^j.
+\end{equation}
+These identities follow by the same second-order recurrence and the initial
+values. They also give the polynomial identity
+\begin{equation}\label{eq:D-S-identity}
+ D_j(T,n)^2-(T^2-4n)S_j(T,n)^2=4n^j.
+\end{equation}
+It is a polynomial identity even when the two quadratic roots coincide, since
+it holds for indeterminate distinct roots and hence identically.
+
+Now let $q\ge3$ be odd and suppose we seek a root inside $\Q(\sqrt c)$ of
+\begin{equation}
+ \beta^q=a+b\sqrt c,\qquad b\ne0.
+\end{equation}
+Taking norms gives the necessary condition
+\begin{equation}
+ n^q=a^2-b^2c.
+\end{equation}
+The rational candidate for $n$ is the signed real $q$th root of the right-hand
+side. For every rational root $T$ of
+\begin{equation}\label{eq:trace-polynomial}
+ D_q(T,n)-2a=0,
+\end{equation}
+form
+\begin{equation}\label{eq:odd-reconstruction}
+ \beta=\frac T2+\frac b{S_q(T,n)}\sqrt c.
+\end{equation}
+
+\begin{proposition}[Trace--norm reconstruction]
+Under the assumptions above, if $n,T\in\Q$ satisfy the norm equation and
+\eqref{eq:trace-polynomial}, then $S_q(T,n)\ne0$ and the value in
+\eqref{eq:odd-reconstruction} satisfies $\beta^q=a+b\sqrt c$.
+Conversely, every such root in $\Q(\sqrt c)$ supplies such a pair $(T,n)$.
+\end{proposition}
+\begin{proof}
+Substituting the equations for $D_q$ and $n^q$ into
+\eqref{eq:D-S-identity} yields
+\begin{equation}
+ (T^2-4n)S_q(T,n)^2=4b^2c\ne0.
+\end{equation}
+In particular $S_q\ne0$. Writing $A=T/2$ and $B=b/S_q$ gives
+$A^2-cB^2=n$. Therefore the reconstructed quadratic pair has trace $T$ and
+norm $n$, and \eqref{eq:D-S-meaning} shows
+$\beta^q=D_q/2+B\sqrt c\,S_q=a+b\sqrt c$.
+The converse follows by taking the trace and norm of the assumed root.
+\end{proof}
+
+For $q=3$,
+\begin{equation}
+ D_3=T^3-3nT,\qquad S_3=T^2-n,
+\end{equation}
+which recovers the existing cubic implementation. For $q=5$,
+\begin{equation}
+ D_5=T^5-5nT^3+5n^2T,\qquad
+ S_5=T^4-3nT^2+n^2.
+\end{equation}
+The revision uses rational linear factors of the trace polynomial rather than
+trying to solve an arbitrary quintic or septic by radicals. By default the
+extension is enabled through index seven. This is a bounded additional proposal
+kernel, not a completeness statement for all odd radicals: roots requiring a
+larger field are outside its scope. The original cubic kernel is retained.
+
+\subsection{The Honsbeek quartic proposal is algebraically sound}
+Let $A^3=a$, $B^3=b$, and set
+\begin{equation}
+ N=B^2+sAB-\frac{s^2A^2}{2},\qquad D=b-s^3a.
+\end{equation}
+Expanding and reducing $A^3=a$, $B^3=b$ gives
+\begin{align}
+ N^2&=(b-s^3a)B+A\left(2sb+\frac{s^4a}{4}\right),\\
+ N^2-(A+B)D
+ &=\frac A4\left[a(s^4+4s^3)+b(8s-4)\right].\label{eq:honsbeek}
+\end{align}
+Thus every rational solution of
+\begin{equation}
+ s^4+4s^3+8(b/a)s-4b/a=0
+\end{equation}
+with $a\ne0$ and $D\ne0$ gives candidates $\pm N/\sqrt D$ whose squares equal
+$A+B$. The source restricts to $D>0$ and offers both signs. The exact gate
+selects the original principal square root.\src{325--343}
+
+For $A=\sqrt[3]5$, $B=-\sqrt[3]4$, one may take $s=-2$, giving $D=36$ and
+\begin{equation}
+ \sqrt{\sqrt[3]5-\sqrt[3]4}
+ =\frac{\sqrt[3]2+\sqrt[3]{20}-\sqrt[3]{25}}3.
+\end{equation}
+The positive sign is immediate because $\sqrt[3]2+\sqrt[3]{20}>3$ while
+$\sqrt[3]{25}<3$. This familiar example is also present in the repository
+literature.\cite{jeffrey,landau} The independent test suite verifies
+\eqref{eq:honsbeek} symbolically in a polynomial quotient ring, rather than
+merely checking decimal approximations.
+
+\subsection{Polynomial inverses for rationalization}
+If a nonzero algebraic denominator $d$ satisfies
+\begin{equation}
+ a_0+a_1d+\cdots+a_nd^n=0,\qquad a_0\ne0,
+\end{equation}
+then
+\begin{equation}
+ d^{-1}=-\frac{a_1+a_2d+\cdots+a_nd^{n-1}}{a_0}.
+\end{equation}
+This is exactly the Horner expression used in \code{rationalizeRaw}. The source
+checks that coefficients are rational, excludes zero constant coefficient,
+and verifies $d\cdot d^{-1}=1$ before using the inverse. There is no missing sign
+or off-by-one error in the formula.\src{261--279}
+
+The result need not be cheaper, which is why the standalone rationalization
+API has a different cost contract from a denesting proposal. When a symbolic
+numerator is present, multiplying by a certified inverse of a fixed nonzero
+numeric denominator is a congruence step; it is not a license to cancel arbitrary
+symbolic factors whose zero sets were not tracked.
+
+\section{The sparse multisurd ansatz: a proved limitation}
+
+\subsection{A counterexample inside a small field}
+The baseline multisurd kernel forms two trial sets: 1 together with visible
+prime factors, and then those values together with the visible radicands. It
+solves for a rational linear combination of the corresponding square roots.
+These are useful small ansatzes, but they do not constitute a basis for all
+possible denestings.\src{345--375}
+
+Take
+\begin{equation}\label{eq:beta-example}
+ B=\sqrt6+\sqrt{10}+\sqrt{21}.
+\end{equation}
+Direct expansion gives
+\begin{equation}\label{eq:rho-example}
+ B^2=37+4\sqrt{15}+6\sqrt{14}+2\sqrt{210}.
+\end{equation}
+The old largest ansatz uses
+\begin{equation}
+ U=\{1,2,3,5,7,14,15,210\}.
+\end{equation}
+It contains none of the square classes 6, 10, or 21. Distinct square classes
+have linearly independent square roots over $\Q$ inside a multiquadratic field.
+Consequently neither $B$ nor $-B$ lies in the rational span of
+$\{\sqrt u:u\in U\}$. Since the only roots of $x^2-B^2$ are $\pm B$, the ansatz
+has no solution.
+
+For completeness, the independence statement follows from character
+orthogonality. Choose independent square classes generating a field containing
+all the roots. Each root belongs to a distinct one-dimensional eigenspace for
+the sign-changing automorphism group. Applying the projector for one character
+to a rational linear relation isolates its coefficient, which must therefore
+vanish. This argument also motivates the replacement kernel below.
+
+The conclusion is about the \emph{multisurd kernel}. Kummer, generic CAS, or
+multiplier proposals might still solve the same whole input. This review does
+not turn a demonstrated local search-space omission into an unmeasured
+end-to-end failure claim.
+
+\subsection{Closing the visible prime basis is still not enough}
+A tempting repair is to include every product of the visible radicand primes.
+That helps, but it does not solve the general issue. For example,
+\begin{equation}
+ \left(\sqrt{10}+\sqrt{15}+\sqrt{35}\right)^2
+ =60+10\sqrt6+10\sqrt{14}+10\sqrt{21}.
+\end{equation}
+The prime 5 is absent from the radicands 6, 14, and 21. It occurs in coefficients,
+and the square root lies in a square-class coset not contained in the field
+obtained from those radicands alone.
+
+In \eqref{eq:rho-example}, the radicand field is
+$K=\Q(\sqrt{14},\sqrt{15})$. The classes supporting $B$ lie in
+\begin{equation}
+ 6\langle14,15\rangle\subset\Q^\times/\Q^{\times2},
+\end{equation}
+not necessarily in the subgroup itself. Multipliers can sometimes discover
+this missing coset; a direct reconstruction method can find it without first
+guessing its representative.
+
+\section{A bounded character-reconstruction kernel}
+
+\subsection{Square-class basis without an explicit prime-factor basis}
+Suppose
+\begin{equation}
+ \rho=a_0+\sum_j a_j\sqrt{d_j},\qquad a_j\in\Q,\quad d_j\in\mathbb Z_{>0}.
+\end{equation}
+Let $H$ be the subgroup of $\Q^\times/\Q^{\times2}$ generated by the $d_j$,
+and let $r$ be its rank. Then $K=\Q(\sqrt h:h\in H)$ has degree $m=2^r$.
+
+The new kernel constructs representatives of $H$ incrementally. Starting with
+$\{1\}$, a new radicand $d$ is already represented precisely when $d/h$ is a
+rational square for some existing representative $h$. Otherwise $d$ becomes a
+new generator and the representative list is doubled by multiplication by $d$.
+The rank cap is checked before that doubling.
+
+There is no explicit \code{FactorInteger} call in this basis construction.
+The Wolfram implementation uses exact rational-square tests involving square
+roots; it does not promise that the kernel never factors internally while
+simplifying them. An integer-square-root test on the numerator and denominator
+would be a possible further low-level optimization.
+
+\subsection{Conjugates and the finite transform}
+Index $H$ and the automorphisms of $K$ by $\mathbb F_2^r$. Let
+\begin{equation}
+ \chi_g(\sigma)=(-1)^{g\cdot\sigma},\qquad
+ \lambda_\sigma=\sqrt{\sigma(\rho)}
+\end{equation}
+with the principal square root at each embedding. Enumerate signs
+$\epsilon_\sigma\in\{\pm1\}$, fixing $\epsilon_0=1$. For each choice compute
+\begin{equation}\label{eq:fourier}
+ F_g=\frac1m\sum_\sigma\chi_g(\sigma)\epsilon_\sigma\lambda_\sigma.
+\end{equation}
+If every $F_g^2$ is rational, each $F_g$ can be represented by one signed square
+root of a rational number, with the sign determined by exact comparison. The
+candidate is then
+\begin{equation}\label{eq:reconstruct}
+ \sum_g F_g.
+\end{equation}
+Orthogonality of the characters shows that this sum is exactly $\lambda_0$:
+all columns except the identity column cancel. Nevertheless, the implementation
+also runs the final exact equality gate. A proof of the algebraic construction
+should not become a reason to bypass a robust implementation boundary.
+
+\subsection{Why this captures the missing coset}
+\begin{lemma}[Single-coset support]
+Let $K/\Q$ be multiquadratic. Suppose $\beta\ne0$, $\beta^2\in K$, and $\beta$
+lies in some finite multiquadratic extension of $\Q$. Then
+$\beta\in\sqrt d\,K$ for some $d\in\Q^\times$.
+\end{lemma}
+\begin{proof}
+Choose a finite multiquadratic field $M$ containing both $K$ and $\beta$.
+For $\tau\in\Gal(M/K)$, the equality
+$(\tau\beta)^2=\beta^2$ gives $\tau\beta=\pm\beta$. These signs form a character
+of $\Gal(M/K)$, because $\beta\ne0$. The Galois group of $M/\Q$ is a finite
+vector space over $\mathbb F_2$, so that character extends to the whole group.
+Its one-dimensional eigenspace is generated by $\sqrt d$ for a rational square
+class $d$. The quotient $\beta/\sqrt d$ is fixed by $\Gal(M/K)$ and hence lies
+in $K$.
+\end{proof}
+
+\begin{theorem}[Restricted completeness of exhaustive reconstruction]
+Ignore computational limits and suppose exact algebraic arithmetic and equality
+are available. For $\rho\in K$, the sign enumeration in \eqref{eq:fourier}
+finds a representation of the principal $\sqrt\rho$ as a sum of square roots of
+rational numbers whenever such a representation exists. Signed rational
+radicands, and thus complex square roots, may be allowed. This statement does
+not include arbitrary fourth roots or higher-index radicals.
+\end{theorem}
+\begin{proof}
+The zero case is trivial. A finite sum of rational square roots lies in a finite
+multiquadratic extension. By the lemma, $\beta=\sqrt\rho=\sqrt d\,u$ with $u\in K$.
+If $\sqrt d\in K$, absorb it into $u$ and use $d=1$. Otherwise each automorphism
+of $K$ extends to $K(\sqrt d)$ while fixing $\sqrt d$.
+
+Expand $u=\sum_g c_g\sqrt{h_g}$ in the square-class basis of $K$, where
+$c_g\in\Q$. At each embedding, the image of $\beta$ is one of the two square
+roots of $\sigma(\rho)$, so it equals
+$\epsilon_\sigma\lambda_\sigma$ for some enumerated sign choice. At the identity
+embedding the sign is $+1$. Character projection then gives
+$F_g=c_g\sqrt{d h_g}$, and $F_g^2=c_g^2dh_g\in\Q$.
+Thus that sign choice passes the rational-square tests and reconstructs $\beta$.
+Conversely, whenever the tests pass, selecting the exact signs of the square
+roots gives the $F_g$ themselves; orthogonality proves
+\eqref{eq:reconstruct} equals the principal target.
+\end{proof}
+
+The theorem is a mathematical guarantee for an exhaustive restricted procedure,
+not a guarantee for a timed execution. It is also not a new general denesting
+theorem: it is an explicit character-based formulation suitable for this
+implementation. The preceding review already pointed toward field bases and
+character projections; this revision turns a small-rank form into executable
+proposal code.\cite{prior}
+
+\subsection{An explicit reconstruction table}
+For \eqref{eq:beta-example}, write $a=\sqrt6$, $b=\sqrt{10}$, $c=\sqrt{21}$.
+Choose generators 14 and 15 and extend their sign changes while fixing
+$\sqrt6$. The principal square roots of the four conjugates are
+\begin{equation}
+ (\lambda_0,\lambda_1,\lambda_2,\lambda_3)
+ =(a+b+c,\ a+b-c,\ a-b+c,\ -a+b+c).
+\end{equation}
+All four displayed values are positive. The only nontrivial triangle inequality
+is $a+b>c$, which follows from $(a+b)^2=16+4\sqrt{15}>21$; the other two follow
+already from $a^2+c^2>b^2$ and $b^2+c^2>a^2$.
+
+Use the sign vector $(1,1,1,-1)$. The Hadamard transform gives
+\begin{equation}
+ (F_0,F_1,F_2,F_3)=(\sqrt6,\sqrt{21},\sqrt{10},0),\qquad
+ (F_0^2,F_1^2,F_2^2,F_3^2)=(6,21,10,0).
+\end{equation}
+The missing square classes are recovered directly. With this generator order
+and the implementation's binary sign enumeration, this is the second sign
+pattern, not an expensive search through all possible rational multipliers.
+The independent checks verify this example and 48 additional exact rank-two
+coset examples using separate multiquadratic arithmetic and certified rational
+intervals for signs.
+
+\subsection{The cost is exponential in field degree}
+There are $2^{m-1}=2^{2^r-1}$ sign patterns. The distinction between rank and
+field degree is operationally important:
+\begin{center}
+\begin{tabular}{@{}rrr@{}}\toprule
+Square-class rank $r$ & Field degree $m$ & Sign patterns\\\midrule
+1 & 2 & 2\\2 & 4 & 8\\3 & 8 & 128\\4 & 16 & 32,768\\\bottomrule
+\end{tabular}
+\end{center}
+The revision defaults to rank two and eight patterns. Rank three with 128
+patterns is an explicit opt-in; rank four is accepted only with a deliberately
+chosen pattern budget and remains potentially expensive. Each algebraic
+reduction and sign certificate is also subject to the shared limits.
+
+The older sparse ansatz remains as a fallback. Preserving it avoids throwing
+away a useful fast heuristic for inputs outside the new rank cap. The new
+kernel supplements rather than replaces the larger Kummer and multiplier
+machinery.
+
+\section{The proposed source revision}
+
+\subsection{A standalone file, not an undocumented patch layer}
+\code{StradFixed3.wl} is a complete loadable package in
+\code{RadicalDenest3`}. It does not require loading version two first and does
+not modify the user's repository. The archive also includes
+\code{StradFixed2.original.wl}, the exact reviewed baseline,
+\code{revision_definitions.wl}, and \code{build_revision.py}.
+
+The builder verifies the baseline's Git-blob identity, applies anchored changes,
+removes replaced function definitions, appends the new private definitions
+before closing the package, and writes the standalone file. Every replacement
+anchor has an expected occurrence count, so the builder fails rather than
+silently applying a review to a different source version. A unified diff is
+included for human inspection.
+
+The original low-degree and general-search algorithms remain present. Additional
+changes include fresh multisurd coefficient symbols, early size checking before
+polishing, exact equality-method labels in accepted-proposal records, and
+explicit report wording about cooperative resource limits and certificate scope.
+These are small but useful measures against accidental coupling and misleading
+diagnostics.
+
+\subsection{Behavior intentionally changed}
+The changes are not perfectly backward compatible. A valid algebraic value in
+an unsupported \code{Root} representation can now be rejected by the conservative
+grammar. Numeric prefiltering defaults to false, and setting it true no longer
+produces an unproved inequality status. Gaussian bit accounting and opaque
+pruning can change cost tie-breaks. A zero-budget report can contain missing
+cost fields. Malformed option tails now produce structured failures instead
+of remaining unevaluated.
+
+These changes are documented because they are contract corrections, not
+incidental implementation details. Existing callers that compare exact output
+syntax should instead check equality and the desired presentation property,
+unless a specific normal form is part of their own API.
+
+\subsection{New options}
+\begin{longtable}{@{}P{.31\textwidth}P{.12\textwidth}P{.50\textwidth}@{}}
+\toprule
+Option & Default & Meaning\\\midrule\endhead
+\code{"MaxCharacterRank"} & 2 & Maximum independent square-class rank for the
+new reconstruction kernel. Zero disables it; values above four are rejected.\\
+\code{"MaxCharacterPatterns"} & 8 & Maximum sign patterns attempted. Zero
+disables character reconstruction. A truncated enumeration is not a negative
+mathematical answer.\\
+\code{"MaxOddIndex"} & 7 & Largest odd index admitted by the additional
+quadratic-field trace--norm kernel. The existing cubic path is retained.\\
+\code{"DiscriminantBatchCap"} & 24 & Maximum prime-power/mixed-product proposal
+attempts generated by one discriminant expansion. The global queue and trial
+limits remain separate.\\\bottomrule
+\end{longtable}
+All existing options remain. \code{"MaxTrials"} continues to be per island,
+not a global counter for the entire call; recursive invocations continue to use
+smaller trial allowances. The overall session deadline and memory constraint
+remain shared. Those distinctions are intentional and should not be reported
+as regressions.
+
+\subsection{Usage}
+\begin{lstlisting}
+Get["StradFixed3.wl"];
+
+RadicalDenest3`DenestCore[
+  Sqrt[37 + 4 Sqrt[15] + 6 Sqrt[14] + 2 Sqrt[210]],
+  "MaxTrials" -> 0
+]
+
+RadicalDenest3`DenestReport[
+  (41 + 29 Sqrt[2])^(1/5),
+  "Trace" -> True,
+  "MaxTrials" -> 0
+]
+
+RadicalDenest3`DenestRadicals[
+  expression,
+  "AllLevels" -> True,
+  "MaxCharacterRank" -> 3,
+  "MaxCharacterPatterns" -> 128
+]
+\end{lstlisting}
+The first call targets $\sqrt6+\sqrt{10}+\sqrt{21}$ and the second targets
+$1+\sqrt2$. These are mathematical expected results and native regression
+fixtures; they are not a transcript of a kernel session performed for this
+review. Fully qualified names are useful when loading versions two and three
+side by side.
+
+\section{Validation, reproducibility, and remaining qualification}
+
+\subsection{What actually ran}
+The independent suite completed 396 checks with zero failures under Python
+3.13.5 and SymPy 1.14.0. The JSON output records every check. Its coverage includes:
+\begin{itemize}
+\item the baseline Git-object hash; symbolic Honsbeek, trace--norm, and polynomial
+inverse identities; exact odd-root reconstruction instances;
+\item exact square-class arithmetic, the sparse-ansatz witness, Hadamard
+orthogonality, and exhaustive rank-two reconstruction witnesses;
+\item the finite discriminant-batch model, separate global-admission caps,
+partial-denesting/index-reduction identities, and lexical/source checks.
+\end{itemize}
+Polynomial identities use exact algebra. Sign isolation for the multiquadratic
+examples uses rational outward bounds derived from integer square roots on a
+$10^{-60}$ grid. No floating-point agreement is used as a proof of equality.
+The word ``passed'' applies to these particular checks only.
+
+The source checks verify balanced delimiters after removing strings and nested
+comments and test for the intended critical source patterns. They cannot detect
+all Wolfram semantic errors. In particular, they do not establish option
+precedence, message behavior, native factorization choices, interrupt behavior,
+or actual end-to-end runtime.
+
+\subsection{The native regression suite}
+The 40 supplied Wolfram tests cover conservative root admission, exact equality,
+wrong branches, Gaussian coefficient cost, malformed options, disabled budgets,
+quadratic/cubic/fifth-root examples, the missing-coset example, rationalization,
+restricted host traversal, callback rejection, index reduction without recursive
+progress, incumbent preservation, negative-cache removal, cycle cutting, and
+certificate replay. Some are black-box tests; others deliberately stub discovery
+functions so that a control-flow contract can be tested independently of CAS
+heuristics.
+
+Run them in a native kernel with
+\begin{lstlisting}
+wolframscript -file run_tests.wls
+\end{lstlisting}
+The runner writes \code{native_results.json} containing the kernel version and
+success/failure counts, and exits with a nonzero status on failed tests. That
+file is deliberately absent from this delivery: manufacturing it would imply
+an execution that did not occur.
+
+The tests are a starting qualification suite, not a claim that all behavior of
+the preceding implementation has been covered. The repository's original
+\code{StradFixed2Tests.wlt} should also be run against the revision with public
+contexts adapted, treating intentional API changes separately. Prior reported
+test success belongs to the prior implementation and environment; it cannot be
+inherited by a source revision.\cite{prior}
+
+\subsection{What should be measured next in a native environment}
+The first native run should inspect all messages, not merely count equality
+checks. A candidate that simplifies correctly only after emitting an unexpected
+message may be turned into \code{$Failed} by a surrounding \code{Check}.
+Deterministic tests should then be followed by generated exact families, varying
+signs, numerator exponents, scalar factors, and repeated occurrences at different
+recursion depths.
+
+For timing, record wall time and the package's counters separately. Compare cold
+and warm kernels because algebraic and factorization caches affect search cost.
+Measure default rank-two character reconstruction before raising the rank cap.
+Keep equality-preservation success distinct from denesting coverage: a result
+can be correct yet unchanged, or correctly partially denested without reaching
+the best known presentation.
+
+The honest release status is therefore \emph{proposed research revision with
+independently checked mathematics and supplied native tests}. It is not yet a
+production-qualified replacement, and it is not a proof that the new defaults
+outperform the old defaults on every input family.
+
+\section{Further improvements, in priority order}
+
+\subsection{Make the trusted core smaller and more explicit}
+The domain recognizer, equality oracle, and commit mechanism should be separable
+from discovery. A future certificate structure could contain the exact input
+and output values, an annihilating polynomial, isolating data for the selected
+embedding, and an independently replayable equality witness. A record saying
+which kernel function returned true is useful audit metadata, but it is not
+such a certificate.
+
+A structural proof graph would distinguish accepted proposals, local replacements,
+congruence rebuilding, and committed passes. The current bounded certificate
+sample can contain proposals from an uncommitted pass. Its revised description
+says so explicitly. It should not be interpreted as the exact derivation of the
+published final result.
+
+\subsection{Cache mathematical state separately from search coverage}
+Positive-only caching avoids the immediate defect but leaves performance on the
+table. A more capable cache entry would store a certified incumbent plus a
+frontier of untried multipliers, divisors, and sign patterns. It could also record
+which field presentation was used, which algorithms completed, and what resources
+were available. An interrupted factorization is not a completed negative
+field-membership test, and an exhausted prefix of sign patterns is not an
+exhausted search space.
+
+Canonical algebraic keys could improve deduplication, but normalizing every
+cheap multiplier with \code{RootReduce} may dominate the search. One reasonable
+compromise is cheap syntactic deduplication first and bounded algebraic
+canonicalization only for promising expensive trials. No such optimization
+should be justified by calling an expanded-expression string a canonical
+algebraic value.
+
+\subsection{Separate field discovery from radical presentation}
+The current radical-extension list can contain redundant generators. A reduced
+primitive-element representation, together with maps back to display radicals,
+would make repeated field operations less wasteful. Square-class rank reduction
+is the simplest instance; higher-index Kummer classes require a more general
+representation.
+
+A low minimal-polynomial degree is useful evidence that a presentation might
+be obtainable, but it is not itself a denesting formula or a completeness
+certificate. Similarly, \code{ToRadicals} is a proposal mechanism with documented
+scope, not an unrestricted denesting oracle.\cite{wlradicals} The repository's
+survey and Landau discussion emphasize why roots of unity and the chosen base
+field cannot be treated as free without changing the optimization problem.
+\cite{survey,landau}
+
+\subsection{Preserve useful partial work without weakening publication}
+The current complete-pass checkpoint is safe but coarse. A timeout late in a
+large symbolic-host traversal can discard many independently certified local
+improvements from that pass. Publishing a partially rebuilt tree safely requires
+tracking the original context and already certified replacements, not simply
+returning whatever local variable happened to be last assigned.
+
+A persistent expression tree or a zipper with a replacement log would permit
+finer checkpoints. A supervising process could store those checkpoints durably.
+The revision retains complete-pass publication because it is easier to audit;
+it does not disguise that decision as optimal recovery behavior.
+
+\subsection{Optimize a small portfolio rather than a single presentation}
+Strictly improving local moves can miss a path through a temporarily larger but
+algebraically more useful expression. A bounded Pareto frontier over depth,
+node count, coefficient size, and field degree could retain a few such states.
+Only the final published representation would need to beat the original cost.
+Every state would still need exact value certification, and the frontier would
+need its own explicit size and work limits.
+
+This is an opportunity for better search, not a reason to relax equality checks.
+The same principle applies to fourth-root and root-of-unity presentations: the
+allowed output grammar should be an explicit policy, especially when a user
+wants real radicals only. The current grammar allows principal complex rational
+powers and therefore measures a different search problem from real-only
+square-root denesting.
+
+\section{Conclusion}
+The second corrected implementation has the right basic architecture for a
+practical, incomplete denester: it treats discovery as fallible and places a
+verification gate between a proposal and a replacement. The most valuable next
+step is to apply that discipline consistently to the surrounding software
+contracts.
+
+The root recognizer must establish its claimed domain. Every search stage must
+preserve the incumbent it receives. An index-reduced expression must be offered
+even when recursion does nothing. A negative cache entry must not outlive the
+resource conditions that created it. Limits must be checked where proposals
+and expensive operations are actually generated, and reports must not perform
+unbounded work after the budget has expired.
+
+The accompanying revision implements those repairs while retaining the existing
+search machinery. It also adds two mathematically transparent extensions:
+bounded character reconstruction for small multiquadratic fields and an odd-index
+trace--norm kernel in quadratic fields. Exact proofs, concrete witnesses,
+reproducible source generation, independently executed checks, and an explicitly
+unexecuted native suite make the proposal useful without overstating its
+validation status.
+
+\appendix
+\section{Archive contents and rebuild procedure}
+\begin{longtable}{@{}P{.40\textwidth}P{.53\textwidth}@{}}
+\toprule
+File & Purpose\\\midrule\endhead
+\code{article.tex}, \code{article.pdf} & This self-contained article and its
+rendered edition.\\
+\code{StradFixed3.wl} & Standalone proposed package in a separate public context.\\
+\code{StradFixed2.original.wl} & Exact reviewed baseline, retained for reproducibility.\\
+\code{build_revision.py} & Hash-checking, anchor-checked source generator.\\
+\code{revision_definitions.wl} & Replacement private definitions and new kernels.\\
+\code{StradFixed2-to-3.diff} & Human-readable unified source comparison.\\
+\code{StradFixed3Tests.wlt}, \code{run_tests.wls} & Native Wolfram tests and runner;
+not executed in this review.\\
+\code{independent_checks.py}, \code{independent_results.json} & Executed exact
+mathematical/source checks and their full machine-readable results.\\
+\code{README.md}, \code{source-manifest.json} & Usage, qualification notes,
+source provenance, and relevant paths.\\
+\code{SHA256SUMS.txt}, \code{build_pdf.sh} & Artifact-integrity hashes and PDF
+rebuild commands.\\\bottomrule
+\end{longtable}
+To reproduce the proposed source and independent checks:
+\begin{lstlisting}
+python build_revision.py
+python independent_checks.py
+\end{lstlisting}
+To rebuild this article, run pdfLaTeX twice from the archive directory. No
+external images, bibliography database, local font files, or custom class are
+required. The document uses standard TeX Live/MiKTeX packages and embedded
+scalable Latin Modern fonts.
+
+\section{Source locations for the principal findings}
+All line references in this appendix refer to the archived, hash-verified
+\code{StradFixed2.original.wl}, not to the generated revision.
+\begin{longtable}{@{}P{.28\textwidth}P{.20\textwidth}P{.45\textwidth}@{}}
+\toprule
+Concern & Lines & Inspection target\\\midrule\endhead
+Domain admission & 143--166 & Opaque objects admitted by precision/no-Real test.\\
+Cost accounting & 168--181 & Subtractive radical count and atom bit-size scans.\\
+Equality status & 183--221 & Numeric Different branch; exact-oracle fallback.\\
+Acceptance/polishing & 224--255 & Single gate; size check after candidate entry.\\
+Rationalization & 261--279 & Polynomial inverse and exact product certificate.\\
+Multisurd ansatz & 345--375 & Sparse generator sets, FactorInteger, ansatz expansion.\\
+Linear roots/index reduction & 420--455 & Together call, recursive-progress condition.\\
+Multiplier expansion & 560--572 & Full discriminant factorization; batch guard placement.\\
+Incumbent resets & 598--620 & Stage calls that omit the incumbent.\\
+Memoization & 628--639 & Target-only key; unchanged-result storage.\\
+Session/report & 692--728 & Scope of constrained evaluation and report cost scans.\\
+Public dispatch & 736--742 & OptionsPattern tail versus validation contract.\\\bottomrule
+\end{longtable}
+
+\begin{thebibliography}{99}
+\raggedright
+\bibitem{source} Vladimir Reshetnikov, RadicalDenest repository,
+\emph{StradFixed2.wl}, commit
+\texttt{9000d6f533a68ee7659a6830ad25bba401f800a5}.
+\url{https://github.com/VladimirReshetnikov/RadicalDenest/blob/9000d6f533a68ee7659a6830ad25bba401f800a5/src/corrected/StradFixed2.wl}.
+The exact file is included in the archive.
+\bibitem{prior} RadicalDenest repository, \emph{Unified analysis B},
+\nolinkurl{src/code-review/unified-B/unified_analysis_B.tex}, same commit.
+\url{https://github.com/VladimirReshetnikov/RadicalDenest/tree/9000d6f533a68ee7659a6830ad25bba401f800a5/src/code-review/unified-B}.
+\bibitem{survey} RadicalDenest repository, \emph{Radical denesting: unified report},
+\nolinkurl{docs/report/radical_denesting_unified.tex}, same commit.
+\url{https://github.com/VladimirReshetnikov/RadicalDenest/tree/9000d6f533a68ee7659a6830ad25bba401f800a5/docs/report}.
+\bibitem{editions} RadicalDenest repository, \emph{Corrected re-typesettings of six
+articles}, \nolinkurl{docs/literature/RETYPESET_ARTICLES.md}, same commit.
+\url{https://github.com/VladimirReshetnikov/RadicalDenest/blob/9000d6f533a68ee7659a6830ad25bba401f800a5/docs/literature/RETYPESET_ARTICLES.md}.
+\bibitem{jeffrey} David J. Jeffrey and Albert D. Rich,
+\emph{Simplifying Square Roots of Square Roots by Denesting}, chapter 4.
+Consulted the repository's corrected 2026 re-typesetting, especially
+Sections 4.4--4.5, at
+\url{https://github.com/VladimirReshetnikov/RadicalDenest/blob/9000d6f533a68ee7659a6830ad25bba401f800a5/docs/literature/papers/jeffrey-Simplifying-square-roots-of-square-roots-by-denesting/retypeset-2026/denest.tex}.
+\bibitem{bfht} Allan Borodin, Ronald Fagin, John E. Hopcroft, and Martin Tompa,
+\emph{Decreasing the Nesting Depth of Expressions Involving Square Roots}
+(1985). Consulted the repository's corrected 2026 re-typesetting, including
+its explicit editorial qualifications:
+\url{https://github.com/VladimirReshetnikov/RadicalDenest/blob/9000d6f533a68ee7659a6830ad25bba401f800a5/docs/literature/papers/bfht-Decreasing-the-nesting-depth-of-expressions-involving-square-root/retypeset-2026/symb85.tex}.
+\bibitem{landau} Susan Landau, \emph{Simplification of Nested Radicals}, 1989
+extended abstract. Consulted the corrected 2026 repository re-typesetting and
+its editorial distinction from the final 1992 SIAM Journal on Computing paper,
+DOI 10.1137/0221009:
+\url{https://github.com/VladimirReshetnikov/RadicalDenest/blob/9000d6f533a68ee7659a6830ad25bba401f800a5/docs/literature/papers/landau92-Simplification-of-nested-radicals/retypeset-2026/landau1989.tex}.
+\bibitem{wlroot} Wolfram Research, \emph{Root}, Wolfram Language documentation,
+consulted September 2026. \url{https://reference.wolfram.com/language/ref/Root.html}.
+\bibitem{wlzero} Wolfram Research, \emph{PossibleZeroQ}, particularly the
+\code{Method -> "ExactAlgebraics"} contract, consulted September 2026.
+\url{https://reference.wolfram.com/language/ref/PossibleZeroQ.html}.
+\bibitem{wlreduce} Wolfram Research, \emph{RootReduce}, consulted September 2026.
+\url{https://reference.wolfram.com/language/ref/RootReduce.html}.
+\bibitem{wltime} Wolfram Research, \emph{TimeConstrained}, details on CPU accounting,
+interrupt granularity, and abort protection, consulted September 2026.
+\url{https://reference.wolfram.com/language/ref/TimeConstrained.html}.
+\bibitem{wlmemory} Wolfram Research, \emph{MemoryConstrained}, consulted September
+2026. \url{https://reference.wolfram.com/language/ref/MemoryConstrained.html}.
+\bibitem{wlradicals} Wolfram Research, \emph{ToRadicals}, consulted September 2026.
+\url{https://reference.wolfram.com/language/ref/ToRadicals.html}.
+\end{thebibliography}
+\end{document}

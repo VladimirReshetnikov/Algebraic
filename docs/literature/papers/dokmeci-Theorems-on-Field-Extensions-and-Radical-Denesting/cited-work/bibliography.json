@@ -1,0 +1,25 @@
+{
+  "id": "dokmeci",
+  "title": "Theorems on Field Extensions and Radical Denesting",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "dokmeci",
+      "entry_latex": "K. Dokmeci, \\emph{Theorems on Field Extensions and Radical Denesting}, MIT PRIMES report, 2017.\n\\access{https://math.mit.edu/research/highschool/primes/materials/2017/Dokmeci.pdf}{Institutional PDF}. \\status{B}\nStudent research on field extensions and real radical denesting, useful for alternative elementary routes. Author's given name: Kaan. Included with its actual publication status."
+    },
+    {
+      "report": "report-2",
+      "key": "dokmeci",
+      "entry_latex": "Kaan Dokmeci.\n\\emph{Theorems on Field Extensions and Radical Denesting}.\nMIT PRIMES-USA research report, 26 September 2017.\n\\sourceurl{https://math.mit.edu/research/highschool/primes/materials/2017/Dokmeci.pdf}.\n\\textbf{FT.} Student research on field extensions, denesting, and degree/root-of-unity arguments. Corrects the first-name initial and publication type given in one input report."
+    },
+    {
+      "report": "report-3",
+      "key": "dokmeci",
+      "entry_latex": "Kaan Dokmeci. \\emph{Theorems on Field Extensions and Radical Denesting}. MIT PRIMES research report, September 26, 2017. \\url{https://math.mit.edu/research/highschool/primes/materials/2017/Dokmeci.pdf}. \\status{F}\n\\entrynote{An accessible research exposition connecting field extensions and denesting. Identified as a student research report, not a journal article. Useful as a route into the underlying algebra.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

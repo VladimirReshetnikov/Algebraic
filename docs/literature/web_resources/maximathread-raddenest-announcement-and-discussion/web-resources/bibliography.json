@@ -1,0 +1,19 @@
+{
+  "id": "maximathread",
+  "title": "raddenest announcement and discussion",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "maximathread",
+      "entry_latex": "G. Schintgen and participants, denesting and \\texttt{raddenest} discussions, \\emph{maxima-discuss}, 2017.\n\\access{https://sourceforge.net/p/maxima/mailman/maxima-discuss/thread/o6lan6\\%24h4r\\%241\\%40blaine.gmane.org/}{SourceForge thread};\n\\access{https://maxima-discuss.narkive.com/rz7bUs4t/denesting}{discussion mirror}. \\status{B}\nHistorical development context. The package source, not a historical message alone, is the main evidence for capabilities described in this report."
+    },
+    {
+      "report": "report-2",
+      "key": "maximathread",
+      "entry_latex": "Gilles Schintgen and Maxima-discuss participants.\n\\emph{raddenest announcement and discussion}, 2017.\n\\sourceurl{https://sourceforge.net/p/maxima/mailman/maxima-discuss/thread/slrno8nek9.2pg.robert.dodier@freekbox.fglan/}.\n\\textbf{R.} Historical developer context. Current source code is the stronger reference for what the implementation actually contains."
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

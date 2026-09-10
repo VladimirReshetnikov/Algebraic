@@ -1,0 +1,154 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=1in,headheight=15pt]{geometry}
+\usepackage{microtype}
+\usepackage{booktabs,longtable,array,tabularx}
+\usepackage{xcolor,listings,fancyhdr,enumitem}
+\usepackage{hyperref}
+\usepackage{bookmark}
+\definecolor{accent}{HTML}{1F4E79}
+\definecolor{muted}{HTML}{55606B}
+\definecolor{codebg}{HTML}{F4F6F8}
+\definecolor{bad}{HTML}{9B1C1C}
+\definecolor{good}{HTML}{1D6F42}
+\hypersetup{colorlinks=true,linkcolor=accent,citecolor=accent,urlcolor=accent,
+  pdftitle={Radical Denesting with Strad.wl: A Unified Analysis, Experimental Evaluation, and Corrected Implementation},
+  pdfauthor={Claude (Anthropic) for Vladimir Reshetnikov},
+  pdfsubject={Analysis of a Wolfram Language radical-denesting program}}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textsc{Strad.wl: unified analysis}}
+\fancyhead[R]{\small 5 September 2026}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\setlength{\parskip}{4pt}
+\setlength{\parindent}{1.2em}
+\setlength{\emergencystretch}{2.5em}
+\setcounter{tocdepth}{2}
+\setlist{itemsep=2pt,topsep=4pt}
+
+\newcommand{\code}[1]{\texttt{\detokenize{#1}}}
+\newcommand{\src}[1]{\hyperref[app:original]{lines #1}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\RI}{\textsf{R1}}
+\newcommand{\RII}{\textsf{R2}}
+\newcommand{\RIII}{\textsf{R3}}
+\newcommand{\U}[1]{\hyperref[u:#1]{\textsf{U#1}}}
+\newcommand{\bad}[1]{\textcolor{bad}{#1}}
+\newcommand{\good}[1]{\textcolor{good}{#1}}
+\DeclareMathOperator{\Arg}{Arg}
+\DeclareMathOperator{\Disc}{Disc}
+\DeclareMathOperator{\lcm}{lcm}
+\DeclareMathOperator{\rdepth}{rdepth}
+\DeclareMathOperator{\cost}{cost}
+
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}[proposition]{Lemma}
+\newtheorem{theorem}[proposition]{Theorem}
+\newtheorem{corollary}[proposition]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[proposition]{Definition}
+\newtheorem{example}[proposition]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[proposition]{Remark}
+
+\lstdefinelanguage{WL}{
+  morekeywords={Block,Module,With,If,For,While,Which,Switch,Return,ClearAll,Function,True,False,Null,
+    Power,Times,Plus,List,Rule,RuleDelayed,Set,SetDelayed,MinimalPolynomial,PolynomialGCD,
+    PolynomialQuotient,RootReduce,FactorList,FactorInteger,FactorTermsList,Sort,SortBy,Select,
+    DeleteDuplicates,DeleteCases,Cases,ReplaceAll,ReplaceRepeated,Replace,Part,TrueQ,Check,Quiet,
+    TimeConstrained,Failure,Catch,Throw,Print,Simplify,Expand,Together,Solve,Outer,Flatten,
+    Discriminant,Divisors,Union,Drop,Take,Insert,Append,Prepend,Length,Exponent,Sqrt,Exp,
+    BeginPackage,Begin,End,EndPackage,Options,OptionValue,OptionsPattern,Unprotect,Protect,
+    PossibleZeroQ,Element,Algebraics,MemberQ,FreeQ,MatchQ,AtomQ,NumericQ,Precision,LeafCount,Count},
+  sensitive=true,morecomment=[s]{(*}{*)},morestring=[b]"
+}
+\lstset{language=WL,basicstyle=\ttfamily\small,keywordstyle=\color{accent},
+  commentstyle=\color{muted}\itshape,stringstyle=\color{muted},
+  backgroundcolor=\color{codebg},frame=single,rulecolor=\color{black!15},
+  columns=fullflexible,keepspaces=true,showstringspaces=false,breaklines=true,
+  breakatwhitespace=false,tabsize=2,aboveskip=8pt,belowskip=8pt,
+  numberstyle=\tiny\color{muted},numbersep=8pt,xleftmargin=4pt,xrightmargin=4pt,
+  literate={\\[Pi]}{{$\pi$}}1}
+
+\begin{document}
+\begin{titlepage}
+\vspace*{0.1in}
+{\color{accent}\large\textsc{Mathematical software analysis}\par}
+\vspace{0.2in}
+{\fontsize{26}{31}\selectfont\bfseries Radical Denesting with \code{Strad.wl}\par}
+\vspace{0.15in}
+{\Large A unified analysis of three independent reviews,\par an experimental evaluation in a live Wolfram kernel,\par and a corrected implementation\par}
+\vspace{0.25in}
+{\large 5 September 2026\par}
+\vspace{0.2in}
+\noindent\rule{\textwidth}{0.6pt}
+\begin{abstract}
+\small\noindent
+\code{Strad.wl} is a 585-line Wolfram Language program that tries to denest
+algebraic radicals such as $\sqrt{5+2\sqrt6}=\sqrt2+\sqrt3$ by searching for a
+multiplier $m$ that makes the minimal polynomial of $(m\,\beta^q)^{1/q}$ share a
+low-degree factor with the binomial $X^q-m\beta^q$ over an algebraic coefficient
+field. Three independent reviews of the program were produced earlier; all
+three were purely static and none executed the code. This document compares the
+three reviews, reconstructs the algorithm, proves the mathematics that justifies
+it, and then does what the reviews could not: it runs the program in
+Wolfram~15.0.1 on more than 400 inputs (classical identities, the reviews'
+counterexamples, symbolic input, higher-order roots, and randomized families),
+runs the reviews' own never-executed regression suites, and measures timings.
+
+The experiments confirm the central defect predicted by all three reviews:
+the program certifies candidates against the principal root of $\beta^q$
+instead of against $\beta$, so 39 of 40 random inputs of the form
+$(p+qi\sqrt c)^{3/2}$ and 17 of 40 random products of complex square roots come
+back with the wrong value. The experiments also uncover facts that no review
+established: the program changes the value of purely numeric input through its
+custom factorizer; its acceptance test routinely relies on \code{PossibleZeroQ}
+answering ``unable to decide, assuming zero''; the mis-typed prime comparator
+reverses the prime list, which silently disables the prime-pruning loop and
+hides an out-of-range slice that only appears once the comparator is fixed;
+list input yields nonsense; and several ``successful'' denestings are far uglier
+than the input. On the positive side, the program denests every classical
+identity we tried in under a second, and its denominator rationalizer is sound.
+
+A corrected package, \code{StradFixed.wl}, retains the architecture but
+certifies every candidate against the original value with exact algebra, makes
+the factorizer branch-safe, restricts factoring to exact numeric subexpressions,
+fixes the comparator, slice, cap, and empty-list defects, adds budgets, a
+visited set, private symbols, a quadratic-surd fast path, candidate polishing
+and an explicit improvement criterion. On the same battery it produces no wrong
+value, no kernel message, and finds several denestings the original misses,
+including the depth-three Borodin--Fagin--Hopcroft--Tompa example
+$\sqrt{16-2\sqrt{29}+2\sqrt{55-10\sqrt{29}}}=\sqrt5+\sqrt{11-2\sqrt{29}}$.
+The document closes with a prioritized list of future improvements.
+\end{abstract}
+\vfill
+\noindent\textbf{Evidence.} All executions reported here were performed in
+\emph{15.0.1 for Microsoft Windows (64-bit) (July 2, 2026)} through
+\code{wolframscript}. Every table of results is generated mechanically from the
+recorded runs. Statements about the reviews cite their finding identifiers.
+\end{titlepage}
+\tableofcontents
+\clearpage
+
+\input{sec_intro}
+\input{sec_code}
+\input{sec_math}
+\input{sec_reviews}
+\input{sec_experiments}
+\input{sec_findings}
+\input{sec_corrected}
+\input{sec_future}
+\input{sec_conclusion}
+
+\clearpage
+\appendix
+\input{app_listings}
+\end{document}

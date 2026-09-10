@@ -1,0 +1,31 @@
+{
+  "record_id": "mo",
+  "title": "MathOverflow discussions of radicals and algebraic identities",
+  "asset_id": "resource-04",
+  "version": "web-resources",
+  "kind": "web",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://mathoverflow.net/questions/319874",
+    "resolved_url": "https://mathoverflow.net/questions/319874/relevance-of-landaus-algorithm-for-denesting-radicals",
+    "retrieved_at": "2026-09-05T20:28:41+00:00",
+    "http_status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "content_encoding": "",
+    "bytes": 107227,
+    "sha256": "ec59ec8ee307a5fb7fe3ef1a29b75a11de40d457008feea70bb1b756949f986b"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "cited_web_resource",
+  "note": "URL cited in an input report. Not all web pages have been independently reopened. HTML is saved as HTML; software code is not labelled as article TeX.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "web_resources/mo-MathOverflow-discussions-of-radicals-and-algebraic-identities/web-resources/resource-04.html",
+      "role": "web",
+      "bytes": 107227,
+      "sha256": "ec59ec8ee307a5fb7fe3ef1a29b75a11de40d457008feea70bb1b756949f986b"
+    }
+  ],
+  "prior_candidate_errors": []
+}

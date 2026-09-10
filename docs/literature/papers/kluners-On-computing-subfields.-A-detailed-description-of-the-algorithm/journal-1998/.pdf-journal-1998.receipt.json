@@ -1,0 +1,31 @@
+{
+  "record_id": "kluners",
+  "title": "On computing subfields. A detailed description of the algorithm",
+  "asset_id": "pdf-journal-1998",
+  "version": "journal-1998",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://www.numdam.org/item/JTNB_1998__10_2_243_0.pdf",
+    "resolved_url": "https://www.numdam.org/item/JTNB_1998__10_2_243_0.pdf",
+    "retrieved_at": "2026-09-05T20:25:37+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 2887714,
+    "sha256": "f6f955d4dd346a051a81c7796ad15d84bca58f5ded6e7accdf719255e00caabc"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "browser_fulltext",
+  "note": "NUMDAM full text, 30 PDF pages.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/kluners-On-computing-subfields.-A-detailed-description-of-the-algorithm/journal-1998/pdf-journal-1998.pdf",
+      "role": "pdf",
+      "bytes": 2887714,
+      "sha256": "f6f955d4dd346a051a81c7796ad15d84bca58f5ded6e7accdf719255e00caabc"
+    }
+  ],
+  "prior_candidate_errors": []
+}

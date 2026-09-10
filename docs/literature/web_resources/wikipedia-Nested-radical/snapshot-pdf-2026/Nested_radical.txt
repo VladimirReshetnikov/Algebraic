@@ -1,0 +1,258 @@
+{{Short description|Mathematical expression with outer and inner radicals}}
+In [[algebra]], a '''nested radical''' is a [[radical expression]] (one containing a [[square root]] sign, [[cube root]] sign, etc.) that contains (nests) another radical expression. Examples include
+
+<math display="block">\sqrt{5-2\sqrt{5}\ },</math>
+
+which arises in discussing the [[pentagon|regular pentagon]], and more complicated ones such as
+
+<math display="block">\sqrt[3]{2+\sqrt{3}+\sqrt[3]{4}\ }.</math>
+
+== Denesting==
+
+Some nested radicals can be rewritten in a form that is not nested. For example,
+
+<math display=block>\sqrt{3+2\sqrt{2}} = 1+\sqrt{2}\,,</math>
+
+{{bi|left=1.6|1=<math>\sqrt2+\sqrt{5-2\sqrt{6}} = \sqrt{3},\quad</math><ref>{{citation
+ | last = Scheinerman | first = Edward R.
+ | doi = 10.2307/2589344
+ | issue = 6
+ | journal = American Mathematical Monthly
+ | jstor = 2589344
+ | mr = 1766736
+ | pages = 489–499
+ | title = When close enough is close enough
+ | volume = 107
+ | year = 2000}}</ref>}}
+
+<math display=block>\sqrt[3]{\sqrt[3]{2} - 1} = \frac{1 - \sqrt[3]{2} + \sqrt[3]{4}}{\sqrt[3]{9}} \,.</math>
+
+Another simple example,
+
+<math display=block>\sqrt[3]{\sqrt{2}} = \sqrt[6]{2}</math>
+
+Rewriting a nested radical in this way is called '''denesting'''. This is not always possible, and, even when possible, it is often difficult.
+
+==Two nested square roots==
+In the case of two nested square roots, the following theorem completely solves the problem of denesting.<ref>{{cite book | last=Euler | first=Leonhard | title= Elements of algebra | publisher= Springer Science & Business Media | year= 2012 | at=Part 1, Section IV, Chapter VIII}}</ref> In this section the use of the radical sign {{tmath|\textstyle\sqrt{\;^\;} }} denotes, as usual, the positive square root of the radicand, which is supposed to be a positive real number, 
+
+One has two nested square roots with an expression of the form 
+<math display="block">\sqrt{\frac{\alpha + \beta\sqrt r}{\gamma + \delta\sqrt r}}, </math>
+where all variables denote rational numbers. By [[rationalization (mathematics)|rationalizing]] the fraction, one gets an expression of the form 
+<math display="block">\sqrt{a\pm b\sqrt r}, </math>
+where {{tmath|a,b,r}} are [[rational number]]s and {{tmath|b>0}}. By putting {{tmath|1=c=rb^2}}, the problem is reduced to denest an expression of the form 
+<math display="block">\sqrt{a\pm\sqrt c}. </math>
+
+{{math theorem|It is possible to denest the expression <math display=inline>\sqrt{a\pm\sqrt c} </math> where {{tmath|a}} and {{tmath|c}} are rational numbers [[if and only if]] {{tmath|a>0}} and {{tmath|a^2-c}} is the square of a positive rational number {{tmath|d}}. In this case one has
+<math display="block">\begin{align}
+\sqrt{a+\sqrt{c}}&=\sqrt{\frac{a+d}2}+\sqrt{\frac{a-d}2},\\[6pt]
+\sqrt{a-\sqrt{c}}&=\sqrt{\frac{a+d}2}-\sqrt{\frac{a-d}2},
+\end{align}</math>}}
+
+The theorem will be proved in two separate steps. Firstly, one has a denested formula of the form {{tmath|\sqrt x\pm \sqrt y}} if and only if {{tmath|1=a^2-c=d^2}}. This will be done with elementary algebraic computation. The second step consists to prove that more complicated denested formulas, such as {{tmath|t+ \sqrt x \pm \sqrt y +z\sqrt x\sqrt y}}, can always be reduced to the form given in the theorem. This involves basic [[Galois theory]]. 
+
+''Proof that the given denesting formula is correct:'' If {{tmath|a>0}} and {{tmath|1=a^2-c=d^2}}, all radicands are positive in the given formulas. This is almost immediate for the left-hand sides. For the right-hand sides, this results from the positiveness of the sum and the product of the two radicands that are respectively {{tmath|a}} and {{tmath|c/4}}. Then, since two positive numbes are equal if and only if their squares are equal, it suffices to square everything and apply the [[binomial formula]].
+
+''Proof that, if denesting is possible into a sum or difference of square roots, then {{tmath|a>0}} and {{tmath|1=a^2-c=d^2}}.'' By squaring, the equation 
+<math display="block">\sqrt{a\pm\sqrt{c}} = \sqrt{x}\pm\sqrt{y}</math>
+implies 
+<math display="block">a\pm\sqrt{c}=x+y\pm 2\sqrt{xy}.</math>
+This implies that {{tmath|\sqrt{xy} }} is an element of the [[field (mathematics)|field]] {{tmath|\Q(\sqrt c)}}, and can thus be uniquely written {{tmath|\alpha+\beta\sqrt c}}, with {{tmath|\alpha}} and {{tmath|\beta}} rational numbers. One has {{tmath|\beta\ne 0}} since, otherwise one would have an [[irrational number]] equal to a rational number. One has <math display="block">xy=(\alpha+\beta\sqrt c)^2=\alpha^2+c\beta^2+2\alpha\beta\sqrt c.</math> As {{tmath|xy}} is a rational number and {{tmath|\beta\ne 0}}, one has {{tmath|1=\alpha=0}}. It results that {{tmath|1=xy=\beta^2c}} and
+<math display=block>a+\sqrt{c}=x+y\pm 2\beta \sqrt c.</math>
+Thus {{tmath|1=x+y=a}}, {{tmath|1=\beta=\tfrac 12}}, and {{tmath|1=xy=\tfrac c4}}. This implies by [[Vieta's formulas]] that {{tmath|x}} and {{tmath|y}} are the two roots ot the equation
+<math display=block>X^2-aX+\frac c4.</math>
+As these roots must be rational and positive, this implies that {{tmath|a>0}} and {{tmath|1=a^2-c}} is the square of a rational number. Then, the [[quadratic formula]] provides the solution as given in the theorem.
+
+''Other forms of denesting:''
+
+A denesting of the form
+<math display="block">\sqrt{a+\sqrt{c}} = \alpha\sqrt{r}+\beta\sqrt{s}</math> 
+can be reduced to the above form: setting {{tmath|1=x=r\alpha^2}} and {{tmath|1=y=s\beta^2}}, one gets 
+<math display="block">\sqrt{a+\sqrt{c}} = \pm\sqrt{x}\pm\sqrt{y}.</math>
+Since the left member of the equality is positive, at least one of the "{{tmath|\pm}}" must be positive, and one gets the above form after exchanging, if needed, {{tmath|x}} and {{tmath|y}}.
+
+If 
+<math display=inline>\sqrt{a\pm\sqrt{c} } \in \Q(\sqrt c),</math>
+there are rational numbers {{tmath|\alpha}} and {{tmath|\beta}} such that
+<math display="block">\sqrt{a\pm \sqrt{c}} = \alpha + \beta \sqrt c=\pm \sqrt{\alpha^2}\pm \sqrt{\beta^2 c}.</math>
+So, the theorem applies to test whether an element of {{tmath|\Q(\sqrt c)}} has a square root in {{tmath|\Q(\sqrt c)}}, and, if it has one, to compute it.
+
+A general denesting formula would be an expression of <math display=inline>\sqrt{a\pm\sqrt{c}}</math> as an element of a field {{tmath|1=K=\Q(\sqrt {r_1},\ldots \sqrt {r_k})}}, where {{tmath|r_1, \ldots, r_k}} are rational numbers. One may suppose that the {{tmath|r_i}} are distinct [[prime number]]s, by [[field extension|extending]] {{tmath|K}} with the square roots of the prime numbers that appear as factors of  the numerator or the denominator of some {{tmath|r_i}}, and then removing the original {{tmath|\sqrt{r_i} }}, since they can be expressed as product and quotients of the new square roots. If the {{tmath|r_i}} are distinct [[prime number]]s, {{tmath|K}} is a [[Galois extension]] of {{tmath|\Q}} with {{tmath|(\Z/2\Z)^k}} as [[Galois group]]. An element of this Galois groupe is a {{tmath|k}}-tuple of 0 and 1, and the corresponding [[field automorphism|automorphism]] consists to change the signs of the {{tmath|\sqrt{r_i} }} such the {{tmath|i}}th element of the [[tuple]] is 1.
+
+Excluding the already considered case <math display=inline>\sqrt{a\pm\sqrt{c} } \in \Q(\sqrt c),</math> the field {{tmath|\Q\left(\sqrt{a\pm\sqrt{c} }\right)}} is a subfield of {{tmath|K}} of degree four over of {{tmath|\Q}}. It follows that it is a galois extension of {{tmath|\Q}}, with the [[Klein four-group]] as its Galois group. The automorphisms in this Galois group are the identity, two [[involution (mathematics)|involution]]s {{tmath|\sigma_1}} and {{tmath|\sigma_2}} whose square are the identity, and their product {{tmath|\sigma_1\sigma_2}}. The elements of {{tmath|\Q\left(\sqrt{a\pm\sqrt{c} }\right)}} that are fixed by {{tmath|\sigma_1}} for a [[quadratic extension]] of {{tmath|\Q}}, which is thus of the form {{tmath|\Q(x)}}, where {{tmath|x\in \Q}}. Similarly, the elements fixed b {{tmath|\sigma_2}} generate a field {{tmath|\Q(y)}}, and one has {{tmath|1=\Q\left(\sqrt{a\pm\sqrt{c} }\right)=\Q(\sqrt x,\sqrt y)}}.
+
+This shows that when denesting is possible, it is possible with at most two radicals.
+
+As for every element of {{tmath|\Q(\sqrt x,\sqrt y)}}, one may write uniquely
+<math display="block">\sqrt{a\pm\sqrt{c} }=\alpha +\beta\sqrt x +\gamma \sqrt y+\delta\sqrt x \sqrt y,</math>
+with {{tmath|\alpha, \beta, \gamma,\delta\in \Q}}. There exists an automorphism that changes the sign of the left member. It must change the signs of all nonzero terms of the right member|. It follows that {{tmath|\alpha}} and at least one of {{tmath|\beta, \gamma,\delta}} must be zero. Indeed, if {{tmath|\beta\ne 0}} and {{tmath|\gamma\ne 0}}, one must have {{tmath|1=\delta = 0}}, because the change of sign of the two first radicals implies that the sign of their product is not changed.
+
+So, setting {{tmath|1=z=xy}}, and, if needed, permuting and renaming the variables, we are reduced to a denesting into a sum or difference of two square roots that has already been considered.
+
+== Some identities of Ramanujan ==
+
+[[Srinivasa Ramanujan]] demonstrated a number of curious identities involving nested radicals.  Among them are the following:<ref>{{cite web | title = A note on 'Zippel Denesting' | first = Susan | last = Landau | author-link = Susan Landau |date=July 16, 1993| url = https://citeseerx.ist.psu.edu/pdf/da359f4651fd157a1aa47e21e3ea9284bd5e7282 | access-date = August 23, 2023}}</ref>
+
+<math display=block> \sqrt[4]{\frac{3 + 2 \sqrt[4]{5}}{3 - 2 \sqrt[4]{5}}} = \frac{ \sqrt[4]{5} + 1}{\sqrt[4]{5} - 1}=\tfrac12\left(3+\sqrt[4]5+\sqrt5+\sqrt[4]{125}\right),</math>
+
+<math display=block> \sqrt{ \sqrt[3]{28} - \sqrt[3]{27}} = \tfrac13\left(\sqrt[3]{98} - \sqrt[3]{28} -1\right), </math>
+
+<math display=block> \sqrt[3]{ \sqrt[5]{\frac{32}{5}} - \sqrt[5]{\frac{27}{5}} } = \sqrt[5]{\frac{1}{25}} + \sqrt[5]{\frac{3}{25}} - \sqrt[5]{\frac{9}{25}}, </math>
+
+and
+{{bi|left=1.6|1=<math>\sqrt[3]{\ \sqrt[3]{2}\ - 1}= \sqrt[3]{\frac{1}{9}} - \sqrt[3]{\frac{2}{9}} + \sqrt[3]{\frac{4}{9}}.\quad</math><ref>{{cite journal |last1=Berndt |first1=Bruce |last2=Chan |first2=Heng |last3=Zhang |first3=Liang-Cheng |title=Radicals and units in Ramanujan's work |journal=Acta Arithmetica |date=1998 |volume=87 |issue=2 |pages=145–158 |url=https://faculty.math.illinois.edu/~berndt/articles/radicals.pdf|doi=10.4064/aa-87-2-145-158 |doi-access=free }}</ref>}}
+
+== Landau's algorithm ==
+In 1989 [[Susan Landau]] introduced the first [[algorithm]] for deciding which nested radicals can be denested and denesting them when possible.<ref>{{cite book | chapter = Simplification of Nested Radicals | author-link = Susan Landau | first = Susan | last = Landau | title = 30th Annual Symposium on Foundations of Computer Science | publisher = [[Society for Industrial and Applied Mathematics|SIAM]] | volume = 21 | year = 1992 | pages = 85–110 | doi = 10.1109/SFCS.1989.63496 | isbn = 978-0-8186-1982-3 | s2cid = 29982884 }}</ref> Earlier algorithms worked in some cases but not others. Landau's algorithm is based on [[field theory (mathematics)|field theory]], [[Galois theory]], and [[polynomial factorization]] over [[algebraic field extension]]s.  It runs in [[exponential time]] with respect to the depth of nested radicals.<ref>{{Cite journal|last=Gkioulekas|first=Eleftherios|date=2017-08-18|title=On the denesting of nested square roots | url=https://www.tandfonline.com/doi/full/10.1080/0020739X.2017.1290831|journal=International Journal of Mathematical Education in Science and Technology| language=en| volume=48| issue=6| pages=942–953| doi=10.1080/0020739X.2017.1290831 | bibcode=2017IJMES..48..942G | s2cid=9737528 | issn=0020-739X| url-access=subscription}}</ref>
+
+==In trigonometry==
+{{Main|Exact trigonometric values}}
+
+In [[trigonometry]], the [[sine and cosine|sines and cosines]] of many angles can be expressed in terms of nested radicals. For example,
+<math display=block>\sin\frac{\pi}{60}=\sin 3^\circ=\frac{1}{16} \left[2(1-\sqrt3)\sqrt{5+\sqrt5}+\sqrt2(\sqrt5-1)(\sqrt3+1)\right]</math>
+
+and
+<math display=block>\sin\frac{\pi}{24}=\sin 7.5^\circ=\frac{1}{2} \sqrt{2-\sqrt{2+\sqrt3}} = \frac{1}{2} \sqrt{2 - \frac{1 + \sqrt3}{\sqrt2}} .</math>
+The last equality results directly from the results of {{slink||Two nested square roots}}.
+
+==In the solution of the cubic equation==
+
+Nested radicals appear in the [[algebraic solution]] of the [[cubic equation]]. Any cubic equation can be written in simplified form without a quadratic term, as
+
+<math display="block">x^3+px+q=0,</math>
+
+whose general solution for one of the roots is
+<math display=block> x=\sqrt[3]{-{q\over 2}+ \sqrt{{q^2\over 4}+{p^3 \over 27}}} +\sqrt[3]{-{q\over 2}- \sqrt{{q^2\over 4}+{p^3\over 27}}}.</math>
+
+In the case in which the cubic has only one real root, the real root is given by this expression with the [[radicand]]s of the cube roots being real and with the cube roots being the real cube roots. In the case of three real roots, the square root expression is an [[imaginary number]]; here any real root is expressed by defining the first cube root to be any specific complex cube root of the complex radicand, and by defining the second cube root to be the [[complex conjugate]] of the first one. The nested radicals in this solution cannot in general be simplified unless the cubic equation has at least one [[rational number|rational]] solution. Indeed, if the cubic has three irrational but real solutions, we have the ''[[casus irreducibilis]]'', in which all three real solutions are written in terms of cube roots of complex numbers. On the other hand, consider the equation
+
+<math display="block">x^3-7x+6=0,</math>
+
+which has the rational solutions 1, 2, and&nbsp;−3. The general solution formula given above gives the solutions
+<math display="block">x=\sqrt[3]{-3+\frac{10i\sqrt{3}}{9}} + \sqrt[3]{-3-\frac{10i\sqrt{3}}{9}} .</math>
+
+For any given choice of cube root and its conjugate, this contains nested radicals involving complex numbers, yet it is reducible (even though not obviously so) to one of the solutions 1, 2, or −3.
+
+== Infinitely nested radicals ==
+
+=== Square roots ===
+
+Under certain conditions infinitely nested square roots such as
+<math display=block> x= \sqrt{2+\sqrt{2+\sqrt{2+\sqrt{2+\cdots}}}} </math>
+
+represent rational numbers. This rational number can be found by realizing that ''x'' also appears under the radical sign, which gives the equation
+
+<math display="block"> x = \sqrt{2+x}. </math>
+
+If we solve this equation, we find that {{math|1=''x'' = 2}} (the second solution {{math|1=''x'' = −1}} doesn't apply, under the convention that the positive square root is meant). This approach can also be used to show that generally, if {{math|''n'' > 0}}, then
+<math display=block> \sqrt{n+\sqrt{n+\sqrt{n+\sqrt{n+\cdots}}}} = \tfrac{1}{2}\left(1 + \sqrt {1+4n}\right) </math>
+
+and is the positive root of the equation {{math|1=''x''<sup>2</sup> − ''x'' − ''n'' = 0}}. For {{math|1=''n'' = 1}}, this root is the [[golden ratio]] {{math|φ}}, approximately equal to 1.618. The same procedure also works to obtain, if {{math|''n'' > 0}},
+<math display=block> \sqrt{n-\sqrt{n-\sqrt{n-\sqrt{n-\cdots}}}} = \tfrac12\left(-1 + \sqrt {1+4n}\right),</math>
+which is the positive root of the equation {{math|1=''x''<sup>2</sup> + ''x'' − ''n'' = 0}}.
+
+==== Nested square roots of 2 ====
+The nested square roots of 2 are a special case of the wide class of infinitely nested radicals. There are many known results that bind them to [[Trigonometric functions|sines and cosines]]. For example, it has been shown that nested square roots of 2 as<ref name=":0">{{Cite journal|last=Servi|first=L. D.|date=April 2003|title=Nested Square Roots of 2 | url=https://www.tandfonline.com/doi/full/10.1080/00029890.2003.11919968|journal=The American Mathematical Monthly | language=en|volume=110|issue=4|pages=326–330|doi=10.1080/00029890.2003.11919968|s2cid=38100940 |issn=0002-9890|url-access=subscription}}</ref>
+<math display=block>R(b_k, \ldots, b_1)=\frac{b_k}{2} \sqrt{2+b_{k-1} \sqrt{2+b_{k-2} \sqrt{2+\cdots+b_2 \sqrt{2+x}}}}</math>
+
+where <math>x=2 \sin(\pi b_1/4)</math> with <math>b_1</math> in [−2,2] and <math>b_i\in \{-1,0,1\}</math> for <math>i \neq 1</math>, are such that <math>R(b_k, \ldots, b_1)=\cos \theta</math> for
+<math display=block>\theta=\left(\frac{1}{2}-\frac{b_k}{4}-\frac{b_k b_{k-1}}{8}-\frac{b_k b_{k-1} b_{k-2}}{16}-\cdots-\frac{b_k b_{k-1} \cdots b_1}{2^{k+1}}\right) \pi .</math>
+
+This result allows to deduce for any <math>x \in [-2,2]</math> the value of the following infinitely nested radicals consisting of k nested roots as
+<math display=block>R_k(x)=\sqrt{2+\sqrt{2+\cdots+\sqrt{2+x}}}.</math>
+
+If <math>x \geq 2</math>, then<ref>{{Cite journal|last=Nyblom|first=M. A.|date=November 2005|title=More Nested Square Roots of 2|url=https://www.tandfonline.com/doi/full/10.1080/00029890.2005.11920256|journal=The American Mathematical Monthly | language=en | volume=112 | issue=9 | pages=822–825 | doi=10.1080/00029890.2005.11920256 | s2cid=11206345 |issn=0002-9890|url-access=subscription }}</ref>
+<math display=block>\begin{aligned}
+R_k(x) &=\sqrt{2+\sqrt{2+\cdots+\sqrt{2+x}}} \\
+&=\left(\frac{x+\sqrt{x^2-4}}{2}\right)^{1 / 2^k}+\left(\frac{x+\sqrt{x^2-4}}{2}\right)^{-1 / 2^k}
+\end{aligned}</math>
+
+These results can be used to obtain some nested square roots representations of <math>\pi</math> . Let us consider the term <math>R\left(b_{k}, \ldots, b_{1}\right)</math> defined above. Then<ref name=":0" />
+<math display=block>\pi=\lim _{k \rightarrow \infty}\left[\frac{2^{k+1}}{2-b_{1}} R(\underbrace{1,-1,1,1, \ldots, 1,1, b_1}_{k \text { terms }})\right]</math>
+
+where <math>b_1\neq 2</math>.
+
+====Ramanujan's infinite radicals====
+
+[[Srinivasa Ramanujan|Ramanujan]] posed the following problem to the ''Journal of Indian Mathematical Society'':
+
+<math display="block">? = \sqrt{1+2\sqrt{1+3 \sqrt{1+\cdots}}}. </math>
+
+This can be solved by noting a more general formulation:
+<math display=block>? = \sqrt{ax+(n+a)^2 +x\sqrt{a(x+n)+(n+a)^2+(x+n) \sqrt{\mathrm{\cdots}}}}. </math>
+
+Setting this to {{math|''F''(''x'')}} and squaring both sides gives us
+<math display=block>F(x)^2 = ax+(n+a)^2 +x\sqrt{a(x+n)+(n+a)^2+(x+n) \sqrt{\mathrm{\cdots}}}, </math>
+
+which can be simplified to
+<math display="block">F(x)^2 = ax + (n+a)^2 + x F(x+n) .</math>
+
+It can be shown that
+
+<math display="block">F(x) = {x + n + a}</math>
+
+satisfies the equation for <math>F(x)</math>, so it can be hoped that
+it is the true solution.  For a complete proof, we would need to show
+that this is indeed the solution to the equation for <math>F(x)</math>.
+
+So, setting {{math|1=''a'' = 0}}, {{math|1=''n'' = 1}}, and&nbsp;{{math|1=''x'' = 2}}, we have
+<math display=block>3 = \sqrt{1+2\sqrt{1+3 \sqrt{1+\cdots}}}. </math>
+Ramanujan stated the following infinite radical denesting in his [[Ramanujan's lost notebook|lost notebook]]:
+<math display=block>\sqrt{5+\sqrt{5+\sqrt{5-\sqrt{5+\sqrt{5+\sqrt{5+\sqrt{5-\cdots}}}}}}}=\frac{2+\sqrt{5}+\sqrt{15-6\sqrt{5}}}{2}.</math>
+The repeating pattern of the signs is <math>(+,+,-,+).</math>
+
+====Viète's expression for {{pi}}====
+
+[[Viète's formula]] for [[pi|{{pi}}]], the ratio of a circle's circumference to its diameter, is
+<math display=block>\frac{2}\pi=
+\frac{\sqrt2}{2}\cdot
+\frac{\sqrt{2+\sqrt2}}2\cdot
+\frac{\sqrt{2+\sqrt{2+\sqrt2}}}2\cdots.</math>
+
+=== Cube roots ===
+{{Unreferenced section|date=November 2018}}
+In certain cases, infinitely nested cube roots such as
+<math display="block"> x = \sqrt[3]{6+\sqrt[3]{6+\sqrt[3]{6+\sqrt[3]{6+\cdots}}}} </math>
+can represent rational numbers as well.  Again, by realizing that the whole expression appears inside itself, we are left with the equation
+<math display="block"> x = \sqrt[3]{6+x}. </math>
+
+If we solve this equation, we find that&nbsp;{{math|1=''x'' = 2}}. More generally, we find that
+<math display="block"> \sqrt[3]{n+\sqrt[3]{n+\sqrt[3]{n+\sqrt[3]{n+\cdots}}}}</math>
+is the positive real root of the equation {{math|1=''x''<sup>3</sup> − ''x'' − ''n'' = 0}} for all&nbsp;{{math|''n'' > 0}}. For {{math|1=''n'' = 1}}, this root is the [[plastic ratio]] ''ρ'', approximately equal to 1.3247.
+
+The same procedure also works to get
+
+<math display="block"> \sqrt[3]{n-\sqrt[3]{n-\sqrt[3]{n-\sqrt[3]{n-\cdots}}}} </math>
+
+as the real root of the equation {{math|1=''x''<sup>3</sup> + ''x'' − ''n'' = 0}} for all {{math|''n'' > 1}}.
+
+=== Herschfeld's convergence theorem===
+An infinitely nested radical <math>\sqrt{a_1 + \sqrt{a_2 + \dotsb}}</math> (where all <math>a_i</math> are [[nonnegative]]) converges if and only if there is some <math>M \in \mathbb R</math>  such that <math>M \geq a_n^{2^{-n}}</math> for all <math>n</math>,<ref>{{Cite journal|last=Herschfeld|first=Aaron|date=1935|title=On Infinite Radicals|journal=The American Mathematical Monthly | volume=42|issue=7|pages=419–429|doi=10.2307/2301294|jstor=2301294|issn=0002-9890}}</ref> or in other words <math display=inline> \sup a_n^{2^{-n}} <+\infty. </math>
+
+==== Proof of "if" ====
+We observe that 
+<math display=block>\sqrt{a_1 + \sqrt{a_2 + \dotsb}} \leq \sqrt{M^{2^1} + \sqrt{M^{2^2} + \cdots}} = M\sqrt{1 + \sqrt{1 + \dotsb}}<2M.</math>
+Moreover, the sequence <math>\left(\sqrt{a_1 + \sqrt{a_2 + \dotsc \sqrt{a_n}}}\right)</math> is monotonically increasing. Therefore it converges, by the [[monotone convergence theorem]].
+
+==== Proof of "only if" ====
+If the sequence <math>\left(\sqrt{a_1 + \sqrt{a_2 + \cdots \sqrt{a_n}}}\right)</math> converges, then it is bounded.
+
+However, <math>a_n^{2^{-n}}\le\sqrt{a_1 + \sqrt{a_2 + \cdots \sqrt{a_n}}}</math>, hence <math>\left(a_n^{2^{-n}}\right)</math> is also bounded.
+
+==See also==
+*[[Exponentiation]]
+*[[Sum of radicals]]
+
+== References ==
+
+{{reflist}}
+
+===Further reading ===
+* {{cite journal | author-link = Susan Landau | first = Susan | last = Landau | title = How to Tangle with a Nested Radical | journal = [[Mathematical Intelligencer]] | volume = 16 | issue = 2 | pages = 49–55 | year = 1994 | doi=10.1007/bf03024284| s2cid = 119991567 }}
+*
+* [https://web.archive.org/web/20060312035635/http://www.almaden.ibm.com/cs/people/fagin/symb85.pdf Decreasing the Nesting Depth of Expressions Involving Square Roots]
+* [http://www.cybertester.com/data/denest.pdf Simplifying Square Roots of Square Roots]
+* {{mathworld|urlname=SquareRoot|title=Square Root}}
+* {{mathworld|urlname=NestedRadical|title=Nested Radical}}
+
+[[Category:Algebra]]

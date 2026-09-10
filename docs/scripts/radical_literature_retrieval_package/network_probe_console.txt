@@ -1,0 +1,15 @@
+[1/2] cavallo / pdf
+  FAILED: https://arxiv.org/pdf/2403.04776v2: RuntimeError: Could not retrieve https://arxiv.org/pdf/2403.04776v2: <urlopen error [Errno -3] Temporary failure in name resolution>
+[2/2] cavallo / tex-source
+  FAILED: https://arxiv.org/src/2403.04776v2: RuntimeError: Could not retrieve https://arxiv.org/src/2403.04776v2: <urlopen error [Errno -3] Temporary failure in name resolution> | https://arxiv.org/e-print/2403.04776v2: RuntimeEr
+NO ZIP CREATED: no external asset was successfully retrieved.
+{
+  "successful_assets": 0,
+  "failed_assets": 2,
+  "pdf_files": 0,
+  "tex_files": 0,
+  "records_with_downloads": 0,
+  "selected_records_without_any_asset_route": [],
+  "candidate_assets_skipped": 0,
+  "interrupted": false
+}

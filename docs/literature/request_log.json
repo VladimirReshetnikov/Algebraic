@@ -1,0 +1,393 @@
+[
+  {
+    "time": "2026-09-05T20:29:14+00:00",
+    "url": "https://web.archive.org/web/20051217213927id_/http://www.lcs.mit.edu/publications/pubs/pdf/MIT-LCS-TR-095.pdf",
+    "attempt": 1,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 429: Too Many Requests"
+  },
+  {
+    "time": "2026-09-05T20:29:16+00:00",
+    "url": "https://web.archive.org/web/20051217213927id_/http://www.lcs.mit.edu/publications/pubs/pdf/MIT-LCS-TR-095.pdf",
+    "attempt": 2,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 429: Too Many Requests"
+  },
+  {
+    "time": "2026-09-05T20:29:20+00:00",
+    "url": "https://web.archive.org/web/20051217213927id_/http://www.lcs.mit.edu/publications/pubs/pdf/MIT-LCS-TR-095.pdf",
+    "attempt": 3,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 429: Too Many Requests"
+  },
+  {
+    "time": "2026-09-05T20:29:28+00:00",
+    "url": "https://web.archive.org/web/20051217213927id_/http://www.lcs.mit.edu/publications/pubs/pdf/MIT-LCS-TR-095.pdf",
+    "attempt": 4,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 429: Too Many Requests"
+  },
+  {
+    "time": "2026-09-05T20:29:28+00:00",
+    "url": "https://publications.csail.mit.edu/lcs/pubs/pdf/MIT-LCS-TR-095.pdf",
+    "attempt": 1,
+    "status": "received",
+    "bytes": 13334928,
+    "resolved_url": "https://publications.csail.mit.edu/lcs/pubs/pdf/MIT-LCS-TR-095.pdf"
+  },
+  {
+    "time": "2026-09-05T20:29:31+00:00",
+    "url": "https://people.eecs.berkeley.edu/~fateman/papers/radcan.pdf",
+    "attempt": 1,
+    "status": "failed",
+    "error": "URLError: <urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>"
+  },
+  {
+    "time": "2026-09-05T20:29:35+00:00",
+    "url": "https://people.eecs.berkeley.edu/~fateman/papers/radcan.pdf",
+    "attempt": 2,
+    "status": "failed",
+    "error": "URLError: <urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>"
+  },
+  {
+    "time": "2026-09-05T20:29:41+00:00",
+    "url": "https://people.eecs.berkeley.edu/~fateman/papers/radcan.pdf",
+    "attempt": 3,
+    "status": "failed",
+    "error": "URLError: <urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>"
+  },
+  {
+    "time": "2026-09-05T20:29:51+00:00",
+    "url": "https://people.eecs.berkeley.edu/~fateman/papers/radcan.pdf",
+    "attempt": 4,
+    "status": "failed",
+    "error": "URLError: <urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>"
+  },
+  {
+    "time": "2026-09-05T20:29:54+00:00",
+    "url": "https://dspace.mit.edu/entities/publication/8c890e97-f123-4c57-9278-9c85915cf15c",
+    "attempt": 1,
+    "status": "received",
+    "bytes": 554542,
+    "resolved_url": "https://dspace.mit.edu/entities/publication/8c890e97-f123-4c57-9278-9c85915cf15c"
+  },
+  {
+    "time": "2026-09-05T20:29:55+00:00",
+    "url": "https://dspace.mit.edu/bitstreams/1c92e9a9-bf80-46b8-a0a6-aa9fc82f2391/download",
+    "attempt": 1,
+    "status": "received",
+    "bytes": 6870113,
+    "resolved_url": "https://cf003.cdn.4science.cloud/4s-assetstore-prod--mit--dspace/156691816665879550430948245216022190567?response-content-type=application%2Fpdf&response-content-disposition=attachment%3B+filename%3D%2204731425-MIT.pdf%22&Expires=1788640316&Signature=Kf7pzwCWxgKuUT4Ta~B51f9Ifw~UwWFg3PwsTHXVLT3MfLBX7JwwOuZqZ3APGawA9GCHCnzrYXkmqaNMm1UYkhWVGbTv~urjha2U1ViDLALz56G-DyNvyGF-dqwaGiARKlbhglbF~a~Rvh77m9N0VZTKkL6CZnm9BD1e2P1VgiPQwpXfdVu-MdYplwrHQ0Tzj7cE~06YAtvPeUT6hxGL03qN47AOxWUOQiP6tLevm4TlTCK7waWOchIb0sGuzRyi7WvpELhyLblcr~dozNZUEd1P29C3LG198oQFET4aeqk0k8upDOso82Z7vsalm2v-PrIpsKKXRMrFO4iCkMHeQA__&Key-Pair-Id=K1M0LPFHJMTXJX"
+  },
+  {
+    "time": "2026-09-05T20:29:57+00:00",
+    "url": "https://ntrs.nasa.gov/api/citations/19770021838",
+    "attempt": 1,
+    "status": "received",
+    "bytes": 2879,
+    "resolved_url": "https://ntrs.nasa.gov/api/citations/19770021838"
+  },
+  {
+    "time": "2026-09-05T20:29:58+00:00",
+    "url": "https://www.researchgate.net/profile/Susan-Landau-2/publication/2629046_Simplification_of_Nested_Radicals/links/02bfe510fbd90dfb8f000000/Simplification-of-Nested-Radicals.pdf",
+    "attempt": 1,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 403: Forbidden"
+  },
+  {
+    "time": "2026-09-05T20:29:58+00:00",
+    "url": "https://web.cs.umass.edu/publication/docs/1990/UM-CS-1990-120.pdf",
+    "attempt": 1,
+    "status": "received",
+    "bytes": 2800458,
+    "resolved_url": "https://web.cs.umass.edu/publication/docs/1990/UM-CS-1990-120.pdf"
+  },
+  {
+    "time": "2026-09-05T20:29:59+00:00",
+    "url": "https://web.cs.umass.edu/publication/docs/1991/UM-CS-1991-076.pdf",
+    "attempt": 1,
+    "status": "received",
+    "bytes": 7160196,
+    "resolved_url": "https://web.cs.umass.edu/publication/docs/1991/UM-CS-1991-076.pdf"
+  },
+  {
+    "time": "2026-09-05T20:30:09+00:00",
+    "url": "https://www.researchgate.net/publication/220577276_Solving_polynomials_by_radicals_with_roots_of_unity_in_minimum_depth",
+    "attempt": 1,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 403: Forbidden"
+  },
+  {
+    "time": "2026-09-05T20:30:09+00:00",
+    "url": "https://www.ams.org/journals/mcom/1999-68-226/S0025-5718-99-01060-1/S0025-5718-99-01060-1.pdf",
+    "attempt": 1,
+    "status": "received",
+    "bytes": 191760,
+    "resolved_url": "https://www.ams.org/journals/mcom/1999-68-226/S0025-5718-99-01060-1/S0025-5718-99-01060-1.pdf"
+  },
+  {
+    "time": "2026-09-05T20:30:10+00:00",
+    "url": "https://ieeexplore.ieee.org/iel2/379/4746/00185434.pdf",
+    "attempt": 1,
+    "status": "received",
+    "bytes": 0,
+    "resolved_url": "https://ieeexplore.ieee.org/document/185434/;jsessionid=92BD42B4E1DDA48F301CCFB26C938573"
+  },
+  {
+    "time": "2026-09-05T20:30:11+00:00",
+    "url": "https://ieeexplore.ieee.org/iel2/424/6693/00267807.pdf",
+    "attempt": 1,
+    "status": "received",
+    "bytes": 0,
+    "resolved_url": "https://ieeexplore.ieee.org/document/267807/;jsessionid=109205D14EC802256044EAE7DF2E4DBD"
+  },
+  {
+    "time": "2026-09-05T20:30:12+00:00",
+    "url": "https://www.researchgate.net/publication/225210864_Denesting_by_Bounded_Degree_Radicals",
+    "attempt": 1,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 403: Forbidden"
+  },
+  {
+    "time": "2026-09-05T20:30:13+00:00",
+    "url": "https://repository.ubn.ru.nl/bitstream/handle/2066/18722/18722.pdf",
+    "attempt": 1,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 403: Forbidden"
+  },
+  {
+    "time": "2026-09-05T20:30:13+00:00",
+    "url": "https://projecteuclid.org/journals/pacific-journal-of-mathematics/volume-3/issue-3/On-the-linear-independence-of-algebraic-numbers/pjm/1103051334.pdf",
+    "attempt": 1,
+    "status": "received",
+    "bytes": 409702,
+    "resolved_url": "https://projecteuclid.org/journals/pacific-journal-of-mathematics/volume-3/issue-3/On-the-linear-independence-of-algebraic-numbers/pjm/1103051334.pdf"
+  },
+  {
+    "time": "2026-09-05T20:30:14+00:00",
+    "url": "https://eudml.org/doc/205133",
+    "attempt": 1,
+    "status": "received",
+    "bytes": 32953,
+    "resolved_url": "https://eudml.org/doc/205133"
+  },
+  {
+    "time": "2026-09-05T20:30:15+00:00",
+    "url": "https://infoscience.epfl.ch/bitstreams/4fa72d55-df13-42ed-9c2d-bb1cdfdd8801/download",
+    "attempt": 1,
+    "status": "received",
+    "bytes": 324240,
+    "resolved_url": "https://infoscience.epfl.ch/server/api/core/bitstreams/4fa72d55-df13-42ed-9c2d-bb1cdfdd8801/content"
+  },
+  {
+    "time": "2026-09-05T20:30:17+00:00",
+    "url": "https://www.researchgate.net/publication/282728308_Cardan_Polynomials_and_the_Reduction_of_Radicals",
+    "attempt": 1,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 403: Forbidden"
+  },
+  {
+    "time": "2026-09-05T20:30:19+00:00",
+    "url": "https://www.researchgate.net/profile/Roman-Witula-2/publication/241071508_Cardano%27s_formula_square_roots_Chebyshev_polynomials_and_radicals/links/5d385ae992851cd04682a056/Cardanos-formula-square-roots-Chebyshev-polynomials-and-radicals.pdf",
+    "attempt": 1,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 403: Forbidden"
+  },
+  {
+    "time": "2026-09-05T20:30:19+00:00",
+    "url": "https://arxiv.org/pdf/1401.1474v1",
+    "attempt": 1,
+    "status": "received",
+    "bytes": 161140,
+    "resolved_url": "https://arxiv.org/pdf/1401.1474v1"
+  },
+  {
+    "time": "2026-09-05T20:30:22+00:00",
+    "url": "https://arxiv.org/src/1401.1474v1",
+    "attempt": 1,
+    "status": "received",
+    "bytes": 9526,
+    "resolved_url": "https://arxiv.org/src/1401.1474v1"
+  },
+  {
+    "time": "2026-09-05T20:30:22+00:00",
+    "url": "https://math-mech-astr-journal.spbu.ru/article/download/11190/7872/34789",
+    "attempt": 1,
+    "status": "received",
+    "bytes": 296405,
+    "resolved_url": "https://math-mech-astr-journal.spbu.ru/article/download/11190/7872/34789"
+  },
+  {
+    "time": "2026-09-05T20:30:25+00:00",
+    "url": "https://www.mathnet.ru/php/getFT.phtml?jrnid=vspua&option_lang=rus&paperid=180&what=fullt",
+    "attempt": 1,
+    "status": "received",
+    "bytes": 325913,
+    "resolved_url": "https://www.mathnet.ru/links/d69f3740ff219d56fe1d88733bba4c6d/vspua180.pdf"
+  },
+  {
+    "time": "2026-09-05T20:30:28+00:00",
+    "url": "https://math.mit.edu/research/highschool/primes/materials/2017/Dokmeci.pdf",
+    "attempt": 1,
+    "status": "received",
+    "bytes": 304322,
+    "resolved_url": "https://math.mit.edu/research/highschool/primes/materials/2017/Dokmeci.pdf"
+  },
+  {
+    "time": "2026-09-05T20:30:29+00:00",
+    "url": "https://www.sciencedirect.com/science/article/pii/S2772827725000038",
+    "attempt": 1,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 403: Forbidden"
+  },
+  {
+    "time": "2026-09-05T20:30:29+00:00",
+    "url": "https://eccc.weizmann.ac.il/report/2005/037/download/",
+    "attempt": 1,
+    "status": "received",
+    "bytes": 149975,
+    "resolved_url": "https://eccc.weizmann.ac.il/report/2005/037/download/"
+  },
+  {
+    "time": "2026-09-05T20:30:32+00:00",
+    "url": "https://is.muni.cz/el/1431/jaro2015/M7400/um/2301294_147_251_4_41_15_08_2014_19_16.pdf",
+    "attempt": 1,
+    "status": "received",
+    "bytes": 117,
+    "resolved_url": "https://is.muni.cz/el/1431/jaro2015/M7400/um/2301294_147_251_4_41_15_08_2014_19_16.pdf"
+  },
+  {
+    "time": "2026-09-05T20:30:32+00:00",
+    "url": "https://www.tandfonline.com/doi/pdf/10.1080/00029890.1991.11995783",
+    "attempt": 1,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 403: Forbidden"
+  },
+  {
+    "time": "2026-09-05T20:30:34+00:00",
+    "url": "https://resources.wolframcloud.com/FunctionRepository/resources/RadicalDenest",
+    "attempt": 1,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 404: Not Found"
+  },
+  {
+    "time": "2026-09-05T20:30:36+00:00",
+    "url": "https://resources.wolframcloud.com/FunctionRepository/resources/RadicalDenest/",
+    "attempt": 1,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 404: Not Found"
+  },
+  {
+    "time": "2026-09-05T20:30:36+00:00",
+    "url": "https://community.wolfram.com/groups/-/m/t/980264",
+    "attempt": 1,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 503: Service Unavailable"
+  },
+  {
+    "time": "2026-09-05T20:30:39+00:00",
+    "url": "https://community.wolfram.com/groups/-/m/t/980264",
+    "attempt": 2,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 503: Service Unavailable"
+  },
+  {
+    "time": "2026-09-05T20:30:43+00:00",
+    "url": "https://community.wolfram.com/groups/-/m/t/980264",
+    "attempt": 3,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 503: Service Unavailable"
+  },
+  {
+    "time": "2026-09-05T20:30:51+00:00",
+    "url": "https://community.wolfram.com/groups/-/m/t/980264",
+    "attempt": 4,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 503: Service Unavailable"
+  },
+  {
+    "time": "2026-09-05T20:30:53+00:00",
+    "url": "https://community.wolfram.com/groups/-/m/t/2120629",
+    "attempt": 1,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 503: Service Unavailable"
+  },
+  {
+    "time": "2026-09-05T20:30:55+00:00",
+    "url": "https://community.wolfram.com/groups/-/m/t/2120629",
+    "attempt": 2,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 503: Service Unavailable"
+  },
+  {
+    "time": "2026-09-05T20:30:59+00:00",
+    "url": "https://community.wolfram.com/groups/-/m/t/2120629",
+    "attempt": 3,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 503: Service Unavailable"
+  },
+  {
+    "time": "2026-09-05T20:31:07+00:00",
+    "url": "https://community.wolfram.com/groups/-/m/t/2120629",
+    "attempt": 4,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 503: Service Unavailable"
+  },
+  {
+    "time": "2026-09-05T20:31:08+00:00",
+    "url": "https://doc.sagemath.org/html/en/reference/qqbar/sage/rings/qqbar.html",
+    "attempt": 1,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 404: Not Found"
+  },
+  {
+    "time": "2026-09-05T20:31:08+00:00",
+    "url": "https://magma.maths.usyd.edu.au/magma/handbook/",
+    "attempt": 1,
+    "status": "received",
+    "bytes": 6221,
+    "resolved_url": "https://magma.maths.usyd.edu.au/magma/handbook/"
+  },
+  {
+    "time": "2026-09-05T20:31:09+00:00",
+    "url": "https://math.stackexchange.com/questions/4680",
+    "attempt": 1,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 403: Forbidden"
+  },
+  {
+    "time": "2026-09-05T20:31:11+00:00",
+    "url": "https://math.stackexchange.com/questions/16331",
+    "attempt": 1,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 403: Forbidden"
+  },
+  {
+    "time": "2026-09-05T20:31:12+00:00",
+    "url": "https://math.stackexchange.com/questions/871639",
+    "attempt": 1,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 403: Forbidden"
+  },
+  {
+    "time": "2026-09-05T20:31:12+00:00",
+    "url": "https://www.cantorsparadise.com/ramanujans-nested-radical-problem-f14c3060e495",
+    "attempt": 1,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 403: Forbidden"
+  },
+  {
+    "time": "2026-09-05T20:31:12+00:00",
+    "url": "https://medium.com/@ArchieGSmith/calculus-of-infinite-nested-radicals-1ab3e1d26774",
+    "attempt": 1,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 403: Forbidden"
+  },
+  {
+    "time": "2026-09-05T20:31:14+00:00",
+    "url": "https://math.stackexchange.com/questions/4049946/the-infinitely-nested-radicals-problem-and-ramanujans-wondrous-formula",
+    "attempt": 1,
+    "status": "failed",
+    "error": "HTTPError: HTTP Error 403: Forbidden"
+  }
+]

@@ -1,0 +1,24 @@
+\section{Conclusion}
+\label{sec:conclusion}
+The three reviews were right about the essentials and, being static, could
+not see the rest. Executed in Wolfram~15.0.1, \code{Strad.wl} denests every
+classical identity in our corpus quickly and correctly, and its two
+mathematical ideas, the multiplier-driven polynomial GCD over an algebraic
+extension and the minimal-polynomial rationalizer, are sound. It also returns
+wrong values on a large, natural class of inputs: 56 of 340 random inputs,
+concentrated entirely in complex products and non-principal powers, plus a
+purely numeric case caused by its own factorizer. Its acceptance test rests on
+\code{PossibleZeroQ} assuming zero when it cannot decide; its prime
+comparator reverses the prime list and thereby disables its own pruning
+while hiding a second bug; it mishandles lists, inexact numbers and
+\code{Root} objects; and several of its ``successes'' are larger than the
+input.
+
+The unified catalogue contains 27 items. Sixteen were reported by at least one
+review and are confirmed here; five were reported and are refined (one is
+unreachable, one is moot, one probe was mis-chosen, two are practically
+inert); six are new. The corrected package removes every wrong value observed
+and every message, adds budgets and an explicit improvement criterion, and
+finds several denestings the original misses, at a cost of two to three in
+running time. Everything reported is reproducible from the harness, logs and
+scripts shipped alongside this document.

@@ -1,0 +1,43 @@
+{
+  "record_id": "perucca",
+  "title": "Linear relations among radicals",
+  "asset_id": "tex-source",
+  "version": "arxiv-2511.02498v1",
+  "kind": "source",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://arxiv.org/src/2511.02498v1",
+    "resolved_url": "https://arxiv.org/src/2511.02498v1",
+    "retrieved_at": "2026-09-05T20:25:46+00:00",
+    "http_status": 200,
+    "content_type": "application/gzip",
+    "content_encoding": "",
+    "bytes": 11131,
+    "sha256": "ec68eb27b758fbf3bda280c6afc6717a5c888863e961b6dafc3f83e2117c29bf"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "repository_pdf_and_source_links",
+  "note": "arXiv advertises TeX Source; actual bytes and archive contents have NOT been retrieved in this environment.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/perucca-Linear-relations-among-radicals/arxiv-2511.02498v1/tex-source.tar.gz",
+      "role": "original_source_response",
+      "bytes": 11131,
+      "sha256": "ec68eb27b758fbf3bda280c6afc6717a5c888863e961b6dafc3f83e2117c29bf"
+    },
+    {
+      "path": "papers/perucca-Linear-relations-among-radicals/arxiv-2511.02498v1/source/00README.json",
+      "role": "source_member",
+      "bytes": 224,
+      "sha256": "5b1f3f321cbf3eef407b9033b5aa7313853e0aef1cc18f09f72dd499458933d2"
+    },
+    {
+      "path": "papers/perucca-Linear-relations-among-radicals/arxiv-2511.02498v1/source/Linear-radicals.tex",
+      "role": "tex",
+      "bytes": 37408,
+      "sha256": "8ce11ef5b7fdbf308e106a8ba92111f5b75a887c15790f5a34ed19ba26f99953"
+    }
+  ],
+  "prior_candidate_errors": []
+}

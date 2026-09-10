@@ -1,0 +1,24 @@
+{
+  "id": "campbell",
+  "title": "Variations on Ramanujan's nested radicals",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "campbell",
+      "entry_latex": "G.~B. Campbell and A. Zujev, ``Variations on Ramanujan's nested radicals,'' arXiv:1511.06865, 2015.\n\\access{https://arxiv.org/html/1511.06865v1}{Full HTML text}. \\status{T}\nFinite nested-radical identities, including cubic and quartic constructions. Not classified here as primarily an infinite-radical convergence paper."
+    },
+    {
+      "report": "report-2",
+      "key": "campbell",
+      "entry_latex": "Geoffrey B. Campbell and Aleksander Zujev.\n\\emph{Variations on Ramanujan's nested radicals}.\narXiv:1511.06865, 2015.\n\\sourceurl{https://arxiv.org/abs/1511.06865}.\n\\textbf{M.} Variations and related identities; retained in the analytic/special-form strand rather than treated as a general denesting algorithm."
+    },
+    {
+      "report": "report-3",
+      "key": "campbell",
+      "entry_latex": "Geoffrey B. Campbell and Aleksander Zujev. \\emph{Variations on Ramanujan's nested radicals}. arXiv:1511.06865, 2015. \\url{https://arxiv.org/abs/1511.06865}. \\status{F}\n\\entrynote{A collection and development of related identities. Relevant examples were checked algebraically here; the existence of such families is not a general complexity or completeness theorem.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

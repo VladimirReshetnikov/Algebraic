@@ -1,0 +1,15 @@
+{
+  "id": "exactgeometry",
+  "title": "Recent progress in exact geometric computation",
+  "citations": [
+    {
+      "report": "report-2",
+      "key": "exactgeometry",
+      "entry_latex": "Chen Li, Sylvain Pion, and Chee-Keng Yap.\n\\emph{Recent progress in exact geometric computation}.\nJournal of Logic and Algebraic Programming \\textbf{64}(1), 85--111, 2005.\n\\sourceurl{https://www.sciencedirect.com/science/article/pii/S1567832604000773}.\n\\textbf{M.} Application context for exact algebraic arithmetic, separation, and reliable predicates rather than radical presentation alone.\n\n\\item[]\\textbf{E. Infinite radicals, special values, and educational context}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

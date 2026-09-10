@@ -1,0 +1,31 @@
+{
+  "record_id": "landau98",
+  "title": "Square root of 2 plus square root of 3: four different views",
+  "asset_id": "pdf-author-pdf",
+  "version": "author-pdf",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://privacyink.org/pdf/Sqrt2%2BSqrt3.pdf",
+    "resolved_url": "https://privacyink.org/pdf/Sqrt2%2BSqrt3.pdf",
+    "retrieved_at": "2026-09-05T20:25:17+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 1095606,
+    "sha256": "dc7af2a6e3835e46e3aebe9ba1df25a3fb448c03333b092bbdc8d1f0ec78ae7d"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "search_indexed_pdf",
+  "note": "Author-hosted PDF.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/landau98-Square-root-of-2-plus-square-root-of-3-four-different-views/author-pdf/pdf-author-pdf.pdf",
+      "role": "pdf",
+      "bytes": 1095606,
+      "sha256": "dc7af2a6e3835e46e3aebe9ba1df25a3fb448c03333b092bbdc8d1f0ec78ae7d"
+    }
+  ],
+  "prior_candidate_errors": []
+}

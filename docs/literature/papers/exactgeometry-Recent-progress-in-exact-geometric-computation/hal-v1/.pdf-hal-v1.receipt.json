@@ -1,0 +1,31 @@
+{
+  "record_id": "exactgeometry",
+  "title": "Recent progress in exact geometric computation",
+  "asset_id": "pdf-hal-v1",
+  "version": "hal-v1",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://inria.hal.science/inria-00344355v1/document",
+    "resolved_url": "https://inria.hal.science/inria-00344355v1/document",
+    "retrieved_at": "2026-09-05T20:27:02+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 587038,
+    "sha256": "f0b47b48a87858f519fb30bb42a46f3d0072f5f268e219ba76d22de6cfb737c0"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "search_indexed_fulltext",
+  "note": "HAL public repository version; not necessarily publisher pagination.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/exactgeometry-Recent-progress-in-exact-geometric-computation/hal-v1/pdf-hal-v1.pdf",
+      "role": "pdf",
+      "bytes": 587038,
+      "sha256": "f0b47b48a87858f519fb30bb42a46f3d0072f5f268e219ba76d22de6cfb737c0"
+    }
+  ],
+  "prior_candidate_errors": []
+}

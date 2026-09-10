@@ -1,0 +1,31 @@
+{
+  "record_id": "cavallo",
+  "title": "Denesting cubic radicals",
+  "asset_id": "pdf",
+  "version": "arxiv-2403.04776v2",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://arxiv.org/pdf/2403.04776v2",
+    "resolved_url": "https://arxiv.org/pdf/2403.04776v2",
+    "retrieved_at": "2026-09-05T20:26:25+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 145566,
+    "sha256": "0c4f1a8199493b222885c24e7d1d2f1461b5d51cac37485054b374fd1ad55798"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "repository_pdf_and_source_links",
+  "note": "Pinned arXiv version; PDF and source requests use the identical version identifier.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/cavallo-Denesting-cubic-radicals/arxiv-2403.04776v2/paper.pdf",
+      "role": "pdf",
+      "bytes": 145566,
+      "sha256": "0c4f1a8199493b222885c24e7d1d2f1461b5d51cac37485054b374fd1ad55798"
+    }
+  ],
+  "prior_candidate_errors": []
+}

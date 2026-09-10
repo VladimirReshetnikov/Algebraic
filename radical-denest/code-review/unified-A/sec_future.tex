@@ -1,0 +1,112 @@
+\section{Future improvements}
+\label{sec:future}
+The corrected version makes the program \emph{safe}; it does not make it
+\emph{complete} or \emph{fast}. Section~\ref{sec:probes} exhibits fifteen
+denestable inputs it leaves unchanged; items 1, 3 and 5 below address them
+directly. The following improvements are listed in the order in which we
+would undertake them.
+
+\subsection{Algorithmic}
+\begin{enumerate}
+\item \textbf{Replace degree heuristics by field computations.} The engine
+      guesses multipliers and asks a degree oracle whether it guessed well.
+      For a problem $\beta$ with $\rho=\beta^q$, the question ``does
+      $X^q-\rho$ have a linear factor over $K=\Q(\rho)$?'' is answered directly
+      by \code{Factor[x^q - rho, Extension -> Automatic]}; a linear factor is
+      a denesting into $K$ with no multiplier at all, and the trial $m=1$ is
+      then redundant. More generally, for $\beta$ of degree $n$ over $\Q$ the
+      candidate fields for a depth reduction are the subfields of the Galois
+      closure; Landau's algorithm for nested square roots and Blömer's
+      algorithms for real radicals and for roots of unity reduce the problem
+      to computing a specific extension (e.g.\ adjoining $\sqrt[q]{d}$ for a
+      \emph{single} well-chosen $d$ derived from the discriminant or from the
+      norm of $\rho$) and testing membership. The discriminant-prime batches
+      of \code{newmultipliers} are a heuristic approximation of this; the
+      exact version would try $m=\pm d^{e}$ for the $q$-th-power-free
+      divisors $d$ of the norm $N_{K/\Q}(\rho)$ and its conjugates, which is a
+      finite and provably sufficient list for Kummer-type denestings
+      ($\sqrt[q]{\rho}\in K(\sqrt[q]{m})$ for some $m\in K$).
+\item \textbf{A complete quadratic-surd layer.} Proposition~\ref{prop:surd}
+      covers the case $a^2-b^2c=\delta^2$. The other half of Landau's theorem,
+      $c(a^2-b^2c)=\delta^2$, yields denestings with a fourth root
+      ($\sqrt{a+b\sqrt c}=c^{1/4}\sqrt{\cdots}$ forms); and nested square roots
+      over a real quadratic field $\Q(\sqrt d)$ admit an exact decision
+      procedure (Borodin--Fagin--Hopcroft--Tompa) that would find A30 in one
+      step instead of a two-level multiplier search. Both are cheap to add in
+      front of the engine.
+\item \textbf{Denest sums and products jointly.} The wrapper treats
+      $\sqrt{2+\sqrt3}+\sqrt{2-\sqrt3}$ (A23) as two problems and relies on
+      \code{Simplify} to combine the answers. A joint treatment
+      ($\beta=\beta_1+\beta_2$ with $\beta^2\in\Q(\sqrt3)$) is the
+      Borodin--Fagin--Hopcroft--Tompa setting and would also cover
+      $\sqrt{a+\sqrt b}+\sqrt{a-\sqrt b}$ patterns that the current design
+      cannot see.
+\item \textbf{Root objects as first-class citizens.} The corrected version
+      converts \code{Root} input to radicals and forbids \code{Root} in the
+      output by its cost. A ``canonical'' mode could instead accept
+      \code{Root} output (\code{RootReduce} is the canonical form) and use
+      \code{ToRadicals} only when it yields a radical-only expression of lower
+      depth.
+\item \textbf{Roots of unity and complex bases.} Cube roots of negative reals
+      denest to $e^{i\pi/3}(\cdots)$; the corrected version finds these but
+      prints them as $(1+i\sqrt3)/2\cdot(\cdots)$. A normal form that writes
+      $(-1)^{p/q}$ factors explicitly and a fast path for
+      $\rho=-|\rho|$ would give shorter answers in one step.
+\end{enumerate}
+
+\subsection{Search engineering}
+\begin{enumerate}
+\item \textbf{Lazy, prioritized generation.} Batches are still materialized as
+      lists (bounded by the cap). A priority queue of \emph{generators}
+      (exponent vectors over the selected primes, ordered by a cost such as
+      $\sum e_i\log p_i$) would remove the cap altogether and make the trial
+      order independent of \code{Divisors}'s ordering.
+\item \textbf{Caching.} \code{MinimalPolynomial} of $(m\rho)^{1/q}$ is the
+      dominant cost per trial and is recomputed for algebraically equal
+      multipliers written differently. Key the visited set by
+      \code{RootReduce[m]} (with a small time limit) instead of by syntax.
+\item \textbf{Cheaper certification.} \code{RootReduce} is called on
+      differences that are exactly zero, which is its worst case. A modular or
+      interval prefilter with a proven bound (e.g.\ compare at 200 digits and
+      only then call \code{RootReduce}), or certification by
+      \code{MinimalPolynomial[candidate] == MinimalPolynomial[problem]} plus a
+      numeric separation argument between conjugates, would cut the factor of
+      two to three observed in Section~\ref{sec:expfixed}.
+\item \textbf{Structured results.} The engine should return an association
+      (status, best certified value, cost, trials used, budget exhausted?,
+      multipliers tried) so that callers can distinguish ``nothing found'' from
+      ``budget exhausted'' and ``certification timed out''. The current
+      corrected version returns only the expression for compatibility.
+\item \textbf{Records instead of positional lists.} The history and stack
+      layout of the original is preserved; replacing it by associations with
+      explicit keys (\code{"Multiplier"}, \code{"Degree"}, \code{"Batch"},
+      \code{"Deferred"}) would let the invariants be checked and the
+      scheduling be unit-tested with a mock trial function.
+\item \textbf{Termination.} The outer loop compares its index with a growing
+      stack. The budget makes termination certain, but a monotone measure
+      (each inserted batch strictly decreases the best degree or is a
+      product batch inserted at most once) would make it provable without a
+      budget.
+\end{enumerate}
+
+\subsection{Testing and quality}
+\begin{enumerate}
+\item \textbf{Property-based tests from constructed answers.} Every family of
+      Section~\ref{sec:fuzz} is of the form ``build $\beta$, hand over
+      $\beta^q$ raised to $1/q$''; the same generator can produce nested
+      answers ($\beta=\sqrt5+\sqrt{11-2\sqrt{29}}$), roots of unity, and
+      products, and the oracle is exact equality plus a depth target.
+\item \textbf{Regression suite.} The harness of Appendix~\ref{app:harness}
+      and the reviews' three \code{.wlt} files should be merged into one
+      \code{TestReport} suite run on both versions; all expected values used
+      here were verified with \code{RootReduce} in the kernel.
+\item \textbf{Timing corpus.} The battery is small-input only. A corpus of
+      degree-16 to degree-64 problems (four to six independent square roots,
+      cube roots of sums of three cube roots) is needed before any claim about
+      performance; the original's 20\,s tenth root suggests where the cliff is.
+\item \textbf{Output normal form.} Choose and document one: the corrected
+      version prefers fewer radical nodes and then fewer atoms, which yields
+      $\sqrt{3/2}+1/\sqrt2$ for A03 where the original's \code{Simplify} gave
+      $(1+\sqrt3)/\sqrt2$. Both are depth 1; a documented tie-break (e.g.\
+      rationalized denominators, integer radicands) would remove the surprise.
+\end{enumerate}

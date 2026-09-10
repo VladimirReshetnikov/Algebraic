@@ -1,0 +1,18 @@
+test_catalog (test_downloader.DownloaderTests.test_catalog) ... ok
+test_gzipped_tex (test_downloader.DownloaderTests.test_gzipped_tex) ... ok
+test_landing_parser (test_downloader.DownloaderTests.test_landing_parser) ... ok
+test_pdf_validation (test_downloader.DownloaderTests.test_pdf_validation) ... ok
+test_plain_tex (test_downloader.DownloaderTests.test_plain_tex) ... ok
+test_receipt_verification (test_downloader.DownloaderTests.test_receipt_verification) ... ok
+test_reject_archive_without_tex (test_downloader.DownloaderTests.test_reject_archive_without_tex) ... ok
+test_reject_path_traversal (test_downloader.DownloaderTests.test_reject_path_traversal) ... ok
+test_reject_pdf_as_source (test_downloader.DownloaderTests.test_reject_pdf_as_source) ... ok
+test_reject_tar_symlink (test_downloader.DownloaderTests.test_reject_tar_symlink) ... ok
+test_reject_zip_symlink (test_downloader.DownloaderTests.test_reject_zip_symlink) ... ok
+test_tar_gz_source (test_downloader.DownloaderTests.test_tar_gz_source) ... ok
+test_zip_source (test_downloader.DownloaderTests.test_zip_source) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.014s
+
+OK

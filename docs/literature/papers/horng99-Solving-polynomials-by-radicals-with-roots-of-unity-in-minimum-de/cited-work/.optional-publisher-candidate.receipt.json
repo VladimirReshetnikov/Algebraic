@@ -1,0 +1,33 @@
+{
+  "record_id": "horng99",
+  "title": "Solving polynomials by radicals with roots of unity in minimum depth",
+  "asset_id": "optional-publisher-candidate",
+  "version": "cited-work",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://www.ams.org/journals/mcom/1999-68-226/S0025-5718-99-01060-1/S0025-5718-99-01060-1.pdf",
+    "resolved_url": "https://www.ams.org/journals/mcom/1999-68-226/S0025-5718-99-01060-1/S0025-5718-99-01060-1.pdf",
+    "retrieved_at": "2026-09-05T20:30:10+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36",
+    "content_encoding": "",
+    "bytes": 191760,
+    "sha256": "e4455fd4cb54a62b420193f83fec9bde9af93a9f4f9db48315fde974e176f47f",
+    "tls_verification": "SKIPPED by --insecure"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "candidate_unverified",
+  "note": "AMS URL constructed from DOI and journal metadata, NOT verified.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/horng99-Solving-polynomials-by-radicals-with-roots-of-unity-in-minimum-de/cited-work/optional-publisher-candidate.pdf",
+      "role": "pdf",
+      "bytes": 191760,
+      "sha256": "e4455fd4cb54a62b420193f83fec9bde9af93a9f4f9db48315fde974e176f47f"
+    }
+  ],
+  "prior_candidate_errors": []
+}

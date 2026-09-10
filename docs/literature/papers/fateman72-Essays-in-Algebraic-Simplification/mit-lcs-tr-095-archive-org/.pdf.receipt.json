@@ -1,0 +1,28 @@
+{
+  "record_id": "fateman72",
+  "title": "Essays in Algebraic Simplification",
+  "asset_id": "pdf",
+  "version": "mit-lcs-tr-095-archive-org",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://web.archive.org/web/20051217213927id_/http://www.lcs.mit.edu/publications/pubs/pdf/MIT-LCS-TR-095.pdf",
+    "resolved_url": "https://web.archive.org/web/20051217213927id_/http://www.lcs.mit.edu/publications/pubs/pdf/MIT-LCS-TR-095.pdf",
+    "retrieved_at": "2026-09-05T20:38:36+00:00",
+    "method": "manual download registered by register_manual_file.py",
+    "bytes": 5464999,
+    "sha256": "acc882cf73abed4c183c64ff72f57ebd0cacdf39fa633d4d1fcfdb405a2f7ad6"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "manual_download",
+  "note": "Internet Archive scan (195 pages), a different scan from the CSAIL copy. Fetched manually by the repository owner on 2026-09-05 after the downloader received HTTP 429; also committed as docs/articles/MIT-LCS-TR-095.pdf.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/fateman72-Essays-in-Algebraic-Simplification/mit-lcs-tr-095-archive-org/paper.pdf",
+      "role": "pdf",
+      "bytes": 5464999,
+      "sha256": "acc882cf73abed4c183c64ff72f57ebd0cacdf39fa633d4d1fcfdb405a2f7ad6"
+    }
+  ]
+}

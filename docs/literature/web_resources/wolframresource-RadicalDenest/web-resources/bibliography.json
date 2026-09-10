@@ -1,0 +1,24 @@
+{
+  "id": "wolframresource",
+  "title": "RadicalDenest",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "wolframrd",
+      "entry_latex": "S. Banerjee, \\emph{RadicalDenest}, Wolfram Function Repository, version 2.1.0, 29 April 2024.\n\\access{https://resources.wolframcloud.com/FunctionRepository/resources/RadicalDenest}{Function page}. \\status{D}\nA heuristic, time-constrained denesting resource function; acknowledges Corey Ziegler, Bill Gosper, and Daniel Lichtblau. Not a built-in kernel guarantee of complete minimum-depth denesting."
+    },
+    {
+      "report": "report-2",
+      "key": "wolframresource",
+      "entry_latex": "Swastik Banerjee.\n\\emph{RadicalDenest}, Wolfram Function Repository.\n\\sourceurl{https://resources.wolframcloud.com/FunctionRepository/resources/RadicalDenest/}.\n\\textbf{D.} Contributed heuristic resource, including a time constraint and examples involving algebraic \\texttt{Root} objects. Distinct from a built-in universal minimum-depth algorithm."
+    },
+    {
+      "report": "report-3",
+      "key": "wolframresource",
+      "entry_latex": "Swastik Banerjee. \\texttt{RadicalDenest}, Wolfram Function Repository. \\url{https://resources.wolframcloud.com/FunctionRepository/resources/RadicalDenest}. \\status{D}\n\\entrynote{A contributed resource function rather than a kernel built-in. Its time-constrained heuristic search should not be interpreted as a proof of optimality or of non-denestability after failure. The function was not executed here.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

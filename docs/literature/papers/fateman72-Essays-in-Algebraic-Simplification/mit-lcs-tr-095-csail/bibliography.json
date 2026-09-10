@@ -1,0 +1,26 @@
+{
+  "id": "fateman72",
+  "title": "Essays in Algebraic Simplification",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "fateman72",
+      "entry_latex": "R.~J. Fateman, \\emph{Essays in Algebraic Simplification}, PhD thesis, Massachusetts Institute of Technology, 1972. \\status{B}\nHistorical background for algebraic simplification and the MACSYMA tradition. Distinguished from the later joint SYMSAC paper."
+    },
+    {
+      "report": "report-2",
+      "key": "fatemanthesis",
+      "entry_latex": "Richard J. Fateman.\n\\emph{Essays in Algebraic Simplification}.\nPh.D. thesis, Massachusetts Institute of Technology, 1972.\n\\textbf{R.} Early symbolic-simplification context preceding the Caviness--Fateman radical paper.\n\n\\item[]\\textbf{C. Classical identities, special forms, and later research}"
+    },
+    {
+      "report": "report-3",
+      "key": "fateman",
+      "entry_latex": "Richard J. Fateman. \\emph{Essays in Algebraic Simplification}. Ph.D. thesis, Massachusetts Institute of Technology, 1972. \\status{A}\n\\entrynote{An early source for symbolic simplification, including the background to radical canonicalization. Read with the later Caviness--Fateman paper rather than treating the two as unrelated algorithms.}"
+    }
+  ],
+  "notes": [
+    "1972 refers to revised MIT technical report MIT-LCS-TR-095. The reports call it an MIT PhD thesis; that institutional attribution has not been accepted as independently verified metadata.",
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "record_id": "fateman72",
+  "title": "Essays in Algebraic Simplification",
+  "asset_id": "pdf-csail-direct",
+  "version": "mit-lcs-tr-095-csail",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://publications.csail.mit.edu/lcs/pubs/pdf/MIT-LCS-TR-095.pdf",
+    "resolved_url": "https://publications.csail.mit.edu/lcs/pubs/pdf/MIT-LCS-TR-095.pdf",
+    "retrieved_at": "2026-09-05T20:29:31+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36",
+    "content_encoding": "",
+    "bytes": 13334928,
+    "sha256": "66def1a0480766920a255a50a37fccd17a16c48473002c79cfbf778f236f05d9",
+    "tls_verification": "SKIPPED by --insecure"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "search_indexed_pdf",
+  "note": "Direct CSAIL publication server copy of MIT-LCS-TR-095 (route from the download kit); avoids the archive.org rate limit.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/fateman72-Essays-in-Algebraic-Simplification/mit-lcs-tr-095-csail/pdf-csail-direct.pdf",
+      "role": "pdf",
+      "bytes": 13334928,
+      "sha256": "66def1a0480766920a255a50a37fccd17a16c48473002c79cfbf778f236f05d9"
+    }
+  ],
+  "prior_candidate_errors": []
+}

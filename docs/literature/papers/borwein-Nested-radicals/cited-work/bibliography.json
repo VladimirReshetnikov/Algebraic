@@ -1,0 +1,25 @@
+{
+  "id": "borwein",
+  "title": "Nested radicals",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "borwein",
+      "entry_latex": "J.~M. Borwein and G. de Barra, ``Nested radicals,'' \\emph{American Mathematical Monthly} \\textbf{98} (1991), 735--739. \\status{A}\nA later analytic discussion of nested radicals and convergence, retained separately from finite algebraic denesting."
+    },
+    {
+      "report": "report-2",
+      "key": "borweindebarra",
+      "entry_latex": "Jonathan M. Borwein and G. de Barra.\n\\emph{Nested radicals}.\nAmerican Mathematical Monthly \\textbf{98}, 735--739, 1991.\n\\textbf{R.} A concise later source on infinite nested radicals and convergence questions."
+    },
+    {
+      "report": "report-3",
+      "key": "borweinradicals",
+      "entry_latex": "Jonathan M. Borwein and G. de Barra. ``Nested Radicals.'' \\emph{The American Mathematical Monthly} \\textbf{98} (1991), 735--739. \\status{A}\n\\entrynote{A useful expository source on infinite nests and their interpretation. Placed in an adjacent section because convergence and evaluation of a limiting nest are not identical to finite denesting.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "pages": 25,
+  "page_size_points": [
+    595.2760009765625,
+    841.8900146484375
+  ],
+  "text_outside_page": [],
+  "fonts": [
+    {
+      "name": "BEDMSX+LMRomanCaps10-Regular",
+      "type": "Type1",
+      "embedded": true
+    },
+    {
+      "name": "DUBNOU+LMRoman12-Bold",
+      "type": "Type1",
+      "embedded": true
+    },
+    {
+      "name": "UOTAQO+LMMonoLt10-Bold",
+      "type": "Type1",
+      "embedded": true
+    },
+    {
+      "name": "TJOKLB+LMRoman12-Regular",
+      "type": "Type1",
+      "embedded": true
+    },
+    {
+      "name": "ZLAHNI+LMRoman10-Regular",
+      "type": "Type1",
+      "embedded": true
+    },
+    {
+      "name": "ZAKBUT+LMMono10-Regular",
+      "type": "Type1",
+      "embedded": true
+    },
+    {
+      "name": "XXHDLY+LMRoman10-Bold",
+      "type": "Type1",
+      "embedded": true
+    },
+    {
+      "name": "RXMEPJ+LMRoman10-Italic",
+      "type": "Type1",
+      "embedded": true
+    },
+    {
+      "name": "EBDAGR+LMMathItalic10-Regular",
+      "type": "Type1",
+      "embedded": true
+    },
+    {
+      "name": "ZLAHNI+LMRoman10-Regular",
+      "type": "Type1",
+      "embedded": true
+    },
+    {
+      "name": "FZWXZJ+LMMathSymbols10-Regular",
+      "type": "Type1",
+      "embedded": true
+    },
+    {
+      "name": "GFHSZC+LMRoman8-Regular",
+      "type": "Type1",
+      "embedded": true
+    },
+    {
+      "name": "LVOAFZ+LMMathExtension10-Regular",
+      "type": "Type1",
+      "embedded": true
+    },
+    {
+      "name": "WNPWFG+MSBM10",
+      "type": "Type1",
+      "embedded": true
+    },
+    {
+      "name": "XYSNAA+LMMono10-Italic",
+      "type": "Type1",
+      "embedded": true
+    },
+    {
+      "name": "UXLLFE+LMMathItalic8-Regular",
+      "type": "Type1",
+      "embedded": true
+    },
+    {
+      "name": "RLMEQR+LMMathSymbols8-Regular",
+      "type": "Type1",
+      "embedded": true
+    },
+    {
+      "name": "VLNZNM+LMRoman6-Regular",
+      "type": "Type1",
+      "embedded": true
+    },
+    {
+      "name": "LORKKK+LMMathItalic6-Regular",
+      "type": "Type1",
+      "embedded": true
+    },
+    {
+      "name": "ZLAHNI+LMRoman10-Regular",
+      "type": "Type1",
+      "embedded": true
+    }
+  ],
+  "latex_warnings": 0,
+  "render_engine": "PyMuPDF / MuPDF",
+  "visual_check": "Rendered pages and contact sheets inspected; no clipping or layout defects found."
+}

@@ -1,0 +1,24 @@
+The aim of this section is to prove a bound on the probability of randomly choosing a good prime $p$ in the randomised polynomial time algorithm for the complement of $2$-RIT.
+
+\probabilityprimep*
+
+\begin{proof}
+
+We follow the proof of \cite[Proposition 9]{balaji2021cyclotomic}. Recall that we set  $a_i\leq 2^s$,
+which implies $A \leq 2^{s^2}$.
+
+For (i), we note that by \Cref{th:prime_density}, the probability that $p$ is prime is at most
+\begin{align*}
+	\frac{\pi_{8A,b+1}(2^{5s^3})}{{2^{5s^3}}/{8A}}
+	&\geq \frac{8A}{\varphi(8A)\log 2^{5s^3} } - \frac{c \log 2^{5s^3} 8A}{(2^{5s^3})^{1/2}} \\
+	&\geq \frac{1}{5s^3} - \frac{c {5s^3} 2^{s^2 + 3}}{2^{2s^3}} \\
+	&\geq \frac{1}{5s^3} - \frac{c {5s^3} 2^{s^3}}{2^{2s^3}}
+\end{align*}
+where $c$ is the absolute constant mentioned in the theorem. For $k$ sufficiently large, the above is
+$\frac{1}{6s^3}$, which proves the claim.
+	
+For (ii), by \Cref{lem:norm} the norm of $\alpha$ has absolute value at most
+$2^{2^{s^3}}$, and hence $N(\alpha)$ has at most $2^{s^3}$ 
+distinct prime factors. Then, for $s$ sufficiently large, the probability that $p$ divides $N(\alpha)$ given that $p$ is prime is at most
+\[ \frac{6s^3 \cdot 8A \cdot 2^{s^3}}{2^{5s^3}} \leq 2^{-s^{3}}\]	
+\end{proof}

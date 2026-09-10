@@ -1,0 +1,14 @@
+{
+  "id": "euclid",
+  "title": "Elements",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "euclid",
+      "entry_latex": "Euclid, \\emph{Elements}, Book X. \\status{B}\nHistorical background on irrational magnitudes and quadratic constructions. Modern generalizations and degree-reduction results should be attributed separately to their modern authors."
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

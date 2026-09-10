@@ -1,0 +1,151 @@
+{
+  "record_id": "rit",
+  "title": "Identity testing for radical expressions",
+  "asset_id": "tex-source",
+  "version": "arxiv-2202.07961v4",
+  "kind": "source",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://arxiv.org/src/2202.07961v4",
+    "resolved_url": "https://arxiv.org/src/2202.07961v4",
+    "retrieved_at": "2026-09-05T20:26:35+00:00",
+    "http_status": 200,
+    "content_type": "application/gzip",
+    "content_encoding": "",
+    "bytes": 47103,
+    "sha256": "d4838bf985ccb672dfebf6dab74104745a835738a6e655ad92268e0861005e36"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "repository_pdf_and_source_links",
+  "note": "arXiv advertises TeX Source; actual bytes and archive contents have NOT been retrieved in this environment.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/rit-Identity-testing-for-radical-expressions/arxiv-2202.07961v4/tex-source.tar.gz",
+      "role": "original_source_response",
+      "bytes": 47103,
+      "sha256": "d4838bf985ccb672dfebf6dab74104745a835738a6e655ad92268e0861005e36"
+    },
+    {
+      "path": "papers/rit-Identity-testing-for-radical-expressions/arxiv-2202.07961v4/source/abstract.tex",
+      "role": "tex",
+      "bytes": 1180,
+      "sha256": "e405e6242eec7ddcc6acd53e53a0a2277b00d478418004d8b719a9ed4813b7c5"
+    },
+    {
+      "path": "papers/rit-Identity-testing-for-radical-expressions/arxiv-2202.07961v4/source/app_discriminant.tex",
+      "role": "tex",
+      "bytes": 3642,
+      "sha256": "bb260d6900038bfc36334a201177a4065ead028b6e2803d84c91c17bdf5ce29c"
+    },
+    {
+      "path": "papers/rit-Identity-testing-for-radical-expressions/arxiv-2202.07961v4/source/appendix_reduction.tex",
+      "role": "tex",
+      "bytes": 6460,
+      "sha256": "561d3a1855abe8b0cd48e59feef3e95d3d7939ebe9a48f147fa93bd9ec520fbf"
+    },
+    {
+      "path": "papers/rit-Identity-testing-for-radical-expressions/arxiv-2202.07961v4/source/app_norm.tex",
+      "role": "tex",
+      "bytes": 2471,
+      "sha256": "67bb5126eba9b4e8e7c7504e820c576363fba0a238e82ffa9cd9933512d27f7c"
+    },
+    {
+      "path": "papers/rit-Identity-testing-for-radical-expressions/arxiv-2202.07961v4/source/app_pocklington.tex",
+      "role": "tex",
+      "bytes": 2215,
+      "sha256": "0334547a3d6ea8f9fd5032dfafa8448d5a5b6223c2022331c5351458ac0b80a4"
+    },
+    {
+      "path": "papers/rit-Identity-testing-for-radical-expressions/arxiv-2202.07961v4/source/app_preliminaries.tex",
+      "role": "tex",
+      "bytes": 13341,
+      "sha256": "23b973f5dc6f313c5cc06546611f295fb6db8c0aa38ada46df717fd46fc8458b"
+    },
+    {
+      "path": "papers/rit-Identity-testing-for-radical-expressions/arxiv-2202.07961v4/source/app_primes.tex",
+      "role": "tex",
+      "bytes": 1037,
+      "sha256": "9926220d1647036a49f58d704ef2518f21e8acee1dc65dbad6577aeebca723fa"
+    },
+    {
+      "path": "papers/rit-Identity-testing-for-radical-expressions/arxiv-2202.07961v4/source/app_primitiveel.tex",
+      "role": "tex",
+      "bytes": 4084,
+      "sha256": "002a5a89fe018943d9ff5c4c8d1c77d3aa1669e2d9cd5be65a84232ff849fa7d"
+    },
+    {
+      "path": "papers/rit-Identity-testing-for-radical-expressions/arxiv-2202.07961v4/source/app_prob.tex",
+      "role": "tex",
+      "bytes": 1235,
+      "sha256": "f6f847a8e2c41937721bf60f66296826f9c56288ef9c2ab76b91061293ef8000"
+    },
+    {
+      "path": "papers/rit-Identity-testing-for-radical-expressions/arxiv-2202.07961v4/source/arxiv.bbl",
+      "role": "source_member",
+      "bytes": 10825,
+      "sha256": "3c9ee16afc3278295e1886efb3768ede5927d759dc4b5985c8e77c9eb3fcc425"
+    },
+    {
+      "path": "papers/rit-Identity-testing-for-radical-expressions/arxiv-2202.07961v4/source/arxiv.out",
+      "role": "source_member",
+      "bytes": 5811,
+      "sha256": "25ce19654ce66d19d4ebb9106ecc81f28cc367e701d74dacb0216e5905004944"
+    },
+    {
+      "path": "papers/rit-Identity-testing-for-radical-expressions/arxiv-2202.07961v4/source/arxiv.tex",
+      "role": "tex",
+      "bytes": 4074,
+      "sha256": "89ecb16861d80572fc0185056c6b351b3539c3468bde223b6dbab539ad089146"
+    },
+    {
+      "path": "papers/rit-Identity-testing-for-radical-expressions/arxiv-2202.07961v4/source/conp.tex",
+      "role": "tex",
+      "bytes": 21265,
+      "sha256": "aa73f95e9d72e0e985721966600b0478fd3ddd2a7e643eea1a385135f67ccbf8"
+    },
+    {
+      "path": "papers/rit-Identity-testing-for-radical-expressions/arxiv-2202.07961v4/source/corp.tex",
+      "role": "tex",
+      "bytes": 11125,
+      "sha256": "b371510d348f314feb68e6facc4b1056036effc4350bf750ce25d9895b9f9ea1"
+    },
+    {
+      "path": "papers/rit-Identity-testing-for-radical-expressions/arxiv-2202.07961v4/source/discussion.tex",
+      "role": "tex",
+      "bytes": 2503,
+      "sha256": "24c5f42b841a4e02ab8039219efa804041f26499fe000760f07e8b97fc646a96"
+    },
+    {
+      "path": "papers/rit-Identity-testing-for-radical-expressions/arxiv-2202.07961v4/source/intro.tex",
+      "role": "tex",
+      "bytes": 10090,
+      "sha256": "621a5b2df38043c93eb13cb7f1b4888201e0116d6fde8c37d4c6a6afe2aa3642"
+    },
+    {
+      "path": "papers/rit-Identity-testing-for-radical-expressions/arxiv-2202.07961v4/source/literature.bib",
+      "role": "source_member",
+      "bytes": 22894,
+      "sha256": "d2e796f50e2c90c1572a8a0c66977e4edaa4c1dfffe88f45ad9d881fb4ea89ce"
+    },
+    {
+      "path": "papers/rit-Identity-testing-for-radical-expressions/arxiv-2202.07961v4/source/macro.tex",
+      "role": "tex",
+      "bytes": 753,
+      "sha256": "af5963c03ef93281743633ff3c93bc01ace89f24b983352fceec218d5b178de4"
+    },
+    {
+      "path": "papers/rit-Identity-testing-for-radical-expressions/arxiv-2202.07961v4/source/mymath.tex",
+      "role": "tex",
+      "bytes": 1250,
+      "sha256": "d374fa8182012b6582be051570ee8db831d9a64a17f08734d24fffb424c26741"
+    },
+    {
+      "path": "papers/rit-Identity-testing-for-radical-expressions/arxiv-2202.07961v4/source/overview.tex",
+      "role": "tex",
+      "bytes": 20077,
+      "sha256": "90e5096ce3af1c103d06e5651f970bdc80d1df1dc7d6944e3ae8a7ad478ceb37"
+    }
+  ],
+  "prior_candidate_errors": []
+}

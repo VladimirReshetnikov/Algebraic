@@ -1,0 +1,42 @@
+In this section, we prove a bound on the norm of the algebraic integer computed by an algebraic circuit $C$ on a radical input $\mysqrt{d_1}{a_1},\ldots,\mysqrt{d_k}{a_k}$, with the $a_i$ pairwise coprime, and the $d_i$ and $a_i$ of magnitude at most $2^s$, that is an instance of the RIT problem.
+Let $d=\lcm(d_1,\ldots,d_k)$, and denote by $\zeta_d$ a primitive $d$-th root of unity. Let  $K = \QQ(\mysqrt{d_1}{a_1},\ldots,\mysqrt{d_k}{a_k}, \zeta_d)$. We claim:
+
+
+\boundnorm*
+
+\begin{proof}
+Recall that $s$ is an upper bound on the number $k$ of input radicands, the size of the circuit, and that the magnitude of $a_i$ and $d_i$ is at most $2^s$. 
+
+Write $\alpha = \sum_{i} b_i x_1^{e_{i_1}} \cdots x_k^{e_{i_k}}$ where
+$e_{i_1} + \ldots + e_{i_k} \leq 2^s $, $b_i \in \ZZ$ with $b_i\leq 2^{2^s}$,
+$i$ ranges over all monomials of the shape $x_i^{e_{i_1}}\cdots x_i^{e_{i_k}}$. Let us denote by $M$ the number of all such monomials, and count how many of them we can construct. Denote by $D = \max (d_1,\ldots,d_k)$, then:
+\[ M = \binom{k+D}{D} = \binom{k + D}{k} \leq  \binom{s + 2^s}{s}
+\leq (s + 2^s)^s \leq 2^{s^2}  \]
+
+Denote by $G = \Gal(K/\QQ)$, and
+note that given the size bounds on our input $|G| \leq 2^{2s^2}$.
+
+ Observe that the action of all $\sigma\in G$ is determined by their action on $\zeta_d$, that is:
+\[ \sigma(\mysqrt{d_i}{a_i}) = \mysqrt{d_i}{a_i}\sigma(\zeta_d).\]
+Then
+\begin{align*}
+    N(\alpha)
+    &= N\left(\sum_{i = 1}^M b_i x_1^{e_{i_1}} \cdots x_k^{e_{i_k}} \right) \\
+    &= \prod_{\sigma\in G} \sigma\left(\sum_{i = 1}^M b_i x_1^{e_{i_1}} \cdots x_k^{e_{i_k}} \right) \\
+    &= \prod_{\sigma\in G} \sum_{i=1}^M b_i \left(\max_{j=1}^k x_j \right)^{\#e_i}\sigma \left(\zeta_d \right)^{\#e_i}
+    \text{ where } \#e_i = e_{i_1} + \ldots e_{i_k} = \sum_{j=1}^k e_{i_j} \\
+    &= \prod_{l\in \ZZ_{|G|^*}} \sum_{i=1}^M b_i \left(\max_{j=1}^k x_j\right)^{\#e_i} \left(\zeta_d^l\right)^{\#e_i}
+\end{align*}
+
+Finally, putting together all of our bounds
+yields
+\begin{align*}
+    |N(\alpha)|
+    &\leq \prod_{l=1}^{2^{2s^2} } \left( \sum_{l=1}^{2^{s^2}} 2^{2^s} \cdot (2^s)^{2^s} \right) \\
+    &\leq \prod_{l=1}^{2^{2s^2} } \left( \sum_{l=1}^{2^{s^2}} 2^{2^s (s+1)}\right) \\
+    &\leq \prod_{l=1}^{2^{2s^2} } \left( 2^{s^2} \cdot 2^{2^s (s+1)} \right) \\
+    &\leq \left( 2^{s^2} \cdot 2^{2^s (s+1)} \right) ^ {2^{2s^2}} \\
+    &\leq 2^{2^{2s^2} (s2^s + 2^s + s^3)} \\
+    &\leq 2^{2^{s^3}} \text{ for } s \geq 4.
+\end{align*}
+\end{proof}

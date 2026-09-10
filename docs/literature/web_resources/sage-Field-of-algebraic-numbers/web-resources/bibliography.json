@@ -1,0 +1,34 @@
+{
+  "id": "sage",
+  "title": "Field of algebraic numbers",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "sageaa",
+      "entry_latex": "SageMath developers, \\emph{Field of algebraic numbers}, \\texttt{sage.rings.qqbar} reference, especially \\texttt{radical\\_expression()}.\n\\access{https://doc.sagemath.org/html/en/reference/number_fields/sage/rings/qqbar.html}{Official reference}. \\status{D}\nExact real/complex algebraic-number representations and attempted radical conversion. An unchanged exact algebraic object is not a numerical approximation or impossibility certificate."
+    },
+    {
+      "report": "report-1",
+      "key": "sagesymbolic",
+      "entry_latex": "SageMath developers, \\emph{Symbolic expressions}, especially \\texttt{canonicalize\\_radical()}.\n\\access{https://doc.sagemath.org/html/en/reference/calculus/sage/symbolic/expression.html}{Official reference}. \\status{D}\nSymbolic radical normalization with explicit branch/assumption cautions. Distinct from the algebraic-field conversion method in the preceding entry."
+    },
+    {
+      "report": "report-2",
+      "key": "sageqqbar",
+      "entry_latex": "SageMath development team.\n\\emph{Field of algebraic numbers}, reference manual for \\texttt{AA} and \\texttt{QQbar}.\n\\sourceurl{https://doc.sagemath.org/html/en/reference/number_fields/sage/rings/qqbar.html}.\n\\textbf{D.} Exact representations and \\texttt{radical\\_expression()}; an algebraic-number object may remain without a requested radical presentation."
+    },
+    {
+      "report": "report-2",
+      "key": "sageexpression",
+      "entry_latex": "SageMath development team.\n\\emph{Symbolic expressions}, reference manual.\n\\sourceurl{https://doc.sagemath.org/html/en/reference/calculus/sage/symbolic/expression.html}.\n\\textbf{D.} Includes \\texttt{canonicalize\\_radical()} and warnings about assumptions and branches; symbolic normalization must be distinguished from exact algebraic-number arithmetic."
+    },
+    {
+      "report": "report-3",
+      "key": "sage",
+      "entry_latex": "SageMath development team. ``Algebraic numbers'' and symbolic-expression documentation. \\url{https://doc.sagemath.org/html/en/reference/qqbar/sage/rings/qqbar.html}; \\url{https://doc.sagemath.org/html/en/reference/calculus/sage/symbolic/expression.html}. \\status{D}\n\\entrynote{Documents exact algebraic real and complex number types and symbolic radical operations. Exact evaluation in \\texttt{AA}/\\texttt{QQbar} should not be conflated with a shortest radical expression; symbolic identities can depend on assumptions.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

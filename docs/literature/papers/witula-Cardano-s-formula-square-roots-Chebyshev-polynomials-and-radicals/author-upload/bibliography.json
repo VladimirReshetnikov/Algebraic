@@ -1,0 +1,25 @@
+{
+  "id": "witula",
+  "title": "Cardano's formula, square roots, Chebyshev polynomials and radicals",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "witula",
+      "entry_latex": "R. Witu\\l a and D. S\\l ota, ``Cardano's formula, square roots, Chebyshev polynomials and radicals,'' \\emph{Journal of Mathematical Analysis and Applications} \\textbf{363} (2010), 639--647. \\status{B}\nConnects cubic formulas, Chebyshev-type identities, and radical expressions. Included as a related algebraic construction source, not a universal denesting theorem."
+    },
+    {
+      "report": "report-2",
+      "key": "witula",
+      "entry_latex": "Roman Witu\\l a and Damian S\\l ota.\n\\emph{Cardano's formula, square roots, Chebyshev polynomials and radicals}.\nJournal of Mathematical Analysis and Applications \\textbf{363}, 639--647, 2010.\n\\textbf{R.} Develops the connection between classical radical formulas and special polynomial families."
+    },
+    {
+      "report": "report-3",
+      "key": "witula",
+      "entry_latex": "Roman Witu\\l a and Damian S\\l ota. ``Cardano's formula, square roots, Chebyshev polynomials and radicals.'' \\emph{Journal of Mathematical Analysis and Applications} \\textbf{363} (2010), 639--647. \\status{A}\n\\entrynote{Connects cubic formulas, polynomial identities, and radical representations. A useful companion to Osler, not a substitute for unrestricted radical-depth theory.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

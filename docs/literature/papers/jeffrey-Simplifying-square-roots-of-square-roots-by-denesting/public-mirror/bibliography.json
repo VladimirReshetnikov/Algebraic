@@ -1,0 +1,25 @@
+{
+  "id": "jeffrey",
+  "title": "Simplifying square roots of square roots by denesting",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "jeffrey",
+      "entry_latex": "D.~J. Jeffrey and A.~D. Rich, ``Simplifying square roots of square roots by denesting,'' in M.~J. Wester (ed.), \\emph{Computer Algebra Systems: A Practical Guide}, Wiley, 1999, 61--72. ISBN 0-471-98353-5.\n\\access{https://cybertester.com/data/denest.pdf}{Paper PDF}; \\access{https://math.unm.edu/~wester/cas/book/contents.html}{editor's book contents}. \\status{T}\nRecursive practical denesting and complexity control. One of the two references explicitly cited by SymPy's square-root denester."
+    },
+    {
+      "report": "report-2",
+      "key": "jeffreyrich",
+      "entry_latex": "David J. Jeffrey and Albert D. Rich.\n\\emph{Simplifying square roots of square roots by denesting}.\nIn Michael J. Wester (ed.), \\emph{Computer Algebra Systems: A Practical Guide}, Wiley, 61--72, 1999.\n\\sourceurl{https://cybertester.com/data/denest.pdf}.\n\\textbf{FT.} Practical recursive square-root methods and an expression-complexity measure distinct from ordinary radical depth. Another explicit reference for SymPy's implementation."
+    },
+    {
+      "report": "report-3",
+      "key": "jeffrey",
+      "entry_latex": "David J. Jeffrey and Albert D. Rich. ``Simplifying Square Roots of Square Roots by Denesting.'' In Michael J. Wester (ed.), \\emph{Computer Algebra Systems: A Practical Guide}, Wiley, 1999, pp.~61--72. Author publication list: \\url{https://www.math.uwo.ca/faculty/jeffrey_david/publications.html}; accessible text: \\url{https://cybertester.com/data/denest.pdf}. \\status{F}\n\\entrynote{A practical bridge from square-root theory to implementable procedures. Particularly relevant to SymPy's documented algorithmic lineage and to selected simplification strategies in other systems.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

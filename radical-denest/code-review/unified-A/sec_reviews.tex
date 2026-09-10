@@ -1,0 +1,128 @@
+\section{The three reviews compared}
+\label{sec:reviews}
+
+\subsection{Coverage matrix}
+Table~\ref{tab:matrix} maps every finding of every review onto the unified
+catalogue of Section~\ref{sec:findings}. A dot means the review reports the
+item as a finding; a circle means it is mentioned in passing. The last column
+gives the experimental status established in Section~\ref{sec:experiments}.
+
+\begin{table}[h]\centering\small
+\begin{tabularx}{\textwidth}{@{}l X c c c l@{}}
+\toprule
+Unified & Short description & \RI & \RII & \RIII & Status\\\midrule
+\U{1} & Candidates certified against $(\beta^q)^{1/q}$, not $\beta$ & F01 & B1 & F1 & \bad{confirmed}, quantified\\
+\U{2} & Branch-unsafe power rules in the factorizer & F02, F03 & B2 & F2 & \bad{confirmed}; new numeric case\\
+\U{3} & \code{PossibleZeroQ} as certificate & F04 & $\circ$ & F6 & \bad{confirmed}: ``assuming zero'' in practice\\
+\U{4} & Zero/invalid multipliers, \code{{}[[1]]} & F05 & B5, B10 & F5 & \bad{confirmed}\\
+\U{5} & Comparator \code{#1[[1]] <= #[[2]]} & F06 & B8 & F3 & \bad{confirmed}; reverses the list\\
+\U{6} & Stale length in the prime slice & -- & -- & F4 & confirmed snippet; \emph{unreachable} in original\\
+\U{7} & Cap is not a cap; \code{Ceiling[Log]} & F07 & B6 & F7 & confirmed; new \code{Ceiling::meprec}\\
+\U{8} & \code{Unprotect[Print]} at load & F08 & B9 & F10 & \bad{confirmed}\\
+\U{9} & ``Success'' is not an improvement & F09 & H5 & F8 & \bad{confirmed}; several ugly outputs\\
+\U{10} & Marker \code{f} collides with user data & -- & B3 & -- & \bad{confirmed}\\
+\U{11} & Rationalizer's \code{x -> 0} erases a numerator & -- & B4 & -- & \bad{confirmed}\\
+\U{12} & Equal-degree gate skips a linear GCD & -- & H1 & $\circ$ & \bad{confirmed}\\
+\U{13} & \code{List @@ Expand} head assumption & $\circ$ & H4 & $\circ$ & not reachable with exact input\\
+\U{14} & Composite discriminant cofactors dropped & $\circ$ & H2 & $\circ$ & theoretical; not observed\\
+\U{15} & Input domain unenforced (lists, inexact, \code{Root}) & F10 & B10 & F9 & \bad{confirmed}: list input is nonsense\\
+\U{16} & No budget, no visited set & F12 & B7 & $\circ$ & confirmed duplicates; no blow-up seen\\
+\U{17} & Fragile positional state; \code{Throw[,]} & F13 & M1 & $\circ$ & new: load-time \code{Syntax::com}\\
+\U{18} & Dead settings & F14 & M1 & F12 & confirmed by inspection\\
+\U{19} & Messages leak through \code{Strad} & -- & -- & -- & new\\
+\U{20} & Final \code{Simplify} re-nests \code{Root}, rewrites non-denested input & -- & -- & $\circ$ & new\\
+\U{21} & \code{combine} skips the last unit entry & -- & -- & F11 & confirmed by inspection\\
+\U{22} & Single-level mode cannot use inner denestings & $\circ$ & $\circ$ & $\circ$ & confirmed (A29 vs A28)\\
+\U{23} & Candidates contain denestable inner surds & -- & -- & -- & new: 17/30 cube roots not denested\\
+\U{24} & ``Forced'' multipliers are only initial & $\circ$ & $\circ$ & $\circ$ & confirmed (D12)\\
+\U{25} & Search incompleteness in general & F11 & H3 & F11 & theoretical; A13 correctly unchanged\\
+\U{26} & All-level mode marks trivial radicals & -- & -- & -- & new, harmless\\
+\U{27} & Poor final form (quotients, unrationalized) & $\circ$ & $\circ$ & $\circ$ & new: 4-term and BFHT outputs\\
+\bottomrule
+\end{tabularx}
+\caption{Coverage of the unified findings by the three reviews.}\label{tab:matrix}
+\end{table}
+
+\subsection{Where the reviews agree}
+All three reviews reconstruct the same algorithm, prove the same three
+propositions (nonconstant GCD, orbit coverage, principal-root reset), single
+out \U{1} and \U{2} as the critical defects, recognize the rationalizer as
+sound, and recommend the same repair order: certify against the original value,
+remove or guard unsafe rewrites, validate inputs and intermediate results, then
+tune heuristics. Each ships a one-multiplier ``certified trial'' component
+with the same shape (validate, minimal polynomial, GCD, orbit, exact
+certification, structured result). The experiments vindicate this consensus:
+every wrong value observed is a consequence of \U{1} or \U{2}, and the
+corrected version's certification layer eliminates all of them.
+
+\subsection{Where they differ}
+\begin{itemize}
+\item \RII\ is the only review that notices the two symbol collisions (\U{10},
+      \U{11}) and the equal-degree gate (\U{12}); all three predictions are
+      confirmed exactly (M01, R05, D06).
+\item \RIII\ is the only review that notices the stale-length slice (\U{6}) and
+      proposes the quadratic-surd fast path and an explicit cost tuple; the
+      corrected version adopts both. Its F9 remark about \code{MemberQ[...,
+      Infinity]} excluding level 0 is correct as a reading of the code but
+      moot for exact numeric input, because the kernel auto-simplifies
+      $(a^{1/2})^{1/3}$ and similar nested powers before they reach the gate.
+\item \RI\ gives the most careful ``what should not be misdiagnosed'' list
+      (sign flips with a compensating accumulator, non-strict comparators,
+      one-argument \code{MinimalPolynomial}) and a discussion of the
+      discriminant/index relation $\Disc(P)=\Disc(K)[\mathcal O_K:\Z[\alpha]]^2$.
+      Its proposed regression \code{Factorc[Sqrt[t + t^2]]} does \emph{not}
+      exhibit the predicted failure: the kernel returns \code{Sqrt[t (1 + t)]},
+      which is value preserving (H02). The mechanism it describes is real, but
+      the concrete probe was mis-chosen; \code{Sqrt[-x - y]} (\RIII) and the
+      numeric \code{Sqrt[-(Sqrt[2] + (-1)^(1/3))]} (\RI's own algebraic example,
+      never run) are the probes that fail.
+\item \RII\ and \RIII\ correctly hedge that the wrapper keeps a leading minus
+      sign outside the marker, so \code{Strad[-Sqrt[3 + 2 Sqrt[2]]]} is
+      \emph{not} a wrapper-level counterexample (C01 confirms), whereas the
+      direct engine call is (D01).
+\item Only \RIII\ notes that \code{history[[2, -1]]} in the stopping rule is
+      the largest finite degree seen so far rather than a fixed baseline.
+\end{itemize}
+
+\subsection{What the reviews could not know}
+Because none of them executed the program, several important facts were
+invisible to all three:
+\begin{itemize}
+\item The mis-typed comparator does not merely fail to sort: with Wolfram's
+      merge sort it \emph{reverses} the list (S01, N01). Consequently the
+      ratio-pruning loop (\src{184--189}) is dead code, the prefix
+      (\src{190--194}) selects the \emph{largest} primes, and the stale-length
+      defect \U{6} can never fire in the original. Repairing the comparator
+      alone activates \U{6} (N02).
+\item The acceptance test is not merely heuristic in principle: in the
+      kernel, \code{PossibleZeroQ} reports \emph{``Unable to decide whether
+      \ldots\ is equal to zero. Assuming it is.''} on most successful runs
+      (A03, A05, A07, A08, \ldots; 14/40 of family F1, 38/40 of F4). The
+      program's successes rest on that ``assume zero'' fallback.
+\item The factorizer changes the value of purely numeric input end to end:
+      \code{Strad[Sqrt[-(Sqrt[2] + (-1)^(1/3))]]} returns the negative of the
+      input (J01), with no message.
+\item \code{Strad} on a list returns a \code{Power}, not a list (K14); on a
+      \code{Root} object it returns a \emph{nested} radical (B07).
+\item Loading the file prints a \code{Syntax::com} warning caused by
+      \code{Throw[, "solution"]} at \src{320}.
+\item Several ``successful'' denestings are much larger than the input and
+      contain denestable radicals (D07, L04, A30/A31, Q01--Q08).
+\item Performance is not the practical problem the reviews feared for inputs
+      of this size: every probe finished in under 2.5\,s except a 10th root
+      (20\,s), and the worst batch materialized 63 multipliers.
+\end{itemize}
+
+\subsection{The reviews' own test suites, executed}
+\label{sec:suites}
+Each review ships Wolfram tests it did not run. We ran them
+(Section~\ref{sec:setup}). The outcomes are exactly as the reviews predicted
+where they made predictions: on the original program, every preservation
+contract for \U{1}, \U{2}, \U{5}, \U{8}, \U{10}, \U{11} fails and every
+positive control passes. \RII's suite: 4 of 11 original-program tests pass
+(loading test, worked example, rationalizer, all-level control). The guarded
+one-trial components of all three reviews, executed for the first time here,
+behave as designed on the negative and complex targets, reject a zero
+multiplier and root order one, and return structured failures; details are in
+Section~\ref{sec:expkernels}. None of them is a full denester, as their
+authors say.

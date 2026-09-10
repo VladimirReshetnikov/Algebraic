@@ -1,0 +1,33 @@
+{
+  "record_id": "landau94",
+  "title": "How to tangle with a nested radical",
+  "asset_id": "pdf-umass-1991-076",
+  "version": "umass-1991-076",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://web.cs.umass.edu/publication/docs/1991/UM-CS-1991-076.pdf",
+    "resolved_url": "https://web.cs.umass.edu/publication/docs/1991/UM-CS-1991-076.pdf",
+    "retrieved_at": "2026-09-05T20:30:09+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36",
+    "content_encoding": "",
+    "bytes": 7160196,
+    "sha256": "2c2cc6779ef0e7c24fc24b11ef72470a97edf16fe6d9a62bbfd6c67f02b51b76",
+    "tls_verification": "SKIPPED by --insecure"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "search_indexed_pdf",
+  "note": "University report related to the 1994 published article; version/pagination can differ.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/landau94-How-to-tangle-with-a-nested-radical/umass-1991-076/pdf-umass-1991-076.pdf",
+      "role": "pdf",
+      "bytes": 7160196,
+      "sha256": "2c2cc6779ef0e7c24fc24b11ef72470a97edf16fe6d9a62bbfd6c67f02b51b76"
+    }
+  ],
+  "prior_candidate_errors": []
+}

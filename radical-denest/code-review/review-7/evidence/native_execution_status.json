@@ -1,0 +1,16 @@
+{
+  "review_date": "2026-09-05",
+  "native_wolfram_executed": false,
+  "native_regression_cases_supplied": 50,
+  "proposed_package": "code/StradFixed3.wl",
+  "execution_attempt": {
+    "local_kernel": "No Wolfram executable was found in the working environment.",
+    "connector": "WolframContext and WolframLanguageEvaluator were invoked.",
+    "result": "Both connector attempts failed: MCP SSE endpoint returned HTTP 404."
+  },
+  "native_pass_count": null,
+  "native_fail_count": null,
+  "performance_measured": false,
+  "independent_checks": "See independent_results.json; those checks do not execute Wolfram Language.",
+  "release_status": "Proposed revision; native semantic, regression and differential validation required."
+}

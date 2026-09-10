@@ -1,0 +1,31 @@
+{
+  "record_id": "wolframradicals",
+  "title": "ToRadicals",
+  "asset_id": "resource-01",
+  "version": "web-resources",
+  "kind": "web",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://reference.wolfram.com/language/ref/ToRadicals.html",
+    "resolved_url": "https://reference.wolfram.com/language/ref/ToRadicals.html",
+    "retrieved_at": "2026-09-05T20:28:11+00:00",
+    "http_status": 200,
+    "content_type": "text/html",
+    "content_encoding": "",
+    "bytes": 243902,
+    "sha256": "081e72afe4357f69a1f0f1364f1c760a7c25157c674c831f2dbd85c001d740a4"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "cited_web_resource",
+  "note": "URL cited in an input report. Not all web pages have been independently reopened. HTML is saved as HTML; software code is not labelled as article TeX.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "web_resources/wolframradicals-ToRadicals/web-resources/resource-01.html",
+      "role": "web",
+      "bytes": 243902,
+      "sha256": "081e72afe4357f69a1f0f1364f1c760a7c25157c674c831f2dbd85c001d740a4"
+    }
+  ],
+  "prior_candidate_errors": []
+}

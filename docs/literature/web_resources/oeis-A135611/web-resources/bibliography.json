@@ -1,0 +1,14 @@
+{
+  "id": "oeis",
+  "title": "A135611",
+  "citations": [
+    {
+      "report": "report-2",
+      "key": "oeis",
+      "entry_latex": "OEIS Foundation Inc. and contributors.\n\\emph{A135611}, decimal expansion of $\\sqrt2+\\sqrt3$.\n\\sourceurl{https://oeis.org/A135611}.\n\\textbf{M.} A sequence entry and pointer to related representations, not a research paper proving a denesting algorithm."
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

@@ -1,0 +1,430 @@
+
+Syntax::com: Warning: comma encountered with no adjacent expression. The expression will be treated as Null.  (line 320 of "C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/original/Strad.wl").
+Kernel: 15.0.1 for Microsoft Windows (64-bit) (July 2, 2026)
+Print attributes before load: {Protected}  after: {}
+=== A. Classical denesting identities via Strad ===
+A01 | HoldForm[Strad[Sqrt[3 + 2*Sqrt[2]]]]
+   -> 1 + Sqrt[2]
+   time 0.146s  numeric=True  exact=True  depth 2->1
+A02 | HoldForm[Strad[Sqrt[5 + 2*Sqrt[6]]]]
+   -> Sqrt[2] + Sqrt[3]
+   time 0.04s  numeric=True  exact=True  depth 2->1
+
+                                                                      3       1
+PossibleZeroQ::ztest1: Unable to decide whether numeric quantity Sqrt[-] + ------- - Sqrt[2 + Sqrt[3]] is equal to zero. Assuming it is.
+                                                                      2    Sqrt[2]
+A03 | HoldForm[Strad[Sqrt[2 + Sqrt[3]]]]
+   -> (1 + Sqrt[3])/Sqrt[2]
+   time 0.07200000000000001s  numeric=True  exact=True  depth 2->1  MSGS: {PossibleZeroQ::ztest1}
+A04 | HoldForm[Strad[Sqrt[11 + 6*Sqrt[2]]]]
+   -> 3 + Sqrt[2]
+   time 0.016s  numeric=True  exact=True  depth 2->1
+
+                                                                    1           5
+PossibleZeroQ::ztest1: Unable to decide whether numeric quantity ------- + Sqrt[-] - Sqrt[3 + Sqrt[5]] is equal to zero. Assuming it is.
+                                                                 Sqrt[2]        2
+A05 | HoldForm[Strad[Sqrt[3 + Sqrt[5]]]]
+   -> (1 + Sqrt[5])/Sqrt[2]
+   time 0.03s  numeric=True  exact=True  depth 2->1  MSGS: {PossibleZeroQ::ztest1}
+A06 | HoldForm[Strad[Sqrt[7 + 2*Sqrt[10]]]]
+   -> Sqrt[2] + Sqrt[5]
+   time 0.03s  numeric=True  exact=True  depth 2->1
+
+PossibleZeroQ::ztest1: Unable to decide whether numeric quantity 1 + Sqrt[2] + Sqrt[3] - Sqrt[2 (3 + Sqrt[2] + Sqrt[3] + Sqrt[6])] is equal to zero. Assuming it is.
+
+General::stop: Further output of PossibleZeroQ::ztest1 will be suppressed during this calculation.
+A07 | HoldForm[Strad[Sqrt[6 + 2*Sqrt[2] + 2*Sqrt[3] + 2*Sqrt[6]]]]
+   -> 1 + Sqrt[2] + Sqrt[3]
+   time 0.054s  numeric=True  exact=True  depth 2->1  MSGS: {PossibleZeroQ::ztest1, General::stop}
+A08 | HoldForm[Strad[Sqrt[12 + 2*Sqrt[6] + 2*Sqrt[14] + 2*Sqrt[21]]]]
+   -> Sqrt[2] + Sqrt[3] + Sqrt[7]
+   time 0.096s  numeric=True  exact=True  depth 2->1  MSGS: {PossibleZeroQ::ztest1}
+A09 | HoldForm[Strad[(Sqrt[5] - 2)^(1/3)]]
+   -> (-1 + Sqrt[5])/2
+   time 0.027s  numeric=True  exact=True  depth 2->1  MSGS: {PossibleZeroQ::ztest1}
+A10 | HoldForm[Strad[(2 + Sqrt[5])^(1/3)]]
+   -> (1 + Sqrt[5])/2
+   time 0.019s  numeric=True  exact=True  depth 2->1  MSGS: {PossibleZeroQ::ztest1}
+A11 | HoldForm[Strad[(10 + 6*Sqrt[3])^(1/3)]]
+   -> 1 + Sqrt[3]
+   time 0.029s  numeric=True  exact=True  depth 2->1  MSGS: {PossibleZeroQ::ztest1}
+A12 | HoldForm[Strad[(2^(1/3) - 1)^(1/3)]]
+   -> (1 - 2^(1/3) + 2^(2/3))/3^(2/3)
+   time 0.052000000000000005s  numeric=True  exact=True  depth 2->1  MSGS: {PossibleZeroQ::ztest1}
+A13 | HoldForm[Strad[(5^(1/3) - 4^(1/3))^(1/3)]]
+   -> (-2^(2/3) + 5^(1/3))^(1/3)
+   time 1.063s  numeric=True  exact=True  depth 2->2
+A14 | HoldForm[Strad[((11 + 5*Sqrt[5])/2)^(1/5)]]
+   -> (1 + Sqrt[5])/2
+   time 0.031s  numeric=True  exact=True  depth 2->1  MSGS: {PossibleZeroQ::ztest1}
+A15 | HoldForm[Strad[Sqrt[1 + 2*2^(1/3) + 2^(2/3)]]]
+   -> 1 + 2^(1/3)
+   time 0.004s  numeric=True  exact=True  depth 2->1
+A16 | HoldForm[Strad[(17 + 12*Sqrt[2])^(1/4)]]
+   -> 1 + Sqrt[2]
+   time 0.018000000000000002s  numeric=True  exact=True  depth 2->1  MSGS: {PossibleZeroQ::ztest1}
+A17 | HoldForm[Strad[(99 + 70*Sqrt[2])^(1/6)]]
+   -> 1 + Sqrt[2]
+   time 0.019s  numeric=True  exact=True  depth 2->1  MSGS: {PossibleZeroQ::ztest1}
+A18 | HoldForm[Strad[(3 + 2*Sqrt[2])^(3/2)]]
+   -> 7 + 5*Sqrt[2]
+   time 0.026000000000000002s  numeric=True  exact=True  depth 2->1  MSGS: {PossibleZeroQ::ztest1}
+A19 | HoldForm[Strad[(3 + 2*Sqrt[2])^(-2^(-1))]]
+   -> -1 + Sqrt[2]
+   time 0.018000000000000002s  numeric=True  exact=True  depth 2->1  MSGS: {PossibleZeroQ::ztest1}
+A20 | HoldForm[Strad[1/Sqrt[3 + 2*Sqrt[2]]]]
+   -> -1 + Sqrt[2]
+   time 0.009000000000000001s  numeric=True  exact=True  depth 2->1
+A21 | HoldForm[Strad[Sqrt[3 + 2*Sqrt[2]] + Sqrt[5 + 2*Sqrt[6]]]]
+   -> 1 + 2*Sqrt[2] + Sqrt[3]
+   time 0.03s  numeric=True  exact=True  depth 2->1
+A22 | HoldForm[Strad[Sqrt[3 + 2*Sqrt[2]]*Sqrt[5 + 2*Sqrt[6]]]]
+   -> 2 + Sqrt[2] + Sqrt[3] + Sqrt[6]
+   time 0.046s  numeric=True  exact=True  depth 2->1  MSGS: {PossibleZeroQ::ztest1}
+A23 | HoldForm[Strad[Sqrt[2 + Sqrt[3]] + Sqrt[2 - Sqrt[3]]]]
+   -> Sqrt[6]
+   time 0.048s  numeric=True  exact=True  depth 2->1
+A24 | HoldForm[Strad[Sqrt[-1 + 2*I*Sqrt[2]]]]
+   -> 1 + I*Sqrt[2]
+   time 0.026000000000000002s  numeric=True  exact=True  depth 2->1  MSGS: {PossibleZeroQ::ztest1}
+A25 | HoldForm[Strad[Sqrt[2 + 2*I*Sqrt[3]]]]
+   -> I + Sqrt[3]
+   time 0.046s  numeric=True  exact=True  depth 2->1  MSGS: {PossibleZeroQ::ztest1}
+A26 | HoldForm[Strad[Sqrt[-3 - 2*Sqrt[2]]]]
+   -> I*(1 + Sqrt[2])
+   time 0.009000000000000001s  numeric=True  exact=True  depth 2->1
+A27 | HoldForm[Strad[(3 + 2*Sqrt[2])^(1/4)]]
+   -> Sqrt[1 + Sqrt[2]]
+   time 0.03s  numeric=True  exact=True  depth 2->2  MSGS: {PossibleZeroQ::ztest1}
+A28 | HoldForm[Strad[Sqrt[3 + 2*Sqrt[3 + 2*Sqrt[2]]], True]]
+   -> Sqrt[5 + 2*Sqrt[2]]
+   time 0.09s  numeric=True  exact=True  depth 3->2
+A29 | HoldForm[Strad[Sqrt[3 + 2*Sqrt[3 + 2*Sqrt[2]]]]]
+   -> Sqrt[3 + 2*Sqrt[3 + 2*Sqrt[2]]]
+   time 0.099s  numeric=True  exact=True  depth 3->3
+A30 | HoldForm[Strad[Sqrt[16 - 2*Sqrt[29] + 2*Sqrt[55 - 10*Sqrt[29]]], True]]
+   -> (Sqrt[319 - 58*Sqrt[29]] - 10*Sqrt[11 - 2*Sqrt[29]] + Sqrt[5]*(-16 + 3*Sqrt[29]))/(-5 + Sqrt[29] - Sqrt[55 - 10*Sqrt[29]])
+   time 0.598s  numeric=True  exact=True  depth 3->2  MSGS: {PossibleZeroQ::ztest1}
+A31 | HoldForm[Strad[Sqrt[16 - 2*Sqrt[29] + 2*Sqrt[55 - 10*Sqrt[29]]]]]
+   -> (Sqrt[319 - 58*Sqrt[29]] - 10*Sqrt[11 - 2*Sqrt[29]] + Sqrt[5]*(-16 + 3*Sqrt[29]))/(-5 + Sqrt[29] - Sqrt[55 - 10*Sqrt[29]])
+   time 0.11800000000000001s  numeric=True  exact=True  depth 3->2  MSGS: {PossibleZeroQ::ztest1}
+=== B. Non-denestable / trivial inputs ===
+B01 | HoldForm[Strad[Sqrt[2 + Sqrt[2]]]]
+   -> 2^(1/4)*Sqrt[1 + Sqrt[2]]
+   time 0.031s  numeric=True  exact=True  depth 2->2
+B02 | HoldForm[Strad[Sqrt[1 + Sqrt[2]]]]
+   -> Sqrt[1 + Sqrt[2]]
+   time 0.022s  numeric=True  exact=True  depth 2->2
+B03 | HoldForm[Strad[(1 + Sqrt[2])^(1/3)]]
+   -> (1 + Sqrt[2])^(1/3)
+   time 0.085s  numeric=True  exact=True  depth 2->2
+B04 | HoldForm[Strad[Sqrt[2]]]
+   -> Sqrt[2]
+   time 0.002s  numeric=True  exact=True  depth 1->1
+B05 | HoldForm[Strad[2]]
+   -> 2
+   time 0.s  numeric=True  exact=True  depth 0->0
+B06 | HoldForm[Strad[Sqrt[1 + I]]]
+   -> Sqrt[1 + I]
+   time 0.002s  numeric=True  exact=True  depth 1->1
+B07 | HoldForm[Strad[Root[#1^4 - 10*#1^2 + 1 & , 4]]]
+   -> Sqrt[5 + 2*Sqrt[6]]
+   time 0.006s  numeric=True  exact=True  depth 0->2
+B08 | HoldForm[Strad[Sqrt[Sqrt[2] + Sqrt[3]]]]
+   -> Sqrt[Sqrt[2] + Sqrt[3]]
+   time 0.074s  numeric=True  exact=True  depth 2->2
+B09 | HoldForm[Strad[(2 + 2*I*Sqrt[3])^(1/3)]]
+   -> (2 + (2*I)*Sqrt[3])^(1/3)
+   time 0.261s  numeric=True  exact=True  depth 2->2
+=== C. Branch counterexamples from the reviews (wrapper) ===
+C01 | HoldForm[Strad[-Sqrt[3 + 2*Sqrt[2]]]]
+   -> -1 - Sqrt[2]
+   time 0.016s  numeric=True  exact=True  depth 2->1
+C02 | HoldForm[Strad[(-1 + 2*I*Sqrt[2])^(3/2)]]
+   -> 5 - I*Sqrt[2]
+   time 0.396s  numeric=False  exact=False  depth 2->1  MSGS: {PossibleZeroQ::ztest1}
+C03 | HoldForm[Strad[Sqrt[-1 + 2*I*Sqrt[2]]*Sqrt[-2 + 2*I*Sqrt[3]]]]
+   -> (-I + Sqrt[2])*(-I + Sqrt[3])
+   time 0.128s  numeric=False  exact=False  depth 2->1  MSGS: {PossibleZeroQ::ztest1}
+C04 | HoldForm[Strad[(-3 - 2*Sqrt[2])^(3/2)]]
+   -> (-I)*(7 + 5*Sqrt[2])
+   time 0.013000000000000001s  numeric=True  exact=True  depth 2->1
+C05 | HoldForm[Strad[Sqrt[-2 - 2*Sqrt[2]]*Sqrt[-3 - 2*Sqrt[2]]]]
+   -> -Sqrt[2*(7 + 5*Sqrt[2])]
+   time 0.065s  numeric=True  exact=True  depth 2->2
+C06 | HoldForm[Strad[Sqrt[-3 - 2*Sqrt[2]]*Sqrt[-3 - 2*Sqrt[2]]]]
+   -> -3 - 2*Sqrt[2]
+   time 0.009000000000000001s  numeric=True  exact=True  depth 1->1
+C07 | HoldForm[Strad[(-1 + 2*I*Sqrt[2])^(5/2)]]
+   -> 1 - (11*I)*Sqrt[2]
+   time 0.034s  numeric=True  exact=True  depth 2->1  MSGS: {PossibleZeroQ::ztest1}
+C08 | HoldForm[Strad[(-5 - 2*Sqrt[6])^(3/2)]]
+   -> (-I)*(11*Sqrt[2] + 9*Sqrt[3])
+   time 0.045s  numeric=True  exact=True  depth 2->1  MSGS: {PossibleZeroQ::ztest1}
+=== D. Direct denest11 probes ===
+problem  -Sqrt[3 + 2*Sqrt[2]]
+outer root: 2  extra root: 1
+
+multiplier count: 1
+multiplier: 1   minpoly degree: 2
+success: {1, 2, {{1, 1}}}
+history: {{0, Infinity}, {1, 2}}
+1 + Sqrt[2]
+
+D01 | HoldForm[denest11[-Sqrt[3 + 2*Sqrt[2]], {1}]]
+   -> 1 + Sqrt[2]
+   time 0.005s  numeric=False  exact=False  depth 2->1
+problem  Sqrt[3 + 2*Sqrt[2]]
+outer root: 2  extra root: 1
+
+multiplier count: 1
+multiplier: 0   minpoly degree: 1
+
+                                 1
+Power::infy: Infinite expression - encountered.
+                                 0
+
+Part::partw: Part 1 of {} does not exist.
+success: {0, 1, {{0, 1}}}
+history: {{0, Infinity}, {0, 1}}
+{}[[1]]
+
+D02 | HoldForm[denest11[Sqrt[3 + 2*Sqrt[2]], {0}]]
+   -> {}[[1]]
+   time 0.089s  numeric=n/a  exact=False  depth 2->0  MSGS: {Power::infy, Part::partw}
+problem  Sqrt[3 + 2*Sqrt[2]]
+outer root: 2  extra root: 1
+
+multiplier count: 0
+history: {{0, Infinity}}
+no progress
+
+D03 | HoldForm[denest11[Sqrt[3 + 2*Sqrt[2]], {}]]
+   -> Sqrt[3 + 2*Sqrt[2]]
+   time 0.001s  numeric=True  exact=True  depth 2->2
+problem  (-1 + (2*I)*Sqrt[2])^(3/2)
+outer root: 2  extra root: 1
+
+multiplier count: 1
+multiplier: 1   minpoly degree: 2
+success: {1, 2, {{1, 1}}}
+history: {{0, Infinity}, {1, 2}}
+5 - I*Sqrt[2]
+
+D04 | HoldForm[denest11[(-1 + 2*I*Sqrt[2])^(3/2), {1}]]
+   -> 5 - I*Sqrt[2]
+   time 0.01s  numeric=False  exact=False  depth 2->1
+problem  Sqrt[-1 + (2*I)*Sqrt[2]]*Sqrt[-2 + (2*I)*Sqrt[3]]
+outer root: 2  extra root: 1
+
+multiplier count: 1
+multiplier: 1   minpoly degree: 4
+success: {1, 4, {{1, 1}}}
+history: {{0, Infinity}, {1, 4}}
+(-I + Sqrt[2])*(-I + Sqrt[3])
+
+D05 | HoldForm[denest11[Sqrt[-1 + 2*I*Sqrt[2]]*Sqrt[-2 + 2*I*Sqrt[3]], {1}]]
+   -> (-I + Sqrt[2])*(-I + Sqrt[3])
+   time 0.026000000000000002s  numeric=False  exact=False  depth 2->1  MSGS: {PossibleZeroQ::ztest1}
+problem  Sqrt[5 + 2*Sqrt[6]]
+outer root: 2  extra root: 1
+
+multiplier count: 2
+multiplier: 1   minpoly degree: 4
+multiplier: 6 - 2*Sqrt[2] + 2*Sqrt[3] - 2*Sqrt[6]   minpoly degree: 4
+history: {{0, Infinity}, {1, 4}}
+no progress
+
+D06 | HoldForm[denest11[Sqrt[5 + 2*Sqrt[6]], {1, 6 - 2*Sqrt[6] - 2*Sqrt[2] + 2*Sqrt[3]}]]
+   -> Sqrt[5 + 2*Sqrt[6]]
+   time 0.012s  numeric=True  exact=True  depth 2->2
+problem  Sqrt[5 + 2*Sqrt[6]]
+outer root: 2  extra root: 1
+
+multiplier count: 1
+multiplier: 6 - 2*Sqrt[2] + 2*Sqrt[3] - 2*Sqrt[6]   minpoly degree: 4
+success: {6 - 2*Sqrt[2] + 2*Sqrt[3] - 2*Sqrt[6], 4}
+history: {{0, Infinity}, {6 - 2*Sqrt[2] + 2*Sqrt[3] - 2*Sqrt[6], 4}}
+(1 + Sqrt[2] + Sqrt[3])/Sqrt[2*(3 - Sqrt[2] + Sqrt[3] - Sqrt[6])]
+
+D07 | HoldForm[denest11[Sqrt[5 + 2*Sqrt[6]], {6 - 2*Sqrt[6] - 2*Sqrt[2] + 2*Sqrt[3]}]]
+   -> (1 + Sqrt[2] + Sqrt[3])/Sqrt[2*(3 - Sqrt[2] + Sqrt[3] - Sqrt[6])]
+   time 0.056s  numeric=True  exact=True  depth 2->2  MSGS: {PossibleZeroQ::ztest1}
+problem  Sqrt[3 + 2*Sqrt[3 + 2*Sqrt[2]]]
+outer root: 2  extra root: 2
+
+multiplier count: 2  multipliers: {1, Sqrt[3 + 2*Sqrt[2]]}
+multiplier: 1   minpoly degree: 4
+adding new multipliers from: 1
+multiplier: Sqrt[3 + 2*Sqrt[2]]   minpoly degree: 4
+adding new multipliers from: Sqrt[3 + 2*Sqrt[2]]
+multiplier count: 3  from: {1, 4}
+multiplier: 2   minpoly degree: 4
+multiplier: 17   minpoly degree: 4
+multiplier: 34   minpoly degree: 4
+multiplier count: 7  from: {Sqrt[3 + 2*Sqrt[2]], 4}
+multiplier: 2*Sqrt[3 + 2*Sqrt[2]]   minpoly degree: 4
+multiplier: 7*Sqrt[3 + 2*Sqrt[2]]   minpoly degree: 4
+multiplier: 14*Sqrt[3 + 2*Sqrt[2]]   minpoly degree: 4
+multiplier: 17*Sqrt[3 + 2*Sqrt[2]]   minpoly degree: 4
+multiplier: 34*Sqrt[3 + 2*Sqrt[2]]   minpoly degree: 4
+multiplier: 119*Sqrt[3 + 2*Sqrt[2]]   minpoly degree: 4
+multiplier: 238*Sqrt[3 + 2*Sqrt[2]]   minpoly degree: 4
+history: {{0, Infinity}, {1, 4}}
+no progress
+
+D08 | HoldForm[denest11[Sqrt[3 + 2*Sqrt[3 + 2*Sqrt[2]]]]]
+   -> Sqrt[3 + 2*Sqrt[3 + 2*Sqrt[2]]]
+   time 0.1s  numeric=True  exact=True  depth 3->3
+D09 | HoldForm[denest11[2 + Sqrt[3]]]
+   -> 2 + Sqrt[3]
+   time 0.s  numeric=True  exact=True  depth 1->1
+problem  Sqrt[3 + 2*Sqrt[2]]
+outer root: 2  extra root: 1
+
+multiplier count: 1
+
+MinimalPolynomial::nalg: 3.41421 is not an explicit algebraic number.
+multiplier: 2.   minpoly degree: 0
+
+Outer::heads: Heads List and Times at positions 3 and 2 are expected to be the same.
+
+Outer::argm: Outer called with 0 arguments; 1 or more arguments are expected.
+
+Part::partw: Part 1 of Outer[] does not exist.
+success: {2., 0}
+history: {{0, Infinity}, {2., 0}}
+Outer[][[1]]
+
+D10 | HoldForm[denest11[Sqrt[3 + 2*Sqrt[2]], {2.}]]
+   -> Outer[][[1]]
+   time 0.23800000000000002s  numeric=n/a  exact=False  depth 2->0  MSGS: {MinimalPolynomial::nalg, Outer::heads, Outer::argm, Part::partw}
+problem  Sqrt[3 + 2*Sqrt[2]]
+outer root: 2  extra root: 1
+
+multiplier count: 1
+
+MinimalPolynomial::nalg: Sqrt[(3 + 2 Sqrt[2]) Pi] is not an explicit algebraic number.
+multiplier: Pi   minpoly degree: 0
+PolynomialGCD error: {3 + 2*Sqrt[2], 1/2, Pi, MinimalPolynomial[Sqrt[(3 + 2*Sqrt[2])*Pi]]}
+history: {{0, Infinity}}
+no progress
+
+D11 | HoldForm[denest11[Sqrt[3 + 2*Sqrt[2]], {Pi}]]
+   -> Sqrt[3 + 2*Sqrt[2]]
+   time 0.004s  numeric=True  exact=True  depth 2->2  MSGS: {MinimalPolynomial::nalg}
+problem  Sqrt[5 + 2*Sqrt[6]]
+outer root: 2  extra root: 1
+
+multiplier count: 2
+multiplier: 1   minpoly degree: 4
+multiplier: Sqrt[5]   minpoly degree: 8
+previous progress identified
+improvement  {Sqrt[5], 8}
+adding new multipliers from: Sqrt[5]
+multiplier count: 3  from: {1, 4}
+multiplier: 2   minpoly degree: 2
+success: {2, 2, {{2, 1}}}
+history: {{0, Infinity}, {Sqrt[5], 8}, {1, 4}, {2, 2}}
+Sqrt[2] + Sqrt[3]
+
+D12 | HoldForm[denest11[Sqrt[5 + 2*Sqrt[6]], {1, Sqrt[5]}]]
+   -> Sqrt[2] + Sqrt[3]
+   time 0.014s  numeric=True  exact=True  depth 2->1
+problem  Sqrt[3 + 2*Sqrt[2]]
+outer root: 2  extra root: 1
+
+multiplier count: 1
+multiplier: -1   minpoly degree: 4
+history: {{0, Infinity}, {-1, 4}}
+no progress
+
+D13 | HoldForm[denest11[Sqrt[3 + 2*Sqrt[2]], {-1}]]
+   -> Sqrt[3 + 2*Sqrt[2]]
+   time 0.005s  numeric=True  exact=True  depth 2->2
+problem  Sqrt[3 + 2*Sqrt[2]]
+outer root: 2  extra root: 1
+
+multiplier count: 1
+multiplier: I   minpoly degree: 4
+success: {I, 4}
+history: {{0, Infinity}, {I, 4}}
+1 + Sqrt[2]
+
+D14 | HoldForm[denest11[Sqrt[3 + 2*Sqrt[2]], {I}]]
+   -> 1 + Sqrt[2]
+   time 0.032s  numeric=True  exact=True  depth 2->1  MSGS: {PossibleZeroQ::ztest1}
+=== E. Symbolic input through the wrapper ===
+E01 | HoldForm[Strad[Sqrt[z^2]]]
+   -> z
+   time 0.001s  numeric=n/a  exact=n/a  depth 1->0
+E02 | HoldForm[Strad[Sqrt[t + t^2]]]
+   -> Sqrt[t*(1 + t)]
+   time 0.002s  numeric=n/a  exact=n/a  depth 1->1
+E03 | HoldForm[Strad[Sqrt[-x - y]]]
+   -> I*Sqrt[x + y]
+   time 0.004s  numeric=n/a  exact=n/a  depth 1->1
+E04 | HoldForm[Strad[Sqrt[a + b]]]
+   -> Sqrt[a + b]
+   time 0.002s  numeric=n/a  exact=n/a  depth 1->1
+E05 | HoldForm[Strad[x]]
+   -> x
+   time 0.s  numeric=n/a  exact=n/a  depth 0->0
+E06 | HoldForm[Strad[Sqrt[x]*Sqrt[3 + 2*Sqrt[2]]]]
+   -> (1 + Sqrt[2])*Sqrt[x]
+   time 0.01s  numeric=n/a  exact=n/a  depth 2->1
+E07 | HoldForm[Strad[f[1], False, Identity]]
+   -> 1
+   time 0.001s  numeric=n/a  exact=n/a  depth 0->0
+
+                                                    2
+MinimalPolynomial::nalg: Sqrt[f[Sqrt[3 + 2 Sqrt[2]]] ] is not an explicit algebraic number.
+
+General::stop: Further output of MinimalPolynomial::nalg will be suppressed during this calculation.
+
+                                                                  2
+Discriminant::poly2: MinimalPolynomial[Sqrt[f[Sqrt[3 + 2 Sqrt[2]]] ]][arg1] is not a well-formed polynomial in arg1.
+
+                                                                                         2                                                                                           2
+FactorInteger::exact: Argument Discriminant[MinimalPolynomial[Sqrt[f[Sqrt[3 + 2 Sqrt[2]]] ]][arg1], arg1] in FactorInteger[Discriminant[MinimalPolynomial[Sqrt[f[Sqrt[3 + 2 Sqrt[2]]] ]][arg1], arg1], Automatic] is not an exact number.
+
+                                                                                                        2
+Part::partd: Part specification FactorInteger[Discriminant[MinimalPolynomial[Sqrt[f[Sqrt[3 + 2 Sqrt[2]]] ]][arg1], arg1], Automatic][[All,1]] is longer than depth of object.
+
+Union::heads: Heads Part and Divisors at positions 2 and 1 are expected to be the same.
+
+                                                                                                      2
+Part::pkspec1: The expression FactorInteger[Discriminant[MinimalPolynomial[Sqrt[f[Sqrt[3 + 2 Sqrt[2]]] ]][arg1], arg1], Automatic] cannot be used as a part specification.
+
+                                                                  2
+Discriminant::poly2: MinimalPolynomial[Sqrt[f[Sqrt[3 + 2 Sqrt[2]]] ]][arg1] is not a well-formed polynomial in arg1.
+
+                                                                                         2                                                                                           2
+FactorInteger::exact: Argument Discriminant[MinimalPolynomial[Sqrt[f[Sqrt[3 + 2 Sqrt[2]]] ]][arg1], arg1] in FactorInteger[Discriminant[MinimalPolynomial[Sqrt[f[Sqrt[3 + 2 Sqrt[2]]] ]][arg1], arg1], Automatic] is not an exact number.
+
+                                                                                                      2
+Part::pkspec1: The expression FactorInteger[Discriminant[MinimalPolynomial[Sqrt[f[Sqrt[3 + 2 Sqrt[2]]] ]][arg1], arg1], Automatic] cannot be used as a part specification.
+
+                                                                  2
+Discriminant::poly2: MinimalPolynomial[Sqrt[f[Sqrt[3 + 2 Sqrt[2]]] ]][arg1] is not a well-formed polynomial in arg1.
+
+General::stop: Further output of Discriminant::poly2 will be suppressed during this calculation.
+
+                                                                                         2                                                                                           2
+FactorInteger::exact: Argument Discriminant[MinimalPolynomial[Sqrt[f[Sqrt[3 + 2 Sqrt[2]]] ]][arg1], arg1] in FactorInteger[Discriminant[MinimalPolynomial[Sqrt[f[Sqrt[3 + 2 Sqrt[2]]] ]][arg1], arg1], Automatic] is not an exact number.
+
+General::stop: Further output of FactorInteger::exact will be suppressed during this calculation.
+
+                                                                                                      2
+Part::pkspec1: The expression FactorInteger[Discriminant[MinimalPolynomial[Sqrt[f[Sqrt[3 + 2 Sqrt[2]]] ]][arg1], arg1], Automatic] cannot be used as a part specification.
+
+General::stop: Further output of Part::pkspec1 will be suppressed during this calculation.
+
+                                                                                                        3
+Part::partd: Part specification FactorInteger[Discriminant[MinimalPolynomial[Sqrt[f[Sqrt[3 + 2 Sqrt[2]]] ]][arg1], arg1], Automatic][[All,1]] is longer than depth of object.
+
+Union::heads: Heads Part and Divisors at positions 2 and 1 are expected to be the same.
+E08 | HoldForm[Strad[f[Sqrt[3 + 2*Sqrt[2]]]]]
+   -> f[Sqrt[3 + 2*Sqrt[2]]]
+   time 0.363s  numeric=n/a  exact=n/a  depth 2->2  MSGS: {MinimalPolynomial::nalg, General::stop, Discriminant::poly2, FactorInteger::exact, Part::partd, Union::heads, Part::pkspec1}
+DONE

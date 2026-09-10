@@ -1,0 +1,155 @@
+Our algorithm for RIT uses non-determinism to guess a "good" prime.  It is natural to wonder whether such primes can instead be randomly sampled.
+Recall we require that the prime $p$ have polynomial bit-length in the size of the input, and that  the congruences $x^{d_i} \equiv a_i \pmod{p}$ are solvable in $\FF_p$. By Chebotarev's density theorem, roughly speaking, the density of such good primes is
+$\frac{1}{|\Gal(K/\QQ)|}$.
+Since the size of the Galois group of $K$ over $\QQ$ is exponential in the size of the input, good primes do not have sufficient density in order to directly be chosen randomly. 
+The density remains insufficient even if the exponents~$d_i$ are prime numbers written in unary.
+ 
+
+In what follows, we show that   $2$-RIT is in {\coRP} under GRH, and  in {\coNP} unconditionally. Recall that  $2$-RIT  is the identity testing problem for an algebraic circuit~$C$ evaluated on square-roots
+$\sqrt{a_1},\ldots,\sqrt{a_k}$ for 
+$k$ rational odd primes $a_1,\ldots,a_k$.
+The proofs from \Cref{sec:correctness} ensure that the finite field computation in our algorithm is sound; it remains to show how to choose a completely split prime~$p$ and determine the solutions to the equations $x^{2} \equiv a_i \pmod{p}$  in~$\FF_p$.
+
+
+As noted above, 
+the natural density of primes is not sufficient even for  $2$-RIT, 
+however, we show that there is an arithmetic progression with a good density of primes, and that all primes in this progression are good.
+
+Below, we state known effective bounds on the density of primes in an arithmetic progression, in particular, the following estimates, which have been shown in \cite[Chapter 20, page 125]{davenport} and \cite[Corollary 18.8]{IKbook}, respectively:
+
+\begin{theorem}\label{th:prime_density}
+	Given $a\in\ZZ_n^*$, write $\pi_{n,a}(x)$ for the number of primes less than $x$ that are congruent to $a$ modulo $n$. Then under GRH, there is an absolute constant $c>0$ such that
+	\[ \pi_{n,a}(x) \geq \frac{x}{\varphi(n)\log x} - c x^{1/2}\log x.\]
+	Unconditionally, there exist effective positive constants $c_1$ and $c_2$, such that for all $n < c_1 x^{c_1}$,
+	\[ \pi_{n,a}(x) \geq \frac{c_2 x}{\varphi(n)x^{1/2}\log x}. \]
+\end{theorem}
+
+What remains to be understood is how to construct an arithmetic progression such that for every prime $p$ appearing in it, $\FF_p$ contains a representation $\overline{\alpha}_1,\ldots,\overline{\alpha}_k\in\FF_p$ of the square-root input $\sqrt{a_1},\ldots,\sqrt{a_k}$. As it turns out, this only
+requires some classical results on quadratic reciprocity,
+which we recall now.
+
+Let $p$ be an odd prime number. An integer $a$ is said to be a \emph{quadratic residue} modulo $p$ if it is congruent to a perfect square modulo $p$, i.e., if there exists an integer $x$ such that $x^2 \equiv a \mod p$. The \emph{Legendre symbol} is a function of $a$ and $p$ taking values in~$\{1,-1,0\}$, that is
+\[\left( \frac{a}{p} \right) =\begin{cases}
+1 & \text{if $a$ is a quadratic residue mod $p$ and $a \not\equiv 0 \pmod{p}$},\\
+-1 &\text{if $a$ is a non-quadratic residue mod $p$},\\
+0 & \text{if $a\equiv 0 \pmod{p}$.} 	
+\end{cases}
+\]
+  Its explicit definition is as follows:
+\[ \left( \frac{a}{p} \right) =a^{\frac{p-1}{2}} \pmod{p}. \]
+Furthermore, given  odd primes $p$ and $q$, the \emph{Law of quadratic reciprocity} states:
+\[ \left( \frac{p}{q} \right)\left( \frac{q}{p} \right) = (-1)^{\frac{p-1}{2}\frac{q-1}{2}}.\]
+We observe that in the case where $p\in 4\NN+1$, then
+\[ \left( \frac{p}{q} \right)\left( \frac{q}{p} \right) = 1 \; \; \Leftrightarrow \; \; \left( \frac{p}{q} \right) = \left( \frac{q}{p} \right) = \pm 1.\]
+In other words, $p$ is a quadratic residue modulo $q$ if and only if $q$ is a quadratic residue modulo~$p$, when either $p$ or $q \equiv 1 \pmod{4}$.
+
+
+
+\begin{figure*}[t]
+    \centering
+    \begin{tabularx}{0.82\textwidth}{ p{0.1\textwidth} p{0.72\textwidth} }
+   \rowcolor{Gray}
+    \multicolumn{2}{c}{\textbf{Radical Identity Testing for square root inputs}} \\
+    \textbf{Input:} & Algebraic circuit $C$ of size  at most $s$
+    and a list of $k$ odd primes $a_1, \ldots, a_k$ 
+    of magnitude at most $2^s$.
+    \\
+    \rowcolor{Gray}
+    \textbf{Output:} & Whether $f(\sqrt{a_1},\ldots,\sqrt{a_k})=0$ for the polynomial $f(x_1,\ldots,x_k)$ computed by $C$.
+    \\ 
+    \textbf{Step 1:} &
+            Compute $b$ such that $b +1 \equiv 5 \pmod{8}$, and $b +1 \equiv 1\pmod{a_i}$ for all $i$.
+    \\  
+    \textbf{Step 2:} & 
+    		Pick $p$ uniformly at random from the set $S(a_1,\ldots,a_k)$ defined in~(\ref{eq:SA}).
+     \\ 
+    \textbf{Step 3:} &
+            Compute $\overline{\alpha}_1,\ldots,\overline{\alpha}_k \in\FF_p$ such that $\overline{\alpha}_i^{2}  \equiv a_i \pmod{p}$ as described in
+            \Cref{eq:pocklington}.
+     \\  
+    \textbf{Step 4:} &
+            Output 'Zero' if $\overline{f}(\overline{\alpha}_1,\ldots,\overline{\alpha}_k) = 0$, where $\bar{f}$ is the reduction of $f$ modulo $p$; and 'Non-zero' otherwise.
+    \\ \hline
+    \end{tabularx}
+    \caption{Our randomised polynomial time
+   algorithm for the complement of  $2$-RIT.
+    }
+    \label{fig:corp_squareRIT}
+\end{figure*}
+
+
+In what follows, we apply the law of quadratic reciprocity in order to choose the right field $\FF_p$ for deciding $2$-RIT. Recall that intuitively, we are looking for a prime $p$ such that $x^2-a_i$ has a solution in $\FF_p$ for all $i$, that is, the $a_i$ is a quadratic residue modulo $p$. Since we will be choosing $p$ from an arithmetic progression, we can easily make that progression to be of the shape $4\NN + 1$, that is, to ensure that $p\equiv 1 \pmod{4}$. In that case the $a_i$'s will be quadratic residues modulo $p$ if and only if $p$ is a quadratic residue modulo $a_i$ for all~$i$. In order to ensure that, it suffices to choose $p$ such that $p \equiv 1 \pmod{a_i}$ for all $i$, as $1$ is a perfect square modulo $a_i$ for all $i$, and thus $p$ a quadratic residue modulo $a_i$.
+
+We have just shown that if we choose $p$ such that it satisfies all the above-mentioned congruences, the polynomials $x^{2}-a_i$ all split and have non-zero roots in $\FF_p$. Following Pocklington's algorithm, there is a deterministic way to solve the equations $x^2-a_i$  if $p\equiv 5 \pmod{8}$. 
+In particular, writing $p = 8m+5$, the solution of the equation $x^2 \equiv a \pmod{p}$ is given by the following function:
+\begin{equation}\label{eq:pocklington}
+x =\begin{cases}
+\pm a^{m+1} & \text{if $a^{2m+1} \equiv 1 \pmod{p}$,}\\
+\pm\frac{y}{2} &\text{if $a^{2m+1} \equiv -1 \pmod{p}$ and} \\
+& \text{$y = \pm(4a)^{m+1}$ is even,} \\ 
+\pm\frac{p+y}{2} &\text{if $a^{2m+1} \equiv -1 \pmod{p}$ and} \\
+& \text{$y = \pm(4a)^{m+1}$ is odd.}
+\end{cases}
+\end{equation}
+See \Cref{appendix:pocklington} for details.
+Note that this congruence encompasses the above restriction on $p$ being congruent to 1 modulo~4.
+
+
+We now show how to construct an arithmetic progression such that all primes $p$ in the progression satisfy the above congruences. Denote by $A=\prod_{i=1,a_i\neq 2}^{k}a_i$ the product of all input radicands $a_i$. Note that $A$ will always be odd as the $a_i$ are odd primes. Let us look at the arithmetic progression
+\begin{equation}\label{eq:arithmetic_progression_corp}
+	 8A\NN + b + 1,
+\end{equation}
+where $b$ is a solution of the following system of equations 
+\begin{align}\label{eq:bAP}
+	b \equiv 4 &\pmod{8} \\
+	b \equiv 0 &\pmod{a_i}. \nonumber
+\end{align}
+Since all the moduli in the equations~(\ref{eq:bAP}) are pairwise coprime, by the Chinese remainder theorem, the  system has a solution.
+By the construction above,
+ we have an arithmetic progression such that all primes $p$ in the progression are  good primes.
+We also ensure that $p$ is such that we can deterministically find the representations $\overline{\alpha}_1,\ldots,\overline{\alpha}_k$ of $\sqrt{a_1},\ldots,\sqrt{a_k}$ in $\FF_p$.
+Define by $S(a_1,\ldots,a_k)$ the following set  
+\begin{align}\label{eq:SA}\big\{p \leq 2^{5k^3} \mid  &p \in  8A \NN+ b+1  \text{ where } A=\prod_{i=1}^{k}a_i \\
+    &\text{ and } b \text{ is a solution of~(\ref{eq:bAP})} \big\}. 	\nonumber
+\end{align}
+We have the following:
+
+\begin{restatable}{proposition}{probabilityprimep}\label{prop:density_corp}
+Let $C$ be an algebraic circuit of size at most $s$, and $a_1, \ldots, a_k$ odd primes of bit-length at most $s$. 
+	 Denote by $\alpha$ the algebraic integer obtained by evaluating~$C$ on the~$\sqrt{a_i}$. Suppose that $p$ is chosen uniformly at random from the set~$S(a_1,\ldots,a_k)$ defined in~(\ref{eq:SA}).
+	 Then
+		\begin{itemize}
+			\item[(i)] $p$ is prime with probability at least
+			$\frac{1}{6s^3}$ assuming GRH, 
+			 and
+			\item[(ii)] given that $p$ is prime, the probability that it divides $N(\alpha)$ is at most $2^{-s^3}$	unconditionally.
+		\end{itemize}
+\end{restatable}
+
+
+
+With~\Cref{prop:density_corp} in hand, we can state our algorithm, see \Cref{fig:corp_squareRIT}, and prove its complexity.
+
+
+\begin{proof}[Proof of \Cref{th:squareRIT-coRP}]
+\Cref{fig:corp_squareRIT} presents a 
+randomised polynomial time algorithm for the complement of  $2$-RIT  as follows. It is clear that the algorithm runs in polynomial time. Let us now argue its correctness.
+	
+	First, suppose that $f(\sqrt{a_1},\ldots,\sqrt{a_k}) = 0$. By \Cref{th:RIT-soundess}, we have $\overline{f}(\overline{\alpha}_1,\ldots,\overline{\alpha}_k) = 0$, and hence the output is 'Zero'. Second, suppose that $f(\sqrt{a_1},\ldots,\sqrt{a_k}) \neq 0$. Then the output will be 'Non-Zero' provided that $p$ does not divide $N(f(\sqrt{a_1},\ldots,\sqrt{a_k}))$. By \Cref{prop:density_corp}(ii), the probability that $p$ does not divide $N(f(\sqrt{a_1},\ldots,\sqrt{a_k}))$ is at least $1 - 2^{-s^3}$. 
+	Thus, the probability that the algorithm gives the wrong output is at most $2^{-s^3}$.
+
+	 
+	It remains to show that  $2$-RIT  is in {\coNP} unconditionally. The idea is to modify the algorithm in \Cref{fig:corp_squareRIT}, replacing randomisation with guessing. \Cref{th:prime_density} shows that \begin{equation}\label{eq:numprimnocon}\pi_{8A,b+1}(2^{3s^3}) > 2^{s^3}\end{equation}
+	 for $s$ sufficiently large.
+	 It follows that there exists a prime $p\leq 2^{3s^3}$
+	 that does not divide $N(f(\sqrt{a_1},\ldots,\sqrt{a_k}))$. The rest of the argument follows as in the proof of Theorem~\ref{th:rit-conp}.
+	\end{proof}
+	
+
+Note that, in general, in the proof of the theorem above, GRH is required to obtain the {\coRP} bound. 
+This is because the unconditional lower bound on density of primes in arithmetic progressions is not strong enough for our purposes: 
+The number of primes less than $2^{3s^3}$ which are favourable is just $2^{s^3}$, as computed in \eqref{eq:numprimnocon}. This gives a probability of success at least $2^{-2s^3}$, which is exponentially small in the instance size. In order to get a constant success probability, we have to repeatedly sample and run this algorithm $2^{2s^3}$ times, which yields an exponential time algorithm. However, under GRH, the bound is improved to $\frac{1}{6s^3}$ and polynomially many repetitions suffice for a constant success probability.
+
+	
+	
+	

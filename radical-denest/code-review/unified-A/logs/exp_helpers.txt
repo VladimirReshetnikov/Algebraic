@@ -1,0 +1,182 @@
+
+Syntax::com: Warning: comma encountered with no adjacent expression. The expression will be treated as Null.  (line 320 of "C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/original/Strad.wl").
+Kernel: 15.0.1 for Microsoft Windows (64-bit) (July 2, 2026)
+Print attributes before load: {Protected}  after: {}
+=== H. Helper-level probes ===
+H01 | HoldForm[Factorc[Sqrt[z^2]]]
+   -> z
+   time 0.s  numeric=n/a  exact=n/a  depth 0->0
+H02 | HoldForm[Factorc[Sqrt[t + t^2]]]
+   -> Sqrt[t*(1 + t)]
+   time 0.s  numeric=n/a  exact=n/a  depth 1->1
+H03 | HoldForm[Factorc[Sqrt[-x - y]]]
+   -> I*Sqrt[x + y]
+   time 0.001s  numeric=n/a  exact=n/a  depth 1->1
+H04 | HoldForm[Factorc[Sqrt[-2 - 2*Sqrt[2]]]]
+   -> I*Sqrt[2*(1 + Sqrt[2])]
+   time 0.001s  numeric=True  exact=True  depth 2->2
+H05 | HoldForm[Factorc[Sqrt[-(Sqrt[2] + (-1)^(1/3))]]]
+   -> I*Sqrt[(-1)^(1/3) + Sqrt[2]]
+   time 0.001s  numeric=True  exact=False  depth 2->2
+H06 | HoldForm[Factorc[Sqrt[(1 + I)*(3 + 2*Sqrt[2])]]]
+   -> Sqrt[(1 + I)*(3 + 2*Sqrt[2])]
+   time 0.001s  numeric=True  exact=True  depth 2->2
+H07 | HoldForm[Factorc[Sqrt[-1 - I]]]
+   -> Sqrt[-1 - I]
+   time 0.s  numeric=True  exact=True  depth 1->1
+H08 | HoldForm[Factorc[Sqrt[-2 - 2*I*Sqrt[3]]]]
+   -> Sqrt[2*(-1 - I*Sqrt[3])]
+   time 0.001s  numeric=True  exact=True  depth 2->2
+H09 | HoldForm[Factorc[Sqrt[(-1 - I*Sqrt[3])*(1 + Sqrt[2])]]]
+   -> Sqrt[(-I)*(1 + Sqrt[2])*(-I + Sqrt[3])]
+   time 0.001s  numeric=True  exact=True  depth 2->2
+H10 | HoldForm[Factorc[(-3 - 2*Sqrt[2])^(1/3)]]
+   -> (-3 - 2*Sqrt[2])^(1/3)
+   time 0.s  numeric=True  exact=True  depth 2->2
+H11 | HoldForm[Factorc[((-1 + I)*(3 + 2*Sqrt[2]))^(1/3)]]
+   -> ((-1 + I)*(3 + 2*Sqrt[2]))^(1/3)
+   time 0.001s  numeric=True  exact=True  depth 2->2
+H12 | HoldForm[Factorc[Sqrt[2] + Sqrt[3]]]
+   -> Sqrt[2] + Sqrt[3]
+   time 0.001s  numeric=True  exact=True  depth 1->1
+H13 | HoldForm[Factorc[(1 + Sqrt[2])^2]]
+   -> (1 + Sqrt[2])^2
+   time 0.s  numeric=True  exact=True  depth 1->1
+H14 | HoldForm[Factorc[Sqrt[8 + 4*Sqrt[3]]]]
+   -> 2*Sqrt[2 + Sqrt[3]]
+   time 0.001s  numeric=True  exact=True  depth 2->2
+H15 | HoldForm[Factorc[Sqrt[-8 - 4*Sqrt[3]]]]
+   -> (2*I)*Sqrt[2 + Sqrt[3]]
+   time 0.001s  numeric=True  exact=True  depth 2->2
+H16 | HoldForm[Factorc[Sqrt[(-1)^(1/3)*(3 + 2*Sqrt[2])]]]
+   -> (-1)^(1/6)*Sqrt[3 + 2*Sqrt[2]]
+   time 0.001s  numeric=True  exact=True  depth 2->2
+H17 | HoldForm[Factorc[Sqrt[(-1)^(2/3)*(3 + 2*Sqrt[2])]]]
+   -> (-1)^(1/3)*Sqrt[3 + 2*Sqrt[2]]
+   time 0.001s  numeric=True  exact=True  depth 2->2
+H18 | HoldForm[Factorc[Sqrt[x^4]]]
+   -> x^2
+   time 0.s  numeric=n/a  exact=n/a  depth 0->0
+H19 | HoldForm[Factorc[(x^2)^(1/3)]]
+   -> x^(2/3)
+   time 0.s  numeric=n/a  exact=n/a  depth 1->1
+H20 | HoldForm[Factorc[Sqrt[4*x^2 + 4*x^3]]]
+   -> 2*Sqrt[x^2*(1 + x)]
+   time 0.001s  numeric=n/a  exact=n/a  depth 1->1
+H21 | HoldForm[Factorc[Sqrt[-3 - 2*Sqrt[2]]]]
+   -> I*Sqrt[3 + 2*Sqrt[2]]
+   time 0.001s  numeric=True  exact=True  depth 2->2
+H22 | HoldForm[Factorc[Sqrt[(-1 + I*Sqrt[3])*(-1 + I*Sqrt[3])]]]
+   -> 1 - I*Sqrt[3]
+   time 0.s  numeric=True  exact=True  depth 1->1
+H23 | HoldForm[Factorc[Sqrt[-(1 + Sqrt[2]) - (1 + Sqrt[2])*I*Sqrt[3]]]]
+   -> Sqrt[(-I)*(1 + Sqrt[2])*(-I + Sqrt[3])]
+   time 0.001s  numeric=True  exact=True  depth 2->2
+--- RationalizeDenominator ---
+R01 | HoldForm[RationalizeDenominator[1/(1 + Sqrt[2])]]
+   -> -1 + Sqrt[2]
+   time 0.s  numeric=True  exact=True  depth 1->1
+R02 | HoldForm[RationalizeDenominator[1/(Sqrt[2] + Sqrt[3])]]
+   -> -Sqrt[2] + Sqrt[3]
+   time 0.002s  numeric=True  exact=True  depth 1->1
+R03 | HoldForm[RationalizeDenominator[1/(1 + I*Sqrt[2])]]
+   -> (1 - I*Sqrt[2])/3
+   time 0.001s  numeric=True  exact=True  depth 1->1
+R04 | HoldForm[RationalizeDenominator[(1 + Sqrt[2])/(Sqrt[2] - Sqrt[3])]]
+   -> -2 - Sqrt[2] - Sqrt[3] - Sqrt[6]
+   time 0.002s  numeric=True  exact=True  depth 1->1
+R05 | HoldForm[RationalizeDenominator[x/(1 + Sqrt[2])]]
+   -> 0
+   time 0.s  numeric=True  exact=n/a  depth 0->0
+R06 | HoldForm[RationalizeDenominator[1/2 + 1/Sqrt[2]]]
+   -> 1/2 + 1/Sqrt[2]
+   time 0.s  numeric=True  exact=True  depth 1->1
+R07 | HoldForm[RationalizeDenominator[1/Sqrt[2]]]
+   -> 1/Sqrt[2]
+   time 0.s  numeric=True  exact=True  depth 1->1
+R08 | HoldForm[RationalizeDenominator[1/(1 + 2^(1/3))]]
+   -> (1 - 2^(1/3) + 2^(2/3))/3
+   time 0.001s  numeric=True  exact=True  depth 1->1
+R09 | HoldForm[RationalizeDenominator[1/Sqrt[1 + Sqrt[2]]]]
+   -> -Sqrt[1 + Sqrt[2]] + Sqrt[2*(1 + Sqrt[2])]
+   time 0.001s  numeric=True  exact=True  depth 2->2
+R10 | HoldForm[RationalizeDenominator[0]]
+   -> 0
+   time 0.s  numeric=True  exact=True  depth 0->0
+
+MinimalPolynomial::nalg: x is not an explicit algebraic number.
+
+PolynomialQuotient::ivar: 0 is not a valid variable.
+
+MinimalPolynomial::nalg: x is not an explicit algebraic number.
+
+MinimalPolynomial::nalg: x is not an explicit algebraic number.
+
+General::stop: Further output of MinimalPolynomial::nalg will be suppressed during this calculation.
+
+PolynomialQuotient::ivar: 0 is not a valid variable.
+R11 | HoldForm[RationalizeDenominator[1/x]]
+   -> -(PolynomialQuotient[0, 0, 0]/MinimalPolynomial[x][0])
+   time 0.008s  numeric=n/a  exact=n/a  depth 0->0  MSGS: {MinimalPolynomial::nalg, General::stop, PolynomialQuotient::ivar}
+--- Marker/context collisions ---
+{f[1]}
+
+M01 | HoldForm[DenestRadicals3[f[1], False, Identity]]
+   -> 1
+   time 0.s  numeric=n/a  exact=n/a  depth 0->0
+{}
+
+M02 | HoldForm[DenestRadicals3[g[1], False, Identity]]
+   -> g[1]
+   time 0.s  numeric=n/a  exact=n/a  depth 0->0
+{f[Sqrt[3 + 2*Sqrt[2]]], f[f[Sqrt[3 + 2*Sqrt[2]]]]}
+
+M03 | HoldForm[DenestRadicals3[f[Sqrt[3 + 2*Sqrt[2]]], False, Identity]]
+   -> f[Sqrt[3 + 2*Sqrt[2]]]
+   time 0.007s  numeric=n/a  exact=n/a  depth 2->2  MSGS: {General::newsym}
+--- nesting helpers ---
+N01 | HoldForm[maxnestdepth[Sqrt[3 + 2*Sqrt[2]], MatchQ[#1, _^_Rational] & ]]
+   -> {{Sqrt[3 + 2*Sqrt[2]], 2}}
+   time 0.s  numeric=n/a  exact=n/a  depth 2->2
+N02 | HoldForm[maxnestdepth[(1 + 2^(1/3))^3, MatchQ[#1, _^_Rational] & ]]
+   -> {{2^(1/3), 1}}
+   time 0.s  numeric=n/a  exact=n/a  depth 1->1
+N03 | HoldForm[LCM @@ (maxnestdepth[(1 + 2^(1/3))^3, MatchQ[#1, _^_Rational] & ] /. {(base_)^(exp_), _} :> Denominator[exp])]
+   -> 3
+   time 0.s  numeric=True  exact=n/a  depth 0->0
+N04 | HoldForm[maxnestdepth[Sqrt[1 + 2^(1/3)]*(1 + Sqrt[2])^(1/3), MatchQ[#1, _^_Rational] & ]]
+   -> {{Sqrt[1 + 2^(1/3)], 2}, {(1 + Sqrt[2])^(1/3), 2}}
+   time 0.s  numeric=n/a  exact=n/a  depth 2->2
+N05 | HoldForm[nestdepthsort[Sqrt[3 + 2*Sqrt[3 + 2*Sqrt[2]]], MatchQ[#1, _^_Rational] & ]]
+   -> {{{Sqrt[3 + 2*Sqrt[3 + 2*Sqrt[2]]], 3}}, {{3 + 2*Sqrt[3 + 2*Sqrt[2]], 2}, {2*Sqrt[3 + 2*Sqrt[2]], 2}, {Sqrt[3 + 2*Sqrt[2]], 2}}, {{3 + 2*Sqrt[2], 1}, {2*Sqrt[2], 1}, {Sqrt[2], 1}}, {{3, 0}, {2, 0}, {3, 0}, {2, 0}, {2, 0}, {1/2, 0}, {1/2, 0}, {1/2, 0}}}
+   time 0.s  numeric=n/a  exact=n/a  depth 3->3
+N06 | HoldForm[maxnestdepth[Sqrt[3 + 2*Sqrt[2]] + (5 + 2*Sqrt[6])^(1/3), MatchQ[#1, _^_Rational] & ]]
+   -> {{Sqrt[3 + 2*Sqrt[2]], 2}, {(5 + 2*Sqrt[6])^(1/3), 2}}
+   time 0.s  numeric=n/a  exact=n/a  depth 2->2
+--- comparator and slice ---
+S01 | HoldForm[Sort[{{2, 1}, {3, 1}, {5, 1}, {7, 1}, {11, 1}, {13, 1}, {2003, 1}}, #1[[1]] <= #1[[2]] & ]]
+   -> {{2003, 1}, {13, 1}, {11, 1}, {7, 1}, {5, 1}, {3, 1}, {2, 1}}
+   time 0.s  numeric=n/a  exact=n/a  depth 0->0
+
+Part::take: Cannot take positions 1 through 6 in {2, 3, 5, 7, 11}.
+
+Part::take: Cannot take positions 1 through 6 in {2, 3, 5, 7, 11}.
+S02 | HoldForm[Module[{p = {2, 3, 5, 7, 11, 0}}, DeleteCases[p, 0][[1 ;; Min[10, Length[p]]]]]]
+   -> {2, 3, 5, 7, 11}[[1 ;; 6]]
+   time 0.s  numeric=n/a  exact=n/a  depth 0->0  MSGS: {Part::take}
+S03 | HoldForm[ComplexitySort[{6, Sqrt[2], 2, 3, 1 + Sqrt[2], 10, -3}]]
+   -> {2, 3, -3, 6, 10, Sqrt[2], 1 + Sqrt[2]}
+   time 0.s  numeric=n/a  exact=n/a  depth 1->1
+S04 | HoldForm[PossibleZeroQ[Sqrt[2] - FromContinuedFraction[ContinuedFraction[Sqrt[2], 400]]]]
+   -> False
+   time 0.s  numeric=n/a  exact=n/a  depth 0->0
+S05 | HoldForm[PossibleZeroQ[Sqrt[2] - FromContinuedFraction[ContinuedFraction[Sqrt[2], 400]], Method -> "ExactAlgebraics"]]
+   -> False
+   time 0.001s  numeric=n/a  exact=n/a  depth 0->0  MSGS: {N::meprec}
+S06 | HoldForm[PossibleZeroQ[Sqrt[2] - Root[#1^2 - 2 + 10^(-100) & , 2]]]
+   -> False
+   time 0.001s  numeric=n/a  exact=n/a  depth 0->0
+S07 | HoldForm[DeleteDuplicates[{1 + Sqrt[2], Sqrt[3 + 2*Sqrt[2]], 1 + Sqrt[2]}]]
+   -> {1 + Sqrt[2], Sqrt[3 + 2*Sqrt[2]]}
+   time 0.s  numeric=n/a  exact=n/a  depth 2->2
+DONE

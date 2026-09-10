@@ -1,0 +1,31 @@
+{
+  "record_id": "maximathread",
+  "title": "raddenest announcement and discussion",
+  "asset_id": "resource-01",
+  "version": "web-resources",
+  "kind": "web",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://sourceforge.net/p/maxima/mailman/maxima-discuss/thread/o6lan6%24h4r%241%40blaine.gmane.org/",
+    "resolved_url": "https://sourceforge.net/p/maxima/mailman/maxima-discuss/thread/o6lan6%24h4r%241%40blaine.gmane.org/",
+    "retrieved_at": "2026-09-05T20:28:07+00:00",
+    "http_status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "content_encoding": "",
+    "bytes": 125980,
+    "sha256": "5cf4437ca3ef2d1227c777b911518224090c8d072ededa2652b9b59c1d19babf"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "cited_web_resource",
+  "note": "URL cited in an input report. Not all web pages have been independently reopened. HTML is saved as HTML; software code is not labelled as article TeX.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "web_resources/maximathread-raddenest-announcement-and-discussion/web-resources/resource-01.html",
+      "role": "web",
+      "bytes": 125980,
+      "sha256": "5cf4437ca3ef2d1227c777b911518224090c8d072ededa2652b9b59c1d19babf"
+    }
+  ],
+  "prior_candidate_errors": []
+}

@@ -1,0 +1,31 @@
+{
+  "record_id": "girstmair",
+  "title": "Reducing radicals in the spirit of Euclid",
+  "asset_id": "pdf",
+  "version": "arxiv-2004.06039v1",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://arxiv.org/pdf/2004.06039v1",
+    "resolved_url": "https://arxiv.org/pdf/2004.06039v1",
+    "retrieved_at": "2026-09-05T20:26:19+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 142257,
+    "sha256": "c20329961333ca0e2b375addca3407b10ce6d78a17b041f3eaff9aad73f41762"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "repository_pdf_and_source_links",
+  "note": "Pinned arXiv version; PDF and source requests use the identical version identifier.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/girstmair-Reducing-radicals-in-the-spirit-of-Euclid/arxiv-2004.06039v1/paper.pdf",
+      "role": "pdf",
+      "bytes": 142257,
+      "sha256": "c20329961333ca0e2b375addca3407b10ce6d78a17b041f3eaff9aad73f41762"
+    }
+  ],
+  "prior_candidate_errors": []
+}

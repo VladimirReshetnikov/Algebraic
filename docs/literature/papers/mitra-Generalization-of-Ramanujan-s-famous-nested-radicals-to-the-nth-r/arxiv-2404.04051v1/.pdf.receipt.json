@@ -1,0 +1,31 @@
+{
+  "record_id": "mitra",
+  "title": "Generalization of Ramanujan's famous nested radicals to the nth root and their evaluation",
+  "asset_id": "pdf",
+  "version": "arxiv-2404.04051v1",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://arxiv.org/pdf/2404.04051v1",
+    "resolved_url": "https://arxiv.org/pdf/2404.04051v1",
+    "retrieved_at": "2026-09-05T20:27:09+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 327336,
+    "sha256": "8a8d49ecc7d49defe599b27734e41ad4dfc2628c18ff6011066dc58f3b118d30"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "repository_pdf_and_source_links",
+  "note": "Pinned arXiv version; PDF and source requests use the identical version identifier.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/mitra-Generalization-of-Ramanujan-s-famous-nested-radicals-to-the-nth-r/arxiv-2404.04051v1/paper.pdf",
+      "role": "pdf",
+      "bytes": 327336,
+      "sha256": "8a8d49ecc7d49defe599b27734e41ad4dfc2628c18ff6011066dc58f3b118d30"
+    }
+  ],
+  "prior_candidate_errors": []
+}

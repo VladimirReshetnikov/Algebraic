@@ -1,0 +1,47 @@
+\section{The original source, with line numbers}
+\label{app:original}
+The file \code{src/original/Strad.wl} is reproduced verbatim (585 physical
+lines). All ``lines $n$--$m$'' references in the text refer to these numbers.
+\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,firstnumber=1,stepnumber=1,breaklines=true,frame=none,backgroundcolor=\color{white},xleftmargin=22pt,literate=]{../../original/Strad.wl}
+
+\clearpage
+\section{The corrected source}
+\label{app:fixed}
+The file \code{src/corrected/StradFixed.wl}. Load it with
+\code{Get["StradFixed.wl"]}; the public symbols live in the context
+\code{RadicalDenest`}.
+\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,firstnumber=1,stepnumber=1,breaklines=true,frame=none,backgroundcolor=\color{white},xleftmargin=22pt,literate=]{../../corrected/StradFixed.wl}
+
+\clearpage
+\section{Experiment harness}
+\label{app:harness}
+All scripts are in \code{src/code-review/unified-A/harness/}; the recorded
+outputs are in \code{src/code-review/unified-A/logs/}. The runner used for the original program is
+listed below; \code{runner_fixed.wl} is identical except that it loads the
+corrected package. The case files (\code{exp_original.wl},
+\code{exp_helpers.wl}, \code{exp_round2.wl}, \code{exp_round3.wl},
+\code{exp_fixed.wl}), the randomized families (\code{exp_fuzz.wl},
+\code{exp_fuzz_fixed.wl}), the table generator (\code{export_tables.wl}), the
+script that exercises the reviews' proposed kernels
+(\code{test_review_kernels.wl}) and the shell script that runs the reviews'
+suites (\code{run_suites.sh}) are self-contained apart from absolute paths at
+their top.
+\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines=true,frame=none,backgroundcolor=\color{white},xleftmargin=22pt,literate=]{harness/runner.wl}
+
+\paragraph{Reproduction.} With Wolfram 15 and \code{wolframscript} on the path,
+from \code{src/code-review/unified-A/harness}:
+\begin{lstlisting}[language={}]
+wolframscript -file exp_original.wl      # Tables 6-10
+wolframscript -file exp_helpers.wl       # Tables 11-12
+wolframscript -file exp_round2.wl        # Tables 13-14
+wolframscript -file exp_round3.wl        # Table 15
+wolframscript -file exp_fuzz.wl          # Table 16, original
+wolframscript -file exp_fixed.wl         # Tables 18-22
+wolframscript -file exp_fuzz_fixed.wl    # Table 16, corrected
+wolframscript -file test_review_kernels.wl
+./run_suites.sh                          # the reviews' own suites
+wolframscript -file export_tables.wl     # regenerates tables/*.tex
+\end{lstlisting}
+Only one kernel should run at a time on a single-seat license. Loading the
+original file in a valuable interactive session is not advisable: it clears
+several global symbols and unprotects \code{Print}.

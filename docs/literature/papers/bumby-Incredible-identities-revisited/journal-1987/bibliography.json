@@ -1,0 +1,25 @@
+{
+  "id": "bumby",
+  "title": "Incredible identities revisited",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "bumby",
+      "entry_latex": "R.~T. Bumby, ``Incredible identities revisited,'' \\emph{Fibonacci Quarterly} \\textbf{25}(1) (1987), 62--64. \\doi{10.1080/00150517.1987.12429728}.\n\\access{https://www.fq.math.ca/25-1.html}{Original volume index}. \\status{A}\nThe issue year is 1987. A 2024 digitization/publication timestamp should not be mistaken for a recent theorem."
+    },
+    {
+      "report": "report-2",
+      "key": "bumby",
+      "entry_latex": "Richard T. Bumby.\n\\emph{Incredible identities revisited}.\nThe Fibonacci Quarterly \\textbf{25}(1), 62--64, 1987.\n\\doi{10.1080/00150517.1987.12429728}.\n\\textbf{M.} Reexamines the identities; a 2024 online-publication timestamp is digitization metadata, not the original research year."
+    },
+    {
+      "report": "report-3",
+      "key": "bumby",
+      "entry_latex": "Richard T. Bumby. ``Incredible Identities Revisited.'' \\emph{The Fibonacci Quarterly} \\textbf{25}(1) (1987), 62--64. \\doi{10.1080/00150517.1987.12429728}. \\status{A}\n\\entrynote{Revisits and explains the Shanks identities. A 2024 online backfile date is not the paper's original publication year.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

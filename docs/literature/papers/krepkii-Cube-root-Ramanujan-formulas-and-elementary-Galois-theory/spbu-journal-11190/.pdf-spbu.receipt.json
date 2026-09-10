@@ -1,0 +1,33 @@
+{
+  "record_id": "krepkii",
+  "title": "Cube root Ramanujan formulas and elementary Galois theory",
+  "asset_id": "pdf-spbu",
+  "version": "spbu-journal-11190",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://math-mech-astr-journal.spbu.ru/article/download/11190/7872/34789",
+    "resolved_url": "https://math-mech-astr-journal.spbu.ru/article/download/11190/7872/34789",
+    "retrieved_at": "2026-09-05T20:30:25+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36",
+    "content_encoding": "",
+    "bytes": 296405,
+    "sha256": "382652ed4d42405d7187a30db132ab2189b0db8b28ce6f13a40f773cab9f45cb",
+    "tls_verification": "SKIPPED by --insecure"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "search_indexed_pdf",
+  "note": "Vestnik SPbU Mathematics article download endpoint (route from the download kit).",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/krepkii-Cube-root-Ramanujan-formulas-and-elementary-Galois-theory/spbu-journal-11190/pdf-spbu.pdf",
+      "role": "pdf",
+      "bytes": 296405,
+      "sha256": "382652ed4d42405d7187a30db132ab2189b0db8b28ce6f13a40f773cab9f45cb"
+    }
+  ],
+  "prior_candidate_errors": []
+}

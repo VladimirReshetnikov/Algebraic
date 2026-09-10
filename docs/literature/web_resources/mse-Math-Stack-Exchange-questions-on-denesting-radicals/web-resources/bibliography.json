@@ -1,0 +1,34 @@
+{
+  "id": "mse",
+  "title": "Math Stack Exchange questions on denesting radicals",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "mse",
+      "entry_latex": "Math StackExchange, discussions of elementary radical denesting and Ramanujan cube-root identities:\n\\access{https://math.stackexchange.com/questions/4680}{question 4680},\n\\access{https://math.stackexchange.com/questions/16331}{question 16331}, and\n\\access{https://math.stackexchange.com/questions/871639}{question 871639}. \\status{B}\nConcrete question identifiers replace vague unverified titles from the supplied reports. Useful coefficient-matching, field-theoretic, and exact-identity explanations; informal rather than a substitute for primary-source verification."
+    },
+    {
+      "report": "report-2",
+      "key": "mse4680",
+      "entry_latex": "Mathematics Stack Exchange contributors.\nDiscussion of denesting nested radicals, question 4680.\n\\sourceurl{https://math.stackexchange.com/questions/4680}.\n\\textbf{R.} A retained question-and-answer resource for elementary methods and references. Individual answers have their own authorship and should not be cited as one refereed theorem."
+    },
+    {
+      "report": "report-2",
+      "key": "mse16331",
+      "entry_latex": "Mathematics Stack Exchange contributors.\nRadical-denesting discussion, question 16331.\n\\sourceurl{https://math.stackexchange.com/questions/16331}.\n\\textbf{R.} Useful discovery trail for structural explanations and classical identities; primary sources should carry the final mathematical attribution."
+    },
+    {
+      "report": "report-2",
+      "key": "mse871639",
+      "entry_latex": "Mathematics Stack Exchange contributors.\nNested-radical discussion, question 871639.\n\\sourceurl{https://math.stackexchange.com/questions/871639}.\n\\textbf{R.} Retained as an additional informal explanation resource rather than an independent research publication."
+    },
+    {
+      "report": "report-3",
+      "key": "mse",
+      "entry_latex": "Mathematics Stack Exchange. Discussions on denesting radicals, including threads 4680, 16331, and 871639. \\url{https://math.stackexchange.com/questions/4680}; \\url{https://math.stackexchange.com/questions/16331}; \\url{https://math.stackexchange.com/questions/871639}. \\status{D}\n\\entrynote{Community explanations and useful references, including contributions by Bill Dubuque and other authors. Grouped as discussion resources rather than counted as independent papers. Exact identities used in this report have their own algebraic verification.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

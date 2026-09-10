@@ -1,0 +1,23 @@
+[
+  {
+    "time": "2026-09-05T20:05:59+00:00",
+    "url": "https://arxiv.org/pdf/2403.04776v2",
+    "attempt": 1,
+    "status": "failed",
+    "error": "URLError: <urlopen error [Errno -3] Temporary failure in name resolution>"
+  },
+  {
+    "time": "2026-09-05T20:06:03+00:00",
+    "url": "https://arxiv.org/src/2403.04776v2",
+    "attempt": 1,
+    "status": "failed",
+    "error": "URLError: <urlopen error [Errno -3] Temporary failure in name resolution>"
+  },
+  {
+    "time": "2026-09-05T20:06:06+00:00",
+    "url": "https://arxiv.org/e-print/2403.04776v2",
+    "attempt": 1,
+    "status": "failed",
+    "error": "URLError: <urlopen error [Errno -3] Temporary failure in name resolution>"
+  }
+]

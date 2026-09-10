@@ -1,0 +1,31 @@
+{
+  "record_id": "kneser",
+  "title": "Lineare Abhängigkeit von Wurzeln",
+  "asset_id": "pdf-journal-1975",
+  "version": "journal-1975",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://matwbn.icm.edu.pl/ksiazki/aa/aa26/aa26313.pdf",
+    "resolved_url": "https://matwbn.icm.edu.pl/ksiazki/aa/aa26/aa26313.pdf",
+    "retrieved_at": "2026-09-05T20:25:32+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 155043,
+    "sha256": "4493789c647e2517d4b47ae21681351758e8613c9a022fbd075b5c7e2ab47a09"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "search_indexed_pdf",
+  "note": "Polish mathematical archive; German article.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/kneser-Lineare-Abh-ngigkeit-von-Wurzeln/journal-1975/pdf-journal-1975.pdf",
+      "role": "pdf",
+      "bytes": 155043,
+      "sha256": "4493789c647e2517d4b47ae21681351758e8613c9a022fbd075b5c7e2ab47a09"
+    }
+  ],
+  "prior_candidate_errors": []
+}

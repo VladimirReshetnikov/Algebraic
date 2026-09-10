@@ -1,0 +1,15 @@
+{
+  "id": "kluners",
+  "title": "On computing subfields. A detailed description of the algorithm",
+  "citations": [
+    {
+      "report": "report-2",
+      "key": "kluners",
+      "entry_latex": "J\\\"urgen Kl\\\"uners.\n\\emph{On computing subfields. A detailed description of the algorithm}.\nJournal de Th\\'eorie des Nombres de Bordeaux \\textbf{10}(2), 243--271, 1998.\n\\sourceurl{https://jtnb.centre-mersenne.org/item/JTNB_1998__10_2_243_0/}.\n\\textbf{M.} Subfield computation as a practical component for discovering smaller radical representations; not itself a complete denester."
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

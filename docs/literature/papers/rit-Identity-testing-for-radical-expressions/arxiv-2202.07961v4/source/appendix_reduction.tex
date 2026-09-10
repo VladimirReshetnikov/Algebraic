@@ -1,0 +1,90 @@
+
+Given a set of integers $a_1,\ldots,a_k$, the \emph{factor-refinement} algorithm~\cite{BACH1993199} computes a set~$\{m_1,\ldots,m_{\ell}\}$ of (not necessarily prime) factors~$m_j$ of the $a_i$'s such that 
+ $gcd(m_j,m_k)=1$ for all $1\leq j<k\leq \ell$, and each $a_i$ can be written as a product of these factors, i.e.,  $a_i = \prod_{j=1}^{l} m_j^{e_{ij}}$ with the $e_{ij}\in\NN$. If we denote by $a = \lcm(a_1,\ldots,a_k)$, the factor-refinement algorithm runs in time $\mathcal{O}(\log^2(a))$(see also~\cite[Lemma 3.1]{blomer98}), and the number~$\ell$ of factors is bounded by $\sum_{i=1}^{k} \log(|a_i|)$. 
+  
+ \paragraph{Reduction.}
+ Given an algebraic circuit $C$ representing a polynomial $f(x_1,\ldots,x_k)$ together with $k$ input radicals $\mysqrt{d_1}{a_1},\ldots,\mysqrt{d_k}{a_k}$, we construct another algebraic circuit~$C'$ representing an $\ell$-variate polynomial $f'(y_1,\ldots,y_{\ell})$ and input radicals $\mysqrt{t_1}{n_1},\ldots,\mysqrt{t_\ell}{n_\ell}$, with the $n_j$ pairwise coprime and respective minimal polynomials $x^{t_j}-n_j$, such that 
+$f(\mysqrt{d_1}{a_1},\ldots,\mysqrt{d_k}{a_k})=0$ if and only if $f'(\mysqrt{t_1}{n_1},\ldots,\mysqrt{t_\ell}{n_\ell})=0$.
+
+We first compute the partial factorisation of each one of the $a_i$'s by going through all primes up to $\log a$, which can clearly be done in $poly(\log a)$ time, where $a = \lcm(a_1,\ldots,a_k)$. We denote by $m_1,\ldots,m_r$, the primes $p$ appearing in the factorisations of the $a_i$. We then apply the \emph{factor-refinement} algorithm to the unfactored parts of the $a_i$'s 
+and compute a set of pairwise coprime factors $\{m_{r+1},\ldots,m_\ell\}$ such that $a_i=\prod_{j=1}^{l} m_j^{e_{ij}}$. Then  
+\begin{align*}
+	f(\mysqrt{d_1}{a_1},\ldots,\mysqrt{d_k}{a_k})=0 \, & \Longleftrightarrow \, f\big(\prod_{j=1}^{l} m_j^{\frac{e_{1j}}{d_1}},\ldots,\prod_{j=1}^{l} m_j^{\frac{e_{kj}}{d_k}}\big)=0
+\end{align*}
+
+
+To construct the new input radicals $\mysqrt{t_i}{n_i}$ with respective minimal polynomials $x^{t_i}-n_i$, we compute for each $\mysqrt{d_i}{m_j}$ the smallest $d_{ij}$ such that $\mysqrt{d_i}{m_j}^{d_{ij}}\in\ZZ$. Observe that in general $m_j= p_1^{f_{j1}} \ldots p_s^{f_js}$ with $p_1,\ldots,p_s$ rational primes, and we have
+\[\mysqrt{d_i}{m_j}^{d_{ij}} =
+  \mysqrt{d_i}{p_1^{f_{j1}} \cdots p_s^{f_{js}}}^{d_{ij}} =
+  \left( p_1^{f_{j1}} \cdots p_s^{f_{js}} \right) ^ {\frac{d_{ij}}{d_i}}
+\]
+which will be an integer if and only if $d_{i} | \gcd(f_{j1}, \ldots, f_{js}) \cdot d_{ij}$. Furthermore, observe that $d_{ij}$ will be the smallest such power precisely when
+\begin{equation}\label{eq:di_gcd_dij}
+    d_{i} = \gcd(f_{j1}, \ldots, f_{js}) \cdot d_{ij}.
+\end{equation}
+
+Now for the first $r$ factors of the $a_i$'s which are all prime, we have that $m_j = p$ for some rational prime $p$, and $d_{ij} = d_i$.
+
+For $m_j$, $r < j \leq l$, first note that all $m_j$'s are products of powers of primes larger than $\log a$. Thus the multiplicities of the primes appearing in the decompositions $m_j= p_1^{f_{j1}} \ldots p_s^{f_js}$, that is, all $f_{j}$'s, are small. In particular, $f_{j} < \log m_j$ for all $j$, and furthermore $\gcd(f_{j1},\ldots,f_{js}) < \log m_j$.  Keeping this observation in mind, we can now show how to compute the $d_{ij}$ in time polynomial in $\log m_j$.
+    
+ Following \eqref{eq:di_gcd_dij}, we go trough the candidates for the $\gcd(f_{j1},\ldots,f_{js})$, $g_{ij} = 1,\ldots,\log m_j-1$, computing $f = \frac{d_i}{g_{ij}}$, the candidate for our $d_{ij}$ (note that if $f\notin\ZZ$, we discard it and move on). We then approximate $\mysqrt{d_i}{m_j}^f = m_j^{\frac{f}{d_i}} = m_j ^ {\frac{1}{g_{ij}}}$ with absolute error less than $1/2$ to obtain the unique integer $m$ with $|\mysqrt{g_{ij}}{m_j} - m| < 1/2$. This can be done by doing $\log m_j < \log a$ iterations of the Newton iteration \cite[Lemma~3.1]{Brent2016}. 
+ We conclude by checking whether $m ^{d_i} = m_j^f$. This can be efficiently computed by writing $d_i = fg$ and observing that we are checking whether $(m^{g_{ij}})^f = m_j ^ e$, which simplifies to $m^{g_{ij} }=m_j$, with $g_{ij}$ unary.
+
+Finally, we construct the new input radicals by setting $n_j = m_j ^{\frac{1}{\lcm(d_{1j}\cdots d_{kj})}}$ and $t_j = \frac{d_1\cdots d_k}{\lcm(d_{1j} \cdots d_{kj})}$.
+We complete the reduction by constructing the algebraic circuit $C'$ from $C$ by replacing the leaves $x_i$, $i\in \{1,\ldots,k\}$, with a small circuit that computes $\prod_{j=1}^{l} y_j^{\frac{e_{ij}d_1\cdots d_k}{d_i}}$;
+see Figure~\ref{fig:reduction}.
+
+\begin{figure}[t]
+\begin{center}
+\begin{tikzpicture} 
+
+\node[isosceles triangle, isosceles triangle apex angle=80, rotate=90,
+    color=red!60, fill=red!5, draw, minimum size =2cm,thick] (T)at (0,0){}; 
+ \node   at (0,0) (C) {\textcolor{red}{circuit $C$}};
+       
+ \filldraw[red] (-1.1,-.75) circle (3pt);
+  \node at (-1.1, -1.1)   (a1) {$x_1$};
+  \node at (-.25, -1.1)   (dots) {$\ldots$};
+ \filldraw[red] (.5,-.75) circle (3pt);
+  \node at (.5, -1.1)   (ak) {$x_k$}; 
+ \filldraw[red] (1.2,-.75) circle (3pt);
+  \node at (1.2, -1.1)   (const) {$-1$}; 
+  
+ 
+ 
+ \node   at (3,0) (CC) {$\Longrightarrow$};
+ 
+ \node[isosceles triangle, isosceles triangle apex angle=80, rotate=90,
+    color=blue!60, fill=blue!5, draw, minimum size =3.2cm,thick] (T)at (6,-.6){};  
+       
+  \node[isosceles triangle, isosceles triangle apex angle=80, rotate=90,
+    color=red!60, dashed, draw, minimum size =2cm,thick] (T)at (6,0){}; 
+ \node   at (6,0) (CC) {\textcolor{blue}{circuit $C'$}};
+ 
+
+ \node[draw] at (5, -.7)   (t1) {$\times$};
+ \node[draw] at (7, -.7)   (t2) {$\times$}; 
+
+ 
+\node at (4, -2.1)   (y1) {$y_1$};
+\node at (4.8, -2.1)   (yl) {$y_{2}$}; 
+\node at (6.4, -2.1)   (a) {$\ldots$};
+
+\node at (7.2, -2.1)   (yl) {$y_{\ell}$}; 
+\node at (8, -2.1)   (m) {$-1$};
+
+
+\filldraw[blue] (4,-1.75) circle (3pt);
+ \path[->,draw,blue] (t1) edge  (4.1,-1.7);
+ \filldraw[blue] (5,-1.75) circle (3pt);
+  \path[->,draw,blue] (t1) edge  [bend left] (5.1,-1.7);
+    \path[->,draw,blue] (t1) edge [bend right] (4.9,-1.7);
+ \path[->,draw,blue] (t1) edge  (7.1,-1.7);
+ \filldraw[blue] (7.2,-1.75) circle (3pt);
+ \filldraw[blue] (8,-1.75) circle (3pt);
+  
+	\end{tikzpicture}
+	\end{center}
+	\caption{The scheme of the reduction from  RIT  to its variant where the input radicands are pairwise coprime and the exponents are all equal. In this simple example, $a_1$ is factored to $m_1m_2^2m_{\ell}$. }\label{fig:reduction}
+\end{figure}
+

@@ -1,0 +1,24 @@
+{
+  "id": "maxima",
+  "title": "raddenest",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "raddenestsrc",
+      "entry_latex": "G. Schintgen, \\emph{raddenest}, Maxima package.\n\\access{https://github.com/gschintgen/raddenest}{Repository};\n\\access{https://raw.githubusercontent.com/gschintgen/raddenest/master/raddenest.mac}{implementation source}. \\status{D}\nA SymPy-derived square-root denester with original higher-root extensions, including Cardan and Honsbeek-style routines. Source comments and branch settings should be read before translating examples involving negative radicands."
+    },
+    {
+      "report": "report-2",
+      "key": "maximaraddenest",
+      "entry_latex": "Gilles Schintgen.\n\\emph{raddenest}, Maxima package and source repository.\n\\sourceurl{https://github.com/gschintgen/raddenest}.\nSource: \\sourceurl{https://raw.githubusercontent.com/gschintgen/raddenest/master/raddenest.mac}.\n\\textbf{D.} SymPy port plus additional Cardan-polynomial and Ramanujan-type methods. Source comments discuss real-domain semantics and cite Honsbeek."
+    },
+    {
+      "report": "report-3",
+      "key": "maxima",
+      "entry_latex": "\\texttt{gschintgen/raddenest}. Maxima add-on package, documentation, and source. \\url{https://github.com/gschintgen/raddenest}. \\status{D}\n\\entrynote{The README describes substantial lineage from SymPy 1.0, while the package documentation includes selected additional higher-root routines. Thus ``only a square-root port'' is incomplete. Maxima was not executed during this synthesis.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

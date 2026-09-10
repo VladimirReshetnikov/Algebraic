@@ -1,0 +1,582 @@
+% Corrected re-typesetting of the PDF supplied in articles.zip.
+% See CORRECTIONS.md for transcription repairs and substantive editorial notes.
+% Compile twice with: pdflatex -interaction=nonstopmode -halt-on-error gkioulekas2017.tex
+\documentclass[11pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=0.88in,headheight=15pt,headsep=18pt]{geometry}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{microtype}
+\usepackage{graphicx,booktabs,array,longtable}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{xurl}
+\usepackage[hidelinks,unicode,pdfencoding=auto]{hyperref}
+\usepackage{fancyhdr}
+\usepackage{needspace}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+\urlstyle{same}
+\setlength{\emergencystretch}{2em}
+\setlength{\parskip}{2pt}
+\setlength{\parindent}{1.2em}
+\linespread{1.025}
+\allowdisplaybreaks[1]
+\setlist{itemsep=3pt,topsep=6pt,parsep=1pt}
+\lstset{basicstyle=\ttfamily\small,columns=fullflexible,keepspaces=true,
+  breaklines=true,breakatwhitespace=true,showstringspaces=false,
+  aboveskip=9pt,belowskip=9pt,xleftmargin=0.6em}
+\newcommand{\editorialnote}[1]{\begin{quote}\small\noindent
+  \textbf{Editorial note.} #1\end{quote}}
+\newcommand{\transcriptionnote}{\par\smallskip\noindent{\footnotesize
+  Corrected re-typesetting. Original numbering retained; pagination reset.
+  Substantive editorial changes are identified in the accompanying correction log.}\par\medskip}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\Gal}{Gal}
+\DeclareUnicodeCharacter{27F8}{\ensuremath{\Longleftarrow}}
+\DeclareUnicodeCharacter{27F9}{\ensuremath{\Longrightarrow}}
+\DeclareUnicodeCharacter{21D2}{\ensuremath{\Rightarrow}}
+\DeclareUnicodeCharacter{21D4}{\ensuremath{\Leftrightarrow}}
+\DeclareUnicodeCharacter{25A1}{\ensuremath{\square}}
+\DeclareUnicodeCharacter{2264}{\ensuremath{\leq}}
+\DeclareUnicodeCharacter{2265}{\ensuremath{\geq}}
+\DeclareUnicodeCharacter{2212}{\ensuremath{-}}
+\DeclareUnicodeCharacter{00B1}{\ensuremath{\pm}}
+\DeclareUnicodeCharacter{00D7}{\ensuremath{\times}}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\itshape On the denesting of nested square roots}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\small\thepage}\renewcommand{\headrulewidth}{0pt}}
+\hypersetup{pdftitle={On the denesting of nested square roots},pdfauthor={Eleftherios Gkioulekas},pdfsubject={Corrected re-typesetting of the supplied article}}
+\title{On the denesting of nested square roots}
+\author{Eleftherios Gkioulekas\\[4pt]\small University of Texas Rio Grande Valley, Edinburg, Texas}
+\date{\small International Journal of Mathematical Education in Science and Technology (2017)\\DOI: \href{https://doi.org/10.1080/0020739X.2017.1290831}{10.1080/0020739X.2017.1290831}}
+
+\begin{document}
+\maketitle
+\transcriptionnote
+
+\begin{abstract}
+We present the basic theory of denesting nested square roots, from an elementary point of view, suitable for lower level coursework. Necessary and sufficient conditions are given for direct denesting, where the nested expression is rewritten as a sum of square roots of rational numbers, and for indirect denesting, where the nested expression is rewritten as a sum of fourth-order roots of rational numbers. The theory is illustrated with several solved examples.
+\end{abstract}
+
+\noindent\textbf{Received:} 11 September 2016.\par\noindent\textbf{Keywords:} Denesting; roots; nested radicals; algebra.
+
+\section*{1. Introduction}
+Using basic arithmetic, we can expand $(2+\sqrt{2})^{2}=2^{2}+2 \cdot 2 \sqrt{2}+(\sqrt{2})^{2}=6+4 \sqrt{2}$ and then turn that around to write $\sqrt{6+4 \sqrt{2}}=2+\sqrt{2}$. The left-hand side is an example of a nested radical, which is defined as an expression involving rational numbers, the basic four operations of arithmetic (addition, subtraction, multiplication, division), and roots, such that some root appears under another root. Denesting means rewriting the expression so that only rational numbers appear inside roots. In this note, we limit ourselves to the problem of denesting expressions of the form $A=\sqrt{a \pm b \sqrt{p}}$ with $a$ being a rational number and $b, p$ being positive rational numbers. We also consider the closely related problem of denesting expressions of the form $\sqrt{a \sqrt{p}+b \sqrt{q}}$ with $a, b$ rational numbers and $p, q$ rational positive numbers. Such expressions may occur in solutions of quadratic or biquadratic equations, trigonometry problems, integrals of rational functions and so on.
+
+However, this is only part of a broader problem. For example, nested radicals involving a square root inside a cubic root routinely emerge when solving cubic equations [1]. More complicated examples of nested radicals were given by Ramanujan [2], such as
+
+
+\begin{gather*}
+\sqrt[3]{\sqrt[3]{2}-1}=\sqrt[3]{\frac{1}{9}}-\sqrt[3]{\frac{2}{9}}+\sqrt[3]{\frac{4}{9}}  \tag{1}\label{eq:1}\\
+\sqrt{\sqrt[3]{5}-\sqrt[3]{4}}=(1 / 3)(\sqrt[3]{2}+\sqrt[3]{20}-\sqrt[3]{25}) \tag{2}\label{eq:2}
+\end{gather*}
+
+
+naturally begging the question of whether there is a systematic algorithm that can be used to denest radical expressions of arbitrary complexity. To the best of the author's knowledge, this is still an open question and a subject of current research. A review of known results is given by Landau [3]. Most notable is an algorithm by Bl\"omer [4,5] that can handle nested radicals with depth 2 (roots inside roots) but cannot handle depths greater than 2. Another method was developed by Zippel [6,7] that is able to denest radicals, like the one by Ramanujan given by Equation (1). A much more general and more powerful algorithm was developed by Landau [8], except for two shortcomings: the denested expression will use complex roots of unity, and it requires splitting-field computations and has exponential worst-case running time. There is no known general denesting algorithm that does not involve resulting expressions that use complex roots of unity.
+
+When we limit ourselves to the simple case $A=\sqrt{a \pm b \sqrt{p}}$, then the situation is much clearer: Borodin et al. [9] showed that it can denest in only two ways, or not at all:
+
+
+\begin{equation*}
+\sqrt{a \pm b \sqrt{p}}=\sqrt{x} \pm \sqrt{y} \quad \text { or } \quad \sqrt{a \pm b \sqrt{p}}=\sqrt[4]{p}(\sqrt{x} \pm \sqrt{y}), \tag{3}\label{eq:3}
+\end{equation*}
+
+
+where $x,y,p$ are positive rational numbers. In this note, we give an exposition of the denesting theory for this special expression from an elementary point of view, appropriate for lower level coursework. In particular, in Section 2, we derive the necessary and sufficient conditions for the existence of denestings in accordance to Equation (3), without, however, going as far as to show that these are the only possible denestings. The proofs are simple, given in a formal and complete style, and can serve as excellent examples for introducing concepts of proof in lower level coursework, such as proof by contradiction, proof by cases and quantified statements. In Section 3, we give a few examples and also illustrate the splitting-term method, as an occasional shortcut that leads to a faster calculation, where the appropriate term splitting is obvious. In Section 4, we consider the denesting of radicals of the form $\sqrt{a \sqrt{p}+b \sqrt{q}}$ with $a, b, p, q$ rational numbers. The note is concluded in Section 5.
+
+For readers who wish to present this material at an elementary level, without including the proofs in Section 2, it is sufficient to introduce Definition 2.1, where we define direct and indirect denestings, and then state without proof both Theorems 2.1 and 2.2. Theorem 2.1 gives the necessary and sufficient conditions for direct denesting and the corresponding denesting formula. Likewise, Theorem 2.2 gives the necessary and sufficient conditions and the denesting formula for indirect denesting. After this brief presentation, one can then proceed with the examples in Sections 3 and 4.
+
+\section*{2. Denesting theorems}
+We use the following standard notation throughout the article: $\mathbb{Q}$ represents the set of all rational numbers. We define $\mathbb{Q}^{*}$ and $\mathbb{Q}_{+}^{*}$ as the sets of non-zero rational numbers and nonzero positive rational numbers correspondingly, given by $\mathbb{Q}^{*}=\mathbb{Q}-\{0\}$ and $\mathbb{Q}_{+}^{*}=\{x \in$ $\mathbb{Q} \mid x>0\}$. In the arguments given below, we use standard quantifier notation to write statements and we use braces to represent conjunction (i.e. the 'logical and').
+
+We pose the problem of denesting the expression $A=\sqrt{a \pm b \sqrt{p}}$ via the following definition:
+
+\noindent\textbf{Definition 2.1:} Let $A=\sqrt{a\pm b\sqrt p}$ with $a\in\mathbb Q$, $b,p\in\mathbb Q_+^*$, $\sqrt p\notin\mathbb Q$, and $a\pm b\sqrt p>0$. We say that
+
+\[
+\begin{aligned}
+A \text { denests directly } & \Longleftrightarrow \exists x,y\in\mathbb Q_+^*,\ \varepsilon\in\{-1,1\}: A=\sqrt{x}+\varepsilon\sqrt{y}, \\
+A \text { denests indirectly } & \Longleftrightarrow \exists x,y\in\mathbb Q_+^*,\ \varepsilon\in\{-1,1\}: A=\sqrt[4]{p}(\sqrt{x}+\varepsilon\sqrt{y}) .
+\end{aligned}
+\]
+
+The sign $\varepsilon$ is chosen so that the right-hand side is positive. For direct denesting it agrees with the sign of the inner irrational term; for indirect denesting it need not agree with that sign. In particular, a negative rational part $a$ produces a difference in Theorem 2.2. The goal is to derive necessary and sufficient conditions for the statements ' $A$ denests directly' and ' $A$ denests indirectly' and to calculate the corresponding rational numbers $x, y$. This is done below via Theorems 2.1 and 2.2. To show these theorems, we begin with the following lemmas:
+
+\noindent\textbf{Lemma 2.1:} Let $a, b \in \mathbb{Q}_{+}^{*}$ be given. Then,
+
+\[
+(\sqrt{a} \notin \mathbb{Q} \wedge a \neq b) \Longrightarrow \sqrt{a}-\sqrt{b} \notin \mathbb{Q}
+\]
+
+Proof: Assume that $\sqrt{a} \notin \mathbb{Q}$ and $a \neq b$. To show that $\sqrt{a}-\sqrt{b} \notin \mathbb{Q}$, we assume that $\sqrt{a}-\sqrt{b} \in \mathbb{Q}$ in order to derive a contradiction. Since, $a \neq b \Longrightarrow \sqrt{a}-\sqrt{b} \neq 0$, we may write
+
+\[
+\begin{aligned}
+\sqrt{a} & =(1 / 2)[(\sqrt{a}+\sqrt{b})+(\sqrt{a}-\sqrt{b})] \\
+& =\frac{1}{2}\left[\frac{(\sqrt{a})^{2}-(\sqrt{b})^{2}}{\sqrt{a}-\sqrt{b}}+(\sqrt{a}-\sqrt{b})\right] \\
+& =\frac{1}{2}\left[\frac{a-b}{\sqrt{a}-\sqrt{b}}+(\sqrt{a}-\sqrt{b})\right],
+\end{aligned}
+\]
+
+and it follows that $\sqrt{a}-\sqrt{b} \in \mathbb{Q} \Longrightarrow \sqrt{a} \in \mathbb{Q}$ which is a contradiction, since by hypothesis, we have $\sqrt{a} \notin \mathbb{Q}$. We conclude that $\sqrt{a}-\sqrt{b} \notin \mathbb{Q}$. \(\square\)
+
+\noindent\textbf{Lemma 2.2:} Let $a_{1}, a_{2}, b_{1}, b_{2} \in \mathbb{Q}$ with $b_{1}>0$ and $b_{2}>0$ and $\sqrt{b_{1}} \notin \mathbb{Q}$. Then,
+
+\[
+a_{1} \pm \sqrt{b_{1}}=a_{2} \pm \sqrt{b_{2}} \Longleftrightarrow\left(a_{1}=a_{2} \wedge b_{1}=b_{2}\right) .
+\]
+
+Proof: $(\Longrightarrow)$ : Assume that $a_{1} \pm \sqrt{b_{1}}=a_{2} \pm \sqrt{b_{2}}$. We distinguish between the following cases:
+
+Case 1: Assume that $b_{1}=b_{2}$. Then,
+
+\[
+\begin{aligned}
+a_{1} \pm \sqrt{b_{1}}=a_{2} \pm \sqrt{b_{2}} & \Longrightarrow a_{1} \pm \sqrt{b_{1}}=a_{2} \pm \sqrt{b_{1}} \quad\left[\text { via } b_{1}=b_{2}\right] \\
+& \Longrightarrow a_{1}=a_{2},
+\end{aligned}
+\]
+
+and we conclude that $a_{1}=a_{2} \wedge b_{1}=b_{2}$.\\
+Case 2: Assume that $b_{1} \neq b_{2}$. Then,
+
+\[
+\begin{aligned}
+a_{1} \pm \sqrt{b_{1}}=a_{2} \pm \sqrt{b_{2}} & \Longrightarrow \pm\left(\sqrt{b_{1}}-\sqrt{b_{2}}\right)=a_{2}-a_{1} \\
+& \Longrightarrow \sqrt{b_{1}}-\sqrt{b_{2}} \in \mathbb{Q} .
+\end{aligned} \quad\left[\text { via } a_{1}, a_{2} \in \mathbb{Q}\right]
+\]
+
+This is a contradiction because, using Lemma 2.1, we have $\left(\sqrt{b_{1}} \notin \mathbb{Q} \wedge b_{1} \neq b_{2}\right) \Longrightarrow$ $\sqrt{b_1}-\sqrt{b_{2}} \notin \mathbb{Q}$. This means that this case does not materialize.\\
+(⟸): Assume that $a_{1}=a_{2} \wedge b_{1}=b_{2}$. Then, it trivially follows that $a_{1} \pm \sqrt{b_{1}}=$ $a_{2} \pm \sqrt{b_{2}}$. \(\square\)
+
+\noindent\textbf{Lemma 2.3:} Let $f(z)=z^{2}-a z+b$ with zeroes $z_{1}, z_{2} \in \mathbb{R}$. It follows that
+
+\[
+\left\{\begin{array} { l } 
+{ x + y = a } \\
+{ x y = b }
+\end{array} \Longleftrightarrow \left\{\begin{array} { l } 
+{ x = z _ { 1 } } \\
+{ y = z _ { 2 } }
+\end{array} \vee \left\{\begin{array}{l}
+x=z_{2} \\
+y=z_{1} .
+\end{array}\right.\right.\right.
+\]
+
+Proof: Since $z_{1}, z_{2} \in \mathbb{R}$ are zeroes of $f(z)=z^{2}-a z+b$, from the fundamental theorem of algebra, we write $z^{2}-a z+b=\left(z-z_{1}\right)\left(z-z_{2}\right)=z^{2}-\left(z_{1}+z_{2}\right) z+z_{1} z_{2}, \forall z \in \mathbb{R}$, and therefore, $z_{1}+z_{2}=a$. It follows that $z_{1}=a-z_{2}$ and $z_{2}=a-z_{1}$. Then, we argue that
+
+\[
+\begin{aligned}
+\left\{\begin{array}{l}
+x+y=a \\
+x y=b
+\end{array}\right. & \Longleftrightarrow\left\{\begin{array} { l } 
+{ y = a - x } \\
+{ x ( a - x ) = b }
+\end{array} \Longleftrightarrow \left\{\begin{array} { l } 
+{ y = a - x } \\
+{ a x - x ^ { 2 } = b }
+\end{array} \Longleftrightarrow \left\{\begin{array}{l}
+y=a-x \\
+x^{2}-a x+b=0
+\end{array}\right.\right.\right. \\
+& \Longleftrightarrow\left\{\begin{array} { l } 
+{ y = a - x } \\
+{ x = z _ { 1 } \vee x = z _ { 2 } }
+\end{array} \Longleftrightarrow \left\{\begin{array} { l } 
+{ x = z _ { 1 } } \\
+{ y = a - z _ { 1 } }
+\end{array} \vee \left\{\begin{array}{l}
+x=z_{2} \\
+y=a-z_{2}
+\end{array}\right.\right.\right. \\
+& \Longleftrightarrow\left\{\begin{array} { l } 
+{ x = z _ { 1 } } \\
+{ y = z _ { 2 } }
+\end{array} \vee \left\{\begin{array}{l}
+x=z_{2} \\
+y=z_{1} .
+\end{array}\right.\right.
+\end{aligned}
+\] \(\square\)
+
+\noindent\textbf{Lemma 2.4:} For all $x,y\in\mathbb R$,
+\[
+ (x+y>0\ \wedge\ xy>0)\quad\Longleftrightarrow\quad(x>0\ \wedge\ y>0).
+\]
+Proof: (⟹): Let $x, y \in \mathbb{R}$ be given such that $x+y>0$ and $x y>0$. To show that $x>$ $0 \wedge y>0$, we assume the negation of that statement, which reads $x \leq 0 \vee y \leq 0$, in order to derive a contradiction. Since the lemma remains invariant with respect to the exchange $x \leftrightarrow y$, we may assume, with no loss of generality, that $x \leq 0$ and then distinguish between the following cases:
+
+Case 1: Assume that $y \leq 0$. Then, $x \leq 0 \wedge y\leq0\Longrightarrow x+y\leq0$, which is a contradiction, so this case does not materialize.
+
+Case 2: Assume that $y>0$. Then,
+
+\[
+\left\{\begin{array} { l } 
+{ x \leq 0 } \\
+{ y > 0 }
+\end{array} \Longrightarrow \left\{\begin{array}{l}
+-x \geq 0 \\
+y>0
+\end{array} \Longrightarrow-x y \geq 0 \Longrightarrow x y \leq 0,\right.\right.
+\]
+
+which is also a contradiction, since $x y>0$, so this case also does not materialize.\\
+Since neither case materializes, we have an overall contradiction and we conclude that $x>0 \wedge y>0$\\
+(⟸): Assume that $x>0 \wedge y>0$. It follows immediately that $x+y>0 \wedge x y>0$. \(\square\)
+
+The next step is to use these lemmas to derive the following necessary and sufficient conditions for the direct denesting of the expression $A=\sqrt{a \pm \sqrt{b}}$ :
+
+\noindent\textbf{Theorem 2.1:} Let $A=\sqrt{a \pm \sqrt{b}}$ with $a, b \in \mathbb{Q}^{*}$ and $b>0$ and $\sqrt{b} \notin \mathbb{Q}$ and $a \pm \sqrt{b}>0$. Then, it follows that
+
+
+\begin{align*}
+& A \text { denests directly } \Longleftrightarrow\left\{\begin{array}{l}
+\exists \delta \in \mathbb{Q}_{+}^{*}: a^{2}-b=\delta^{2} \\
+a>0
+\end{array}\right. \\
+& \left\{\begin{array}{l}
+\delta=\sqrt{a^{2}-b} \\
+a>0
+\end{array} \Longrightarrow \sqrt{a \pm \sqrt{b}}=\sqrt{\frac{a+\delta}{2}} \pm \sqrt{\frac{a-\delta}{2}} .\right. \tag{4}\label{eq:4}
+\end{align*}
+
+
+Proof: We solve the equation $\sqrt{a \pm \sqrt{b}}=\sqrt{x} \pm \sqrt{y}$ with respect to $x, y$. The first step is to raise both sides to the power of 2 . Doing so requires both sides of the equation to be positive, in order to retain logical equivalence, so we need $x>y$, for the '-' case. Any solutions with $x \leq y$ have to be rejected (again, only for the '-' case), since the left-hand side is strictly positive, so the right-hand side cannot be zero or negative. Finally, by Definition 2.1, we are only interested in solutions $x, y$ such that $x>0 \wedge y>0$. With this in mind, under the assumption $x>y>0$ (without loss of generality for the plus case), we establish the following equivalence:
+
+\[
+\begin{array}{rlr}
+\sqrt{a \pm \sqrt{b}}=\sqrt{x} \pm \sqrt{y} & \Longleftrightarrow a \pm \sqrt{b}=(\sqrt{x} \pm \sqrt{y})^{2} & \quad \text { [require } x>y \text { ] } \\
+& \Longleftrightarrow a \pm \sqrt{b}=(\sqrt{x})^{2} \pm 2 \sqrt{x} \sqrt{y}+(\sqrt{y})^{2} & \\
+& \Longleftrightarrow a \pm \sqrt{b}=(x+y) \pm \sqrt{4 x y} & \\
+& \Longleftrightarrow\left\{\begin{array}{l}
+x+y=a \\
+4 x y=b
+\end{array}\right. & \quad \text { [via Lemma 2.2] } \\
+& \Longleftrightarrow\left\{\begin{array}{l}
+x+y=a \\
+x y=b / 4
+\end{array}\right. \tag{5}\label{eq:5}
+\end{array}
+\]
+
+Define the quadratic $f(z)=z^{2}-a z+b / 4$ and calculate its discriminant $\Delta=(-a)^{2}-$ $4 \cdot 1 \cdot(b / 4)=a^{2}-b$. If $\Delta<0$, Equation (5) cannot have real solutions, since it would imply $\Delta=(x-y)^2\geq0$; thus direct denesting is impossible in that case. For the remainder of the proof assume $\Delta\geq0$. The corresponding zeroes are given by $z_{1}=\left[a+\sqrt{a^{2}-b}\right] / 2$ and $z_{2}=\left[a-\sqrt{a^{2}-b}\right] / 2$. Furthermore, they satisfy $z_{1}+z_{2}=a$ and $z_{1} z_{2}=b / 4$. The main argument reads (the larger of $x,y$ is chosen as $x$):
+\[
+\begin{aligned}
+ A\text{ denests directly}
+ &\Longleftrightarrow\exists x,y\in\mathbb Q_+^*:\ A=\sqrt x\pm\sqrt y
+       &&\text{[Definition 2.1]}\\
+ &\Longleftrightarrow\exists x,y\in\mathbb Q_+^*:\ x+y=a,\ xy=b/4
+       &&\text{[Equation (5)]}\\
+ &\Longleftrightarrow z_1,z_2\in\mathbb Q_+^*
+       &&\text{[Lemma 2.3]}\\
+ &\Longleftrightarrow\sqrt{a^2-b}\in\mathbb Q^*,\ z_1>0,\ z_2>0
+       &&\text{[$\sqrt b\notin\mathbb Q$]}\\
+ &\Longleftrightarrow\exists\delta\in\mathbb Q_+^*:\ a^2-b=\delta^2,\
+            z_1z_2>0,\ z_1+z_2>0
+       &&\text{[Lemma 2.4]}\\
+ &\Longleftrightarrow\exists\delta\in\mathbb Q_+^*:\ a^2-b=\delta^2,\ a>0,\ b>0\\
+ &\Longleftrightarrow\exists\delta\in\mathbb Q_+^*:\ a^2-b=\delta^2,\ a>0.
+\end{aligned}
+\]
+
+The possibility $a^{2}-b=0$ is ruled out by the assumption $\sqrt{b} \notin \mathbb{Q}$, which is why we write $\sqrt{a^{2}-b} \in \mathbb{Q}^{*}$ in the equivalence chain above. Furthermore, the requirement $x>y$ is easy to satisfy with the choice $x=z_{1}$ and $y=z_{2}$.
+
+For the second statement, using $\delta=\sqrt{a^{2}-b}$, we note that since $z_{1}=(a+\delta) / 2$ and $z_{2}=(a-\delta) / 2$, it follows that
+
+\[
+\begin{aligned}
+\sqrt{a\pm\sqrt b}=\sqrt x\pm\sqrt y
+&\Longleftrightarrow x+y=a,\ xy=b/4 &&\text{[Equation (5)]}\\
+&\Longleftrightarrow (x,y)=(z_1,z_2)\ \text{or}\ (z_2,z_1)
+      &&\text{[Lemma 2.3]}\\
+&\Longleftrightarrow x=(a+\delta)/2,\ y=(a-\delta)/2
+      &&\text{[choose $x>y$]}.
+\end{aligned}
+\]
+
+and therefore, we obtain the denesting equation:
+
+
+\begin{equation*}
+\sqrt{a \pm \sqrt{b}}=\sqrt{\frac{a+\delta}{2}} \pm \sqrt{\frac{a-\delta}{2}} . \tag{6}\label{eq:6}
+\end{equation*}
+ \(\square\)
+
+The main result is the denesting equation, given by Equation (4), which holds regardless of whether $\delta$ is rational or irrational. Of course, Equation (4) results in a denesting only when $\delta$ is a rational number. Together with $a^2-b\geq0$, the condition $a>0\wedge b>0$ ensures that there are no square roots of negative numbers in the denested expression so that we do not have to concern ourselves with choosing appropriate branch cuts. However, the theorem gives us more than just the denesting formula. It also shows that when the formula fails to result in a successful direct denesting, this means that no such denesting is possible.
+
+The proof for the indirect denesting theorem piggybacks on the preceding theorem. The indirect denesting theorem reads as follows:
+
+\noindent\textbf{Theorem 2.2:} Let $A=\sqrt{a+b \sqrt{q}}$ with $a, b \in \mathbb{Q}^{*}$ and $q \in \mathbb{Q}_{+}^{*}$ and $\sqrt{q} \notin \mathbb{Q}_{+}^{*}$ such that $a+$ $b \sqrt{q}>0$. Then the following statements hold:
+
+\[
+\begin{gathered}
+A \text { denests indirectly } \Longleftrightarrow\left\{\begin{array}{l}
+\exists \delta \in \mathbb{Q}_{+}^{*}: q\left(b^{2} q-a^{2}\right)=\delta^{2}, \\
+b>0
+\end{array},\right. \\
+\left\{\begin{array}{l}
+\delta=\sqrt{q\left(b^{2} q-a^{2}\right)} \\
+a>0 \wedge b>0
+\end{array} \Longrightarrow \sqrt{a+b \sqrt{q}}=\frac{1}{\sqrt[4]{q}}\left[\sqrt{\frac{b q+\delta}{2}}+\sqrt{\frac{b q-\delta}{2}}\right],\right. \\
+\left\{\begin{array}{l}
+\delta=\sqrt{q\left(b^{2} q-a^{2}\right)} \\
+a<0 \wedge b>0
+\end{array} \Longrightarrow \sqrt{a+b \sqrt{q}}=\frac{1}{\sqrt[4]{q}}\left[\sqrt{\frac{b q+\delta}{2}}-\sqrt{\frac{b q-\delta}{2}}\right] .\right.
+\end{gathered}
+\]
+
+Proof: To show the first statement, we begin with the observation that since $a+b \sqrt{q}>0$, multiplying both sides with $\sqrt{q}>0$ gives $a \sqrt{q}+b q>0$. This enables us to write
+
+\[
+\begin{aligned}
+A & =\sqrt{a+b \sqrt{q}}=\sqrt{\frac{a \sqrt{q}+b(\sqrt{q})^{2}}{\sqrt{q}}}=\frac{1}{\sqrt[4]{q}} \sqrt{a \sqrt{q}+b q} \\
+& =\left\{\begin{array}{l}
+\frac{1}{\sqrt[4]{q}} \sqrt{b q+|a| \sqrt{q}}, \text { if } a>0 \\
+\frac{1}{\sqrt[4]{q}} \sqrt{b q-|a| \sqrt{q}}, \text { if } a<0 .
+\end{array}\right.
+\end{aligned}
+\]
+
+Noting that $|a| \sqrt{q}=\sqrt{a^{2}} \sqrt{q}=\sqrt{a^{2} q}$, it follows that
+
+\[
+A= \begin{cases}\frac{1}{\sqrt[4]{q}} \sqrt{b q+\sqrt{a^{2} q}}, & \text { if } a>0  \tag{7}\label{eq:7}\\ \frac{1}{\sqrt[4]{q}} \sqrt{b q-\sqrt{a^{2} q}}, & \text { if } a<0 .\end{cases}
+\]
+
+The main argument proving the first statement reads:\\
+$A$ denests indirectly $\Longleftrightarrow \sqrt{b q \pm \sqrt{a^{2} q}}$ denests directly [via Equation (7) and $q>0$ ]
+
+\[
+\begin{aligned}
+& \Longleftrightarrow\left\{\begin{array}{l}
+\exists \delta \in \mathbb{Q}_{+}^{*}:(b q)^{2}-a^{2} q=\delta^{2} \quad \text { [via Theorem 2.1] } \\
+b q>0
+\end{array}\right. \\
+& \Longleftrightarrow\left\{\begin{array}{l}
+\exists \delta \in \mathbb{Q}_{+}^{*}: q\left(b^{2} q-a^{2}\right)=\delta^{2} \\
+b>0 .
+\end{array} \quad[\text { via } q>0]\right.
+\end{aligned}
+\]
+
+To show the next two statements, we combine Equation (7) with the direct denesting equation given by Equation (4), and distinguish between the following cases:
+
+Case 1: For $a>0$, we have
+
+\[
+\begin{aligned}
+A & =\sqrt{a+b \sqrt{q}}=\frac{1}{\sqrt[4]{q}} \sqrt{b q+\sqrt{a^{2} q}} & & \text { [via Equation (7)] } \\
+& =\frac{1}{\sqrt[4]{q}}\left[\sqrt{\frac{b q+\delta}{2}}+\sqrt{\frac{b q-\delta}{2}}\right] . & & \text { [via Equation (4)] }
+\end{aligned}
+\]
+
+Case 2: For $a<0$, we have
+
+\[
+\begin{aligned}
+A & =\sqrt{a+b \sqrt{q}}=\frac{1}{\sqrt[4]{q}} \sqrt{b q-\sqrt{a^{2} q}} & & \text { [via Equation (7)] } \\
+& =\frac{1}{\sqrt[4]{q}}\left[\sqrt{\frac{b q+\delta}{2}}-\sqrt{\frac{b q-\delta}{2}}\right], & & \text { [via Equation (4)] }
+\end{aligned}
+\]
+
+and this concludes the proof. \(\square\)
+
+The theorem for indirect denesting corresponds to the following denesting equation:
+
+\[
+\sqrt{a+b \sqrt{q}}= \begin{cases}\frac{1}{\sqrt[4]{q}}\left[\sqrt{\frac{b q+\delta}{2}}+\sqrt{\frac{b q-\delta}{2}}\right], & \text { if } a>0 \\ \frac{1}{\sqrt[4]{q}}\left[\sqrt{\frac{b q+\delta}{2}}-\sqrt{\frac{b q-\delta}{2}}\right], & \text { if } a<0,\end{cases}
+\]
+
+where $\delta=\sqrt{q\left(b^{2} q-a^{2}\right)}$. As long as $\delta$ is a rational number, we have a successful indirect denesting. Note that the formula for indirect denesting given by Zippel [6] does not properly account for the case $a<0$, where the radicals should be subtracted, most likely due to a typo. From the theorems, we learn, in general, that expressions of the form $\sqrt{a \pm \sqrt{b}}$ do not have direct denesting when $a<0$; however, it is possible that they may have an indirect denesting. Finally, it is worth noting that the indirect denesting can be effected by factoring $\sqrt[4]{q}$ instead of $1 / \sqrt[4]{q}$, giving us
+
+\[
+\sqrt{a+b \sqrt{q}}= \begin{cases}\sqrt[4]{q}\left[\sqrt{\frac{b q+\delta}{2 q}}+\sqrt{\frac{b q-\delta}{2 q}}\right], & \text { if } a>0 \\ \sqrt[4]{q}\left[\sqrt{\frac{b q+\delta}{2 q}}-\sqrt{\frac{b q-\delta}{2 q}}\right], & \text { if } a<0 .\end{cases}
+\]
+
+The necessary and sufficient conditions for a successful indirect denesting using the $\sqrt[4]{q}$ factorization are the same as the ones given by Theorem 2.2.
+
+\section*{3. Examples of root denesting}
+As a practical matter, Theorems 2.1 and 2.2 provide universal methods for denesting expressions of the form $\sqrt{a \pm \sqrt{b}}$, or for determining that denesting is not possible. In some cases, we can take a shortcut, if it is possible to see a splitting of $a$ into two contributions that will result in an obvious perfect square. A general case where splitting may work is if we can rewrite the radical as
+
+\[
+\sqrt{a^{2}+q \pm 2 a \sqrt{q}}=|a \pm \sqrt{q}| .
+\]
+
+While it takes some effort to see this splitting in actual problems, the case $a=1$ gives
+
+\[
+\sqrt{q+1 \pm 2 \sqrt{q}}=|1 \pm \sqrt{q}|,
+\]
+
+where the splitting is immediately obvious. Generally, the splitting can be particularly difficult to see, if it involves rational numbers.
+
+We begin with the following two examples of square root denesting. We show the calculations with the level of details needed, if the calculations are done by hand.
+
+\noindent\textbf{Example 3.1:} Denest the expression $\sqrt{37+20 \sqrt{3}}$.\\
+Solution: Using $a=37$ and $b=(20 \sqrt{3})^{2}$, we have
+
+\[
+\begin{aligned}
+\delta^{2} & =a^{2}-b=37^{2}-(20 \sqrt{3})^{2}=1369-400 \cdot 3=1369-1200=169 \\
+& =13^{2} \Longrightarrow \delta=13,
+\end{aligned}
+\]
+
+and therefore,
+
+\[
+\begin{aligned}
+\sqrt{37+20 \sqrt{3}} & =\sqrt{(a+\delta) / 2}+\sqrt{(a-\delta) / 2}=\sqrt{(37+13) / 2}+\sqrt{(37-13) / 2} \\
+& =\sqrt{50 / 2}+\sqrt{24 / 2}=\sqrt{25}+\sqrt{12}=5+2\sqrt{3} .
+\end{aligned}
+\]
+
+\noindent\textbf{Example 3.2:} Denest the expression $\sqrt{3 \sqrt{2}-4}$.\\
+Solution: Since $-4<0$, this expression does not have a direct denesting. Factoring out $\sqrt{2}$ gives
+
+\[
+\begin{aligned}
+\sqrt{3 \sqrt{2}-4} & =\sqrt{\sqrt{2}\left(3-\frac{4}{\sqrt{2}}\right)}=\sqrt[4]{2} \sqrt{3-\frac{4 \sqrt{2}}{2}}=\sqrt[4]{2} \sqrt{3-2 \sqrt{2}} \\
+& =\sqrt[4]{2} \sqrt{1-2 \sqrt{2}+(\sqrt{2})^{2}}=\sqrt[4]{2} \sqrt{(1-\sqrt{2})^{2}}=\sqrt[4]{2}|1-\sqrt{2}| \\
+& =\sqrt[4]{2}(\sqrt{2}-1)
+\end{aligned}
+\]
+
+In general, with indirect denesting, it is easier to just factor out the corresponding radical and then look for a direct denesting. In the above example, the denesting was obvious enough with term splitting. However, instructors should caution their students to use the identity $\sqrt{x^{2}}=|x|$ in order to remove the root, after forming a perfect square. The identity introduces an absolute value that should be carefully removed.
+
+We show one more example of indirect denesting, using the denesting identity given by Theorem 2.2.
+
+\noindent\textbf{Example 3.3:} Denest the expression $\sqrt{-84+67 \sqrt{7}}$.\\
+Solution: Since $-84<0$, there is no direct denesting, so we look for an indirect denesting. Using $a=-84$ and $b=67$ and $q=7$, we have
+
+\[
+\begin{aligned}
+\delta^{2} & =q\left(b^{2} q-a^{2}\right)=7\left(67^{2} \cdot 7-(-84)^{2}\right)=7(4489 \cdot 7-7056)=7(31423-7056) \\
+& =7 \cdot 24367=170569=413^{2} \Longrightarrow \delta=413,
+\end{aligned}
+\]
+
+and from the indirect denesting identity, we have
+
+\[
+\begin{aligned}
+\sqrt{-84+67 \sqrt{7}} & =\frac{1}{\sqrt[4]{q}}\left[\sqrt{\frac{b q+\delta}{2}}-\sqrt{\frac{b q-\delta}{2}}\right] \\
+& =\frac{1}{\sqrt[4]{7}}\left[\sqrt{\frac{67 \cdot 7+413}{2}}-\sqrt{\frac{67 \cdot 7-413}{2}}\right] \\
+& =\frac{1}{\sqrt[4]{7}}\left[\sqrt{\frac{469+413}{2}}-\sqrt{\frac{469-413}{2}}\right]=\frac{1}{\sqrt[4]{7}}\left[\sqrt{\frac{882}{2}}-\sqrt{\frac{56}{2}}\right] \\
+& =\frac{\sqrt{441}-\sqrt{28}}{\sqrt[4]{7}}=\frac{21-2 \sqrt{7}}{\sqrt[4]{7}} .
+\end{aligned}
+\]
+
+We can stop here or continue as follows:
+
+\[
+\begin{aligned}
+\sqrt{-84+67 \sqrt{7}} & =\frac{21-2 \sqrt{7}}{\sqrt[4]{7}}=\frac{\sqrt{7}}{\sqrt[4]{7}}\left[\frac{21}{\sqrt{7}}-2\right]=\sqrt[4]{7}\left[\frac{21 \sqrt{7}}{7}-2\right] \\
+& =\sqrt[4]{7}(3 \sqrt{7}-2)
+\end{aligned}
+\]
+
+Note that converting the $1 / \sqrt[4]{7}$ form of the denested result into the finalized $\sqrt[4]{7}$ form is effected by factoring an $\sqrt{7}$ factor.
+
+\section*{4. A related denesting problem}
+Radicals of the form $\sqrt{a \sqrt{p}+b \sqrt{q}}$ with $a, b \in \mathbb{Q}$ and $p, q \in \mathbb{Q}_{+}^{*}$ can be also denested using direct denesting (Theorem 2.1) or indirect denesting (Theorem 2.2) after factoring out $\sqrt{p}$ or $\sqrt{q}$. We illustrate the technique with the following example.
+
+\noindent\textbf{Example 4.1:} Denest the expression $A=\sqrt{5 \sqrt{2}+4 \sqrt{3}}$.\\
+Solution: We note that
+
+\[
+A=\sqrt{5 \sqrt{2}+4 \sqrt{3}}=\sqrt{\sqrt{2}\left(5+\frac{4 \sqrt{3}}{\sqrt{2}}\right)}=\sqrt[4]{2} \sqrt{5+\frac{4 \sqrt{2} \sqrt{3}}{2}}=\sqrt[4]{2} \sqrt{5+2 \sqrt{6}} .
+\]
+
+We attempt a direct denesting using $a=5$ and $\delta^{2}=5^{2}-(2 \sqrt{6})^{2}=25-4 \cdot 6=25-$ $24=1 \Longrightarrow \delta=1$; therefore,
+
+\[
+\begin{gathered}
+\sqrt{5+2 \sqrt{6}}=\sqrt{\frac{a+\delta}{2}}+\sqrt{\frac{a-\delta}{2}}=\sqrt{\frac{5+1}{2}}+\sqrt{\frac{5-1}{2}}=\sqrt{3}+\sqrt{2} \\
+\Longrightarrow A=\sqrt{5 \sqrt{2}+4 \sqrt{3}}=\sqrt[4]{2}(\sqrt{3}+\sqrt{2}) .
+\end{gathered}
+\]
+
+For the following comparison assume $ab\ne0$, $\sqrt{q/p}\notin\mathbb Q$, and $a\sqrt p+b\sqrt q>0$. Cases with a zero coefficient or rational $\sqrt{q/p}$ reduce immediately to a single fourth root (or to zero when the total radicand is zero). It is easy to show that $\sqrt{p}$ factorization is equivalent to $\sqrt{q}$ factorization, meaning that the radical can be denested by $\sqrt{p}$ factorization if and only if it can be denested with $\sqrt{q}$ factorization. This can be seen by comparing the necessary and sufficient denesting conditions\\
+corresponding to $\sqrt{p}$ factorization with the corresponding conditions for $\sqrt{q}$ factorization. Writing
+
+
+\begin{equation*}
+\sqrt{a \sqrt{p}+b \sqrt{q}}=\sqrt[4]{p} \sqrt{a+b \sqrt{q / p}}, \tag{8}\label{eq:8}
+\end{equation*}
+
+
+the corresponding denesting condition, via Theorems 2.1 and 2.2, is given by the logical 'or' of two statements:
+
+\[
+\left\{\begin{array} { l } 
+{ \exists \delta \in \mathbb { Q } _ { + } ^ { * } : a ^ { 2 } - b ^ { 2 } q / p = \delta ^ { 2 } }  \tag{9}\label{eq:9}\\
+{ a > 0 }
+\end{array} \vee \left\{\begin{array}{l}
+\exists \delta \in \mathbb{Q}_{+}^{*}:(q / p)\left[b^{2}(q / p)-a^{2}\right]=\delta^{2} \\
+b>0 .
+\end{array}\right.\right.
+\]
+
+The first statement corresponds to direct denesting and the second statement corresponds to indirect denesting. Doing a $\sqrt{q}$ factorization gives
+
+
+\begin{equation*}
+\sqrt{a \sqrt{p}+b \sqrt{q}}=\sqrt[4]{q} \sqrt{b+a \sqrt{p / q}}, \tag{10}\label{eq:10}
+\end{equation*}
+
+
+and the corresponding necessary and sufficient condition for denesting, the second factor reads:
+
+\[
+\left\{\begin{array} { l } 
+{ \exists \delta \in \mathbb { Q } _ { + } ^ { * } : b ^ { 2 } - a ^ { 2 } ( p / q ) = \delta ^ { 2 } }  \tag{11}\label{eq:11}\\
+{ b > 0 }
+\end{array} \vee \left\{\begin{array}{l}
+\exists \delta \in \mathbb{Q}_{+}^{*}:(p / q)\left(a^{2}(p / q)-b^{2}\right)=\delta^{2} \\
+a>0 .
+\end{array}\right.\right.
+\]
+
+The first statement in the logical 'or' corresponds to direct denesting, whereas the second statement corresponds to indirect denesting. The equivalence between Equations (9) and (11) follows immediately by noticing that multiplying the equations on the existential statements in Equation (11) by a factor of $(q / p)^{2}$ on both sides, that factor being a perfect square, yields the corresponding statements in Equation (9), although with the order switched. Consequently, if factorization of $\sqrt{p}$ gives a radical that denests directly, then the factorization of $\sqrt{q}$ will give a radical that denests indirectly, and vice versa.
+
+\section*{5. Conclusion}
+In its most general form, the problem of denesting roots remains an open question for current research. The basic discussion given in this article barely scratches the surface of the topic, but it is basic enough to be accessible in low-level coursework. Simple denesting techniques can be introduced in College Algebra or Precalculus courses, in the context of solving quadratic or biquadratic equations, or evaluating trigonometric numbers for unusual angles. They can also be introduced in Calculus coursework in the context of evaluating definite integrals of rational functions. The proofs of the lemmas and theorems in Section 2 are simple and make for excellent examples for introducing basic concepts of proof techniques, such as proof by contradiction, proof by cases, quantifiers, and so on. The necessary and sufficient denesting conditions are as strict as is needed to ensure that the denested expressions do not require use of complex numbers. A more advanced treatment of this topic requires a background in abstract algebra and Galois theory and is given in the cited references.
+
+\section*{Disclosure statement}
+No potential conflict of interest was reported by the author.
+
+\section*{ORCID}
+Eleftherios Gkioulekas \href{http://orcid.org/0000-0002-5437-2534}{http://orcid.org/0000-0002-5437-2534}
+
+\begin{thebibliography}{99}
+\bibitem{ref1} Tan K. Finding the cube root of binomial quadratic surds. Math Mag. 1966;39:212-216.
+
+\bibitem{ref2} Ramanujan S. Problems and solutions. In: Hardy G, Ayar PS, Wilson B, editors. Collected works of Srinivasa Ramanujan. Cambridge (UK): Cambridge University Press; 1927.
+
+\bibitem{ref3} Landau S. How to tangle with a nested radical. Math Intelligencer. 1994;16:49-55.
+
+\bibitem{ref4} Bl\"omer J. Computing sums of radicals in polynomial time. In: Proceedings of the 32nd Annual IEEE Symposium on Foundations of Computer Science; 1991 Oct 1-4; San Juan, PR. p. 670-677.
+
+\bibitem{ref5} Bl\"omer J. How to denest Ramanujan's nested radicals. Proceedings of the 33rd Annual IEEE Symposium on Foundations of Computer Science; 1992 Oct 24-27; Pittsburgh, PA. p. 447-456.
+
+\bibitem{ref6} Zippel R. Simplification of expressions involving radicals. J Symb Comput. 1985;1:189-210.
+
+\bibitem{ref7} Landau S. A note on Zippel denesting. J Symb Comput 1992;13:41-46.
+
+\bibitem{ref8} Landau S. Simplification of nested radicals. SIAM J Comput. 1992;21:85-110.
+
+\bibitem{ref9} Borodin A, Fagin R, Hopcroft J, et al. Decreasing the nesting depth of expressions involving square roots. J Symb Comput. 1985;1:169-188.
+\end{thebibliography}
+
+\end{document}

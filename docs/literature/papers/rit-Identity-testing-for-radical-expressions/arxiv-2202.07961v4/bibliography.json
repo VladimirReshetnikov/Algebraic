@@ -1,0 +1,25 @@
+{
+  "id": "rit",
+  "title": "Identity testing for radical expressions",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "rit",
+      "entry_latex": "N. Balaji, K. Nosan, M. Shirmohammadi, and J. Worrell, ``Identity testing for radical expressions,'' \\emph{LICS 2022}, Article 8, 1--11. \\doi{10.1145/3531130.3533331}; arXiv:2202.07961, version 4, 16 October 2024.\n\\access{https://arxiv.org/abs/2202.07961}{Revised preprint record}. \\status{A}\nRIT for polynomial circuits evaluated at real radical constants; coNP under GRH, with stronger statements for the prime-square-root restriction. The circuit model and conditional hypotheses are essential."
+    },
+    {
+      "report": "report-2",
+      "key": "rit",
+      "entry_latex": "Nikhil Balaji, Klara Nosan, Mahsa Shirmohammadi, and James Worrell.\n\\emph{Identity testing for radical expressions}.\nLICS 2022, Article 8, 1--11.\n\\doi{10.1145/3531130.3533331}.\nRevised preprint: \\sourceurl{https://arxiv.org/abs/2202.07961}, version 4, 16 October 2024.\n\\textbf{FT.} Circuit-based radical identity testing, with explicit GRH-conditional and unconditional complexity results. The restrictions defining $2$-RIT are part of the theorem."
+    },
+    {
+      "report": "report-3",
+      "key": "rit",
+      "entry_latex": "Nikhil Balaji, Klara Nosan, Mahsa Shirmohammadi, and James Worrell. ``Identity Testing for Radical Expressions.'' In \\emph{37th Annual ACM/IEEE Symposium on Logic in Computer Science}, 2022, article~8, pp.~1--11. \\doi{10.1145/3531130.3533331}. Extended preprint arXiv:2202.07961, version~4 dated October 16, 2024: \\url{https://arxiv.org/html/2202.07961v4}. \\status{F}\n\\entrynote{Modern complexity analysis for succinct expressions involving radicals. The precise circuit class and conditional assumptions matter. Identity testing, sign determination, and depth minimization are not the same computational task.}"
+    }
+  ],
+  "notes": [
+    "The pinned arXiv v4 is a revised 2024 preprint; the reports also cite the LICS 2022 publication. These are related versions, not identical files.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

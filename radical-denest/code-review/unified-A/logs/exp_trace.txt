@@ -1,0 +1,218 @@
+
+Syntax::com: Warning: comma encountered with no adjacent expression. The expression will be treated as Null.  (line 320 of "C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/original/Strad.wl").
+{f[Sqrt[5 + 2*Sqrt[6]]]}
+
+problem  Sqrt[5 + 2*Sqrt[6]]
+outer root: 2  extra root: 1
+
+multiplier count: 2  multipliers: {1, Sqrt[6]}
+multiplier: 1   minpoly degree: 4
+adding new multipliers from: 1
+multiplier: Sqrt[6]   minpoly degree: 4
+adding new multipliers from: Sqrt[6]
+multiplier count: 3  from: {1, 4}
+multiplier: 2   minpoly degree: 2
+success: {2, 2, {{2, 1}}}
+history: {{0, Infinity}, {1, 4}, {2, 2}}
+Sqrt[2] + Sqrt[3]
+
+
+########## Sqrt[5+2Sqrt[6]] ##########
+{7.7*^-6, Sqrt[2] + Sqrt[3]}
+{f[Sqrt[2 + Sqrt[3]]]}
+
+problem  Sqrt[2 + Sqrt[3]]
+outer root: 2  extra root: 1
+
+multiplier count: 2  multipliers: {1, Sqrt[3]}
+multiplier: 1   minpoly degree: 4
+adding new multipliers from: 1
+multiplier: Sqrt[3]   minpoly degree: 4
+adding new multipliers from: Sqrt[3]
+multiplier count: 3  from: {1, 4}
+multiplier: 2   minpoly degree: 2
+
+                                                                      3       1
+PossibleZeroQ::ztest1: Unable to decide whether numeric quantity Sqrt[-] + ------- - Sqrt[2 + Sqrt[3]] is equal to zero. Assuming it is.
+                                                                      2    Sqrt[2]
+success: {2, 2, {{2, 1}}}
+history: {{0, Infinity}, {1, 4}, {2, 2}}
+(1 + Sqrt[3])/Sqrt[2]
+
+
+########## Sqrt[2+Sqrt[3]] ##########
+{7.4*^-6, (1 + Sqrt[3])/Sqrt[2]}
+{f[(-1 + 2^(1/3))^(1/3)]}
+
+problem  (-1 + 2^(1/3))^(1/3)
+outer root: 3  extra root: 1
+
+multiplier count: 2  multipliers: {1, 2^(2/3)}
+multiplier: 1   minpoly degree: 9
+adding new multipliers from: 1
+multiplier: 2^(2/3)   minpoly degree: 9
+adding new multipliers from: 2^(2/3)
+multiplier count: 8  from: {1, 9}
+multiplier: 2   minpoly degree: 9
+multiplier: 3   minpoly degree: 9
+multiplier: 4   minpoly degree: 9
+multiplier: 6   minpoly degree: 9
+multiplier: 9   minpoly degree: 3
+
+                                                                                     1/3
+                                                                  2 2/3    -(2/3)   2             1/3 1/3
+PossibleZeroQ::ztest1: Unable to decide whether numeric quantity (-)    + 3       - ---- - (-1 + 2   )    is equal to zero. Assuming it is.
+                                                                  3                  2/3
+                                                                                    3
+success: {9, 3, {{3, 2}}}
+history: {{0, Infinity}, {1, 9}, {9, 3}}
+(1 - 2^(1/3) + 2^(2/3))/3^(2/3)
+
+
+########## (2^(1/3)-1)^(1/3) ##########
+{6.4*^-6, (1 - 2^(1/3) + 2^(2/3))/3^(2/3)}
+{f[2^(1/4)], f[Sqrt[1 + Sqrt[2]]]}
+
+problem  Sqrt[1 + Sqrt[2]]
+outer root: 2  extra root: 1
+
+multiplier count: 2  multipliers: {1, Sqrt[2]}
+multiplier: 1   minpoly degree: 4
+adding new multipliers from: 1
+multiplier: Sqrt[2]   minpoly degree: 4
+adding new multipliers from: Sqrt[2]
+multiplier count: 1  from: {1, 4}
+multiplier: 2   minpoly degree: 4
+multiplier count: 1  from: {Sqrt[2], 4}
+multiplier: 2*Sqrt[2]   minpoly degree: 4
+history: {{0, Infinity}, {1, 4}}
+no progress
+
+
+########## Sqrt[2+Sqrt[2]] ##########
+{7.9*^-6, 2^(1/4)*Sqrt[1 + Sqrt[2]]}
+{f[Sqrt[1 + Sqrt[2]]]}
+
+problem  Sqrt[1 + Sqrt[2]]
+outer root: 2  extra root: 1
+
+multiplier count: 2  multipliers: {1, Sqrt[2]}
+multiplier: 1   minpoly degree: 4
+adding new multipliers from: 1
+multiplier: Sqrt[2]   minpoly degree: 4
+adding new multipliers from: Sqrt[2]
+multiplier count: 1  from: {1, 4}
+multiplier: 2   minpoly degree: 4
+multiplier count: 1  from: {Sqrt[2], 4}
+multiplier: 2*Sqrt[2]   minpoly degree: 4
+history: {{0, Infinity}, {1, 4}}
+no progress
+
+
+########## Sqrt[1+Sqrt[2]] ##########
+{0.0000107, Sqrt[1 + Sqrt[2]]}
+{f[(-1 + (2*I)*Sqrt[2])^(3/2)]}
+
+problem  (-1 + (2*I)*Sqrt[2])^(3/2)
+outer root: 2  extra root: 1
+
+multiplier count: 2  multipliers: {1, I/5/Sqrt[2]}
+multiplier: 1   minpoly degree: 2
+
+PossibleZeroQ::ztest1: Unable to decide whether numeric quantity 5 - I Sqrt[2] - Sqrt[-1 + (2 I) Sqrt[2]] + (2 I) Sqrt[2 (-1 + (2 I) Sqrt[2])] is equal to zero. Assuming it is.
+
+General::stop: Further output of PossibleZeroQ::ztest1 will be suppressed during this calculation.
+success: {1, 2, {{1, 1}}}
+history: {{0, Infinity}, {1, 2}}
+5 - I*Sqrt[2]
+
+
+########## (-1+2I Sqrt[2])^(3/2) ##########
+{6.9*^-6, 5 - I*Sqrt[2]}
+{f[Sqrt[29]], f[Sqrt[55 - 10*f[Sqrt[29]]]], f[Sqrt[2]*Sqrt[8 - f[Sqrt[29]] + f[Sqrt[55 - 10*f[Sqrt[29]]]]]]}
+
+problem  Sqrt[55 - 10*Sqrt[29]]
+outer root: 2  extra root: 1
+
+multiplier count: 2  multipliers: {1, Sqrt[29]}
+multiplier: 1   minpoly degree: 4
+adding new multipliers from: 1
+multiplier: Sqrt[29]   minpoly degree: 4
+adding new multipliers from: Sqrt[29]
+multiplier count: 7  from: {1, 4}
+multiplier: 2   minpoly degree: 4
+multiplier: 5   minpoly degree: 4
+multiplier: 10   minpoly degree: 4
+multiplier: 29   minpoly degree: 4
+multiplier: 58   minpoly degree: 4
+multiplier: 145   minpoly degree: 4
+multiplier: 290   minpoly degree: 4
+multiplier count: 15  from: {Sqrt[29], 4}
+multiplier: 2*Sqrt[29]   minpoly degree: 4
+multiplier: 5*Sqrt[29]   minpoly degree: 4
+multiplier: 10*Sqrt[29]   minpoly degree: 4
+multiplier: 11*Sqrt[29]   minpoly degree: 4
+multiplier: 22*Sqrt[29]   minpoly degree: 4
+multiplier: 29*Sqrt[29]   minpoly degree: 4
+multiplier: 55*Sqrt[29]   minpoly degree: 4
+multiplier: 58*Sqrt[29]   minpoly degree: 4
+multiplier: 110*Sqrt[29]   minpoly degree: 4
+multiplier: 145*Sqrt[29]   minpoly degree: 4
+multiplier: 290*Sqrt[29]   minpoly degree: 4
+multiplier: 319*Sqrt[29]   minpoly degree: 4
+multiplier: 638*Sqrt[29]   minpoly degree: 4
+multiplier: 1595*Sqrt[29]   minpoly degree: 4
+multiplier: 3190*Sqrt[29]   minpoly degree: 4
+history: {{0, Infinity}, {1, 4}}
+no progress
+
+problem  Sqrt[2*(8 - Sqrt[29] + Sqrt[55 - 10*Sqrt[29]])]
+outer root: 2  extra root: 2
+
+multiplier count: 3  multipliers: {1, Sqrt[55 - 10*Sqrt[29]], Sqrt[29]}
+multiplier: 1   minpoly degree: 8
+adding new multipliers from: 1
+multiplier: Sqrt[55 - 10*Sqrt[29]]   minpoly degree: 8
+adding new multipliers from: Sqrt[55 - 10*Sqrt[29]]
+multiplier: Sqrt[29]   minpoly degree: 8
+adding new multipliers from: Sqrt[29]
+multiplier count: 7  from: {1, 8}
+multiplier: 2   minpoly degree: 8
+multiplier: 5   minpoly degree: 4
+success: {5, 4, {{5, 1}}}
+history: {{0, Infinity}, {1, 8}, {5, 4}}
+(Sqrt[319 - 58*Sqrt[29]] - 10*Sqrt[11 - 2*Sqrt[29]] + Sqrt[5]*(-16 + 3*Sqrt[29]))/(-5 + Sqrt[29] - Sqrt[55 - 10*Sqrt[29]])
+
+
+########## Sqrt[16-2Sqrt[29]+2Sqrt[55-10Sqrt[29]]] all levels ##########
+{0.000013, (Sqrt[319 - 58*Sqrt[29]] - 10*Sqrt[11 - 2*Sqrt[29]] + Sqrt[5]*(-16 + 3*Sqrt[29]))/(-5 + Sqrt[29] - Sqrt[55 - 10*Sqrt[29]])}
+{f[Sqrt[3 + 2*Sqrt[3 + 2*Sqrt[2]]]]}
+
+problem  Sqrt[3 + 2*Sqrt[3 + 2*Sqrt[2]]]
+outer root: 2  extra root: 2
+
+multiplier count: 2  multipliers: {1, Sqrt[3 + 2*Sqrt[2]]}
+multiplier: 1   minpoly degree: 4
+adding new multipliers from: 1
+multiplier: Sqrt[3 + 2*Sqrt[2]]   minpoly degree: 4
+adding new multipliers from: Sqrt[3 + 2*Sqrt[2]]
+multiplier count: 3  from: {1, 4}
+multiplier: 2   minpoly degree: 4
+multiplier: 17   minpoly degree: 4
+multiplier: 34   minpoly degree: 4
+multiplier count: 7  from: {Sqrt[3 + 2*Sqrt[2]], 4}
+multiplier: 2*Sqrt[3 + 2*Sqrt[2]]   minpoly degree: 4
+multiplier: 7*Sqrt[3 + 2*Sqrt[2]]   minpoly degree: 4
+multiplier: 14*Sqrt[3 + 2*Sqrt[2]]   minpoly degree: 4
+multiplier: 17*Sqrt[3 + 2*Sqrt[2]]   minpoly degree: 4
+multiplier: 34*Sqrt[3 + 2*Sqrt[2]]   minpoly degree: 4
+multiplier: 119*Sqrt[3 + 2*Sqrt[2]]   minpoly degree: 4
+multiplier: 238*Sqrt[3 + 2*Sqrt[2]]   minpoly degree: 4
+history: {{0, Infinity}, {1, 4}}
+no progress
+
+
+########## Sqrt[3+2Sqrt[3+2Sqrt[2]]] single level (nested radicand) ##########
+{9.5*^-6, Sqrt[3 + 2*Sqrt[3 + 2*Sqrt[2]]]}
+
+DONE

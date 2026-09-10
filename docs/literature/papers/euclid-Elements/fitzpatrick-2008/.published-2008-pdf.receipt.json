@@ -1,0 +1,31 @@
+{
+  "record_id": "euclid",
+  "title": "Elements",
+  "asset_id": "published-2008-pdf",
+  "version": "fitzpatrick-2008",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://farside.ph.utexas.edu/Books/Euclid/Elements.pdf",
+    "resolved_url": "https://farside.ph.utexas.edu/Books/Euclid/Elements.pdf",
+    "retrieved_at": "2026-09-05T20:28:00+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 4905710,
+    "sha256": "3d6304d80810393f987a9f700e8d86c85f64a4763e38b1814502b7b94dfadbfa"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "browser_fulltext",
+  "note": "Free modern Greek/English edition, 545 PDF pages; Book X is included. This is a specific edition of the generic ancient work cited.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/euclid-Elements/fitzpatrick-2008/published-2008-pdf.pdf",
+      "role": "pdf",
+      "bytes": 4905710,
+      "sha256": "3d6304d80810393f987a9f700e8d86c85f64a4763e38b1814502b7b94dfadbfa"
+    }
+  ],
+  "prior_candidate_errors": []
+}

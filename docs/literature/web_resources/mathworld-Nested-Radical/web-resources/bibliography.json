@@ -1,0 +1,24 @@
+{
+  "id": "mathworld",
+  "title": "Nested Radical",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "mathworld",
+      "entry_latex": "E.~W. Weisstein, \\emph{Nested Radical}, MathWorld.\n\\access{https://mathworld.wolfram.com/NestedRadical.html}{Encyclopedia entry}. \\status{B}\nA compact source of identities and literature leads. Check domain and denesting-model restrictions in the original references."
+    },
+    {
+      "report": "report-2",
+      "key": "mathworld",
+      "entry_latex": "Eric W. Weisstein.\n\\emph{Nested Radical}, MathWorld.\n\\sourceurl{https://mathworld.wolfram.com/NestedRadical.html}.\n\\textbf{R.} Convenient index of identities and references. Its finite and infinite examples belong to different problem classes."
+    },
+    {
+      "report": "report-3",
+      "key": "mathworld",
+      "entry_latex": "Eric W. Weisstein. ``Nested Radical.'' \\emph{MathWorld---A Wolfram Web Resource}. \\url{https://mathworld.wolfram.com/NestedRadical.html}. \\status{D}\n\\entrynote{A compact reference for examples, infinite nests, and bibliographic routes. Its coverage complements, but does not replace, the finite-denesting literature.}"
+    }
+  ],
+  "notes": [
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

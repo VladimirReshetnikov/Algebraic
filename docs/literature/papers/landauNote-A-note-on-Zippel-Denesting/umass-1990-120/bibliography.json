@@ -1,0 +1,25 @@
+{
+  "id": "landauNote",
+  "title": "A note on ``Zippel Denesting''",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "landauNote",
+      "entry_latex": "S. Landau, ``A note on `Zippel denesting','' \\emph{Journal of Symbolic Computation} \\textbf{13}(1) (1992), 41--45. \\doi{10.1016/0747-7171(92)90004-N}.\n\\access{https://web.cs.umass.edu/publication/docs/1990/UM-CS-1990-120.pdf}{UMass technical-report version}. \\status{T}\nRepairs the gap in the earlier argument and establishes necessity of the relevant Zippel condition. Page range corrected from a discrepancy in the supplied reports."
+    },
+    {
+      "report": "report-2",
+      "key": "landaunote",
+      "entry_latex": "Susan Landau.\n\\emph{A note on ``Zippel Denesting''}.\nJournal of Symbolic Computation \\textbf{13}(1), 41--45, 1992.\n\\doi{10.1016/0747-7171(92)90004-N}.\n\\sourceurl{https://fletcher.tufts.edu/research/research-publications/note-zippel-denesting}.\n\\textbf{M.} Repairs a gap in Zippel's argument and establishes the relevant necessity statement. The author-affiliated record supports 41--45; some later bibliographies give a different ending page."
+    },
+    {
+      "report": "report-3",
+      "key": "landauzippel",
+      "entry_latex": "Susan Landau. ``A note on `Zippel denesting'.'' \\emph{Journal of Symbolic Computation} \\textbf{13}(1) (1992), 41--45. \\doi{10.1016/0747-7171(92)90004-N}. Author preprint: \\url{https://web.cs.umass.edu/publication/docs/1990/UM-CS-1990-120.pdf}. \\status{F}\n\\entrynote{Explains the extent and limitations of the earlier Zippel procedure. Essential for avoiding the incorrect inference that a useful successful-case method decides every admissible denesting. The journal year is 1992, not a later web-upload date.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

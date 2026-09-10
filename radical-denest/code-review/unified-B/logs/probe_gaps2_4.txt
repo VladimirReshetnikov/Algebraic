@@ -1,0 +1,93 @@
+Kernel: 15.0.1 for Microsoft Windows (64-bit) (July 2, 2026)
+=== F. the factorizer's effect on S05 ===
+Factorc[radicand] = 1296 + 880*Sqrt[2] + 720*Sqrt[3] + 528*Sqrt[6]
+Factorc[problem]  = (1296 + 880*Sqrt[2] + 720*Sqrt[3] + 528*Sqrt[6])^(1/6)
+S05b  ok  depth 2->1  0.1 s
+      in : (1296 + 880*Sqrt[2] + 720*Sqrt[3] + 528*Sqrt[6])^(1/6)
+      out: 1 + Sqrt[2] + Sqrt[3]
+[RadicalDenest2] LinearFactor: (1296 + 880*Sqrt[2] + 720*Sqrt[3] + 528*Sqrt[6])^(1/6) -> 1 + Sqrt[2] + Sqrt[3]
+S05c  ok  depth 2->1  0.05 s
+      in : (1296 + 880*Sqrt[2] + 720*Sqrt[3] + 528*Sqrt[6])^(1/6)
+      out: 1 + Sqrt[2] + Sqrt[3]
+S21  ok  depth 2->1  0.04 s
+      in : (6336 + 4480*Sqrt[2])^(1/6)
+      out: 2*(1 + Sqrt[2])
+S22  ok  depth 2->1  0.02 s
+      in : (272 + 192*Sqrt[2])^(1/4)
+      out: 2*(1 + Sqrt[2])
+S23  ok  depth 2->1  0.02 s
+      in : (56 + 40*Sqrt[2])^(1/3)
+      out: 2*(1 + Sqrt[2])
+S24  ok  depth 2->1  0.03 s
+      in : (9963 + 7047*Sqrt[2])^(1/5)
+      out: 3*(1 + Sqrt[2])
+S25  ok  depth 2->1  0.02 s
+      in : Sqrt[20 + 8*Sqrt[6]]
+      out: 2*(Sqrt[2] + Sqrt[3])
+S26  ok  depth 2->1  0.02 s
+      in : (81 + 81*2^(1/3) + 81*2^(2/3))^(1/3)
+      out: 3*(1 + 2^(1/3))
+
+=== T. where does the time go on the five-prime sum? ===
+Factorc[radicand]:        Short[{0.0023602, 2*(14 + Sqrt[6] + Sqrt[10] + Sqrt[14] + Sqrt[15] + Sqrt[21] + Sqrt[22] + Sqrt[33] + Sqrt[35] + Sqrt[55] + Sqrt[77])}]
+Factorc[problem]:         Short[{0.1290384, Sqrt[2*(14 + Sqrt[6] + Sqrt[10] + Sqrt[14] + Sqrt[15] + Sqrt[21] + Sqrt[22] + Sqrt[33] + Sqrt[35] + Sqrt[55] + Sqrt[77])]}]
+DenestCore, m=1 only:     {0.2912976, Sqrt[2] + Sqrt[3] + Sqrt[5] + Sqrt[7] + Sqrt[11]}
+DenestCore, default:      {0.2624953, Sqrt[2] + Sqrt[3] + Sqrt[5] + Sqrt[7] + Sqrt[11]}
+Strad, Factor->False:     {0.2344798, Sqrt[2] + Sqrt[3] + Sqrt[5] + Sqrt[7] + Sqrt[11]}
+Strad, Multipliers->{1}:  {0.2565269, Sqrt[2] + Sqrt[3] + Sqrt[5] + Sqrt[7] + Sqrt[11]}
+four primes, Factorc[radicand]: 0.0005167
+four primes, DenestCore m=1:    {0.1168562, Sqrt[2] + Sqrt[3] + Sqrt[5] + Sqrt[7]}
+four primes, Strad default:     {0.118148, Sqrt[2] + Sqrt[3] + Sqrt[5] + Sqrt[7]}
+
+=== M. more shapes ===
+M01  ok  depth 2->1  0.06 s
+      in : Sqrt[(-1 + I*Sqrt[3])/2]
+      out: 1/2 + (I/2)*Sqrt[3]
+M02  ok  depth 2->1  0.03 s
+      in : (Sqrt[2] + Sqrt[3 + 2*Sqrt[2]])^(-1)
+      out: (1 + 2*Sqrt[2])^(-1)
+M03  ok  depth 2->0  0.03 s
+      in : (Sqrt[2] + Sqrt[3])/Sqrt[5 + 2*Sqrt[6]]
+      out: 1
+M04  ok  depth 2->1  0.09 s
+      in : Sqrt[10 + 2*Sqrt[6] + 2*Sqrt[10] + 2*Sqrt[15]]/2
+      out: (Sqrt[2] + Sqrt[3] + Sqrt[5])/2
+M05  ok  depth 2->1  0.01 s
+      in : Sqrt[3*(5 + 2*Sqrt[6])]
+      out: 3 + Sqrt[6]
+M06  ok  depth 2->1  0.02 s
+      in : Sqrt[2*(5 + 2*Sqrt[6])]
+      out: 2 + Sqrt[6]
+M07  ok  depth 2->1  0.02 s
+      in : 2^(1/4)*Sqrt[3 + 2*Sqrt[2]]
+      out: 2^(1/4) + 2^(3/4)
+M08  ok  depth 2->1  0.07 s
+      in : (10 + 7*Sqrt[2])^(1/3)
+      out: 2^(1/6) + 2^(2/3)
+M09  ok  depth 2->1  0.1 s
+      in : Sqrt[3 + Sqrt[2] + Sqrt[3] + Sqrt[6]]
+      out: 1 + Sqrt[3/2] + 1/Sqrt[2]
+M10  MISS  depth 2->2  1.57 s
+      in : Sqrt[4 + Sqrt[2] + Sqrt[6]]
+      out: Sqrt[4 + Sqrt[2] + Sqrt[6]]
+      exp: Sqrt[4 + Sqrt[2] + Sqrt[6]]  (exp==in: True)
+M11  ok  depth 3->2  2.18 s
+      in : Sqrt[5 + 2*Sqrt[3] + 2*Sqrt[2 + Sqrt[3]]]
+      out: Sqrt[5 + Sqrt[2] + 2*Sqrt[3] + Sqrt[6]]
+M12  ok  depth 2->1  0.01 s
+      in : Sqrt[(2 - Sqrt[2])*(2 + Sqrt[2])]
+      out: Sqrt[2]
+M13  MISS  depth 2->2  0.77 s
+      in : Sqrt[2 - Sqrt[2]] + Sqrt[2 + Sqrt[2]]
+      out: Sqrt[2*(2 + Sqrt[2])]
+      exp: Sqrt[4 + 2*Sqrt[2]]  (exp==in: True)
+M14  ok  depth 2->1  0.08 s
+      in : -Sqrt[2 - Sqrt[3]] + Sqrt[2 + Sqrt[3]]
+      out: Sqrt[2]
+M15  ok  depth 2->0  0.05 s
+      in : (Sqrt[2 - Sqrt[3]] + Sqrt[2 + Sqrt[3]])^2
+      out: 6
+
+=== SUMMARY ===
+non-ok: {{M10, MISS}, {M13, MISS}}
+DONE

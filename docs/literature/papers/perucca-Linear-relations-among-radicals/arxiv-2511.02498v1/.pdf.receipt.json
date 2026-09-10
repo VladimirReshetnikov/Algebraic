@@ -1,0 +1,31 @@
+{
+  "record_id": "perucca",
+  "title": "Linear relations among radicals",
+  "asset_id": "pdf",
+  "version": "arxiv-2511.02498v1",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://arxiv.org/pdf/2511.02498v1",
+    "resolved_url": "https://arxiv.org/pdf/2511.02498v1",
+    "retrieved_at": "2026-09-05T20:25:42+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 307235,
+    "sha256": "1a8239bf0fbd4da133f5ba3c776344182dbe5a65de4f12dffb7d6d150095fcdf"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "repository_pdf_and_source_links",
+  "note": "Pinned arXiv version; PDF and source requests use the identical version identifier.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/perucca-Linear-relations-among-radicals/arxiv-2511.02498v1/paper.pdf",
+      "role": "pdf",
+      "bytes": 307235,
+      "sha256": "1a8239bf0fbd4da133f5ba3c776344182dbe5a65de4f12dffb7d6d150095fcdf"
+    }
+  ],
+  "prior_candidate_errors": []
+}

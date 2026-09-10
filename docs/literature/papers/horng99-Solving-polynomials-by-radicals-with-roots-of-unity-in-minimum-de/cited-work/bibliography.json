@@ -1,0 +1,20 @@
+{
+  "id": "horng99",
+  "title": "Solving polynomials by radicals with roots of unity in minimum depth",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "horng99",
+      "entry_latex": "G. Horng and M.-D.~A. Huang, ``Solving polynomials by radicals with roots of unity in minimum depth,'' \\emph{Mathematics of Computation} \\textbf{68}(226) (1999), 881--885. \\doi{10.1090/S0025-5718-99-01060-1}. \\status{T}\nA concise source for minimum-depth polynomial solving with roots of unity included explicitly in the model. Corrected terminal page: 885."
+    },
+    {
+      "report": "report-2",
+      "key": "horng1999",
+      "entry_latex": "Gwoboa Horng and Ming-Deh Huang.\n\\emph{Solving polynomials by radicals with roots of unity in minimum depth}.\nMathematics of Computation \\textbf{68}(226), 881--885, 1999.\n\\doi{10.1090/S0025-5718-99-01060-1}.\n\\sourceurl{https://www.jstor.org/stable/2585063}.\n\\textbf{FT.} The roots-of-unity convention is central. This paper should not be conflated with a branch-sensitive simplifier for arbitrary symbolic functions."
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

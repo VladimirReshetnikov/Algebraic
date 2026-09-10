@@ -1,0 +1,27 @@
+The aim of this section is to prove the following proposition:
+
+\boundnprimes*
+
+\begin{proof}
+Recall the bound on $\pi_{1}$ given in \Cref{prop:number_of_primes}:
+\[ \pi_{1}(x) \geq \frac{1}{|\Gal(K/\QQ)|} \left[ \pi(x) - \log \Delta_{K} - c x^{1/2} \log (\Delta_{K} x^{|\Gal(K/\QQ)|}) \right] \]
+
+Recall also that $\pi(x)$, that is, the number of primes $\leq x$, can be bound as
+\[ \pi(x) \geq \frac{x}{\log x} \]
+
+Finally, 
+note that $|\Gal(K/\QQ)| \leq 2^{2s^2}$.
+
+Now compute
+\begin{align*}
+	\pi_{1}(2^{4s^3})
+	&\geq \frac{2^{4s^3}}{2^{2s^2}\cdot 4s^3} - 2^{3s^2} - c\cdot 2^{2s^3} \cdot 2^{3 s^2} - c \cdot 2^{2s^3} \cdot 4 s^3\\
+	&\geq \frac{2^{4s^3}}{2^{s^3}} - 2^{2s^3} - c\cdot 2^{2s^3} \cdot 2^{3 s^2} - c \cdot 2^{2s^3} \cdot 4 s^3 \quad \quad   \text{ for } s\geq 4 \\
+	&\geq 2^{3s^3} - 2^{2s^3}(1 + c\cdot 2^{3s^2} + c \cdot 4s^3) \\
+	&\geq 2^{2s^3}(2^{s^3} - c\cdot 2^{3s^2} - c \cdot 4s^3)\\
+	&\geq 2^{2s^3} \text{ for a fixed constant } c \text { and } s \geq \max(c,5) \\
+	&\geq 2^{s^3} + 1 .
+\end{align*}
+
+
+\end{proof}

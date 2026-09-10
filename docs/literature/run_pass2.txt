@@ -1,0 +1,275 @@
+[1/120] fateman72 / pdf
+  FAILED: https://web.archive.org/web/20051217213927id_/http://www.lcs.mit.edu/publications/pubs/pdf/MIT-LCS-TR-095.pdf: RuntimeError: Could not retrieve https://web.archive.org/web/20051217213927id_/http://www.lcs.mit.edu/publica
+[2/120] fateman72 / pdf-csail-direct
+  DOWNLOADED
+[3/120] caviness76 / pdf
+  FAILED: https://people.eecs.berkeley.edu/~fateman/papers/radcan.pdf: RuntimeError: Could not retrieve https://people.eecs.berkeley.edu/~fateman/papers/radcan.pdf: <urlopen error [WinError 10061] No connection could be made becau
+[4/120] zippelthesis / pdf-from-landing
+  DOWNLOADED
+[5/120] zippel1977 / nasa-pdf
+  FAILED: No explicit matching download link resolved; manual inspection is needed.
+[6/120] bfht / pdf
+  RESUMED
+[7/120] landauMiller / pdf-journal-1985
+  RESUMED
+[8/120] landau92 / pdf-author-upload-preprint
+  FAILED: https://www.researchgate.net/profile/Susan-Landau-2/publication/2629046_Simplification_of_Nested_Radicals/links/02bfe510fbd90dfb8f000000/Simplification-of-Nested-Radicals.pdf: RuntimeError: Could not retrieve https://www
+[9/120] landauNote / pdf-umass-1990-120
+  DOWNLOADED
+[10/120] landau94 / pdf-umass-1991-076
+  DOWNLOADED
+[11/120] landau98 / pdf-author-pdf
+  RESUMED
+[12/120] horng99 / pdf-from-landing
+  FAILED: Could not retrieve https://www.researchgate.net/publication/220577276_Solving_polynomials_by_radicals_with_roots_of_unity_in_minimum_depth: HTTP Error 403: Forbidden
+[13/120] horng99 / optional-publisher-candidate
+  DOWNLOADED
+[14/120] bloemer91 / optional-publisher-candidate
+  FAILED: https://ieeexplore.ieee.org/iel2/379/4746/00185434.pdf: ValueError: Not a complete PDF: PDF header / EOF missing (possibly login, error, or truncated data).
+[15/120] bloemer92 / optional-publisher-candidate
+  FAILED: https://ieeexplore.ieee.org/iel2/424/6693/00267807.pdf: ValueError: Not a complete PDF: PDF header / EOF missing (possibly login, error, or truncated data).
+[16/120] bloemer93 / pdf-thesis-1993
+  RESUMED
+[17/120] bloemer00 / pdf-from-landing
+  FAILED: Could not retrieve https://www.researchgate.net/publication/225210864_Denesting_by_Bounded_Degree_Radicals: HTTP Error 403: Forbidden
+[18/120] jeffrey / pdf-public-mirror
+  RESUMED
+[19/120] honsbeek99 / pdf-repository
+  FAILED: https://repository.ubn.ru.nl/bitstream/handle/2066/18722/18722.pdf: RuntimeError: Could not retrieve https://repository.ubn.ru.nl/bitstream/handle/2066/18722/18722.pdf: HTTP Error 403: Forbidden
+[20/120] honsbeek05 / pdf
+  RESUMED
+[21/120] mordell / pdf-journal-1953
+  DOWNLOADED
+[22/120] siegel / pdf-from-landing
+  FAILED: No explicit matching download link resolved; manual inspection is needed.
+[23/120] kneser / pdf-journal-1975
+  RESUMED
+[24/120] lll / pdf-journal-1982
+  DOWNLOADED
+[25/120] kluners / pdf-journal-1998
+  RESUMED
+[26/120] lenstra06 / pdf
+  RESUMED
+[27/120] perucca / pdf
+  RESUMED
+[28/120] perucca / tex-source
+  RESUMED
+[29/120] ramanujan / archive-pdf
+  RESUMED
+[30/120] berndt98 / pdf-journal-1998
+  RESUMED
+[31/120] shanks / pdf-journal-1974-part-a
+  RESUMED
+[32/120] shanks / pdf-journal-1974-part-b
+  RESUMED
+[33/120] spohn / pdf-journal-letter
+  RESUMED
+[34/120] bumby / pdf-journal-1987
+  RESUMED
+[35/120] osler / pdf-from-landing
+  FAILED: Could not retrieve https://www.researchgate.net/publication/282728308_Cardan_Polynomials_and_the_Reduction_of_Radicals: HTTP Error 403: Forbidden
+[36/120] oslercubic / pdf-university-mirror
+  RESUMED
+[37/120] witula / pdf-author-upload
+  FAILED: https://www.researchgate.net/profile/Roman-Witula-2/publication/241071508_Cardano%27s_formula_square_roots_Chebyshev_polynomials_and_radicals/links/5d385ae992851cd04682a056/Cardanos-formula-square-roots-Chebyshev-polynom
+[38/120] barbero / pdf
+  RESUMED
+[39/120] barbero / tex-source-from-publisher
+  RESUMED
+[40/120] barbero / pdf-arxiv
+  DOWNLOADED
+[41/120] barbero / tex-source-arxiv
+  DOWNLOADED
+[42/120] shevelev / pdf
+  RESUMED
+[43/120] shevelev / tex-source
+  RESUMED
+[44/120] sury / pdf
+  RESUMED
+[45/120] krepkii / pdf-spbu
+  DOWNLOADED
+[46/120] antipov / pdf-mathnet
+  DOWNLOADED
+[47/120] gkioulekas / pdf-author-submitted
+  RESUMED
+[48/120] dokmeci / pdf
+  DOWNLOADED
+[49/120] rahal / pdf
+  RESUMED
+[50/120] girstmair / pdf
+  RESUMED
+[51/120] girstmair / tex-source
+  RESUMED
+[52/120] cavallo / pdf
+  RESUMED
+[53/120] cavallo / tex-source
+  RESUMED
+[54/120] tonien / pdf-from-landing
+  FAILED: Could not retrieve https://www.sciencedirect.com/science/article/pii/S2772827725000038: HTTP Error 403: Forbidden
+[55/120] rit / pdf
+  RESUMED
+[56/120] rit / tex-source
+  RESUMED
+[57/120] gaillard / pdf
+  RESUMED
+[58/120] gaillard / tex-source
+  RESUMED
+[59/120] allender / pdf-eccc-2005-037
+  DOWNLOADED
+[60/120] exactgeometry / pdf-hal-v1
+  RESUMED
+[61/120] herschfeld / pdf-university-mirror
+  FAILED: https://is.muni.cz/el/1431/jaro2015/M7400/um/2301294_147_251_4_41_15_08_2014_19_16.pdf: ValueError: Not a complete PDF: PDF header / EOF missing (possibly login, error, or truncated data).
+[62/120] borwein / optional-publisher-candidate
+  FAILED: https://www.tandfonline.com/doi/pdf/10.1080/00029890.1991.11995783: RuntimeError: Could not retrieve https://www.tandfonline.com/doi/pdf/10.1080/00029890.1991.11995783: HTTP Error 403: Forbidden
+[63/120] campbell / pdf
+  RESUMED
+[64/120] campbell / tex-source
+  RESUMED
+[65/120] mitra / pdf
+  RESUMED
+[66/120] mitra / tex-source
+  RESUMED
+[67/120] gutin / pdf
+  RESUMED
+[68/120] gutin / tex-source
+  RESUMED
+[69/120] piagm / pdf-author-hosted-scan
+  RESUMED
+[70/120] euclid / tex-pdf-bundle
+  RESUMED
+[71/120] euclid / published-2008-pdf
+  RESUMED
+[72/120] sympy / resource-01
+  RESUMED
+[73/120] sympysrc / resource-01
+  RESUMED
+[74/120] sympysrc / resource-02
+  RESUMED
+[75/120] sympysrc / resource-03
+  RESUMED
+[76/120] sympysrc / resource-04
+  RESUMED
+[77/120] sympyissues / resource-01
+  RESUMED
+[78/120] sympyissues / resource-02
+  RESUMED
+[79/120] maxima / resource-01
+  RESUMED
+[80/120] maxima / resource-02
+  RESUMED
+[81/120] maximamanual / resource-01
+  RESUMED
+[82/120] maximamanual / resource-02
+  RESUMED
+[83/120] maximathread / resource-01
+  RESUMED
+[84/120] maximathread / resource-02
+  RESUMED
+[85/120] maximathread / resource-03
+  RESUMED
+[86/120] wolframroot / resource-01
+  RESUMED
+[87/120] wolframradicals / resource-01
+  RESUMED
+[88/120] wolframresource / resource-01
+  FAILED: https://resources.wolframcloud.com/FunctionRepository/resources/RadicalDenest: RuntimeError: Could not retrieve https://resources.wolframcloud.com/FunctionRepository/resources/RadicalDenest: HTTP Error 404: Not Found
+[89/120] wolframresource / resource-02
+  FAILED: https://resources.wolframcloud.com/FunctionRepository/resources/RadicalDenest/: RuntimeError: Could not retrieve https://resources.wolframcloud.com/FunctionRepository/resources/RadicalDenest/: HTTP Error 404: Not Found
+[90/120] wolframcommunity / resource-01
+  FAILED: https://community.wolfram.com/groups/-/m/t/980264: RuntimeError: Could not retrieve https://community.wolfram.com/groups/-/m/t/980264: HTTP Error 503: Service Unavailable
+[91/120] wolframcommunity / resource-02
+  FAILED: https://community.wolfram.com/groups/-/m/t/2120629: RuntimeError: Could not retrieve https://community.wolfram.com/groups/-/m/t/2120629: HTTP Error 503: Service Unavailable
+[92/120] maple / resource-01
+  RESUMED
+[93/120] maple / resource-02
+  RESUMED
+[94/120] sage / resource-01
+  RESUMED
+[95/120] sage / resource-02
+  RESUMED
+[96/120] sage / resource-03
+  FAILED: https://doc.sagemath.org/html/en/reference/qqbar/sage/rings/qqbar.html: RuntimeError: Could not retrieve https://doc.sagemath.org/html/en/reference/qqbar/sage/rings/qqbar.html: HTTP Error 404: Not Found
+[97/120] pari / resource-01
+  RESUMED
+[98/120] pari / resource-02
+  RESUMED
+[99/120] magma / resource-01
+  DOWNLOADED
+[100/120] magma / resource-02
+  RESUMED
+[101/120] flint / resource-01
+  RESUMED
+[102/120] calcium / resource-01
+  RESUMED
+[103/120] fricas / resource-01
+  RESUMED
+[104/120] fricas / resource-02
+  RESUMED
+[105/120] honda / resource-01
+  RESUMED
+[106/120] wikipedia / resource-01
+  RESUMED
+[107/120] mathworld / resource-01
+  RESUMED
+[108/120] brownmath / resource-01
+  RESUMED
+[109/120] mse / resource-01
+  FAILED: https://math.stackexchange.com/questions/4680: RuntimeError: Could not retrieve https://math.stackexchange.com/questions/4680: HTTP Error 403: Forbidden
+[110/120] mse / resource-02
+  FAILED: https://math.stackexchange.com/questions/16331: RuntimeError: Could not retrieve https://math.stackexchange.com/questions/16331: HTTP Error 403: Forbidden
+[111/120] mse / resource-03
+  FAILED: https://math.stackexchange.com/questions/871639: RuntimeError: Could not retrieve https://math.stackexchange.com/questions/871639: HTTP Error 403: Forbidden
+[112/120] mo / resource-01
+  RESUMED
+[113/120] mo / resource-02
+  RESUMED
+[114/120] mo / resource-03
+  RESUMED
+[115/120] mo / resource-04
+  RESUMED
+[116/120] oeis / resource-01
+  RESUMED
+[117/120] tiwari / resource-01
+  RESUMED
+[118/120] infiniteblogs / resource-01
+  FAILED: https://www.cantorsparadise.com/ramanujans-nested-radical-problem-f14c3060e495: RuntimeError: Could not retrieve https://www.cantorsparadise.com/ramanujans-nested-radical-problem-f14c3060e495: HTTP Error 403: Forbidden
+[119/120] infiniteblogs / resource-02
+  FAILED: https://medium.com/@ArchieGSmith/calculus-of-infinite-nested-radicals-1ab3e1d26774: RuntimeError: Could not retrieve https://medium.com/@ArchieGSmith/calculus-of-infinite-nested-radicals-1ab3e1d26774: HTTP Error 403: For
+[120/120] infiniteblogs / resource-03
+  FAILED: https://math.stackexchange.com/questions/4049946/the-infinitely-nested-radicals-problem-and-ramanujans-wondrous-formula: RuntimeError: Could not retrieve https://math.stackexchange.com/questions/4049946/the-infinitely-ne
+{
+  "successful_assets": 94,
+  "failed_assets": 26,
+  "pdf_files": 46,
+  "tex_files": 43,
+  "records_with_downloads": 64,
+  "selected_records_without_any_asset_route": [
+    "zippel85",
+    "horng90",
+    "horngThesis",
+    "cotner",
+    "bloemer98",
+    "besicovitch",
+    "landaufactor",
+    "cohen",
+    "cox",
+    "zippelbook",
+    "geddes",
+    "gathen",
+    "davenport",
+    "newman",
+    "berndtII",
+    "berndtIV",
+    "berndtV",
+    "berndt97",
+    "elia",
+    "osipov21",
+    "osipov26",
+    "osipov97",
+    "polya",
+    "guin"
+  ],
+  "candidate_assets_skipped": 0,
+  "interrupted": false
+}

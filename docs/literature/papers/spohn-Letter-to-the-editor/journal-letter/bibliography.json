@@ -1,0 +1,25 @@
+{
+  "id": "spohn",
+  "title": "Letter to the editor",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "spohn",
+      "entry_latex": "W.~G. Spohn, Jr., ``Letter to the Editor,'' \\emph{Fibonacci Quarterly} \\textbf{14} (1976), 12. \\status{B}\nA corrective historical companion to the incredible-identities discussion; retained to avoid presenting that literature without its follow-up."
+    },
+    {
+      "report": "report-2",
+      "key": "spohn",
+      "entry_latex": "William G. Spohn, Jr.\n\\emph{Letter to the editor} concerning Shanks's identities.\nThe Fibonacci Quarterly \\textbf{14}(1), 12, 1976.\n\\textbf{R.} Follow-up to the preceding identities, retained as a separate mathematical contribution rather than as another copy of Shanks's paper."
+    },
+    {
+      "report": "report-3",
+      "key": "spohn",
+      "entry_latex": "W. G. Spohn. ``Letter to the Editor.'' \\emph{The Fibonacci Quarterly} \\textbf{14} (1976), 12. \\status{A}\n\\entrynote{A correction in the ``incredible identities'' lineage. Retaining this short item avoids reproducing a formula from an early version without its published correction.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

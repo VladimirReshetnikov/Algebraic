@@ -1,0 +1,363 @@
+Kernel: 15.0.1 for Microsoft Windows (64-bit) (July 2, 2026)
+Package: C:\RadicalDenest\.claude\worktrees\strad-denesting-analysis-6158e6\src\code-review\unified-C\tests\..\..\..\corrected\StradFixed3.wl  SHA-256 623de948bcc24e057ecb06f65d1afe452612d873f6b8fd60b44f81c150804a1c
+
+TestReport: StradFixed3.wlt | 110 SuccessEvaluating tests (110)Elapsed time 2s
+
+TestReport: StradFixed3.wlt | 113 SuccessEvaluating tests (113)Elapsed time 3s
+
+TestReport: StradFixed3.wlt | 119 SuccessEvaluating tests (119)Elapsed time 3s
+
+TestReport: StradFixed3.wlt | 121 SuccessEvaluating tests (121)Elapsed time 4s
+
+TestReport: StradFixed3.wlt | 124 SuccessEvaluating tests (124)Elapsed time 4s
+
+TestReport: StradFixed3.wlt | 124 SuccessEvaluating tests (124)Elapsed time 4s
+
+TestReport: StradFixed3.wlt | 124 SuccessEvaluating tests (124)Elapsed time 5s
+
+TestReport: StradFixed3.wlt | 125 SuccessEvaluating tests (125)Elapsed time 5s
+
+TestReport: StradFixed3.wlt | 125 SuccessEvaluating tests (125)Elapsed time 6s
+
+TestReport: StradFixed3.wlt | 125 SuccessEvaluating tests (125)Elapsed time 6s
+
+TestReport: StradFixed3.wlt | 126 SuccessEvaluating tests (126)Elapsed time 6s
+
+TestReport: StradFixed3.wlt | 131 SuccessEvaluating tests (131)Elapsed time 7s
+
+TestReport: StradFixed3.wlt | 131 SuccessEvaluating tests (131)Elapsed time 7s
+
+TestReport: StradFixed3.wlt | 131 SuccessEvaluating tests (131)Elapsed time 8s
+
+TestReport: StradFixed3.wlt | 131 SuccessEvaluating tests (131)Elapsed time 8s
+
+TestReport: StradFixed3.wlt | 131 SuccessEvaluating tests (131)Elapsed time 8s
+
+TestReport: StradFixed3.wlt | 131 SuccessEvaluating tests (131)Elapsed time 9s
+
+TestReport: StradFixed3.wlt | 131 SuccessEvaluating tests (131)Elapsed time 9s
+
+TestReport: StradFixed3.wlt | 131 SuccessEvaluating tests (131)Elapsed time 10s
+
+TestReport: StradFixed3.wlt | 131 SuccessEvaluating tests (131)Elapsed time 10s
+
+TestReport: StradFixed3.wlt | 132 SuccessEvaluating tests (132)Elapsed time 11s
+
+TestReport: StradFixed3.wlt | 132 SuccessEvaluating tests (132)Elapsed time 11s
+
+TestReport: StradFixed3.wlt | 132 SuccessEvaluating tests (132)Elapsed time 11s
+
+TestReport: StradFixed3.wlt | 132 SuccessEvaluating tests (132)Elapsed time 12s
+
+TestReport: StradFixed3.wlt | 135 SuccessEvaluating tests (135)Elapsed time 12s
+
+TestReport: StradFixed3.wlt | 138 SuccessEvaluating tests (138)Elapsed time 13s
+
+TestReport: StradFixed3.wlt | 142 SuccessEvaluating tests (142)Elapsed time 13s
+
+TestReport: StradFixed3.wlt | 165 SuccessEvaluating tests (165)Elapsed time 13s
+
+TestReport: StradFixed3.wlt | 165 SuccessEvaluating tests (165)Elapsed time 14s
+
+TestReport: StradFixed3.wlt | 165 SuccessEvaluating tests (165)Elapsed time 14s
+
+TestReport: StradFixed3.wlt | 165 SuccessEvaluating tests (165)Elapsed time 15s
+
+TestReport: StradFixed3.wlt | 165 SuccessEvaluating tests (165)Elapsed time 15s
+
+TestReport: StradFixed3.wlt | 165 SuccessEvaluating tests (165)Elapsed time 15s
+
+TestReport: StradFixed3.wlt | 165 SuccessEvaluating tests (165)Elapsed time 16s
+
+TestReport: StradFixed3.wlt | 165 SuccessEvaluating tests (165)Elapsed time 16s
+
+TestReport: StradFixed3.wlt | 165 SuccessEvaluating tests (165)Elapsed time 17s
+
+TestReport: StradFixed3.wlt | 165 SuccessEvaluating tests (165)Elapsed time 17s
+
+TestReport: StradFixed3.wlt | 165 SuccessEvaluating tests (165)Elapsed time 17s
+
+TestReport: StradFixed3.wlt | 165 SuccessEvaluating tests (165)Elapsed time 18s
+
+TestReport: StradFixed3.wlt | 165 SuccessEvaluating tests (165)Elapsed time 18s
+
+TestReport: StradFixed3.wlt | 165 SuccessEvaluating tests (165)Elapsed time 19s
+
+TestReport: StradFixed3.wlt | 165 SuccessEvaluating tests (165)Elapsed time 19s
+
+TestReport: StradFixed3.wlt | 185 SuccessEvaluating tests (185)Elapsed time 19s
+
+TestReport: StradFixed3.wlt | 213 SuccessEvaluating tests (213)Elapsed time 20s
+
+TestReport: StradFixed3.wlt | 215 SuccessEvaluating tests (215)Elapsed time 20s
+
+TestReport: StradFixed3.wlt | 218 SuccessEvaluating tests (218)Elapsed time 21s
+
+TestReport: StradFixed3.wlt | 218 SuccessEvaluating tests (218)Elapsed time 21s
+
+TestReport: StradFixed3.wlt | 218 SuccessEvaluating tests (218)Elapsed time 21s
+
+TestReport: StradFixed3.wlt | 218 SuccessEvaluating tests (218)Elapsed time 22s
+
+TestReport: StradFixed3.wlt | 218 SuccessEvaluating tests (218)Elapsed time 22s
+
+TestReport: StradFixed3.wlt | 219 SuccessEvaluating tests (219)Elapsed time 23s
+
+TestReport: StradFixed3.wlt | 220 SuccessEvaluating tests (220)Elapsed time 23s
+
+TestReport: StradFixed3.wlt | 220 SuccessEvaluating tests (220)Elapsed time 23s
+
+TestReport: StradFixed3.wlt | 220 SuccessEvaluating tests (220)Elapsed time 24s
+
+TestReport: StradFixed3.wlt | 221 SuccessEvaluating tests (221)Elapsed time 24s
+
+TestReport: StradFixed3.wlt | 221 SuccessEvaluating tests (221)Elapsed time 25s
+
+TestReport: StradFixed3.wlt | 221 SuccessEvaluating tests (221)Elapsed time 25s
+
+TestReport: StradFixed3.wlt | 221 SuccessEvaluating tests (221)Elapsed time 25s
+
+TestReport: StradFixed3.wlt | 221 SuccessEvaluating tests (221)Elapsed time 26s
+
+TestReport: StradFixed3.wlt | 221 SuccessEvaluating tests (221)Elapsed time 26s
+
+TestReport: StradFixed3.wlt | 229 SuccessEvaluating tests (229)Elapsed time 27s
+
+TestReport: StradFixed3.wlt | 229 SuccessEvaluating tests (229)Elapsed time 27s
+
+TestReport: StradFixed3.wlt | 229 SuccessEvaluating tests (229)Elapsed time 28s
+
+TestReport: StradFixed3.wlt | 229 SuccessEvaluating tests (229)Elapsed time 28s
+
+TestReport: StradFixed3.wlt | 229 SuccessEvaluating tests (229)Elapsed time 28s
+R4-exact-equality-positive -> Success   (Quantity[0.01, Seconds] s)
+R4-reject-wrong-square-root-branch -> Success   (Quantity[0., Seconds] s)
+R4-no-numerical-tolerance-acceptance -> Success   (Quantity[0., Seconds] s)
+R4-symbolic-equality-is-not-algebraic-certificate -> Success   (Quantity[0., Seconds] s)
+R4-supported-exact-domain -> Success   (Quantity[0., Seconds] s)
+R4-failed-is-not-an-accepted-polynomial -> Success   (Quantity[0., Seconds] s)
+R4-constant-is-not-a-minimal-polynomial -> Success   (Quantity[0., Seconds] s)
+R4-root-payload-is-opaque -> Success   (Quantity[0., Seconds] s)
+R4-root-representation-is-not-free -> Success   (Quantity[0., Seconds] s)
+R4-empty-list-metrics -> Success   (Quantity[0., Seconds] s)
+R4-direct-quadratic-denesting -> Success   (Quantity[0.02, Seconds] s)
+R4-negative-coefficient-positive-root -> Success   (Quantity[0.01, Seconds] s)
+R4-indirect-fourth-root-minus-sign -> Success   (Quantity[0.01, Seconds] s)
+R4-indirect-negative-rational-part -> Success   (Quantity[0.01, Seconds] s)
+R4-negative-radicand-principal-square-root -> Success   (Quantity[0.02, Seconds] s)
+R4-composite-index-without-cost-neutral-stall -> Success   (Quantity[0.16, Seconds] s)
+R4-negative-rational-exponent -> Success   (Quantity[0.02, Seconds] s)
+R4-cubic-trace-norm -> Success   (Quantity[0.01, Seconds] s)
+R4-negative-real-cubic-is-not-real-root -> Success   (Quantity[0.04, Seconds] s)
+R4-honsbeek-ramanujan-square-of-cube-roots -> Success   (Quantity[0.35000000000000003, Seconds] s)
+R4-untrusted-solver-in-symbolic-host -> Success   (Quantity[0.01, Seconds] s)
+R4-ambient-assumptions-do-not-rewrite-host -> Success   (Quantity[0.01, Seconds] s)
+R4-unknown-head-is-opaque -> Success   (Quantity[0., Seconds] s)
+R4-held-input-is-opaque -> Success   (Quantity[0., Seconds] s)
+R4-symbolic-factorc-is-conservative -> Success   (Quantity[0., Seconds] s)
+R4-horner-inverse -> Success   (Quantity[0., Seconds] s)
+R4-symbolic-numerator-local-inverse-certificate -> Success   (Quantity[0., Seconds] s)
+R4-aggregate-positive-factor-is-not-termwise-license -> Success   (Quantity[0., Seconds] s)
+R4-setoptions-strad-is-effective -> Success   (Quantity[0., Seconds] s)
+R4-setoptions-wrapper-is-effective -> Success   (Quantity[0., Seconds] s)
+R4-zero-budget-no-work -> Success   (Quantity[0., Seconds] s)
+R4-invalid-options-fail-explicitly -> Success   (Quantity[0., Seconds] s)
+R4-forced-list-obeys-cap -> Success   (Quantity[0.01, Seconds] s)
+R4-trial-budget-per-island-across-list -> Success   (Quantity[0.01, Seconds] s)
+R4-bounded-diagnostics -> Success   (Quantity[0.01, Seconds] s)
+R4-callback-throw-is-not-a-rewrite -> Success   (Quantity[0.02, Seconds] s)
+R4-each-example-equal-and-no-more-expensive -> Success   (Quantity[0.22, Seconds] s)
+R5-direct-square-value -> Success   (Quantity[0.01, Seconds] s)
+R5-direct-square-depth -> Success   (Quantity[0.01, Seconds] s)
+R5-indirect-fourth-root-value -> Success   (Quantity[0.01, Seconds] s)
+R5-indirect-fourth-root-depth -> Success   (Quantity[0.01, Seconds] s)
+R5-small-positive-branch -> Success   (Quantity[0.01, Seconds] s)
+R5-negative-radicand-principal-square-root -> Success   (Quantity[0.02, Seconds] s)
+R5-principal-fifth-power-preserved -> Success   (Quantity[0.09, Seconds] s)
+R5-real-fifth-root-is-not-principal-power -> Success   (Quantity[0.01, Seconds] s)
+R5-bad-zero-solver-in-symbolic-host-rejected -> Success   (Quantity[0.02, Seconds] s)
+R5-failed-solver-does-not-leak -> Success   (Quantity[0.02, Seconds] s)
+R5-approximate-solver-does-not-leak -> Success   (Quantity[0.02, Seconds] s)
+R5-ambient-assumptions-do-not-rewrite-host -> Success   (Quantity[0., Seconds] s)
+R5-unknown-head-is-opaque -> Success   (Quantity[0., Seconds] s)
+R5-transcendental-constant-rejected -> Success   (Quantity[0., Seconds] s)
+R5-explicit-algebraic-grammar -> Success   (Quantity[0., Seconds] s)
+R5-conjugates-distinguished -> Success   (Quantity[0., Seconds] s)
+R5-non-algebraic-comparison-is-unknown -> Success   (Quantity[0., Seconds] s)
+R5-zero-total-budget-is-noop -> Success   (Quantity[0., Seconds] s)
+R5-invalid-integer-option -> Success   (Quantity[0., Seconds] s)
+R5-invalid-time-option -> Success   (Quantity[0., Seconds] s)
+R5-unknown-option-rejected -> Success   (Quantity[0., Seconds] s)
+R5-SetOptions-on-alias-is-honored -> Success   (Quantity[0., Seconds] s)
+R5-zero-trials-disables-only-multiplier-search -> Success   (Quantity[0.02, Seconds] s)
+R5-per-island-list-trial-budget -> Success   (Quantity[0.02, Seconds] s)
+R5-simple-idempotence -> Success   (Quantity[0.02, Seconds] s)
+R5-inexact-tree-policy-is-conservative -> Success   (Quantity[0., Seconds] s)
+R5-rationalization-certificate -> Success   (Quantity[0., Seconds] s)
+R5-factor-helper-refuses-symbolic-transform -> Success   (Quantity[0., Seconds] s)
+R5-invalid-seeds-do-not-change-value -> Success   (Quantity[0.02, Seconds] s)
+R5-bounded-certificate-records -> Success   (Quantity[0.02, Seconds] s)
+R5-ramanujan-cubic-multiplier-nine -> Success   (Quantity[0.46, Seconds] s)
+R6-direct-plus -> Success   (Quantity[0.01, Seconds] s)
+R6-direct-minus -> Success   (Quantity[0.01, Seconds] s)
+R6-two-surds -> Success   (Quantity[0.02, Seconds] s)
+R6-indirect-plus -> Success   (Quantity[0.01, Seconds] s)
+R6-indirect-minus -> Success   (Quantity[0.02, Seconds] s)
+R6-imaginary-square-root -> Success   (Quantity[0.02, Seconds] s)
+R6-complex-square-root -> Success   (Quantity[0., Seconds] s)
+R6-cubic-quadratic -> Success   (Quantity[0.01, Seconds] s)
+R6-cubic-golden-ratio -> Success   (Quantity[0.02, Seconds] s)
+R6-principal-negative-cube -> Success   (Quantity[0.05, Seconds] s)
+R6-rational-power-numerator -> Success   (Quantity[0.02, Seconds] s)
+R6-reciprocal-root -> Success   (Quantity[0.02, Seconds] s)
+R6-symbolic-host-reject-zero -> Success   (Quantity[0.01, Seconds] s)
+R6-reject-opposite-branch -> Success   (Quantity[0.01, Seconds] s)
+R6-reject-inexact-candidate -> Success   (Quantity[0.01, Seconds] s)
+R6-symbolic-host-without-fastpath -> Success   (Quantity[0.02, Seconds] s)
+R6-grammar-reject-hidden-function -> Success   (Quantity[0., Seconds] s)
+R6-grammar-reject-root-object -> Success   (Quantity[0., Seconds] s)
+R6-same-minpoly-not-equality -> Success   (Quantity[0., Seconds] s)
+R6-exact-certificate -> Success   (Quantity[0., Seconds] s)
+R6-ambient-assumptions-isolated -> Success   (Quantity[0., Seconds] s)
+R6-held-input-unchanged -> Success   (Quantity[0., Seconds] s)
+R6-unknown-head-not-traversed -> Success   (Quantity[0., Seconds] s)
+R6-mixed-exact-inexact-list-is-conservative -> Success   (Quantity[0., Seconds] s)
+R6-zero -> Success   (Quantity[0., Seconds] s)
+R6-rational-no-op -> Success   (Quantity[0., Seconds] s)
+R6-invalid-value-preserved -> Success   (Quantity[0., Seconds] s)
+R6-zero-budget-no-op -> Success   (Quantity[0., Seconds] s)
+R6-infinite-cap-invalid -> Success   (Quantity[0., Seconds] s)
+R6-negative-trials-invalid -> Success   (Quantity[0., Seconds] s)
+R6-negative-budget-invalid -> Success   (Quantity[0., Seconds] s)
+R6-boolean-option-invalid -> Success   (Quantity[0., Seconds] s)
+R6-unknown-option-invalid -> Success   (Quantity[0., Seconds] s)
+R6-setoptions-respected -> Success   (Quantity[0., Seconds] s)
+R6-first-explicit-option-wins -> Success   (Quantity[0., Seconds] s)
+R6-zero-cap-no-search -> Success   (Quantity[0.01, Seconds] s)
+R6-per-island-list-trials -> Success   (Quantity[0.01, Seconds] s)
+R6-queue-cap-one-node -> Success   (Quantity[0.01, Seconds] s)
+R6-recheck-certificate-log -> Success   (Quantity[0.02, Seconds] s)
+R6-rationalization-equality -> Success   (Quantity[0., Seconds] s)
+R6-symbolic-factorc-conservative -> Success   (Quantity[0., Seconds] s)
+R6-cost-order-direction -> Success   (Quantity[0., Seconds] s)
+R6-ramanujan-forced-multiplier-nine -> Success   (Quantity[0.37, Seconds] s)
+G-A-C05-negative-fifth-root -> Success   (Quantity[0.07, Seconds] s)
+G-A-C14-negative-sixth-root -> Success   (Quantity[0.1, Seconds] s)
+G-A-S11 -> Success   (Quantity[0.12, Seconds] s)
+G-A-S12 -> Success   (Quantity[0.1, Seconds] s)
+G-A-S13 -> Success   (Quantity[0.07, Seconds] s)
+G-A-S14 -> Success   (Quantity[0.02, Seconds] s)
+G-A-S15 -> Success   (Quantity[0.07, Seconds] s)
+G-A-S20 -> Success   (Quantity[0.1, Seconds] s)
+G-B-R03-ramanujan-sixth-root -> Success   (Quantity[0.33, Seconds] s)
+G-B-P02 -> Success   (Quantity[0.06, Seconds] s)
+G-B-S10 -> Success   (Quantity[0.07, Seconds] s)
+G-B-S04 -> Success   (Quantity[0.08, Seconds] s)
+G-C-S05-factor-extraction -> Success   (Quantity[0.06, Seconds] s)
+G-D-Q21-cancellation -> Success   (Quantity[1.22, Seconds] s)
+G-E-P13-five-primes-within-budget -> Success   (Quantity[1.25, Seconds] s)
+A-A12-ramanujan-cube-root -> Success   (Quantity[0.27, Seconds] s)
+A-K01-ramanujan-square-root -> Success   (Quantity[0.06, Seconds] s)
+A-C02-complex-three-halves-power -> Success   (Quantity[0.06, Seconds] s)
+A-C03-complex-product -> Success   (Quantity[0.06, Seconds] s)
+A-C01-negative-target -> Success   (Quantity[0.01, Seconds] s)
+A-A30-bfht-partial-denesting -> Success   (Quantity[3.33, Seconds] s)
+A-A31-bfht-default-levels -> Success   (Quantity[1.68, Seconds] s)
+A-B07-root-input -> Success   (Quantity[0.02, Seconds] s)
+A-B01-non-denestable-unchanged -> Success   (Quantity[0.3, Seconds] s)
+A-B03-non-denestable-cube-root-unchanged -> Success   (Quantity[0.41000000000000003, Seconds] s)
+A-E01-symbolic-untouched -> Success   (Quantity[0., Seconds] s)
+A-E06-numeric-factor-inside-symbolic-product -> Success   (Quantity[0.01, Seconds] s)
+A-K11-transcendental-host -> Success   (Quantity[0.01, Seconds] s)
+A-A23-sum-recombined -> Success   (Quantity[0.05, Seconds] s)
+A-report-status-improved -> Success   (Quantity[0.32, Seconds] s)
+A-M02-reciprocal-of-a-sum-island -> Success   (Quantity[0.02, Seconds] s)
+A-M15-integer-power-of-a-sum-island -> Success   (Quantity[0.04, Seconds] s)
+A-print-untouched -> Success   (Quantity[0., Seconds] s)
+C-R7-admission-basics -> Success   (Quantity[0., Seconds] s)
+C-R7-rational-root-admission -> Success   (Quantity[0., Seconds] s)
+C-R7-transcendental-root-rejected -> Success   (Quantity[0., Seconds] s)
+C-R7-parametric-root-rejected -> Success   (Quantity[0., Seconds] s)
+C-R7-unsupported-root-equality-unknown -> Success   (Quantity[0., Seconds] s)
+C-R7-small-nonzero-exact -> Success   (Quantity[0., Seconds] s)
+C-R7-principal-not-real-cube-root -> Success   (Quantity[0., Seconds] s)
+C-R7-outside-grammar-not-certified -> Success   (Quantity[0., Seconds] s)
+C-R7-injected-numeric-hint-cannot-decide -> Success   (Quantity[0., Seconds] s)
+C-R7-malformed-and-invalid-options-fail -> Success   (Quantity[0., Seconds] s)
+C-R7-every-entry-point-rejects-malformed-calls -> Success   (Quantity[0., Seconds] s)
+C-R7-zero-budget-disabled -> Success   (Quantity[0., Seconds] s)
+C-R7-disabled-no-unbudgeted-cost -> Success   (Quantity[0., Seconds] s)
+C-R7-nested-option-list -> Success   (Quantity[0., Seconds] s)
+C-R7-first-option-wins -> Success   (Quantity[0., Seconds] s)
+C-R7-setoptions-entrypoint -> Success   (Quantity[0., Seconds] s)
+C-R7-opaque-depth-and-radical-count -> Success   (Quantity[0., Seconds] s)
+C-R7-complex-bit-size -> Success   (Quantity[0., Seconds] s)
+C-R7-negative-fifth-root -> Success   (Quantity[0.06, Seconds] s)
+C-R7-higher-odd-seventh -> Success   (Quantity[0.01, Seconds] s)
+C-R7-higher-odd-ninth-private-recipe -> Success   (Quantity[0., Seconds] s)
+C-R7-multisurd-safety -> Success   (Quantity[6.04, Seconds] s)
+C-R7-assumptions-isolation -> Success   (Quantity[0.01, Seconds] s)
+C-R7-inexact-tree-noop -> Success   (Quantity[0., Seconds] s)
+C-R7-held-host-opaque -> Success   (Quantity[0., Seconds] s)
+C-R7-zero-trials-safe -> Success   (Quantity[0.01, Seconds] s)
+C-R7-single-visit-trial-cap -> Success   (Quantity[0., Seconds] s)
+C-R7-throwing-solver-quarantined -> Success   (Quantity[0.01, Seconds] s)
+C-R7-report-cost-and-evidence-kind -> Success   (Quantity[0.01, Seconds] s)
+C-R7-positive-radicand-preserves-incumbent -> Success   (Quantity[0., Seconds] s)
+C-R7-power-stage-monotonicity-mocked-search -> Success   (Quantity[0., Seconds] s)
+C-R7-unchanged-subproblem-admitted-mocked-factors -> Success   (Quantity[0.01, Seconds] s)
+C-R8-grammar -> Success   (Quantity[0., Seconds] s)
+C-R8-opaque-not-output -> Success   (Quantity[0., Seconds] s)
+C-R8-equality-status -> Success   (Quantity[0.01, Seconds] s)
+C-R8-indirect-rational -> Success   (Quantity[0.03, Seconds] s)
+C-R8-negative-seventh -> Success   (Quantity[0.09, Seconds] s)
+C-R8-negative-ninth -> Success   (Quantity[0.06, Seconds] s)
+C-R8-negative-stage-preserves-incumbent -> Success   (Quantity[0., Seconds] s)
+C-R8-raw-index-reduction-without-recursion -> Success   (Quantity[0.03, Seconds] s)
+C-R8-honsbeek-rational-summand -> Success   (Quantity[0.01, Seconds] s)
+C-R8-honsbeek-classical -> Success   (Quantity[0.08, Seconds] s)
+C-R8-coset-enumeration -> Success   (Quantity[0., Seconds] s)
+C-R8-coset-coefficient-solver -> Success   (Quantity[0.04, Seconds] s)
+C-R8-coset-integer-relation -> Success   (Quantity[0.01, Seconds] s)
+C-R8-opaque-node-count -> Success   (Quantity[0., Seconds] s)
+C-R8-gaussian-denominator -> Success   (Quantity[0., Seconds] s)
+C-R8-inexact-and-unknown-heads-untouched -> Success   (Quantity[0., Seconds] s)
+C-R8-new-options-validated -> Success   (Quantity[0., Seconds] s)
+C-R8-report-scopes -> Success   (Quantity[0.01, Seconds] s)
+C-R8-failed-search-cached-with-budget -> Success   (Quantity[0., Seconds] s)
+C-R9-domain-algebraic-number -> Success   (Quantity[0., Seconds] s)
+C-R9-equality-wrong-branch -> Success   (Quantity[0., Seconds] s)
+C-R9-cost-gaussian-bits -> Success   (Quantity[0., Seconds] s)
+C-R9-option-failures -> Success   (Quantity[0., Seconds] s)
+C-R9-zero-budget-no-post-cost -> Success   (Quantity[0., Seconds] s)
+C-R9-direct-quadratic -> Success   (Quantity[0.01, Seconds] s)
+C-R9-quadratic-negative-coefficient -> Success   (Quantity[0.01, Seconds] s)
+C-R9-principal-negative-cube -> Success   (Quantity[0.02, Seconds] s)
+C-R9-fifth-root-Dickson -> Success   (Quantity[0.01, Seconds] s)
+C-R9-character-missing-coset -> Success   (Quantity[0.14, Seconds] s)
+C-R9-symbolic-host-congruence -> Success   (Quantity[0.01, Seconds] s)
+C-R9-incorrect-callback-cannot-override -> Success   (Quantity[0.01, Seconds] s)
+C-R9-index-reduction-without-recursive-progress -> Success   (Quantity[0.01, Seconds] s)
+C-R9-partial-negative-improvement-survives-later-noop -> Success   (Quantity[0.02, Seconds] s)
+C-R9-weak-negative-result-not-reused-by-stronger-search -> Success   (Quantity[0., Seconds] s)
+C-R9-in-progress-cycle-cut -> Success   (Quantity[0., Seconds] s)
+C-R9-numeric-diagnostic-never-suppresses-exact-proof -> Success   (Quantity[0., Seconds] s)
+C-R9-every-reported-proposal-recertifies -> Success   (Quantity[0.01, Seconds] s)
+C-U-coset-1 -> Success   (Quantity[0.2, Seconds] s)
+C-U-coset-2 -> Success   (Quantity[0.09, Seconds] s)
+C-U-coset-3 -> Success   (Quantity[0.14, Seconds] s)
+C-U-coset-rational-coefficients -> Success   (Quantity[0.07, Seconds] s)
+C-U-coset-negative-coefficients -> Success   (Quantity[0.06, Seconds] s)
+C-U-patience-counts-from-earlier-improvement -> Success   (Quantity[2.22, Seconds] s)
+C-U-coset-relation-stage-suffices -> Success   (Quantity[0.1, Seconds] s)
+C-U-quartic-index-reduction -> Success   (Quantity[1.58, Seconds] s)
+C-U-sixth-index-reduction-no-recursion -> Success   (Quantity[2.16, Seconds] s)
+C-U-max-odd-index -> Success   (Quantity[0.05, Seconds] s)
+C-U-prefilter-is-optional-pruning -> Success   (Quantity[0.04, Seconds] s)
+C-U-certificate-counters-exact-only -> Success   (Quantity[0.01, Seconds] s)
+C-U-unsupported-root-is-an-opaque-host -> Success   (Quantity[0.01, Seconds] s)
+C-U-cost-recursive-counters -> Success   (Quantity[0., Seconds] s)
+C-U-inexact-input-classified-inside-region -> Success   (Quantity[0., Seconds] s)
+C-U-unchanged-report -> Success   (Quantity[0., Seconds] s)
+C-U-negative-radicand-partial-denesting -> Success   (Quantity[1.8, Seconds] s)
+tests: 230  succeeded: 230  failed: 0  time: Quantity[28.200000000000003, Seconds]

@@ -1,0 +1,291 @@
+\section{Experiments}
+\label{sec:experiments}
+
+\subsection{Setup}
+\label{sec:setup}
+All runs used \code{wolframscript} with \emph{15.0.1 for Microsoft Windows
+(64-bit) (July 2, 2026)} on the machine holding the repository; the license
+allows one kernel at a time, so every script ran in a fresh kernel in
+sequence. A small harness (\code{runner.wl}, Appendix~\ref{app:harness}) loads
+the program, evaluates each probe under \code{TimeConstrained} (120\,s unless
+stated), captures every message that is switched on through
+\code{Internal`HandlerBlock}, and records:
+\begin{itemize}
+\item \emph{Equal}: exact equality, \code{RootReduce[result - expected] === 0},
+      between the result and the independently known value of the input (for
+      probes without a known closed form, 40-digit numeric agreement with the
+      input is shown instead); \textbf{NO} therefore means a wrong value;
+\item \emph{Depth}: $\rdepth$ before and after;
+\item wall-clock time and the list of messages.
+\end{itemize}
+The original program prints its diagnostics; \code{Strad} suppresses them but
+not messages, and both are visible in the logs. Tables are generated from the
+recorded runs by \code{export_tables.wl}.
+
+\subsection{The original program}
+\label{sec:exporig}
+
+\paragraph{Classical identities (Table~\ref{tab:origA}).}
+The program denests all 26 identities in group A that admit a denesting,
+including cube, fourth, fifth, sixth and seventh roots, sums and products of
+nested radicals, complex radicands, and Ramanujan's $\sqrt[3]{\sqrt[3]2-1}$,
+each in well under a second. A13, $\sqrt[3]{\sqrt[3]5-\sqrt[3]4}$, is correctly
+left alone: the kernel shows that its minimal polynomial has degree 27, so it
+does not lie in the degree-9 field $\Q(\sqrt[3]2,\sqrt[3]5)$, and the closed
+form $(\sqrt[3]2+\sqrt[3]{20}-\sqrt[3]{25})/3$ that we first expected for it is
+not an identity (\code{RootReduce} shows that the cube of that expression is a
+cubic irrational). Two observations temper the success:
+\begin{itemize}
+\item 19 of the 31 rows carry the message \code{PossibleZeroQ::ztest1}
+      (``Unable to decide \ldots\ Assuming it is'') together with
+      \code{N::meprec}. The candidate filter did not \emph{decide} equality; it
+      assumed it.
+\item A27 $(3+2\sqrt2)^{1/4}\to\sqrt{1+\sqrt2}$ is equal and smaller but not
+      shallower; A30/A31, the depth-three example of Borodin, Fagin, Hopcroft
+      and Tompa, comes back as
+      \[
+      \frac{\sqrt{319-58\sqrt{29}}-10\sqrt{11-2\sqrt{29}}+\sqrt5(3\sqrt{29}-16)}
+           {-5+\sqrt{29}-\sqrt{55-10\sqrt{29}}},
+      \]
+      which is equal to the input and one level shallower, but far from the
+      answer $\sqrt5+\sqrt{11-2\sqrt{29}}$ (found by the corrected version,
+      Table~\ref{tab:fixedA}).
+\end{itemize}
+\input{tables/orig_A}
+
+\paragraph{Non-denestable and trivial inputs (Table~\ref{tab:origB}).}
+Values are preserved. B01 shows the final \code{Simplify} rewriting a
+non-denestable input into a different, not simpler, form; B07 shows a
+\code{Root} object turned into a \emph{nested} radical (\U{20}).
+\input{tables/orig_B}
+
+\paragraph{Branch counterexamples through the wrapper (Table~\ref{tab:origC}).}
+C02 and C03 are the wrong values predicted by all three reviews: the program
+returns $5-i\sqrt2$ for $(-1+2i\sqrt2)^{3/2}=-5+i\sqrt2$, and
+$(\sqrt2-i)(\sqrt3-i)$ for $\sqrt{-1+2i\sqrt2}\sqrt{-2+2i\sqrt3}=(1+i\sqrt2)(1+i\sqrt3)$.
+C01, C04, C07, C08 are right because their values happen to lie in the
+principal sector of Proposition~\ref{prop:principal}
+($\Arg=-\pi/2$ is still inside for $q=2$).
+\input{tables/orig_C}
+
+\paragraph{The engine called directly (Table~\ref{tab:origD}).}
+D01, D04, D05 reproduce the branch loss at the engine level. D02 (multiplier
+$0$) prints ``success'' and returns the unevaluated \code{{}[[1]]}; D10 (an
+inexact multiplier) returns \code{Outer[][[1]]}; D11 ($\pi$) is harmless. D06
+versus D07 is \RII's equal-degree gate: with $\{1,m\}$ the trial $m$ is skipped
+because its degree equals the best degree, with $\{m\}$ alone it is tried and
+``succeeds'' with an uglier expression of the same depth (\U{9}, \U{12}). D08
+shows that \code{Extension -> Automatic} copes with a nested radicand but that
+single-level mode cannot find $\sqrt{3+2\sqrt{3+2\sqrt2}}=\sqrt{5+2\sqrt2}$; it
+tries 12 multipliers and gives up (compare A28). D12 shows that a ``forced''
+list does not prevent generated batches. D14 shows that the imaginary
+multiplier $i$ works.
+\input{tables/orig_D}
+
+\paragraph{Symbolic input (Table~\ref{tab:origE}).}
+$\sqrt{z^2}\mapsto z$ and $\sqrt{-x-y}\mapsto i\sqrt{x+y}$ are the branch-unsafe
+rewrites of \U{2} reaching the public interface. E07 is \RII's marker
+collision: \code{Strad[f[1], False, Identity]} returns \code{1}. E08 shows
+what a user function named \code{f} wrapped around a radical provokes: a
+cascade of seven different messages.
+\input{tables/orig_E}
+
+\paragraph{Helpers (Tables~\ref{tab:helpH} and~\ref{tab:helpR}).}
+\code{Factorc} preserves the value on 18 of 20 numeric probes; H05 is the
+numeric counterexample of Proposition~\ref{prop:power}(2): the result
+$i\sqrt{(-1)^{1/3}+\sqrt2}$ is the negative of the input. Note that
+\code{Factorc[Sqrt[t + t^2]]} (H02) returns \code{Sqrt[t (1 + t)]}, so \RI's
+probe does not trigger the defect. \code{RationalizeDenominator} is correct on
+every numeric denominator (R01--R10); R05 confirms \RII's prediction that a
+numerator named \code{x} is erased (result 0), and R11 shows the helper
+emitting three messages on a symbolic denominator. S01 shows the comparator
+reversing a list; S02 the out-of-range slice; S04--S06 that
+\code{PossibleZeroQ} correctly rejects three very close non-zero differences,
+so \U{3} is a matter of unreliable \emph{acceptance}, not of easily
+demonstrable false positives.
+\input{tables/help_H}
+\input{tables/help_RMNS}
+
+\paragraph{Wrapper-level numeric branch errors and odd inputs (Table~\ref{tab:r2JK}).}
+J01 and J02 are the most important new findings: a purely numeric input,
+$\sqrt{-(\sqrt2+(-1)^{1/3})}$, alone or inside a sum, is returned with the
+wrong sign, silently. J06 is the cube-root analogue. K14 shows that a
+\emph{list} of two radicals is turned into
+$(3+2\sqrt2)^{(\sqrt2+\sqrt3)/2}$. K04 shows that the ugly BFHT output is a
+fixed point of the program. K12: inexact input is returned as a machine number.
+\input{tables/r2_JK}
+
+\paragraph{Higher-order roots, \code{PossibleZeroQ}, prime processing (Table~\ref{tab:r2LMN}).}
+L04, a four-term square root, is denested to a correct but enormous quotient
+(rationalizing its denominator and simplifying gives
+$\sqrt2+\sqrt3+\sqrt5+\sqrt7$; the corrected version does this). L14, a tenth
+root, takes 20\,s and emits \code{Ceiling::meprec} because
+\code{Ceiling[Log[1000]/Log[10]]} does not evaluate (R01--R04 in
+Table~\ref{tab:r3QRS}). N01--N04 compare the prime processing with the original
+and the corrected comparator on the same factor lists: the original reverses
+the list and never prunes; the corrected one sorts, prunes, and then hits the
+stale-length \code{Part::take} (\U{6}). N05/N06 materialize the $2^{10}$ and
+$10^5$ divisor lists that the ``cap'' permits.
+\input{tables/r2_LMN}
+
+\paragraph{Negative bases and output quality (Table~\ref{tab:r3QRS}).}
+Q01, Q02, Q07, Q08: for $(p+q\sqrt c)^3<0$ the principal cube root is
+$e^{i\pi/3}|p+q\sqrt c|$; the program's ``solutions'' are equal to the input but
+contain $\sqrt{9\pm6\sqrt2}$ and similar denestable surds, so the depth does not
+decrease (\U{23}). Q03--Q06 (fourth roots and positive bases) are fine.
+\input{tables/r3_QRS}
+
+\subsection{Randomized families}
+\label{sec:fuzz}
+Ten structured families with a fixed seed (\code{SeedRandom[20260905]}),
+$p,q,r\in\{\pm1,\ldots,\pm7\}$ and $c,d$ square-free in $\{2,\ldots,17\}$, were
+run through \code{Strad} of both versions with a 60\,s limit per input. Each
+result was classified by exact comparison with the input. Table~\ref{tab:fuzz}
+summarizes; ``wrong'' means the returned value differs from the input.
+
+\begin{table}[h]\centering\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}l r rrrr rrr@{}}
+\toprule
+& & \multicolumn{4}{c}{Original} & \multicolumn{3}{c}{Corrected}\\
+\cmidrule(lr){3-6}\cmidrule(lr){7-9}
+Family & $n$ & denested & equal, rewritten & unchanged & \textbf{wrong} & denested & unchanged & \textbf{wrong}\\\midrule
+F1 $\sqrt{(p+q\sqrt c)^2}$ & 40 & 40 & 0 & 0 & 0 & 40 & 0 & 0\\
+F2 $\big((p+q\sqrt c)^3\big)^{1/3}$ & 30 & 13 & 17 & 0 & 0 & 30 & 0 & 0\\
+F3 $\sqrt{a+b\sqrt c}$, random & 40 & 6 & 8 & 26 & 0 & 6 & 34 & 0\\
+F4 $\sqrt{(p+qi\sqrt c)^2}$ & 40 & 40 & 0 & 0 & 0 & 40 & 0 & 0\\
+F5 $\big((p+qi\sqrt c)^2\big)^{3/2}$ & 40 & 1 & 0 & 0 & \textbf{39} & 40 & 0 & 0\\
+F6 $\sqrt{u^2}\sqrt{v^2}$, complex & 40 & 23 & 0 & 0 & \textbf{17} & 40 & 0 & 0\\
+F7 $\big((p+q\sqrt c)^4\big)^{1/4}$ & 25 & 17 & 8 & 0 & 0 & 25 & 0 & 0\\
+F8 $\sqrt{(p+q\sqrt c+r\sqrt d)^2}$ & 25 & 25 & 0 & 0 & 0 & 25 & 0 & 0\\
+F9 $\big((p+q\sqrt c)^2\big)^{3/2}$, real & 30 & 30 & 0 & 0 & 0 & 30 & 0 & 0\\
+F10 $\sqrt{-u^2}\sqrt{-v^2}$, real & 30 & 30 & 0 & 0 & 0 & 30 & 0 & 0\\
+\midrule
+Total & 340 & 225 & 33 & 26 & \textbf{56} & 306 & 34 & \textbf{0}\\
+\bottomrule
+\end{tabular}
+\caption{Randomized families. The original program emitted
+\code{PossibleZeroQ::ztest1} on 272 of the 340 inputs; the corrected version
+emitted no message. Wall-clock totals: original 27\,s, corrected 39\,s;
+the slowest single input took 0.4\,s (original) and 1.7\,s (corrected).}
+\label{tab:fuzz}
+\end{table}
+
+The F3 family is a control: with $a\in[-30,30]$ random, only 6 of 40
+radicands satisfy the square criterion of Proposition~\ref{prop:surd}, and
+both versions denest exactly those 6. The 8 ``equal, rewritten'' outputs of
+the original in F3 are the final \code{Simplify} at work (\U{20}); the
+corrected version returns such inputs unchanged. The 17 rewritten outputs in
+F2 and 8 in F7 are the negative-base cases of Table~\ref{tab:r3QRS}.
+
+\subsection{The reviews' regression suites}
+\label{sec:expsuites}
+Table~\ref{tab:suites} lists the outcome of each review's own Wolfram tests on
+the original program. Every ``expected to fail'' contract fails, every control
+passes, and no test aborted.
+
+\begin{table}[h]\centering\small
+\begin{tabularx}{\textwidth}{@{}p{0.1\textwidth} X X@{}}
+\toprule Suite & Failing tests (all predicted by the review) & Passing\\\midrule
+\RI\ (14) & Print protection; comparator; negative branch; grouped complex branch; wrapper complex product; \code{Factorc[Sqrt[t^2]]}; zero multiplier & 7: rationalizer (2), direct and multiplier success, \code{Sqrt[t + t^2]} (\emph{not} predicted to pass), empty seed list, all-levels\\
+\RII\ (15) & comparator; negative branch; complex $3/2$ power; merged product; \code{Factorc[Sqrt[z^2]]}; caller's \code{f}; numerator \code{x} & 4 on the original (Print protection\footnotemark, worked example, rationalizer, all-level control); the 4 tests of its guarded component pass when the component is loaded (Section~\ref{sec:expkernels})\\
+\RIII\ (20) & negative core target; complex $3/2$; merged product (core and wrapper); \code{Factorc[Sqrt[-x-y]]}; zero multiplier; comparator; stale slice; cap; Print protection & 10: classical success, rationalizer (2), non-nested input, wrapper modes with \code{Identity}, and all 5 tests of its proposed kernel\\
+\bottomrule
+\end{tabularx}
+\caption{The reviews' regression suites executed against the original program.}
+\label{tab:suites}
+\end{table}
+\footnotetext{\RII's suite restores the attributes of \code{Print} itself after
+loading and then tests the recorded values, so this test measures the suite's
+own bookkeeping rather than the defect; \RI's and \RIII's versions of the same
+test fail as they should.}
+
+\subsection{The reviews' proposed kernels}
+\label{sec:expkernels}
+The three one-trial components (\RI\ \code{VerifiedMultiplierTrial},
+\RII\ \code{CertifiedMultiplierStep}, \RIII\ \code{TryDenestCandidate}) were
+loaded and called on eleven common cases. All three certify the correct
+branch for the negative target, the complex $3/2$ power, the complex product
+and the cube-root case with $m=9$; all three reject a zero multiplier, an
+inexact multiplier, root order 1 and a symbolic target with a structured
+\code{Failure}; all three report ``no lower-degree GCD'' for
+$\sqrt{5+2\sqrt6}$ with $m=1$ and find $\sqrt2+\sqrt3$ with $m=2$, and, because
+none of them has a degree gate, all three also find it with \RII's
+equal-degree multiplier (returning the same ugly quotient as the original,
+D07). \RIII's \code{BestImprovement} policy correctly rejects that quotient
+as ``not an improvement'', but would accept the original's BFHT output
+(Table~
+ef{tab:origA}, A31), because its cost tuple puts radical depth before
+size: $(0,2,9,69)$ beats $(0,3,4,28)$. In other words the components work as
+their authors said, and they are single steps, not denesters: none contains a
+multiplier generator, a wrapper, or a search.
+
+\subsection{The corrected version}
+\label{sec:expfixed}
+Tables~\ref{tab:fixedA}--\ref{tab:fixedLQ} repeat the battery with
+\code{StradFixed.wl}. Every row is exactly equal to the true value; no row
+emits a message; \code{Print} keeps its \code{Protected} attribute. Beyond
+fixing every wrong value, the corrected version finds denestings the original
+does not: the BFHT example (A30/A31), the four-term square root as
+$\sqrt2+\sqrt3+\sqrt5+\sqrt7$ (L04), $(49+20\sqrt6)^{1/4}=\sqrt2+\sqrt3$ (L06),
+the cube roots of negative bases (Q01--Q08) and the equal-degree multiplier
+(D06). It also returns inputs unchanged when it cannot improve them (B01, B08,
+B09, L02, L03, L09) instead of rewriting them, converts a \code{Root} input to
+$\sqrt2+\sqrt3$ (B07), maps over lists (K14), leaves symbolic hosts alone
+(E01--E05, E07) while still denesting numeric parts inside them (E06, E08), and
+rejects invalid multipliers without garbage (D02, D10, D11). The price is a
+factor of roughly two to three in time on the small inputs, almost entirely
+spent in \code{RootReduce} certification.
+\input{tables/fixed_A}
+\input{tables/fixed_BC}
+\input{tables/fixed_DE}
+\input{tables/fixed_JK}
+\input{tables/fixed_LQ}
+
+\subsection{Probing the corrected version for misses}
+\label{sec:probes}
+After the battery above, four further scripts
+(\code{harness/probe\_gaps\_1..4.wl}, transcripts in \code{logs/}) ran 136
+denestable or control inputs drawn from the literature guide and from
+constructed identities through \code{Strad} with a 400\,s wall limit. No
+wrong value was returned. Of the 111 denestable inputs not already evaluated
+by the kernel itself, 96 were denested to the expected depth: multiquadratic
+sums with up to four independent square roots, depth-3 inputs, the Ramanujan
+and Honsbeek identities, mixed-index sums such as
+$\sqrt{2+2\sqrt2\sqrt[3]3+\sqrt[3]9}=\sqrt2+\sqrt[3]3$, complex radicands,
+and cube, fifth and seventh roots of positive elements of quadratic fields.
+The 15 misses fall into five families (Table~\ref{tab:probes}); the file
+\code{src/corrected/KNOWN\_GAPS.md} gives every input, the verbose diagnosis
+and a proposed fix for each.
+
+\begin{table}[h]\centering\small
+\begin{tabularx}{\textwidth}{@{}p{0.29\textwidth} X p{0.3\textwidth}@{}}
+\toprule Family (inputs) & Example & Cause\\\midrule
+A. Principal root of a negative radicand, index $\ge5$ (8) &
+$(41-29\sqrt2)^{1/5}=(-1)^{1/5}(\sqrt2-1)$ &
+the core solves only the factor of $x^r-\rho$ shared with the principal
+root's minimal polynomial; for $r\ge5$ \code{Solve} returns \code{Root}
+objects or nested surds, certified but not cheaper. Index 3 and 4 work.\\[3pt]
+B. Composite index, answer of larger degree than the radicand (4) &
+$\sqrt[6]{7\sqrt[3]{20}-19}=\sqrt[3]{5/3}-\sqrt[3]{2/3}$ &
+the certified candidate is $\gamma^{1/3}$ with $\gamma=\beta^3\in\Q(\rho)$,
+same depth as the input, hence discarded; no index reduction, no recursion
+on rejected candidates.\\[3pt]
+C. Factorizer extracts a factor with irrational root (1) &
+$\sqrt[6]{1296+880\sqrt2+720\sqrt3+528\sqrt6}$ &
+\code{Factorc} pulls out $16$, leaving $2^{2/3}(\cdots)^{1/6}$ of degree 12;
+with \code{"Factor"->False} the input is denested in 0.1\,s.\\[3pt]
+D. Cancellation across summands (1) &
+$\sqrt{1+\sqrt3}+\sqrt{3+3\sqrt3}-\sqrt{10+6\sqrt3}=0$ &
+summands are independent problems and are individually non-denestable
+(Section~\ref{sec:future}, item 3).\\[3pt]
+E. Time budget not enforced inside a trial (1) &
+$\sqrt{(\sqrt2+\sqrt3+\sqrt5+\sqrt7+\sqrt{11})^2}$ expanded &
+one \code{PolynomialGCD}/\code{Solve} over eleven surds exceeds 150\,s;
+the budget is checked only between trials, so guarantee (iv) of
+Section~\ref{sec:guarantees} fails here. Four primes take 2.9\,s.\\
+\bottomrule
+\end{tabularx}
+\caption{Denestable inputs that the corrected version leaves unchanged
+(5 September 2026).}
+\label{tab:probes}
+\end{table}

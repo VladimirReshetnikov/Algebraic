@@ -1,0 +1,31 @@
+{
+  "record_id": "shanks",
+  "title": "Incredible identities",
+  "asset_id": "pdf-journal-1974-part-b",
+  "version": "journal-1974-part-b",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://www.fq.math.ca/Scanned/12-3/shanks-b.pdf",
+    "resolved_url": "https://www.fq.math.ca/Scanned/12-3/shanks-b.pdf",
+    "retrieved_at": "2026-09-05T20:26:00+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 337697,
+    "sha256": "049ed6411a7af2c50e895f96cdf7c955b2e2c6f42036b4c69d0e5f3983135dd6"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "browser_fulltext",
+  "note": "Second part (one scanned page).",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/shanks-Incredible-identities/journal-1974-part-b/pdf-journal-1974-part-b.pdf",
+      "role": "pdf",
+      "bytes": 337697,
+      "sha256": "049ed6411a7af2c50e895f96cdf7c955b2e2c6f42036b4c69d0e5f3983135dd6"
+    }
+  ],
+  "prior_candidate_errors": []
+}

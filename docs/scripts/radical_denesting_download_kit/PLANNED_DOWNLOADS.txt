@@ -1,0 +1,245 @@
+DRY-RUN PLAN ONLY: no external files have been downloaded.
+
+001_allender | On the complexity of numerical analysis
+  paper | pdf | paper.pdf
+002_antipov | Ramanujan denesting formulas for cubic radicals
+  paper | pdf | paper.pdf
+003_barbero | Identities involving zeros of Ramanujan and Shanks cubic polynomials
+  journal_pdf | pdf | journal/paper.pdf
+  journal_tex | resolve_tex | journal/source
+  arxiv | arxiv_pair | arxiv
+004_berndt_1997 | Ramanujan's association with radicals in India
+  publisher_probe | pdf | publisher_copy.pdf
+005_berndt_1998 | Radicals and units in Ramanujan's work
+  paper | pdf | paper.pdf
+006_berndt_ii | Ramanujan's Notebooks, Part II
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+007_berndt_iv | Ramanujan's Notebooks, Part IV
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+008_berndt_v | Ramanujan's Notebooks, Part V
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+009_besicovitch | On the linear independence of fractional powers of integers
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+010_bfht | Decreasing the nesting depth of expressions involving square roots
+  paper | pdf | paper.pdf
+011_blomer_1991 | Computing sums of radicals in polynomial time
+  publisher_probe | pdf | publisher_copy.pdf
+012_blomer_1992 | How to denest Ramanujan's nested radicals
+  publisher_probe | pdf | publisher_copy.pdf
+013_blomer_1998 | A probabilistic zero-test for expressions involving roots of rational numbers
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+014_blomer_2000 | Denesting by bounded degree radicals
+  resolve_pdf | resolve_pdf | conference_1997/paper.pdf
+015_blomer_thesis | Simplifying Expressions Involving Radicals
+  paper | pdf | paper.pdf
+016_borwein | Nested radicals
+  publisher_probe | pdf | publisher_copy.pdf
+017_brownmath | Denesting Radicals (or Unnesting Radicals)
+  page_1 | html | web/page_1.html
+018_bumby | Incredible identities revisited
+  paper | pdf | paper.pdf
+019_calcium | Calcium / FLINT: exact complex numbers (ca.h)
+  page_1 | html | web/page_1.html
+020_campbell | Variations on Ramanujan's nested radicals
+  arxiv | arxiv_pair | arxiv
+021_cavallo | Denesting cubic radicals
+  arxiv | arxiv_pair | arxiv
+022_caviness | Simplification of radical expressions
+  paper | pdf | paper.pdf
+023_cohen | A Course in Computational Algebraic Number Theory
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+024_cotner | The Nesting Depths of Radical Expression
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+025_cox | Galois Theory
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+026_davenport | Computer Algebra
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+027_dokmeci | Theorems on Field Extensions and Radical Denesting
+  paper | pdf | paper.pdf
+028_elia | Observations on some algebraic equations associated with Ramanujan's work
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+029_euclid | Elements
+  paper | pdf | paper.pdf
+030_exactgeometry | Recent progress in exact geometric computation
+  paper | pdf | paper.pdf
+031_fateman | Essays in Algebraic Simplification
+  paper | pdf | MIT-LCS-TR-095.pdf
+032_flint | FLINT: algebraic numbers (qqbar.h)
+  page_1 | html | web/page_1.html
+033_fricas | RadicalSolvePackage
+  page_1 | html | web/page_1.html
+  page_2 | html | web/page_2.html
+034_gaillard | On the order of power series and the sum of square roots problem
+  arxiv | arxiv_pair | arxiv
+035_gathen | Modern Computer Algebra
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+036_geddes | Algorithms for Computer Algebra
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+037_girstmair | Reducing radicals in the spirit of Euclid
+  arxiv | arxiv_pair | arxiv
+038_gkioulekas | On the denesting of nested square roots
+  paper | pdf | paper.pdf
+039_guin | The Didactical Challenge of Symbolic Calculators: Turning a Computational Device into a Mathematical Instrument
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+040_gutin | Constructive proof of Herschfeld's Convergence Theorem
+  arxiv | arxiv_pair | arxiv
+041_herschfeld | On infinite radicals
+  paper | pdf | paper.pdf
+042_honda | GaloisGroupSolver
+  page_1 | html | web/page_1.html
+  repository | zip | software/repository.zip
+043_honsbeek_1999 | Denesting Certain Nested Radicals of Depth Two
+  paper | pdf | paper.pdf
+044_honsbeek_thesis | Radical Extensions and Galois Groups
+  paper | pdf | paper.pdf
+045_horng_1990 | Simplifying nested radicals and solving polynomials by radicals in minimum depth
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+046_horng_1999 | Solving polynomials by radicals with roots of unity in minimum depth
+  resolve_pdf | resolve_pdf | paper.pdf
+  publisher_probe | pdf | publisher_copy.pdf
+047_horng_thesis | Simplifying Nested Radicals and Solving Polynomials by Nested Radicals in Minimum Depth
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+048_infiniteblogs | Articles and discussion of infinitely nested radicals
+  page_1 | html | web/page_1.html
+  page_2 | html | web/page_2.html
+  page_3 | html | web/page_3.html
+049_jeffrey_rich | Simplifying square roots of square roots by denesting
+  paper | pdf | paper.pdf
+050_kluners | On computing subfields. A detailed description of the algorithm
+  resolve_pdf | resolve_pdf | paper.pdf
+  publisher_probe | pdf | publisher_copy.pdf
+051_kneser | Lineare Abhängigkeit von Wurzeln
+  paper | pdf | paper.pdf
+052_krepkii | Cube root Ramanujan formulas and elementary Galois theory
+  paper | pdf | paper.pdf
+053_landau_1992 | Simplification of nested radicals
+  publisher_probe | pdf | publisher_copy.pdf
+054_landau_1994 | How to tangle with a nested radical
+  paper | pdf | paper.pdf
+055_landau_1998 | √2 + √3: Four Different Views
+  paper | pdf | paper.pdf
+056_landau_miller | Solvability by radicals is in polynomial time
+  paper | pdf | paper.pdf
+057_landau_zippel | A note on `Zippel denesting'
+  paper | pdf | paper.pdf
+058_landaufactor | Factoring polynomials over algebraic number fields
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+059_lenstra | Entangled Radicals
+  paper | pdf | paper.pdf
+060_lll | Factoring polynomials with rational coefficients
+  paper | pdf | paper.pdf
+061_magma | Magma Handbook and version 2.10 release notes
+  page_1 | html | web/page_1.html
+  release_notes | pdf | release_notes.pdf
+062_maple_radical | simplify/radical
+  page_1 | html | web/page_1.html
+063_maple_radnormal | radnormal
+  page_1 | html | web/page_1.html
+064_mathworld | Nested Radical
+  page_1 | html | web/page_1.html
+065_maxima_manual | Maxima Manual
+  page_1 | html | web/page_1.html
+  page_2 | html | web/page_2.html
+066_maxima_threads | Maxima developer discussions of denesting
+  page_1 | html | web/page_1.html
+  page_2 | html | web/page_2.html
+  page_3 | html | web/page_3.html
+067_mitra | Generalization of Ramanujan's famous nested radicals to the nth root and their evaluation
+  arxiv | arxiv_pair | arxiv
+068_mo | Relevance of Landau's algorithm for denesting radicals
+  page_1 | html | web/page_1.html
+  page_2 | html | web/page_2.html
+  page_3 | html | web/page_3.html
+069_mordell | On the linear independence of algebraic numbers
+  paper | pdf | paper.pdf
+070_mse | Mathematics Stack Exchange: radical-denesting discussions
+  page_1 | html | web/page_1.html
+  page_2 | html | web/page_2.html
+  page_3 | html | web/page_3.html
+071_newman | A Classical Introduction to Galois Theory
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+072_oeis | A135611
+  page_1 | html | web/page_1.html
+073_osipov_1997 | On the simplification of nested real radicals
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+074_osipov_2021 | Simplification of nested real radicals revisited
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+075_osipov_2026 | On Ramanujan's identities with nested cubic radicals
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+076_osler | Cardan polynomials and the reduction of radicals
+  resolve_pdf | resolve_pdf | paper.pdf
+  publisher_probe | pdf | publisher_copy.pdf
+077_osler_cubic | An easy look at the cubic formula
+  paper | pdf | paper.pdf
+078_pari | General number fields
+  page_1 | html | web/page_1.html
+  page_2 | html | web/page_2.html
+079_perucca | Linear relations among radicals
+  arxiv | arxiv_pair | arxiv
+080_piagm | Pi and the AGM: A Study in Analytic Number Theory and Computational Complexity
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+081_polya | Problems and Theorems in Analysis
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+082_raddenest | raddenest
+  page_1 | html | web/page_1.html
+  raddenest_mac | text | software/raddenest.mac
+  repository | zip | software/repository.zip
+083_rahal | Introduction to Nested Radicals
+  paper | pdf | paper.pdf
+084_ramanujan | Collected Papers of Srinivasa Ramanujan
+  public_scan | resolve_pdf | collected_papers_1927.pdf
+085_rit | Identity testing for radical expressions
+  arxiv | arxiv_pair | arxiv
+086_sage_aa | Field of algebraic numbers
+  page_1 | html | web/page_1.html
+  page_2 | html | web/page_2.html
+087_sage_symbolic | Symbolic expressions
+  page_1 | html | web/page_1.html
+088_shanks | Incredible identities
+  part1 | pdf | part_1_page_271.pdf
+  part2 | pdf | part_2_page_280.pdf
+089_shevelev | On Ramanujan cubic polynomials
+  arxiv | arxiv_pair | arxiv
+090_siegel | Algebraische Abhängigkeit von Wurzeln
+  resolve_pdf | resolve_pdf | paper.pdf
+091_spohn | Letter to the Editor
+  paper | pdf | paper.pdf
+092_sury | Ramanujan's Route to Roots of Roots
+  paper | pdf | paper.pdf
+093_sympy_docs | Simplify documentation
+  page_1 | html | web/page_1.html
+094_sympy_issues | SymPy issues 2415 and 27082
+  page_1 | html | web/page_1.html
+  page_2 | html | web/page_2.html
+095_sympy_source | SymPy sqrtdenest implementation and regression tests
+  1_14_0_sqrtdenest.py | text | software/1.14.0/sqrtdenest.py
+  1_14_0_tests_test_sqrtdenest.py | text | software/1.14.0/tests/test_sqrtdenest.py
+  master_sqrtdenest.py | text | software/master/sqrtdenest.py
+  master_tests_test_sqrtdenest.py | text | software/master/tests/test_sqrtdenest.py
+096_tiwari | Complete elementary analysis of Ramanujan's nested radicals
+  page_1 | html | web/page_1.html
+097_tonien | Nested fifth root radical identities from elliptic curves
+  publisher_pdf | resolve_pdf | paper.pdf
+098_wikipedia | Nested radical
+  page_1 | html | web/page_1.html
+099_witula | Cardano's formula, square roots, Chebyshev polynomials and radicals
+  paper | pdf | paper.pdf
+100_wolfram_community | Wolfram Community discussions and denesting packages
+  page_1 | html | web/page_1.html
+  page_2 | html | web/page_2.html
+101_wolfram_radicals | ToRadicals
+  page_1 | html | web/page_1.html
+102_wolfram_rd | RadicalDenest
+  page_1 | html | web/page_1.html
+103_wolfram_root | RootReduce
+  page_1 | html | web/page_1.html
+104_zippel_1977 | Radical simplification made easy
+  resolve_pdf | resolve_pdf | paper.pdf
+105_zippel_1985 | Simplification of expressions involving radicals
+  publisher_probe | pdf | publisher_copy.pdf
+106_zippel_thesis | Simplification of Radicals with Applications to Solving Polynomial Equations
+  resolve_pdf | resolve_pdf | paper.pdf
+107_zippelbook | Effective Polynomial Computation
+  NO DOWNLOAD CONFIGURED; bibliography record retained
+
+DRY RUN ONLY: no remote files were downloaded.

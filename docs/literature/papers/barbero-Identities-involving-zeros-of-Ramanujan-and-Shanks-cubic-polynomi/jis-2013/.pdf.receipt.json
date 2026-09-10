@@ -1,0 +1,31 @@
+{
+  "record_id": "barbero",
+  "title": "Identities involving zeros of Ramanujan and Shanks cubic polynomials",
+  "asset_id": "pdf",
+  "version": "jis-2013",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://cs.uwaterloo.ca/journals/JIS/VOL16/Barbero/barbero11.pdf",
+    "resolved_url": "https://cs.uwaterloo.ca/journals/JIS/VOL16/Barbero/barbero11.pdf",
+    "retrieved_at": "2026-09-05T20:26:06+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 167665,
+    "sha256": "97f7e489e853b73071f5b396b5c6c2e68013041610b82c96e28f3db4eeff2621"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "browser_fulltext",
+  "note": "Official JIS PDF, 13 pages; the same article page links its LaTeX.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/barbero-Identities-involving-zeros-of-Ramanujan-and-Shanks-cubic-polynomi/jis-2013/paper.pdf",
+      "role": "pdf",
+      "bytes": 167665,
+      "sha256": "97f7e489e853b73071f5b396b5c6c2e68013041610b82c96e28f3db4eeff2621"
+    }
+  ],
+  "prior_candidate_errors": []
+}

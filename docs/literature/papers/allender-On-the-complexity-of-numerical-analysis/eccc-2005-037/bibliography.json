@@ -1,0 +1,25 @@
+{
+  "id": "allender",
+  "title": "On the complexity of numerical analysis",
+  "citations": [
+    {
+      "report": "report-1",
+      "key": "allender",
+      "entry_latex": "E. Allender, P. B\\\"urgisser, J. Kjeldgaard-Pedersen, and P.~B. Miltersen, ``On the complexity of numerical analysis,'' \\emph{SIAM Journal on Computing} \\textbf{38}(5) (2009), 1987--2006. \\status{A}\nFoundational complexity background for exact numerical decisions, including square-root-sum problems. Included without an unsupported assertion that every bound remains the best known as of the source-check date.\n\n\\bibgroup{IV. Books and broader mathematical background}"
+    },
+    {
+      "report": "report-2",
+      "key": "allender",
+      "entry_latex": "Eric Allender, Peter B\\\"urgisser, Johan Kjeldgaard-Pedersen, and Peter Bro Miltersen.\n\\emph{On the complexity of numerical analysis}.\nSIAM Journal on Computing \\textbf{38}(5), 1987--2006, 2009.\n\\doi{10.1137/070697926}.\n\\textbf{M.} Broader complexity framework for exact numerical decisions, useful for understanding why arithmetic expressions, equality, and ordering require separate analysis."
+    },
+    {
+      "report": "report-3",
+      "key": "allender",
+      "entry_latex": "Eric Allender, Peter B\\\"urgisser, Johan Kjeldgaard-Pedersen, and Peter Bro Miltersen. ``On the Complexity of Numerical Analysis.'' \\emph{SIAM Journal on Computing} \\textbf{38}(5) (2009), 1987--2006. \\doi{10.1137/070697926}. \\status{A}\n\\entrynote{Background on algebraic computation and comparison complexity. Useful when assessing claims about numerical evaluation, sign testing, and the bit complexity hidden behind an exact algebraic representation.}"
+    }
+  ],
+  "notes": [
+    "No corresponding TeX source was located during this search; this does not establish that none exists.",
+    "No external bytes were successfully downloaded in this chat. Availability evidence is distinct from a successful download."
+  ]
+}

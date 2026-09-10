@@ -1,0 +1,31 @@
+{
+  "record_id": "magma",
+  "title": "Handbook",
+  "asset_id": "resource-02",
+  "version": "web-resources",
+  "kind": "pdf",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://magma.maths.usyd.edu.au/magma/releasenotes/pdf/relv210.pdf",
+    "resolved_url": "https://magma.maths.usyd.edu.au/magma/releasenotes/pdf/relv210.pdf",
+    "retrieved_at": "2026-09-05T20:28:32+00:00",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "content_encoding": "",
+    "bytes": 267963,
+    "sha256": "00cfda1cc0a3551b524a69b6930e86cf618d88e0ffda18a7782c437516200594"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "cited_web_resource",
+  "note": "URL cited in an input report. Not all web pages have been independently reopened. HTML is saved as HTML; software code is not labelled as article TeX.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "web_resources/magma-Handbook/web-resources/resource-02.pdf",
+      "role": "pdf",
+      "bytes": 267963,
+      "sha256": "00cfda1cc0a3551b524a69b6930e86cf618d88e0ffda18a7782c437516200594"
+    }
+  ],
+  "prior_candidate_errors": []
+}

@@ -1,0 +1,55 @@
+The aim of this section is to prove a bound on the discriminant of the minimal polynomial of the primitive element of our number field $K$. Recall we denote by $K = \QQ(\mysqrt{d_1}{a_1},\ldots,\mysqrt{d_k}{a_k}, \zeta_d)$, where $d=\lcm(d_1,\ldots,d_k)$, and $\zeta_d$ is a primitive $d$-th root of unity, and compute $\theta$ as a linear combination of $\mysqrt{d_1}{a_1},\ldots,\mysqrt{d_k}{a_k}, \zeta_d$. Note also that we assume the magnitude of the $d_i$'s and $a_i$'s to be at most $2^s$.
+
+Recall that given a polynomial $f(x) = a_nx^n + \ldots + a_1x + a_0$ with roots $r_1,\ldots,r_n$, its discriminant can be computed as
+\begin{equation}\label{eq:disc_formula}
+    \Delta_{f} = a_n^{2n-2} \prod_{i<j} (r_i-r_j)^2 = (-1)^{\frac{n(n-1)}{2}} a_n^{2n-2} \prod_{i\neq j}(r_i-r_j)
+\end{equation}
+
+Now let us see how we use it to prove our claim:
+\bounddiscriminant*
+
+\begin{proof}
+Denote by $G = \Gal(K/\QQ)$ the Galois group of $K$. Recall we construct the primitive element $\theta$ of our radical number field as a linear combination of the radicals $\mysqrt{d_1}{a_1},\ldots,\mysqrt{d_k}{a_k}$ and a primitive $d$-th root of unity $\zeta_d$ as follows:
+\[ \theta = c_o \zeta_d + \sum_{i=1}^k c_i \mysqrt{d_i}{a_i}. \]
+We choose the $c_i\in\ZZ$, hence $\theta$ is an algebraic integer. The minimal polynomial $f_\theta$ of the primitive element $\theta$ has roots $\theta = \theta_1, \ldots, \theta_{|G|}$. Note that the roots of $f_\theta$ are given by the elements of $G$, that is, $\theta_i = \sigma_i(\theta)$ for some $\sigma_i \in G$. Recall also that the elements of the Galois group $G$ act on conjugates of a given element of $K$ by permuting the $d$th roots of unity, that is, given $\alpha \in K$, $\sigma_i(\alpha) = \alpha \zeta_d^i$ for some and $\sigma_i \in G$.
+
+Note that given $d_1,\ldots,d_k \leq 2^s$,
+their least common multiple is at most of size $2^{s^2}$,
+hence we have:
+\[ \deg \zeta_d \leq  2^{s^2}   \]
+As stated in \Cref{lem:primitive_el}, the constants $c_i$ in the computation of the primitive element can be bound by:
+\[ c_i \leq 2^{4s^2}. \]
+
+
+
+Now given $\sigma_j\in G$, write
+\begin{align*}
+    \sigma_j(\theta) &= \sigma_j\left(c_0 \zeta_d + \sum_{i=1}^k c_i \mysqrt{d_i}{a_i}\right) \\
+                     &= c_0 \sigma_j(\zeta_d) + \sum_{i=1}^k c_i \sigma_j(\mysqrt{d_i}{a_i})  \\
+                     &= c_0 \zeta_d^{j+1} + \sum_{i=1}^k c_i \mysqrt{d_i}{a_i} \zeta_d^{ij}
+\end{align*}
+
+Then for $1\leq j, l\leq |G|$, $j \neq l$
+\begin{align*}
+    \sigma_j(\theta) - \sigma_l(\theta)
+    &= \left(c_0 \zeta_d^{j+1} + \sum_{i=1}^k c_i \mysqrt{d_i}{a_i} \zeta_d^{ij}\right) - \left(c_0 \zeta_d^{l+1} + \sum_{i=1}^k c_i \mysqrt{d_i}{a_i} \zeta_d^{il}\right) \\
+    &= c_0\left(\zeta_d^{j+1} - \zeta_d^{l+1}\right) + \left(\sum_{i=1}^k c_i \mysqrt{d_i}{a_i}\right)\left(\zeta_d^{ij} - \zeta_d^{il}\right)
+\end{align*}
+Note that for any two $d$th roots of unity $\zeta_d^j, \zeta_d^l$, we always have $\zeta_d^j - \zeta_d^l \leq 2$, hence
+\begin{align*}
+    \sigma_j(\theta) - \sigma_l(\theta)
+    &\leq 2c_0 + 2\left(\sum_{i=1}^k c_i \mysqrt{d_i}{a_i}\right) \\
+    &\leq 2\cdot 2^{4s^2} + 2 \left(\sum_{i=1}^s 2^{4s^2} \cdot 2^s\right) \\
+    &\leq 2^{4s^2 + 1} + 2^{4s^2+s+1}s \\
+    &\leq 2^{2s ^ 3} \text{ for } s\geq 4.
+\end{align*}
+Thus
+\begin{align*}
+    |\Delta_{f_\theta}| &= |\prod_{j\neq l} (\sigma_j(\theta) - \sigma_l(\theta))| \\
+    &\leq \left(2^{2s^3}\right)^{|G|^2} \\
+    &\leq \left(2^{2s^3}\right)^{\left(2^{2s^2}\right)^2} \\
+    &\leq \left(2^{2s^3}\right)^{2^{4s^2}} \\
+    &\leq 2^{2s^3 \cdot 2^{4s^2}} \\
+    &\leq 2^{2^{5s^2}} \text{ for } s\geq 4.
+\end{align*}
+\end{proof}

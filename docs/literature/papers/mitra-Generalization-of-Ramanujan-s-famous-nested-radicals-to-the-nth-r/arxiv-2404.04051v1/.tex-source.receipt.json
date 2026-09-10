@@ -1,0 +1,55 @@
+{
+  "record_id": "mitra",
+  "title": "Generalization of Ramanujan's famous nested radicals to the nth root and their evaluation",
+  "asset_id": "tex-source",
+  "version": "arxiv-2404.04051v1",
+  "kind": "source",
+  "status": "downloaded",
+  "retrieval": {
+    "requested_url": "https://arxiv.org/src/2404.04051v1",
+    "resolved_url": "https://arxiv.org/src/2404.04051v1",
+    "retrieved_at": "2026-09-05T20:27:13+00:00",
+    "http_status": 200,
+    "content_type": "application/gzip",
+    "content_encoding": "",
+    "bytes": 15632,
+    "sha256": "2a1a7b32cee4a8e6f5d67247c3829e13d55a0d5b2bb12e29c3a1570c1369f711"
+  },
+  "resolution": {},
+  "catalog_evidence_level": "repository_pdf_and_source_links",
+  "note": "arXiv advertises TeX Source; actual bytes and archive contents have NOT been retrieved in this environment.",
+  "warnings": [],
+  "files": [
+    {
+      "path": "papers/mitra-Generalization-of-Ramanujan-s-famous-nested-radicals-to-the-nth-r/arxiv-2404.04051v1/tex-source.tar.gz",
+      "role": "original_source_response",
+      "bytes": 15632,
+      "sha256": "2a1a7b32cee4a8e6f5d67247c3829e13d55a0d5b2bb12e29c3a1570c1369f711"
+    },
+    {
+      "path": "papers/mitra-Generalization-of-Ramanujan-s-famous-nested-radicals-to-the-nth-r/arxiv-2404.04051v1/source/main.bbl",
+      "role": "source_member",
+      "bytes": 593,
+      "sha256": "77fb9a47bcde2b50f428ad3ada5cf44df2dcdb8e3cb10c47fb2247b15b460742"
+    },
+    {
+      "path": "papers/mitra-Generalization-of-Ramanujan-s-famous-nested-radicals-to-the-nth-r/arxiv-2404.04051v1/source/main.tex",
+      "role": "tex",
+      "bytes": 11131,
+      "sha256": "f8ea3d66d428e1808f5bbc29854ff7ba4a34a510239b8f779fe8ae74e348c247"
+    },
+    {
+      "path": "papers/mitra-Generalization-of-Ramanujan-s-famous-nested-radicals-to-the-nth-r/arxiv-2404.04051v1/source/name.bib",
+      "role": "source_member",
+      "bytes": 903,
+      "sha256": "88188b60fe2431187ece82688d9297277c87aa92758bb6272740196d85a67927"
+    },
+    {
+      "path": "papers/mitra-Generalization-of-Ramanujan-s-famous-nested-radicals-to-the-nth-r/arxiv-2404.04051v1/source/untitled.jpg",
+      "role": "source_member",
+      "bytes": 19633,
+      "sha256": "48e1d7b116b068893b131380d84ba70a16c889553a85f4a9ebed087ad6adb165"
+    }
+  ],
+  "prior_candidate_errors": []
+}
