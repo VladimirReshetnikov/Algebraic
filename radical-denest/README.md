@@ -1,5 +1,7 @@
 # RadicalDenest
 
+> The third corrected version, `corrected/StradFixed3.wl`, is also section 4 of the unified package [`../algebraic/`](../algebraic/README.md) (`Algebraic.wl`, context `Algebraic``), together with its 230-test suite; this directory keeps the program under review, the three corrected versions and the review record.
+
 Analysis, correction and literature survey of `Strad.wl`, a Wolfram Language
 program that denests radicals: it rewrites an expression such as
 `Sqrt[5 + 2 Sqrt[6]]` as `Sqrt[2] + Sqrt[3]`, or `(2^(1/3) - 1)^(1/3)` as

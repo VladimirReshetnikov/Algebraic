@@ -1,5 +1,7 @@
 # Polynomial composition with algebraic coefficients
 
+> This project's package `AlgebraicDecomposition.wl` and its Python module are also section 1 of the unified package [`../algebraic/`](../algebraic/README.md) (`Algebraic.wl`, `algebraic.polynomial_decomposition`), which runs in Mathics3 as well; this directory keeps the article, the reports and the sources the merge started from.
+
 This project answers [“Is it possible to make Decompose work with coefficients
 containing radicals?”](https://mathematica.stackexchange.com/q/206618/7288).
 Given an exact polynomial with algebraic coefficients, it finds a complete

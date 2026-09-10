@@ -17,10 +17,39 @@ project removes nested root extractions -- `Sqrt[5 + 2 Sqrt[6]]` becomes
 Wolfram program through three rounds of code review, with a survey of the
 denesting literature alongside.
 
+## The unified package
+
+The four operations are also one package: `algebraic/Algebraic.wl` (one
+Wolfram Language context, `Algebraic``, in one self-contained file, running
+in the Wolfram kernel and in [Mathics3](https://mathics.org/)) and
+`algebraic/python/` (one importable Python package with three modules; the
+denester has no Python implementation). The projects below are the sources
+it was merged from, kept with their articles, reports and validation
+records; [`algebraic/README.md`](algebraic/README.md) says what the merge
+changed and exactly what Mathics can and cannot run.
+
+```wolfram
+Get["algebraic/Algebraic.wl"];
+AlgebraicDecompose[(x^2 + Sqrt[2] x)^3 + x^2 + Sqrt[2] x, x]      (* {x + x^3, Sqrt[2] x + x^2} *)
+RootProductDecomposition[Root[-1 - # + 3 #^3 - #^4 + #^5 - 3 #^6 + 2 #^7 + #^9 &, 1]]["Expression"]
+RootToRadicals[Root[#^4 - 10 #^2 + 1 &, 4]]                        (* Sqrt[5 + 2 Sqrt[6]] *)
+Strad[Sqrt[5 + 2 Sqrt[6]]]                                        (* Sqrt[2] + Sqrt[3] *)
+```
+
+```python
+import sympy as sp, algebraic as alg
+x = sp.Symbol("x")
+alg.decompose((x**2 + sp.sqrt(2)*x)**3 + x**2 + sp.sqrt(2)*x, x)  # [x**3 + x, x**2 + sqrt(2)*x]
+alg.product_decomposition(alg.parse_wolfram_root("Root[-1 - # + 3 #^3 - #^4 + #^5 - 3 #^6 + 2 #^7 + #^9 &, 1]"))
+alg.root_to_radicals("Root[#^4 - 10 #^2 + 1 &, 4]")
+```
+
 ## Layout
 
 | Path | Contents |
 | --- | --- |
+| `algebraic/Algebraic.wl` | The unified Wolfram package: all four operations, one context, Wolfram kernel and Mathics3. `Tests/Algebraic.wlt` (490 tests) with a runner for both kernels, `Examples.wl`, and `AlgebraicKernelReport[]`. |
+| `algebraic/python/` | The unified Python package `algebraic` (`polynomial_decomposition`, `root_decomposition`, `radicals`), 95 tests, a 40-case cross-check against a Wolfram kernel, and a benchmark. |
 | `docs/mathematica.stackexchange.com/` | Archived questions and their answers (`.md`, `.tex`, `.pdf`, `.url`). |
 | `docs/report/` | radical-denest: *Radical Denesting: A Unified Research Guide* (48 pages, 103 annotated bibliography entries), with `verify.py` and its 59 exact SymPy checks of the identities used. |
 | `docs/literature/` | radical-denest: the freely available sources cited by the guide -- 102 assets (54 PDFs, 49 TeX sources) covering 66 works, indexed by `download_manifest.json` (per-file SHA-256, origin URL, retrieval method), with six re-typeset scans and 26 assets that could not be retrieved. |

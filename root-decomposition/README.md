@@ -1,5 +1,7 @@
 # Root decomposition
 
+> This project's package `RootDecomposition.wl` and its Python module are also section 2 of the unified package [`../algebraic/`](../algebraic/README.md) (`Algebraic.wl`, `algebraic.root_decomposition`); this directory keeps the article, the reports and the sources the merge started from.
+
 Additive and multiplicative decomposition of algebraic numbers (`Root` objects)
 into components of the smallest possible maximum degree, answering
 [Mathematica StackExchange question 105933](https://mathematica.stackexchange.com/q/105933/7288).

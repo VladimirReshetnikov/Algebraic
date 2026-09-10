@@ -1,5 +1,7 @@
 # Root to radicals
 
+> This project's package `RootToRadicals.wl` and its Python module are also section 3 of the unified package [`../algebraic/`](../algebraic/README.md) (`Algebraic.wl`, `algebraic.radicals`), where the Galois engine is shared rather than reached through another package's private context; this directory keeps the article and the sources the merge started from.
+
 Expressing algebraic numbers (`Root` objects) by radicals whenever this is possible, and
 proving that it is impossible otherwise, answering
 [Mathematica StackExchange question 34011](https://mathematica.stackexchange.com/q/34011/7288),

@@ -313,6 +313,15 @@ A uniquely tagged `Catch`/`Throw` is the only construct that means the same
 thing in both kernels, which is what the merged package now uses wherever a
 loop has to abort a function.
 
+### `TestReport` from a script
+
+- `TestReport["suite.wlt"]` run under `wolfram -script` redraws its progress
+  line (`TestReport: suite.wlt | 97 Success ... Elapsed time 5s`) continuously
+  to standard output. A 490-test suite had written **two gigabytes** of such
+  lines before it was half done, and the redirected log stopped being
+  readable. Set `$ProgressReporting = False` before `TestReport` in any
+  script whose output is captured; the report object is unaffected.
+
 ### Two silently wrong constructs the merge removed
 
 Both were correct in Wolfram and wrong in Mathics, so they were rewritten in
