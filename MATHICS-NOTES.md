@@ -44,7 +44,9 @@ Wolfram kernel takes the native branch of every one of them.
   nothing, printing only the banner and `Goodbye!`. UTF-8 mode is needed on
   Windows so the printer can emit Wolfram syntax characters, and
   `--no-readline` avoids a startup error there.
-- Set `$IterationLimit = 1000000` at the top of a script. The default 4096
+- Set `$IterationLimit = 1000000` at the top of a script (see also
+  [control flow and evaluation budgets](#control-flow-and-evaluation-budgets)
+  below). The default 4096
   counts ownvalue substitutions across a whole input evaluation and stops
   valid work well short of an infinite loop.
 - Standard output is block-buffered when redirected, and a Python-level crash
@@ -77,6 +79,10 @@ this reason; its argument-error definition is now `AlgebraicKernelReport[__]`.
 
 ### Control flow: only tagged `Catch`/`Throw` is portable
 
+AsymptoticAnalysis reaches the same conclusion through its private module
+adapter (see [control flow and evaluation budgets](#control-flow-and-evaluation-budgets)
+below); the table records what each construct actually did.
+
 | Construct | Wolfram 15.0.1 | Mathics 10.0.1 |
 | --- | --- | --- |
 | `Return[x]` directly in `Module` | returns from the function | same |
@@ -94,6 +100,10 @@ therefore silently taking the wrong branch, and are now tagged throws or
 loops restructured to exit through their condition.
 
 ### `Check` counts messages for the whole top-level evaluation
+
+The [messages and test harnesses](#messages-and-test-harnesses) section
+below records the same contamination for AsymptoticAnalysis; this is the
+fuller characterization.
 
 A two-argument `Check` takes its failure branch when *anything* earlier in the
 same top-level evaluation issued a message or performed a `Print`:
@@ -158,8 +168,9 @@ looks plausible.
   the unevaluated expression.** `Association[Table[k -> k^2, {k, 2}]]` is
   `<|Table[k -> k^2, {k, 2}]|>`, and so is `Association[Thread[...]]` and
   `Association[Options[f]]`; every key lookup on such an object misses.
-  Evaluate the rules first and apply: `Association @@ Table[...]`. (Also in
-  the imported notes below; it cost the denester its whole configuration.)
+  Evaluate the rules first and apply: `Association @@ Table[...]`. (Also
+  recorded under [associations, lists, and held callables](#associations-lists-and-held-callables)
+  below; it cost the denester its whole configuration.)
 - **A string option name is stored as a symbol, and the option as
   `RuleDelayed`.** After `Options[f] = {"MaxTrials" -> 120}`, `Options[f]`
   is `{MaxTrials :> 120}`, so `First /@ Options[f]` are symbols and an
@@ -182,7 +193,8 @@ looks plausible.
   comparing the literal.
 - `Equal` on arbitrary-precision numbers is tolerant here, so a zero test on a
   small numerical scale must be written as `TrueQ[scale > 0]` rather than
-  `TrueQ[scale == 0]`. (Also recorded in the imported notes below.)
+  `TrueQ[scale == 0]`. (Also recorded under
+  [associations, lists, and held callables](#associations-lists-and-held-callables) below.)
 
 ### Crashes that no `Quiet` or `Check` can catch
 
@@ -201,7 +213,8 @@ they must be avoided structurally rather than guarded.
   attribute 'replace'`. The LLL reduction now swaps rows with `ReplacePart`.
 - `Im[Indeterminate] == 0`: `TypeError: Invalid NaN comparison`. Test for
   `Indeterminate` and the infinities before any comparison on a numeric
-  value. (Also in the imported notes.)
+  value. (Also recorded under
+  [associations, lists, and held callables](#associations-lists-and-held-callables) below.)
 
 ### Part specifications and level arguments
 
@@ -453,8 +466,11 @@ this one.
   below about `10^-17`, although `N[Log[c] + Log[r], n]` and the machine
   precision `N[Log[c r]]` evaluate. A tail target `Erfc[x] = 10^-20` reaches
   this form through `Log[Sqrt[Pi] y]`. The Mathics numerical adapter retries
-  a failed evaluation with logarithms of positive products split into sums;
-  see [NUMERICAL.md](docs/Mathics/NUMERICAL.md).
+  a failed evaluation with logarithms of products split into sums when an
+  exact positive grammar proves every factor positive; a machine-precision
+  sign is not a branch proof, since it rounds `10^-400` to zero and can round
+  an exactly negative factor to a positive number. See
+  [NUMERICAL.md](docs/Mathics/NUMERICAL.md).
 - The explicit `Erfc`, `LogGamma`, `Gamma` and `LambertThreshold` adapters of
   `AsymptoticSpecialInverse` exceed the default `$IterationLimit` of 4096 and
   need the raised session limit; each then takes roughly one to one and a
@@ -497,10 +513,13 @@ this one.
 - Inline option values need protection as well as internal proof questions.
   Mathics rewrites `Element[Sin[a], Reals]` to `Element[a, Reals]`, although
   `a = Pi/2 + I` satisfies the first condition and violates the second. The
-  held analytic boundary preserves membership heads inside inline immediate,
-  delayed, and nested `Assumptions` rules before option evaluation. It keeps
-  side effects under the original once-only option resolution. A value
-  already rewritten in caller-side evaluation cannot be reconstructed. See
+  held analytic boundary preserves applied membership heads inside inline
+  immediate, delayed, and nested `Assumptions` rules and inside inline
+  `ConditionalExpression` conditions before option evaluation. It keeps
+  side effects under the original once-only option resolution, leaves a bare
+  `Element` symbol that an option program holds as data untouched, and does
+  not descend below `Hold`-family barriers. A value already rewritten in
+  caller-side evaluation cannot be reconstructed. See
   [INPUT-ASSUMPTIONS.md](docs/Mathics/INPUT-ASSUMPTIONS.md) for the precise boundary.
 - Native symbolic `Element[Log[a], Reals]` can lose the logarithm's positive
   domain before assumptions are considered. Internal realness questions

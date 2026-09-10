@@ -32,9 +32,13 @@ disagreed the more detailed text was kept; nothing was dropped.
   `f[] := Module[{}, While[True, Return[1]]; 2]`, `f[]` returns `1`:
   `While` propagates the return to the enclosing function. A bare `Module`
   in the same probe can leave `Return[1]` unevaluated instead. These exact
-  `Do`, `Table`, and `While` cases were checked in Wolfram 15.0.1.
+  `Do`, `Table`, and `While` cases were checked in Wolfram 15.0.1; an earlier
+  version of this entry wrongly listed `While` with the loop-only cases.
   Use a uniquely tagged `Catch`/`Throw` for an explicit function-wide exit,
-  or store the result and use `Break[]` when only the loop must stop.
+  or store the result and use `Break[]` when only the loop must stop. The
+  packages use tagged `Catch`/`Throw` everywhere a loop must abort a
+  function; `Return[expr, Module]` is correct here but is not implemented
+  in Mathics (see the [portability table](#return-and-loops-restated-as-a-portability-table)).
 - `Break[]` and `Continue[]` in a nested `Do` act on the innermost loop only.
 
 ## Number-field functions (performance)
