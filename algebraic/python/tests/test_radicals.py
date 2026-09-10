@@ -1,0 +1,523 @@
+"""Regression tests and timings for algebraic.radicals.
+
+Run from algebraic/python: python -m unittest -v tests.test_radicals
+"""
+import time
+import unittest
+from types import SimpleNamespace
+from unittest.mock import patch
+
+import sympy as sp
+from flint import fmpz_poly
+
+from algebraic import radicals as rt
+from algebraic import root_decomposition as rd
+
+
+def alg(s):
+    return rd.parse_wolfram_root(s)
+
+
+def run(label, a, method_expected=None, **kw):
+    t0 = time.perf_counter()
+    r = rt.root_to_radicals(a, **kw)
+    dt = time.perf_counter() - t0
+    ok = r.verified and rt.is_radical_expression(r.expression) and (method_expected is None or r.method == method_expected)
+    print(f"[{'OK' if ok else 'CHECK'}] {label} ({dt:.2f} s): method={r.method} depth={r.radical_depth} "
+          f"leaves={r.leaf_count} galois={r.galois_order}", flush=True)
+    if not ok:
+        raise AssertionError(f"{label}: {r}")
+    return r
+
+
+A6 = "Root[-1 - #^2 - #^3 + #^4 + #^6 &, 2]"
+A5 = "Root[6 + 25 # - 25 #^3 + 5 #^5 &, 5]"
+C5 = "Root[1 + 3 # - 3 #^2 - 4 #^3 + #^4 + #^5 &, 1]"
+
+
+class Grammar(unittest.TestCase):
+    def test_grammar(self):
+        x = sp.Symbol("x")
+        self.assertTrue(rt.is_radical_expression((1 + sp.sqrt(5)) / 2))
+        self.assertTrue(rt.is_radical_expression(sp.Pow(-1, sp.Rational(2, 5)) * sp.root(7, 5) + sp.I / 3))
+        self.assertFalse(rt.is_radical_expression(sp.cos(sp.pi / 7)))
+        self.assertFalse(rt.is_radical_expression(x))
+        self.assertFalse(rt.is_radical_expression(sp.Pow(2, sp.sqrt(2))))
+        self.assertEqual(rt.radical_depth(sp.sqrt(1 + sp.sqrt(2))), 2)
+        self.assertEqual(rt.radical_depth(sp.sqrt(2) ** 3 + 1 / sp.sqrt(3)), 1)
+        self.assertEqual(rt.radical_depth(sp.Rational(7, 3)), 0)
+
+    def test_ball_principal_branches(self):
+        # (-8)^(1/3) = 1 + sqrt(3) i, (-1)^(2/5) = exp(2 pi i / 5)
+        with rt.ctx.workprec(200):
+            z = rt.ball(sp.Pow(-8, sp.Rational(1, 3)), 200)
+            self.assertTrue(z.real.contains(1) and z.imag.overlaps(rt.arb(3).sqrt()))
+            w = rt.ball(sp.Pow(-1, sp.Rational(2, 5)), 200)
+            self.assertTrue(w.real.overlaps((rt.arb.pi() * 2 / 5).cos()))
+            self.assertTrue(w.imag > 0)
+
+
+class Examples(unittest.TestCase):
+    def test_question_examples(self):
+        r6 = run("sextic example", A6, "Reciprocal")
+        self.assertEqual(r6.degree, 6)
+        r5 = run("quintic example", A5, "Dickson")
+        self.assertEqual(r5.radical_depth, 1)
+        closed = sp.Pow(sp.Rational(-3, 5) + sp.Rational(4, 5) * sp.I, sp.Rational(1, 5)) + \
+            sp.Pow(sp.Rational(-3, 5) - sp.Rational(4, 5) * sp.I, sp.Rational(1, 5))
+        self.assertTrue(rt.ball(r5.expression - closed, 300).contains(0))
+        for k in range(1, 7):
+            run(f"sextic conjugate {k}", f"Root[-1 - #^2 - #^3 + #^4 + #^6 &, {k}]")
+        for k in range(1, 6):
+            run(f"quintic conjugate {k}", f"Root[6 + 25 # - 25 #^3 + 5 #^5 &, {k}]")
+
+    def test_cyclic_quintic(self):
+        r = run("cyclic quintic", C5, "Galois")
+        self.assertEqual((r.galois_order, r.extended_order, r.series_primes), (5, 20, [5]))
+        run("cyclic quintic fourier", C5, "Galois", resolvents="fourier")
+        run("cyclic quintic eigenvector", C5, "Galois", resolvents="eigenvector")
+        run("cyclic quintic conjugate 3", "Root[1 + 3 # - 3 #^2 - 4 #^3 + #^4 + #^5 &, 3]", "Galois")
+
+    def test_forced_descent(self):
+        for label, s in [("x^3-2", "Root[-2 + #^3 &, 2]"), ("x^3-3x+1", "Root[1 - 3 # + #^3 &, 1]"),
+                         ("x^4-2", "Root[-2 + #^4 &, 4]"), ("x^4-10x^2+1", "Root[1 - 10 #^2 + #^4 &, 4]"),
+                         ("x^5-2", "Root[-2 + #^5 &, 3]"), ("x^8+1", "Root[1 + #^8 &, 1]"),
+                         ("Phi_7", "Root[1 + # + #^2 + #^3 + #^4 + #^5 + #^6 &, 1]"),
+                         ("x^6-2x^3-1", "Root[-1 - 2 #^3 + #^6 &, 1]"),
+                         ("x^4-x-1 (S4)", "Root[-1 - # + #^4 &, 1]")]:
+            run("descent " + label, s, "Galois", method="galois")
+
+    def test_examples_by_descent(self):
+        r6 = run("sextic example by descent", A6, "Galois", method="galois")
+        self.assertEqual((r6.galois_order, r6.extended_order), (24, 48))
+        r5 = run("quintic example by descent", A5, "Galois", method="galois")
+        self.assertEqual((r5.galois_order, r5.extended_order), (20, 40))
+
+    def test_descent_precision_retries_without_odd_primes(self):
+        a = rd.AlgebraicNumber(fmpz_poly([-2, 0, 1]), 2)
+        descend = rt._descend
+        for failures, expected_precisions in [(1, [100, 200]), (3, [100, 200, 400])]:
+            precisions = []
+
+            def attempt(gd, a, primes, state):
+                self.assertEqual(primes, [])
+                precisions.append(gd.prec)
+                if len(precisions) <= failures:
+                    raise rd.PrecisionError("forced descent ambiguity")
+                return descend(gd, a, primes, state)
+
+            with patch.object(rt, "_descend", side_effect=attempt):
+                state = rt._State(method="galois", prec_bits=100)
+                if failures == 1:
+                    self.assertEqual(rt._galois_radicals(a, state), sp.sqrt(2))
+                else:
+                    with self.assertRaisesRegex(rd.PrecisionError, "precision escalation failed in the descent"):
+                        rt._galois_radicals(a, state)
+            self.assertEqual(precisions, expected_precisions)
+
+    def test_structural_families(self):
+        run("decomposition", "Root[1 + 3 #^2 - 3 #^4 - 4 #^6 + #^8 + #^10 &, 5]", "Decompose")
+        run("Dickson D_7", "Root[-3 - 7 # + 14 #^3 - 7 #^5 + #^7 &, 1]", "Dickson")
+        run("low degree", "Root[-1 - # + #^4 &, 2]", "LowDegree")
+        with self.assertRaises(rt.NotFound):
+            rt.root_to_radicals(C5, method="structural")
+
+    def test_decomposition_with_three_components(self):
+        # All branches of ((x^2)^2)^2 - 2 exercise the shared composition suffixes.
+        for k in range(1, 9):
+            run(f"three-component decomposition conjugate {k}", f"Root[-2 + #^8 &, {k}]", "Decompose")
+
+    def test_identity_embedding_precision(self):
+        gd = rd.galois_data(fmpz_poly([-2, 0, 0, 1]), 200, 20)
+        v = [a + b / 3 for a, b in zip(gd.root_coords[0], gd.root_coords[1])]
+        value = rt._value_at_identity(gd, v)
+        for prec in (gd.prec, 2 * gd.prec):
+            with rt.ctx.workprec(prec):
+                expected = (rd.conj_vector(gd, v) if prec == gd.prec else rd._conj_vector_at(gd, v, prec))[gd.identity]
+                self.assertTrue(value(prec).overlaps(expected))
+
+    def test_dense_composition_chain(self):
+        h = rt.X
+        for _ in range(4):
+            h = sp.expand(h ** 2 + h)
+        p = rt.fmpz_poly_of(h + 2)
+        for k in (1, 8, 16):
+            run(f"dense degree-16 decomposition conjugate {k}", rd.AlgebraicNumber(p, k), "Decompose")
+
+
+class CompositionSeries(unittest.TestCase):
+    def test_unordered_commutators_preserve_groups_and_series(self):
+        from sympy.combinatorics.group_constructs import DirectProduct
+        from sympy.combinatorics.named_groups import CyclicGroup, SymmetricGroup
+
+        def all_pairs(mt, ident, H):
+            inverse = {g: mt[g].index(ident) for g in H}
+            return rt.closure(mt, ident, {mt[mt[inverse[g]][inverse[h]]][mt[g][h]] for g in H for h in H})
+
+        for group in (SymmetricGroup(4), DirectProduct(SymmetricGroup(3), SymmetricGroup(3)),
+                      DirectProduct(SymmetricGroup(4), CyclicGroup(2)), SymmetricGroup(5)):
+            elements = list(group.generate_schreier_sims())
+            indices = {g: i for i, g in enumerate(elements)}
+            mt = [[indices[g * h] for h in elements] for g in elements]
+            ident, H = indices[group.identity], list(range(len(elements)))
+            derived = sorted(indices[g] for g in group.derived_subgroup().generate_schreier_sims())
+            self.assertEqual(rt.commutator_subgroup(mt, ident, H), derived)
+            self.assertEqual(rt.is_solvable_group(mt, ident, H), group.is_solvable)
+            if group.is_solvable:
+                actual = rt.prime_series(mt, ident, H)
+                with patch.object(rt, "commutator_subgroup", side_effect=all_pairs):
+                    self.assertEqual(actual, rt.prime_series(mt, ident, H))
+            else:
+                with self.assertRaises(rt.NotSolvable):
+                    rt.prime_series(mt, ident, H)
+            for collection in ([], [ident], H[:3] + H[:3], [indices[g] for g in group.generators], H, H[::-1]):
+                for convert in (list, tuple, set, iter):
+                    with self.subTest(order=len(H), collection=collection, convert=convert):
+                        self.assertEqual(rt.commutator_subgroup(mt, ident, convert(collection)),
+                                         all_pairs(mt, ident, convert(collection)))
+
+    def test_suffix_generators_and_fixed_spaces(self):
+        for p, base_prime, expected_order, expected_subgroup in [
+                (fmpz_poly([1, -3, 0, 1]), None, 3, 3),
+                (fmpz_poly([-1, -1, 0, 0, 1]), None, 24, 24),
+                (fmpz_poly([1, 3, -3, -4, 1, 1]) * rt.cyclotomic(5), 5, 20, 5)]:
+            gd = rd.galois_data(p)
+            H = list(range(gd.order))
+            if base_prime:
+                with rt.ctx.workprec(gd.prec):
+                    zeta = gd.scale * (rt.acb(0, 2) * rt.arb.pi() / base_prime).exp()
+                    indices = [i for i, root in enumerate(gd.roots) if root.overlaps(zeta)]
+                self.assertEqual(len(indices), 1)
+                H = [g for g in H if gd.perms[g][indices[0]] == indices[0]]
+            self.assertEqual((gd.order, len(H)), (expected_order, expected_subgroup))
+            identity = rt.fmpq_mat([[int(i == j) for j in range(gd.order)] for i in range(gd.order)])
+
+            def fixed_space(group):
+                constraints = rt.fmpq_mat([row for g in group for row in (gd.automorphisms[g] - identity).tolist()])
+                return rd.rowspace_basis(rd.fmpq_nullspace(constraints), gd.order)
+
+            steps = rt.prime_series(gd.mult_table, gd.identity, H)
+            for i, step in enumerate(steps):
+                with self.subTest(order=gd.order, step=i):
+                    generators = [s["generator"] for s in steps[i:]]
+                    self.assertEqual(rd.group_closure(gd.mult_table, gd.identity, generators), frozenset(step["group"]))
+                    basis = fixed_space(generators)
+                    self.assertEqual(basis, fixed_space(step["group"]))
+                    self.assertEqual(len(basis) * len(step["group"]), gd.order)
+                    self.assertTrue(all(rt._fixed_by(gd, v, step["group"]) for v in basis))
+
+
+class FieldPowers(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.gd = rd.galois_data(fmpz_poly([-2, 0, 0, 1]), 300, 20)
+
+    def matrix_power(self, v, exponent):
+        with rt.ctx.workprec(self.gd.prec):
+            matrix = rd.multiplication_matrix_of(self.gd, v)
+        one = [rt.fmpq(1)] + [rt.fmpq(0)] * (self.gd.order - 1)
+        return rd.apply_matrix(matrix ** exponent, one)
+
+    def test_multiplication_matrix_precision_trials(self):
+        gd = self.gd
+        one = [rt.fmpq(i == 0) for i in range(gd.order)]
+        mixed = [a / 3 + b / 7 for a, b in zip(gd.root_coords[0], gd.root_coords[1])]
+        vectors = [[0] * gd.order, [q * rt.fmpq(7, 3) for q in one], gd.root_coords[1], mixed,
+                   [10 ** 40 * a + b for a, b in zip(one, mixed)], [q / 10 ** 100 for q in mixed]]
+        for prec in (gd.prec, 2 * gd.prec):
+            with rt.ctx.workprec(prec):
+                for v in vectors:
+                    integers, den = rd._clear_denominators(v)
+                    expected = rd.multiplication_matrix(gd, rd.conj_vector(gd, integers)) / den
+                    self.assertEqual(rd.multiplication_matrix_of(gd, v), expected)
+                    self.assertEqual(rt.ctx.prec, prec)
+
+    def test_multiplication_matrix_restores_caller_precision(self):
+        gd, outer_prec = self.gd, rt.ctx.prec
+        round_matrix, precisions = rd.mat_round, []
+
+        def record_round(matrix):
+            precisions.append(rt.ctx.prec)
+            return round_matrix(matrix)
+
+        # The low attempt really fails for these large traces; the higher caller precision succeeds.
+        v = [rt.fmpq(10 ** 40 * (i == 0)) + c / 7 for i, c in enumerate(gd.root_coords[1])]
+        with rt.ctx.workprec(2 * gd.prec), patch.object(rd, "mat_round", side_effect=record_round):
+            rd.multiplication_matrix_of(gd, v)
+            self.assertEqual(precisions, [64, 2 * gd.prec])
+            self.assertEqual(rt.ctx.prec, 2 * gd.prec)
+        self.assertEqual(rt.ctx.prec, outer_prec)
+
+        # No duplicate attempt when the original precision is already at or below the trial limit.
+        precisions.clear()
+        with rt.ctx.workprec(53), patch.object(rd, "mat_round", side_effect=record_round):
+            rd.multiplication_matrix_of(gd, [1] + [0] * (gd.order - 1))
+            self.assertEqual(precisions, [53])
+
+        def fail_round(matrix):
+            precisions.append(rt.ctx.prec)
+            raise rd.PrecisionError("original precision failure")
+
+        for prec in (53, 96):
+            precisions.clear()
+            with rt.ctx.workprec(prec), patch.object(rd, "mat_round", side_effect=fail_round):
+                with self.assertRaisesRegex(rd.PrecisionError, "original precision failure"):
+                    rd.multiplication_matrix_of(gd, v)
+                self.assertEqual(precisions, [53] if prec == 53 else [64, 96])
+                self.assertEqual(rt.ctx.prec, prec)
+            self.assertEqual(rt.ctx.prec, outer_prec)
+
+    def test_raw_rounding_retains_nonintegral_input_behavior(self):
+        gd = rd.galois_data(fmpz_poly([-1, 1]))
+        with rt.ctx.workprec(300):
+            value = rt.acb(1) + rt.acb(2) ** -100
+            with self.assertRaises(rd.PrecisionError):
+                rd.mat_round(rd.acb_mat([[value]]))
+            with self.assertRaises(rd.PrecisionError):
+                rd.multiplication_matrix(gd, [value])
+            with self.assertRaises(rd.PrecisionError):
+                rd.coords_from_conjugates(gd, [value])
+            # The coordinate wrapper establishes integrality by clearing this denominator first.
+            q = rt.fmpq(1) + rt.fmpq(1, 2 ** 100)
+            self.assertEqual(rd.multiplication_matrix_of(gd, [q]), rt.fmpq_mat([[q]]))
+
+    def test_branch_selection_evaluates_only_identity_at_higher_precision(self):
+        gd = self.gd
+        candidates = [2 ** sp.Rational(1, 3) * (-1) ** sp.Rational(2 * j, 3) for j in range(3)]
+        for vector, expected in zip(gd.root_coords, (candidates[0], candidates[2], candidates[1])):
+            with rt.ctx.workprec(97), patch.object(rd, "_conj_vector_at", wraps=rd._conj_vector_at) as evaluate:
+                result = rt.select_candidate(candidates, rt._value_at_identity(gd, vector), 2 * gd.prec)
+                self.assertEqual(rt.ctx.prec, 97)
+                self.assertEqual(evaluate.call_args.kwargs, {"rows": [gd.identity]})
+                self.assertEqual(result, expected)
+
+    def test_coordinate_powers(self):
+        gd = self.gd
+        vectors = [[rt.fmpq(0)] * gd.order, gd.root_coords[1],
+                   [a / 3 + b / 7 for a, b in zip(gd.root_coords[0], gd.root_coords[1])]]
+        for v in vectors:
+            for exponent in (0, 1, 2, 3, 5):
+                with self.subTest(vector=v, exponent=exponent):
+                    self.assertEqual(rd.power_coordinates(gd, v, exponent), self.matrix_power(v, exponent))
+        with self.assertRaises(ValueError):
+            rd.power_coordinates(gd, vectors[1], -1)
+
+    def test_coordinate_power_precision_fallback(self):
+        gd = self.gd
+        v = [rt.fmpq(10 ** 40)] + [rt.fmpq(1, 7)] * (gd.order - 1)
+        with rt.ctx.workprec(gd.prec):
+            integers, _ = rd._clear_denominators(v)
+            with self.assertRaises(rd.PrecisionError):
+                rd.coords_from_conjugates(gd, [z ** 5 for z in rd.conj_vector(gd, integers)])
+        self.assertEqual(rd.power_coordinates(gd, v, 5), self.matrix_power(v, 5))
+
+    def test_coordinate_power_trace_precision_trials(self):
+        gd, outer_prec = self.gd, rt.ctx.prec
+        mixed = [a / 3 + b / 7 for a, b in zip(gd.root_coords[0], gd.root_coords[1])]
+        conjugates, coordinates = rd.conj_vector, rd.coords_from_conjugates
+        for shift, trace_precisions in ((0, [64]), (10 ** 10, [64, gd.prec])):
+            v = [q + shift * (i == 0) for i, q in enumerate(mixed)]
+            expected = self.matrix_power(v, 3)
+            observed_values, observed_traces = [], []
+
+            def record_values(field, vector):
+                observed_values.append(rt.ctx.prec)
+                return conjugates(field, vector)
+
+            def record_traces(field, values):
+                observed_traces.append(rt.ctx.prec)
+                return coordinates(field, values)
+
+            with rt.ctx.workprec(97), patch.object(rd, "conj_vector", side_effect=record_values), \
+                    patch.object(rd, "coords_from_conjugates", side_effect=record_traces), \
+                    patch.object(rd, "multiplication_matrix_of") as matrix:
+                self.assertEqual(rd.power_coordinates(gd, v, 3), expected)
+                self.assertEqual(observed_values, [gd.prec])
+                self.assertEqual(observed_traces, trace_precisions)
+                matrix.assert_not_called()
+                self.assertEqual(rt.ctx.prec, 97)
+            self.assertEqual(rt.ctx.prec, outer_prec)
+
+    def test_coordinate_power_trace_errors_restore_precision(self):
+        gd, outer_prec = self.gd, rt.ctx.prec
+        v = gd.root_coords[1]
+        expected, observed = self.matrix_power(v, 3), []
+
+        def fail_traces(field, values):
+            observed.append(rt.ctx.prec)
+            raise rd.PrecisionError("uncertain traces")
+
+        with rt.ctx.workprec(97), patch.object(rd, "coords_from_conjugates", side_effect=fail_traces), \
+                patch.object(rd, "multiplication_matrix_of", wraps=rd.multiplication_matrix_of) as matrix:
+            self.assertEqual(rd.power_coordinates(gd, v, 3), expected)
+            self.assertEqual(observed, [64, gd.prec])
+            self.assertEqual(matrix.call_count, 1)
+            self.assertEqual(rt.ctx.prec, 97)
+        self.assertEqual(rt.ctx.prec, outer_prec)
+
+        with rt.ctx.workprec(97), patch.object(rd, "coords_from_conjugates", side_effect=ValueError("coordinate failure")), \
+                patch.object(rd, "multiplication_matrix_of") as matrix:
+            with self.assertRaisesRegex(ValueError, "coordinate failure"):
+                rd.power_coordinates(gd, v, 3)
+            matrix.assert_not_called()
+            self.assertEqual(rt.ctx.prec, 97)
+        self.assertEqual(rt.ctx.prec, outer_prec)
+
+    def test_power_divider(self):
+        gd = self.gd
+        one = [rt.fmpq(1)] + [rt.fmpq(0)] * (gd.order - 1)
+        mixed = [a / 3 + b / 7 for a, b in zip(gd.root_coords[0], gd.root_coords[1])]
+        numerators = [[rt.fmpq(0)] * gd.order, one, gd.root_coords[1], mixed]
+        denominators = [one, gd.root_coords[1], mixed, [c / 10 ** 100 for c in one]]
+        for denominator in denominators:
+            divide = rd.power_divider(gd, denominator)
+            with rt.ctx.workprec(gd.prec):
+                matrix = rd.multiplication_matrix_of(gd, denominator)
+            for numerator in numerators:
+                for exponent in (0, 1, 2, 3, 5):
+                    self.assertEqual(divide(numerator, exponent), rd.fmpq_solve(matrix ** exponent, numerator))
+        with self.assertRaises(ZeroDivisionError):
+            rd.power_divider(gd, numerators[0])
+        with self.assertRaises(ValueError):
+            divide(one, -1)
+
+    def test_power_divider_norm_fallback_reuses_matrix(self):
+        gd = self.gd
+        denominator = [rt.fmpq(10 ** 40)] + [rt.fmpq(1, 7)] * (gd.order - 1)
+        numerator = gd.root_coords[1]
+        with rt.ctx.workprec(gd.prec):
+            integers, _ = rd._clear_denominators(denominator)
+            with self.assertRaises(rd.PrecisionError):
+                rd._unique_integer(rt.math.prod(rd.conj_vector(gd, integers), start=rt.acb(1)))
+            matrix = rd.multiplication_matrix_of(gd, denominator)
+        with patch.object(rd, "multiplication_matrix_of", wraps=rd.multiplication_matrix_of) as reconstruct:
+            divide = rd.power_divider(gd, denominator)
+            denominator[:] = [rt.fmpq(0)] * gd.order  # the lazy fallback owns its denominator snapshot
+            self.assertEqual(divide(iter(numerator), 0), numerator)
+            self.assertEqual(reconstruct.call_count, 0)
+            for exponent in (1, 3, 5):
+                self.assertEqual(divide(iter(numerator), exponent), rd.fmpq_solve(matrix ** exponent, numerator))
+            self.assertEqual(reconstruct.call_count, 1)
+
+    def test_power_divider_trace_fallback(self):
+        gd = self.gd
+        denominator = gd.root_coords[1]
+        numerator = [rt.fmpq(10 ** 100)] + [rt.fmpq(1)] * (gd.order - 1)
+        with rt.ctx.workprec(gd.prec):
+            values = rd.conj_vector(gd, denominator)
+            norm = rd._unique_integer(rt.math.prod(values, start=rt.acb(1)))
+            with self.assertRaises(rd.PrecisionError):
+                rd.coords_from_conjugates(gd, [z * (rt.acb(norm) / w) ** 3
+                    for z, w in zip(rd.conj_vector(gd, numerator), values)])
+            expected = rd.fmpq_solve(rd.multiplication_matrix_of(gd, denominator) ** 3, numerator)
+        with patch.object(rd, "multiplication_matrix_of", wraps=rd.multiplication_matrix_of) as reconstruct:
+            self.assertEqual(rd.power_divider(gd, iter(denominator))(iter(numerator), 3), expected)
+            self.assertEqual(reconstruct.call_count, 1)
+
+    def test_power_divider_negative_norm(self):
+        gd = rd.galois_data(fmpz_poly([1, -3, 0, 1]), 300, 20)
+        denominator = gd.root_coords[0]
+        numerator = [rt.fmpq(i == 0, 5) + c / 7 for i, c in enumerate(gd.root_coords[1])]
+        with rt.ctx.workprec(gd.prec):
+            self.assertEqual(rd._unique_integer(rt.math.prod(rd.conj_vector(gd, denominator), start=rt.acb(1))), -1)
+            matrix = rd.multiplication_matrix_of(gd, denominator)
+        divide = rd.power_divider(gd, denominator)
+        for exponent in (1, 2, 3, 5):
+            self.assertEqual(divide(numerator, exponent), rd.fmpq_solve(matrix ** exponent, numerator))
+
+
+class RationalPolynomials(unittest.TestCase):
+    def test_dickson_recognition_against_recurrence(self):
+        # Inspect candidate order independently of root selection, including reducible families.
+        state = SimpleNamespace(pick=lambda candidates, target: candidates)
+        for n in (1, 2, 3, 4, 5, 7, 8):
+            for c, t, b in [(0, 1, 2), (-2, 0, 3), (sp.Rational(2, 3), sp.Rational(1, 7), sp.Rational(3, 5))]:
+                p = rt.fmpz_poly_of(rt.dickson(n, c).subs(rt.X, rt.X - t) - b)
+                if n < 3 or c == 0:
+                    expected = None
+                else:
+                    u = sp.Pow((b + sp.sqrt(b ** 2 - 4 * c ** n)) / 2, sp.Rational(1, n))
+                    zeta = sp.Pow(-1, sp.Rational(2, n))
+                    expected = [t + zeta ** j * u + c / (zeta ** j * u) for j in range(n)]
+                for scale in (1, -3):
+                    q = scale * p
+                    target = SimpleNamespace(poly=q, degree=q.degree())
+                    self.assertEqual(rt.structural_dickson(target, state, 6), expected)
+                if n >= 4:
+                    q = fmpz_poly(p)
+                    q[n - 3] += 1  # leaves the shift and Dickson parameter unchanged
+                    self.assertIsNone(rt.structural_dickson(SimpleNamespace(poly=q, degree=q.degree()), state, 6))
+                if expected is not None:
+                    with rt.ctx.workprec(300):
+                        self.assertTrue(all(rt.acb_poly(p)(rt.ball(candidate, 300)).contains(0) for candidate in expected))
+
+    def test_native_polynomial_conversion_and_evaluation(self):
+        for degree in (0, 2, 8, 32):
+            expr = sum(sp.Rational(i + 1, i + 2) * rt.X ** i for i in range(degree + 1))
+            poly = rt._rational_poly(expr)
+            self.assertEqual(rt.sympy_poly(poly), expr)
+            for prec in (80, 300):
+                with rt.ctx.workprec(prec):
+                    z = rt.acb(1, 2) / 3
+                    expected = rt.acb(0)
+                    for coefficient in sp.Poly(expr, rt.X).all_coeffs():
+                        expected = expected * z + rt._rational_acb(coefficient.p, coefficient.q)
+                    self.assertTrue(rt.acb_poly(poly)(z).overlaps(expected))
+        self.assertEqual(rt.fmpz_poly_of(-(rt.X + 1) ** 2 / 6), fmpz_poly([1, 2, 1]))
+        self.assertEqual(rt.fmpz_poly_of(0), fmpz_poly())
+
+    def test_reciprocal_rational_families_and_near_misses(self):
+        for m in range(2, 10):
+            outer = rt.X ** m + sum((j + 1) * rt.X ** j for j in range(m))
+            for c in (0, -1, sp.Rational(2, 3), sp.Rational(-3, 2)):
+                p = rt.fmpz_poly_of(sp.expand(rt.X ** m * outer.subs(rt.X, rt.X + c / rt.X)))
+                result = rt.reciprocal_decomposition(p)
+                self.assertIsNotNone(result)
+                cs, reduced = result
+                self.assertEqual(sp.expand(rt.X ** m * reduced.subs(rt.X, rt.X + cs / rt.X)),
+                                 rt.sympy_poly(p) / int(p.leading_coefficient()))
+                if c:
+                    p[2 * m - 1] += 1
+                    self.assertIsNone(rt.reciprocal_decomposition(p))
+
+    def test_cyclotomic_base_with_two_primes(self):
+        p = rt.cyclotomic(15)
+        a = rd.AlgebraicNumber(p, 1)
+        gd = rd.galois_data(p * rt.cyclotomic(3) * rt.cyclotomic(5), 300, 50)
+        expression, order, steps = rt._descend(gd, a, [3, 5], rt._State())
+        self.assertEqual((order, steps), (8, []))
+        self.assertTrue(rt.is_radical_expression(expression) and rt.verify_numeric(expression, a))
+
+
+class Negative(unittest.TestCase):
+    def test_not_solvable(self):
+        for s in ["Root[-1 - # + #^5 &, 1]", "Root[-1 - # + #^7 &, 1]", "Root[-1 - # + #^6 &, 1]",
+                  "Root[5 - 2 # + 3 #^2 + #^4 + #^6 &, 1]", "Root[-1 - # + #^8 &, 1]", "Root[-1 - # + #^9 &, 1]"]:
+            with self.assertRaises(rt.NotSolvable):
+                rt.root_to_radicals(s)
+            self.assertFalse(rt.is_solvable(s))
+        self.assertTrue(rt.is_solvable(C5))
+        self.assertTrue(rt.is_solvable(A6))
+        self.assertTrue(rt.is_solvable("Root[-1 - # + #^4 &, 1]"))
+
+    def test_limits_and_input(self):
+        with self.assertRaises(rt.ResourceLimit):
+            rt.root_to_radicals("Root[-1 - # + #^4 &, 1]", method="galois", maxorder=10)
+        with self.assertRaises(ValueError):
+            rt.root_to_radicals(A6, method="nope")
+        r = rt.root_to_radicals(sp.Rational(3, 4))
+        self.assertEqual(r.expression, sp.Rational(3, 4))
+        self.assertEqual(rt.root_to_radicals(rd.AlgebraicNumber(fmpz_poly([-2, 0, 1]), 2)).expression, sp.sqrt(2))
+
+    def test_frobenius(self):
+        self.assertTrue(rt.frobenius_nonsolvable(fmpz_poly([-1, -1, 0, 0, 0, 1])))
+        self.assertFalse(rt.frobenius_nonsolvable(fmpz_poly([1, 3, -3, -4, 1, 1])))
+        self.assertTrue(rt.frobenius_nonsolvable(fmpz_poly([-1, -1, 0, 0, 0, 0, 1])))
+        self.assertFalse(rt.frobenius_nonsolvable(fmpz_poly([-1, 0, 0, 0, 0, 0, 0, 0, 1])))   # x^8-1: solvable, no obstruction
+        self.assertTrue(rt.frobenius_nonsolvable(fmpz_poly([-1, -1, 0, 0, 0, 0, 0, 0, 0, 1])))  # x^9-x-1: a 5- or 7-cycle
+        self.assertFalse(rt.frobenius_nonsolvable(fmpz_poly([1, 3, -3, -4, 1, 1])))
+        self.assertTrue(rt.frobenius_order_multiple(fmpz_poly([-1, -1, 0, 0, 0, 1])) % 60 == 0)   # S5 element orders
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)
