@@ -17,6 +17,11 @@
    Exit code 0 when nothing failed. *)
 
 $IterationLimit = 1000000;
+(* TestReport's progress ticker, written from a script, produced two gigabytes
+   of redrawn progress lines before the suite was half done.  The switch works
+   only when it is set before TestReport is first used, which autoloads the
+   testing framework; set just before the call it had no effect. *)
+$ProgressReporting = False;
 SetDirectory[DirectoryName[$InputFileName /. "" -> Directory[]]];
 Get[FileNameJoin[{"..", "Algebraic.wl"}]];
 Print["Kernel: ", $Version];
@@ -28,9 +33,6 @@ If[Names["System`TestReport"] =!= {},
 
   (* ---------------- the Wolfram kernel ---------------- *)
   Module[{wall, tr, results, failed},
-    (* TestReport's progress ticker, written from a script, produced two
-       gigabytes of redrawn progress lines before the suite was half done. *)
-    $ProgressReporting = False;
     {wall, tr} = AbsoluteTiming[TestReport["Algebraic.wlt"]];
     If[! IntegerQ[tr["TestsSucceededCount"]] || ! IntegerQ[tr["TestsFailedCount"]] ||
         tr["TestsSucceededCount"] + tr["TestsFailedCount"] == 0,

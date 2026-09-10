@@ -323,8 +323,12 @@ loop has to abort a function.
   line (`TestReport: suite.wlt | 97 Success ... Elapsed time 5s`) continuously
   to standard output. A 490-test suite had written **two gigabytes** of such
   lines before it was half done, and the redirected log stopped being
-  readable. Set `$ProgressReporting = False` before `TestReport` in any
-  script whose output is captured; the report object is unaffected.
+  readable. Set `$ProgressReporting = False` **at the top of the script**:
+  it takes effect only if it is set before `TestReport` is first used, which
+  autoloads the testing framework -- set immediately before the call, inside
+  the same script, it had no effect, and neither did `Block[{$Output = {}},
+  ...]`, `Block[{$Messages = {}, $Urgent = {}}, ...]` or replacing
+  `PrintTemporary`. The report object is unaffected either way.
 
 ### Two silently wrong constructs the merge removed
 
