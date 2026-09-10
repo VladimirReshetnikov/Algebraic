@@ -162,6 +162,7 @@ Begin["`Private`"];
    is never used as a pattern variable.  The algorithms below keep using the
    unassigned private symbol x for the same purpose. *)
 kx = Unique["Algebraic`Private`kx"];
+ey = Unique["Algebraic`Private`ey"];       (* the elimination variable *)
 ktag = Unique["Algebraic`Private`ktag"];   (* a private Catch tag *)
 
 (* Return[expr, Module] is not implemented in Mathics 10.0.1: it does not
@@ -202,6 +203,16 @@ $kNative = <|
   "Ordering" -> probe[Ordering[{3, 1, 2}], {2, 3, 1}],
   "ArrayReshape" -> probe[ArrayReshape[{1, 2, 3, 4}, {2, 2}], {{1, 2}, {3, 4}}],
   "MemoryConstrained" -> probe[MemoryConstrained[1 + 1, 10^8], 2],
+  "RandomChoiceScalar" -> probe[ListQ[RandomChoice[{1, 2, 3}]], False],
+  (* Does N[Root[f, k], p] deliver p correct digits?  Mathics 10.0.1 returns a
+     number that carries the requested precision and reports it through
+     Precision and Accuracy, but for a polynomial of degree six it agrees with
+     the root only to about eleven digits.  The residual is measured here
+     rather than the reported precision, which is what makes the difference
+     detectable at all. *)
+  "RootPrecision" -> probe[
+    Module[{r = N[Root[#^6 + 112 #^3 + 27436 &, 5], 60]},
+      TrueQ[Abs[27436 + 112 r^3 + r^6] < 10^-40]], True],
   "OptionNames" -> (Options[probeOptions] = {"s" -> 1};
     probe[First /@ Options[probeOptions], {"s"}]),
   "PolynomialRemainder" -> probe[PolynomialRemainder[kx^3, kx^2 - 1, kx], kx],
@@ -232,6 +243,18 @@ kNativeQ[name_String] := TrueQ[$kNative[name]];
    budget expressed in Wolfram seconds still buys the same computation.  The
    user's own "TimeBudget" and similar options are never scaled. *)
 $kTimeScale = If[kNativeQ["RootReduce"], 1, 4];
+
+(* How many primes the Frobenius scans may use.  Factorising the minimal
+   polynomial modulo one prime costs milliseconds in the Wolfram kernel and
+   about two seconds for degree nine under Mathics, where it runs on the
+   modular arithmetic of section 0.4.  Scanning fewer primes leaves both
+   conclusions sound -- the exponent multiple becomes a divisor of the full
+   one, so the lower bound it feeds can only come out smaller, and a
+   nonsolvability proof from any single prime stands on its own -- but the
+   lower bound is then not always as sharp, and an optimality claim that
+   depends on it can come back False where the Wolfram kernel proves True. *)
+$kFrobeniusPrimes = If[kNativeQ["FactorListModulus"], 40, 10];
+$kFrobeniusPrimesSolvable = If[kNativeQ["FactorListModulus"], 60, 12];
 
 (* ------------------------------------------------------------------ *)
 (* 0.1  Associations and lists                                        *)
@@ -336,11 +359,14 @@ If[kNativeQ["ArrayReshape"],
 
 If[kNativeQ["ListConvolve"],
   kConvolve[a_List, b_List] := ListConvolve[a, b, {1, -1}, 0],
-  (* the only form the package uses: the full linear convolution of two
-     ascending coefficient lists, length Length[a] + Length[b] - 1 *)
-  kConvolve[a_List, b_List] := Table[
-    Total[Table[a[[i]] b[[k - i + 1]], {i, Max[1, k - Length[b] + 1], Min[k, Length[a]]}]],
-    {k, 1, Length[a] + Length[b] - 1}]];
+  (* The only form the package uses: the full linear convolution of two
+     ascending coefficient lists, length Length[a] + Length[b] - 1.  It is
+     assembled from whole-list operations -- one scaled, shifted copy of a per
+     coefficient of b -- because an interpreter charges per evaluation, and
+     the scalar double loop made the modular arithmetic below the slowest
+     part of the package. *)
+  kConvolve[a_List, b_List] := Module[{n = Length[a] + Length[b] - 1},
+    Total[Table[PadRight[PadLeft[b[[i]] a, Length[a] + i - 1], n], {i, Length[b]}]]]];
 
 SetAttributes[kMemoryConstrained, HoldFirst];
 If[kNativeQ["MemoryConstrained"],
@@ -385,8 +411,11 @@ polyVar[p_] := Module[{v = Variables[p]},
 (* ------------------------------------------------------------------ *)
 
 (* Ascending dense coefficient lists.  The zero polynomial is {}. *)
+(* Ascending dense coefficient lists.  The zero polynomial is {}.  A zero
+   coefficient is recognised structurally: asking == of a polynomial
+   coefficient would reach the kernel's equation solver. *)
 clTrim[c_List] := Module[{k = Length[c]},
-  While[k >= 1 && (c[[k]] === 0 || TrueQ[c[[k]] == 0]), k--];
+  While[k >= 1 && (c[[k]] === 0 || Expand[c[[k]]] === 0), k--];
   Take[c, k]];
 clOf[p_, v_] := clTrim[CoefficientList[Expand[p], v]];
 clTo[c_List, v_] := If[c === {}, 0, Expand[Total[Table[c[[i]] v^(i - 1), {i, Length[c]}]]]];
@@ -443,16 +472,6 @@ If[kNativeQ["PolynomialGCD"],
     v = First[vars];
     g = clGCD[clOf[a, v], clOf[b, v]];
     If[g === {}, 0, clTo[Last[clPrimitive[g]], v]]]];
-
-(* res(f,g) = (-1)^(deg f deg g) lc(g)^(deg f - deg r) res(g, r), r = f mod g *)
-clResultant[a_List, b_List] := Which[
-  a === {} || b === {}, 0,
-  clDeg[a] === 0, clLC[a]^clDeg[b],
-  clDeg[b] === 0, clLC[b]^clDeg[a],
-  True, Module[{r = clMod[a, b], m = clDeg[a], n = clDeg[b], s},
-    If[r === {}, Return[0]];
-    s = clDeg[r];
-    (-1)^(m n) clLC[b]^(m - s) clResultant[b, r]]];
 
 If[kNativeQ["Resultant"],
   kResultant[a_, b_, v_] := Resultant[a, b, v],
@@ -522,13 +541,16 @@ cyclotomicList[n_Integer] := cyclotomicList[n] = Module[{num, d},
 mTrim[c_List, q_] := Module[{d = Mod[c, q], k},
   k = Length[d]; While[k >= 1 && d[[k]] === 0, k--]; Take[d, k]];
 mMul[a_List, b_List, q_] := If[a === {} || b === {}, {}, mTrim[kConvolve[a, b], q]];
-mMod[a_List, b_List, q_] := Module[{r = Mod[a, q], db = Length[b] - 1, inv, k, t},
+mMod[a_List, b_List, q_] := Module[{r = Mod[a, q], db, inv, bb, n, k, t},
   If[b === {}, Return[$Failed]];
-  inv = PowerMod[Last[b], -1, q];
+  db = Length[b] - 1; inv = PowerMod[Last[b], -1, q]; bb = Mod[b, q];
+  n = Length[r];
+  If[n - 1 < db, Return[mTrim[r, q]]];
   Do[t = r[[k + db + 1]];
-    If[t =!= 0, t = Mod[t inv, q];
-      Do[r[[k + j + 1]] = Mod[r[[k + j + 1]] - t b[[j + 1]], q], {j, 0, db}]],
-    {k, Length[a] - 1 - db, 0, -1}];
+    If[t =!= 0,
+      t = Mod[t inv, q];
+      r = Mod[r - t PadRight[PadLeft[bb, k + db + 1], n], q]],
+    {k, n - 1 - db, 0, -1}];
   mTrim[Take[r, Min[db, Length[r]]], q]];
 mGCD[a_List, b_List, q_] := Module[{u = mTrim[a, q], v = mTrim[b, q], w},
   While[v =!= {}, w = mMod[u, v, q]; u = v; v = w];
@@ -539,30 +561,53 @@ mPowerMod[base_List, e_Integer, f_List, q_] := Module[{r = {1}, b = mMod[base, f
     k = Quotient[k, 2];
     If[k > 0, b = mMod[mMul[b, b, q], f, q]]];
   r];
-mQuo[a_List, b_List, q_] := Module[{r = Mod[a, q], db = Length[b] - 1, inv, quo, k, t},
-  inv = PowerMod[Last[b], -1, q];
-  quo = ConstantArray[0, Length[a] - db];
+mQuo[a_List, b_List, q_] := Module[{r = Mod[a, q], db, inv, bb, quo, n, k, t},
+  db = Length[b] - 1; inv = PowerMod[Last[b], -1, q]; bb = Mod[b, q];
+  n = Length[r];
+  If[n - 1 < db, Return[{}]];
+  quo = ConstantArray[0, n - db];
   Do[t = r[[k + db + 1]];
-    If[t =!= 0, t = Mod[t inv, q]; quo[[k + 1]] = t;
-      Do[r[[k + j + 1]] = Mod[r[[k + j + 1]] - t b[[j + 1]], q], {j, 0, db}]],
-    {k, Length[a] - 1 - db, 0, -1}];
+    If[t =!= 0,
+      t = Mod[t inv, q]; quo[[k + 1]] = t;
+      r = Mod[r - t PadRight[PadLeft[bb, k + db + 1], n], q]],
+    {k, n - 1 - db, 0, -1}];
   mTrim[quo, q]];
 
-(* Degrees of the irreducible factors of a squarefree poly modulo a prime,
-   by distinct-degree factorisation.  Returns $Failed for a non-squarefree
-   image, which the callers avoid by skipping primes dividing lc * disc. *)
-clFactorDegreesMod[c_List, q_Integer] := Module[
-  {f = mTrim[c PowerMod[Last[Mod[c, q]], -1, q], q], h = {0, 1}, xs = {0, 1}, i = 0, g, degs = {}},
-  If[Length[Mod[c, q]] =!= Length[c] || Mod[Last[c], q] === 0, Return[$Failed]];
+(* Padded subtraction and monic normalisation over GF(q). *)
+mSub[a_List, b_List, q_] := Module[{n = Max[Length[a], Length[b]]},
+  mTrim[PadRight[a, n] - PadRight[b, n], q]];
+mMonic[c_List, q_] := Module[{d = mTrim[c, q]},
+  If[d === {}, {}, mTrim[d PowerMod[Last[d], -1, q], q]]];
+
+(* Degrees of the irreducible factors of a squarefree polynomial modulo a
+   prime, by distinct-degree factorisation: with h = x^(q^i) mod f, the gcd of
+   h - x and f is the product of the irreducible factors of degree exactly i.
+   The loop stops as soon as twice the level exceeds the degree of what is
+   left, which is then irreducible -- without that exit the levels ran to the
+   degree of the input and one prime cost seconds under Mathics.
+
+   Returns $Failed when the image is not squarefree or the leading
+   coefficient vanishes; the callers skip the primes where that happens. *)
+clFactorDegreesMod[c_List, q_Integer] := Catch[Module[
+  {f, h, i = 0, g, degs = {}, n},
+  If[c === {} || Mod[Last[c], q] === 0, Throw[$Failed, ktag]];
+  f = mMonic[c, q];
+  n = Length[f] - 1;
+  If[n < 1, Throw[$Failed, ktag]];
+  h = mMod[{0, 1}, f, q];
   While[Length[f] - 1 > 0,
     i++;
-    If[i > Length[c], Return[$Failed]];
+    If[i > n, Throw[$Failed, ktag]];
     h = mPowerMod[h, q, f, q];
-    g = mGCD[mTrim[h - PadRight[xs, Max[Length[h], 2]], q], f, q];
+    g = mGCD[mSub[h, {0, 1}, q], f, q];
     If[Length[g] - 1 > 0,
+      If[! IntegerQ[(Length[g] - 1)/i], Throw[$Failed, ktag]];
       degs = Join[degs, ConstantArray[i, (Length[g] - 1)/i]];
-      f = mQuo[f, g, q]]];
-  Sort[degs]];
+      f = mQuo[f, g, q];
+      If[Length[f] - 1 > 0, h = mMod[h, f, q]]];
+    If[Length[f] - 1 > 0 && 2 (i + 1) > Length[f] - 1,
+      AppendTo[degs, Length[f] - 1]; Break[]]];
+  Sort[degs]], ktag];
 
 If[kNativeQ["FactorListModulus"],
   kFactorDegreesMod[poly_, v_, q_Integer] :=
@@ -570,6 +615,148 @@ If[kNativeQ["FactorListModulus"],
       Sort[Join @@ (ConstantArray[Exponent[#[[1]], v], #[[2]]] & /@
         Select[fl, Exponent[#[[1]], v] > 0 &])]],
   kFactorDegreesMod[poly_, v_, q_Integer] := clFactorDegreesMod[clOf[poly, v], q]];
+
+(* ------------------------------------------------------------------ *)
+(* 0.5a  Minimal polynomials by elimination                           *)
+(* ------------------------------------------------------------------ *)
+
+(* On a kernel without RootReduce the minimal polynomial is the whole exact
+   algebraic engine: every canonical reduction, every degree and every zero
+   test goes through it.  Mathics does implement MinimalPolynomial, through
+   SymPy, and it is fast on radicals -- but on a sum or a product of Root
+   objects of degree six and up it did not finish in a minute, which is
+   exactly the shape the Galois descent produces at every tower step.
+
+   So the minimal polynomial of an expression built from rationals, Gaussian
+   rationals, Root objects, Plus, Times and rational powers is computed here
+   by elimination, and only an expression outside that grammar is handed to
+   the kernel.  For u with p(u) = 0 and v with q(v) = 0,
+
+       u + v    is a root of  Res_y(p(y), q(x - y)),
+       u v      is a root of  Res_y(p(y), y^deg(q) q(x/y)),
+       u^(1/m)  is a root of  p(x^m),
+       u^n      is a root of  Res_y(p(y), x - y^n),
+       1/u      is a root of  the reversal of p,
+
+   and after each step the result is factored over the rationals and the one
+   irreducible factor that vanishes at the value is kept.  The factor is
+   chosen numerically at moderate precision, and when the numerical test does
+   not leave exactly one candidate the surviving ones are decided exactly. *)
+
+(* The Sylvester matrix of two ascending coefficient lists; its determinant is
+   the resultant.  Computing the resultant that way avoids the deep recursion
+   of a Euclidean scheme: over a coefficient ring of polynomials the recursive
+   form exceeded $RecursionLimit, and Det is fast in both kernels. *)
+sylvesterMatrix[a_List, b_List] := Module[{m = clDeg[a], n = clDeg[b], ra, rb},
+  ra = Reverse[a]; rb = Reverse[b];
+  Join[
+    Table[PadRight[Join[ConstantArray[0, i], ra], m + n], {i, 0, n - 1}],
+    Table[PadRight[Join[ConstantArray[0, i], rb], m + n], {i, 0, m - 1}]]];
+
+clResultant[a_List, b_List] := Which[
+  a === {} || b === {}, 0,
+  clDeg[a] === 0 && clDeg[b] === 0, 1,
+  clDeg[a] === 0, clLC[a]^clDeg[b],
+  clDeg[b] === 0, clLC[b]^clDeg[a],
+  True, Det[sylvesterMatrix[a, b]]];
+
+(* the primitive integer form of a rational polynomial in v *)
+primitiveIn[poly_, v_] := Module[{c = clOf[poly, v], den, g},
+  If[c === {}, Return[0]];
+  den = LCM @@ (Denominator /@ c); c = c den;
+  g = GCD @@ c; c = c/g;
+  If[Last[c] < 0, c = -c];
+  clTo[c, v]];
+
+(* eliminate ey from p(ey) and an expression q in kx and ey *)
+eliminateY[p_, q_] := Module[{pp, qq},
+  pp = clOf[p /. kx -> ey, ey];
+  qq = clOf[Expand[q], ey];
+  If[pp === {} || qq === {}, $Failed, Expand[clResultant[pp, qq]]]];
+
+(* The irreducible factor of poly that vanishes at value, or $Failed.
+
+   Exactly one irreducible factor can vanish there, so the decision is made on
+   the margin between the smallest scaled residual and the next one, at
+   increasing precision.  When no precision separates them the answer is
+   $Failed and kMinimalPolynomial falls back to the kernel's own function:
+   guessing would be wrong, and confirming with an exact zero test would call
+   the reduction this function is part of computing. *)
+selectFactor[poly_, value_] := Catch[Module[
+  {fl, prec = 60, v, res, ord, attempt},
+  If[poly === 0 || ! TrueQ[PolynomialQ[poly, kx]], Throw[$Failed, ktag]];
+  fl = Select[First /@ kFactorList[Expand[poly]], Exponent[#, kx] >= 1 &];
+  If[fl === {}, Throw[$Failed, ktag]];
+  If[Length[fl] === 1, Throw[primitiveIn[First[fl], kx], ktag]];
+  Do[
+    v = kCheck[N[value, prec], $Failed];
+    If[v === $Failed || ! NumberQ[v], Throw[$Failed, ktag]];
+    res = scaledResidual[#, v] & /@ fl;
+    If[! AllTrue[res, NumberQ], Throw[$Failed, ktag]];
+    ord = kOrdering[res];
+    If[TrueQ[res[[ord[[1]]]] < 10^(-prec/3)] && TrueQ[res[[ord[[2]]]] > 10^(-prec/6)],
+      Throw[primitiveIn[fl[[ord[[1]]]], kx], ktag]];
+    prec = 3 prec, {attempt, 3}];
+  $Failed], ktag];
+
+(* |f(v)| divided by the size of the largest term of f at v, so that the
+   comparison does not depend on the scale of f. *)
+scaledResidual[f_, v_] := Module[{c = clOf[f, kx], r, scale},
+  r = kCheck[N[Total[Table[c[[i]] v^(i - 1), {i, Length[c]}]], Precision[v]], $Failed];
+  If[r === $Failed || ! NumberQ[r], Return[Infinity]];
+  scale = Max[Table[Abs[N[c[[i]] v^(i - 1)]], {i, Length[c]}]];
+  If[! TrueQ[scale > 0], Return[Infinity]];
+  Abs[r]/scale];
+
+(* --- the grammar --- *)
+minPolyOfTree[e_] := Which[
+  kRationalQ[e], primitiveIn[Denominator[e] kx - Numerator[e], kx],
+  Head[e] === Complex && kRationalQ[Re[e]] && kRationalQ[Im[e]],
+    primitiveIn[Expand[(kx - Re[e])^2 + Im[e]^2], kx],
+  Head[e] === Root, minPolyOfRoot[e],
+  Head[e] === Plus, minPolyOfFold[List @@ e, Plus],
+  Head[e] === Times, minPolyOfFold[List @@ e, Times],
+  Head[e] === Power && Length[e] === 2 && kRationalQ[e[[2]]],
+    minPolyOfPower[e[[1]], e[[2]]],
+  True, $Failed];
+
+minPolyOfRoot[r_] := Module[{poly},
+  poly = kCheck[Expand[r[[1]][kx]], $Failed];
+  If[poly === $Failed || ! TrueQ[PolynomialQ[poly, kx]] ||
+     ! FreeQ[poly, _Real] || Exponent[poly, kx] < 1, Return[$Failed]];
+  selectFactor[poly, r]];
+
+(* fold a Plus or a Times one operand at a time, eliminating ey each time *)
+minPolyOfFold[parts_List, op_] := Catch[Module[{p, acc, q, elim, i},
+  p = minPolyOfTree[First[parts]];
+  If[p === $Failed, Throw[$Failed, ktag]];
+  acc = First[parts];
+  Do[
+    q = minPolyOfTree[parts[[i]]];
+    If[q === $Failed, Throw[$Failed, ktag]];
+    elim = If[op === Plus,
+      eliminateY[p, q /. kx -> (kx - ey)],
+      eliminateY[p, Expand[ey^Exponent[q, kx] (q /. kx -> kx/ey)]]];
+    If[elim === $Failed, Throw[$Failed, ktag]];
+    acc = op[acc, parts[[i]]];
+    p = selectFactor[elim, acc];
+    If[p === $Failed, Throw[$Failed, ktag]],
+    {i, 2, Length[parts]}];
+  p], ktag];
+
+minPolyOfPower[base_, r_] := Catch[Module[
+  {p = minPolyOfTree[base], num = Numerator[r], den = Denominator[r], q},
+  If[p === $Failed, Throw[$Failed, ktag]];
+  If[den > 1,
+    p = selectFactor[Expand[p /. kx -> kx^den], base^(1/den)];
+    If[p === $Failed, Throw[$Failed, ktag]]];
+  If[Abs[num] =!= 1,
+    q = eliminateY[p, kx - ey^Abs[num]];
+    If[q === $Failed, Throw[$Failed, ktag]];
+    p = selectFactor[q, base^(Abs[num]/den)];
+    If[p === $Failed, Throw[$Failed, ktag]]];
+  If[num < 0, p = primitiveIn[clTo[Reverse[clOf[p, kx]], kx], kx]];
+  p], ktag];
 
 (* ------------------------------------------------------------------ *)
 (* 0.5  Exact algebraic numbers                                       *)
@@ -580,11 +767,19 @@ kGaussianQ[e_] := kRationalQ[e] || (Head[e] === Complex && kRationalQ[Re[e]] && 
 
 kRootObject[poly_, v_, k_Integer] := Root[Function @@ {poly /. v -> Slot[1]}, k];
 
-If[kNativeQ["MinimalPolynomial"],
+nativeMinimalPolynomial[a_, v_] := Module[{p},
+  If[! kNativeQ["MinimalPolynomial"], Return[$Failed]];
+  p = kCheck[MinimalPolynomial[a, v], $Failed];
+  If[Head[p] === MinimalPolynomial || ! TrueQ[PolynomialQ[p, v]], $Failed, p]];
+
+If[kNativeQ["RootReduce"],
+  (* the Wolfram kernel: its own MinimalPolynomial is complete and fast *)
+  kMinimalPolynomial[a_, v_] := nativeMinimalPolynomial[a, v],
+  (* elsewhere: elimination first, the kernel's own function as the fallback *)
   kMinimalPolynomial[a_, v_] := Module[{p},
-    p = kCheck[MinimalPolynomial[a, v], $Failed];
-    If[Head[p] === MinimalPolynomial || ! TrueQ[PolynomialQ[p, v]], $Failed, p]],
-  kMinimalPolynomial[a_, v_] := $Failed];
+    p = minPolyOfTree[a];
+    If[p === $Failed, Return[nativeMinimalPolynomial[a, v]]];
+    Expand[p /. kx -> v]]];
 
 (* The unique root index of mp at which the value of z is attained.  The exit
    is a tagged Throw: Return[expr, Module] is not implemented in Mathics. *)
@@ -706,6 +901,14 @@ If[kNativeQ["RootReduce"],
 (* The index of the smallest entry: Ordering[list, 1] gives it as a
    one-element list, which Mathics does not implement at all. *)
 kOrderingFirst[l_List] := First[kOrdering[l]];
+
+(* RandomChoice[list] gives the chosen element in the Wolfram kernel and a
+   one-element list in Mathics 10.0.1.  The Galois engine draws a random
+   integer weight with it, and a one-element list silently turned the weight,
+   the primitive element and every conjugate that followed into lists. *)
+If[kNativeQ["RandomChoiceScalar"],
+  kRandomChoice[l_] := RandomChoice[l],
+  kRandomChoice[l_] := First[RandomChoice[l]]];
 
 (* The declared option names of a symbol.  Mathics 10.0.1 turns a string
    option name into a symbol when Options[head] = {...} is assigned, and
@@ -836,11 +1039,19 @@ AlgebraicKernelReport[] := Module[{native, emulated},
     "TimeScale" -> $kTimeScale,
     "Operations" -> <|
       "AlgebraicDecompose" -> True,
-      "RootSumDecomposition" -> True,
-      "RootProductDecomposition" -> True,
-      "RootToRadicals" -> True,
+      "RootDecompositionLowerBound" -> True,
+      "RootDecompositionVerify" -> True,
+      "RootSumDecomposition" -> galoisNote,
+      "RootProductDecomposition" -> galoisNote,
+      "RootGaloisData" -> galoisNote,
+      "RootSolvableQ" -> True,
+      "RootToRadicals" -> If[kNativeQ["RootPrecision"], True,
+        "Only the structural recognizers; the Galois-Kummer descent needs the Galois engine."],
       "Strad" -> If[kNativeQ["FactorExtension"], True,
         "Kummer multipliers found by factorisation over an extension are not available; the other denesting methods are."]|>|>];
+
+galoisNote := If[kNativeQ["RootPrecision"], True,
+  "Not available: the Galois engine needs Root objects to evaluate to the precision they report, and this kernel returns fewer correct digits than that."];
 AlgebraicKernelReport[__] := $Failed;
 
 (* ================================================================ *)
@@ -1219,7 +1430,10 @@ primitiveIntegerCoefficients[coeffs_] := Module[{c = coeffs, den, g},
   den = LCM @@ Denominator[c]; c = c den; g = GCD @@ c;
   c = c/g; If[Last[c] < 0, c = -c]; c];
 
-primitiveIntegerPolynomial[poly_] := FromDigits[Reverse[primitiveIntegerCoefficients[CoefficientList[poly, x]]], x];
+(* Expand is explicit: FromDigits builds a Horner form, which the Wolfram
+   kernel expands on its own and Mathics does not, and the result is compared
+   structurally in several places. *)
+primitiveIntegerPolynomial[poly_] := Expand[FromDigits[Reverse[primitiveIntegerCoefficients[CoefficientList[poly, x]]], x]];
 
 polynomialHeight[poly_] := Max[Abs[CoefficientList[primitiveIntegerPolynomial[poly], x]]];
 
@@ -1275,8 +1489,9 @@ gaussianExponentBound[e_Integer] := If[MemberQ[{1, 2}, e], 1, exponentBound[e]];
 (* cycle type at a prime not dividing the discriminant or leading coefficient *)
 frobeniusCycleType[poly_, p_] := kFactorDegreesMod[poly, x, p];
 
-frobeniusExponentMultiple[poly_, maxPrimes_: 40] := Module[
-  {bad = kDiscriminant[poly, x] Coefficient[poly, x, Exponent[poly, x]], ps},
+frobeniusExponentMultiple[poly_, maxPrimesIn_: Automatic] := Module[
+  {maxPrimes = Replace[maxPrimesIn, Automatic :> $kFrobeniusPrimes],
+   bad = kDiscriminant[poly, x] Coefficient[poly, x, Exponent[poly, x]], ps},
   ps = kTakeUpTo[Select[Prime[Range[maxPrimes + 10]], Mod[bad, #] != 0 &], maxPrimes];
   LCM @@ Prepend[Flatten[frobeniusCycleType[poly, #] & /@ ps], 1]];
 
@@ -1322,7 +1537,7 @@ galoisGroupNumerically[roots_List, nums_List, prec_, maxOrder_, maxTries_] :=
     Do[
       ok = False; used = {};
       Do[
-        w = RandomChoice[Complement[Range[1, Max[60, maxTries]], used]];
+        w = kRandomChoice[Complement[Range[1, Max[60, maxTries]], used]];
         AppendTo[used, w];
         newTheta = kRootReduce[thetaExact + w roots[[k]]];
         m = minimalPolynomialOf[newTheta];
@@ -1369,16 +1584,21 @@ groupClosure[mt_, idElem_, gs_, visit_: None] := Module[{seen = ConstantArray[Fa
   Sort[queue]];
 
 (* Subgroup lattice from the multiplication table. *)
+(* Assignment into an association part is refused in Mathics 10.0.1, so the
+   subgroup table below is extended with kAssociateTo rather than assigned to.
+   The generator lists it records drive every fixed-field computation, and an
+   association that silently stayed a single entry made the whole subgroup
+   lattice collapse to the trivial subgroup. *)
 subgroupLattice[mt_, idElem_] := Module[{ord = Length[mt], seen, queue, H, J, g, pos = 1},
   seen = <|{idElem} -> {}|>;
-  Do[J = groupClosure[mt, idElem, {g}]; If[! kKeyExistsQ[seen, J], seen[J] = {g}], {g, ord}];
+  Do[J = groupClosure[mt, idElem, {g}]; If[! kKeyExistsQ[seen, J], kAssociateTo[seen, J -> {g}]], {g, ord}];
   queue = Keys[seen];
   While[pos <= Length[queue],
     H = queue[[pos++]];
     Do[
       If[! MemberQ[H, g],
         J = groupClosure[mt, idElem, Append[seen[H], g]];
-        If[! kKeyExistsQ[seen, J], seen[J] = Join[seen[H], {g}]; AppendTo[queue, J]]],
+        If[! kKeyExistsQ[seen, J], kAssociateTo[seen, J -> Join[seen[H], {g}]]; AppendTo[queue, J]]],
       {g, ord}]];
   Table[<|"Elements" -> k, "Generators" -> seen[k], "Order" -> Length[k], "Index" -> ord/Length[k]|>, {k, Keys[seen]}]];
 
@@ -1392,6 +1612,17 @@ retryPrecision[compute_, prec0_] := Module[{prec = prec0, result = "precision", 
     result = Catch[compute[prec], precTag];
     If[result === "precision" && attempt < 4, Message[Algebraic::prec, prec]; prec *= 2]];
   If[result === "precision", failure["Precision", "Precision escalation failed"], result]];
+
+(* The numerical-resolvent engine rounds traces of high-precision root values
+   to integers, so it needs N[Root[f, k], p] to deliver the p digits it
+   reports.  A kernel where it does not is refused here rather than allowed to
+   round noise into a plausible wrong group. *)
+kernelPrecisionFailure[] := failure["KernelPrecision",
+  "The Galois engine needs Root objects to evaluate to the precision they report, and this kernel returns fewer correct digits than that. The operations that do not use it are unaffected; see AlgebraicKernelReport[].",
+  <|"Kernel" -> $Version|>];
+
+buildGaloisData[poly_, prec0_, maxOrder_, maxTries_] /; ! kNativeQ["RootPrecision"] :=
+  kernelPrecisionFailure[];
 
 buildGaloisData[poly_, prec0_, maxOrder_, maxTries_] :=
   retryPrecision[Function[prec, Catch[buildGaloisDataAtPrecision[poly, prec, maxOrder, maxTries], failTag]], prec0];
@@ -1464,7 +1695,9 @@ RootGaloisData[poly0_, var_Symbol, OptionsPattern[]] := Module[{poly, c, n, res,
   res = Join[res, <|"Scale" -> c, "OriginalPolynomial" -> poly,
     "SplittingFieldDegree" -> res["Order"],
     "SubfieldDegrees" -> Sort[#["Index"] & /@ res["Subgroups"]]|>];
-  If[OptionValue["Cache"], $galoisCache[key] = res];
+  (* assignment into an association part is refused in Mathics 10.0.1
+     (Association is Protected), so the cache is extended instead *)
+  If[OptionValue["Cache"], kAssociateTo[$galoisCache, key -> res]];
   res];
 
 (* ------------------------------------------------------------------ *)
@@ -1590,7 +1823,7 @@ inputFieldData[poly_] := Module[{n, c, P, Pz, theta, fac, factors, principal, su
     "Galois" -> galois, "FactorDegrees" -> Sort[Exponent[#, x] & /@ factors],
     "Subgroups" -> Table[<|"Index" -> Length[S], "FixedField" -> S, "Elements" -> None, "Order" -> n/Length[S]|>, {S, subfields}],
     "SubfieldDegrees" -> Sort[Length /@ subfields], "TraceVector" -> traces|>;
-  $galoisCache[key] = data;
+  kAssociateTo[$galoisCache, key -> data];
   data];
 
 (* generic element operations dispatching on the engine type *)
@@ -1714,6 +1947,12 @@ RootSumDecomposition[a_, dmax_, OptionsPattern[]] := Module[
       makeResult[a, Plus, {kRootReduce[a]}, lb, scope, "SingleTerm", lb == n, True],
       failure["NotFound", "The input itself exceeds the degree bound for a single term"]]]];
   If[n == 1 || (dmax =!= Automatic && dmax >= n) || lb == n, Return[trivial]];
+  (* Everything below this point needs the Galois engine, directly or through
+     the input-field fast path, so a kernel whose Root numerics are not what
+     they report is refused here.  The answers above -- the trivial and
+     single-term ones, the lower bound and the degree checks -- are exact and
+     stay available. *)
+  If[! kNativeQ["RootPrecision"], Return[kernelPrecisionFailure[]]];
   retryPrecision[Function[prec, sumDecompositionCore[a, in, dmax, lb, scope, gaussian, OptionValue["MaxTerms"], prec,
     OptionValue["MaxGroupOrder"], OptionValue["MaxTries"], OptionValue["Engine"]]], OptionValue["WorkingPrecision"]]];
 
@@ -1927,7 +2166,7 @@ tensorSearch[gd_, va_, d_, stab_, maxFactors_] := Module[{subs, ord = gd["Order"
 tensorTest[gd_, fam_, va_] := Module[{bases, prodBasis, mats, coords, dims, tensor, piv, pos, vecs, ok, elems, ord = gd["Order"], idx},
   bases = #["FixedField"] & /@ fam; dims = Length /@ bases;
   If[compositumDegreeBound[gd, fam] < ord, Return[$Failed]];
-  mats = Map[Function[B, Map[(If[! kKeyExistsQ[$multCache, #], $multCache[#] = multMatrix[gd, #]]; $multCache[#]) &, B]], bases];
+  mats = Map[Function[B, Map[(If[! kKeyExistsQ[$multCache, #], kAssociateTo[$multCache, # -> multMatrix[gd, #]]]; $multCache[#]) &, B]], bases];
   idx = Tuples[Range /@ dims];
   prodBasis = Table[Fold[#2 . #1 &, UnitVector[ord, 1], Table[mats[[j, i[[j]]]], {j, Length[fam]}]], {i, idx}];
   If[MatrixRank[prodBasis] < ord, Return[$Failed]];
@@ -1980,6 +2219,12 @@ RootProductDecomposition[a_, dmax_, OptionsPattern[]] := Module[
         <|"TwoFactorOptimal" -> (lb == n), "NormExponent" -> 1|>],
       failure["NotFound", "The input itself exceeds the degree bound for a single factor"]]]];
   If[n == 1 || (dmax =!= Automatic && dmax >= n) || lb == n, Return[trivial]];
+  (* Everything below this point needs the Galois engine, directly or through
+     the input-field fast path, so a kernel whose Root numerics are not what
+     they report is refused here.  The answers above -- the trivial and
+     single-term ones, the lower bound and the degree checks -- are exact and
+     stay available. *)
+  If[! kNativeQ["RootPrecision"], Return[kernelPrecisionFailure[]]];
   retryPrecision[Function[prec, productDecompositionCore[a, in, dmax, lb, scope, OptionValue["MaxFactors"], OptionValue["RecursionDepth"],
     OptionValue["TensorTest"], prec, OptionValue["MaxGroupOrder"], OptionValue["MaxTries"], OptionValue["Engine"], bd]],
     OptionValue["WorkingPrecision"]]];
@@ -2191,7 +2436,8 @@ singlePrimeCycleQ[degs_, n_] := Module[{l = Last[degs]},
   PrimeQ[l] && 2 l > n && Union[Most[degs]] === {1} && ! (PrimePowerQ[n] && l == n - 1)];
 
 (* True: proved nonsolvable.  False: no obstruction found (inconclusive). *)
-frobeniusNonsolvableQ[poly_, maxPrimes_: 60] := Catch[Module[{n = Exponent[poly, x], bad, p = 2, count = 0},
+frobeniusNonsolvableQ[poly_, maxPrimesIn_: Automatic] := Catch[Module[
+  {n = Exponent[poly, x], maxPrimes = Replace[maxPrimesIn, Automatic :> $kFrobeniusPrimesSolvable], bad, p = 2, count = 0},
   bad = If[PrimeQ[n], ! agl1TypeQ[#, n] &, singlePrimeCycleQ[#, n] &];
   With[{d = kDiscriminant[poly, x] Coefficient[poly, x, n]},
     While[count < maxPrimes,
@@ -2208,7 +2454,7 @@ frobeniusReason[n_] := Which[
 
 (* the lcm of the orders of the Frobenius elements divides |G|; beyond the limit the resource status
    is settled without building the splitting field.  Returns None or a Failure. *)
-orderLimitFailure[poly_, maxOrder_] := With[{mult = frobeniusExponentMultiple[poly, 40]},
+orderLimitFailure[poly_, maxOrder_] := With[{mult = frobeniusExponentMultiple[poly]},
   If[mult > maxOrder,
     failure["ResourceLimit", "A divisor of the Galois group order exceeds \"MaxGroupOrder\"",
       <|"GroupOrderMultiple" -> mult, "Limit" -> maxOrder|>],
@@ -2369,10 +2615,15 @@ structuralMethods = {
   {"PairSum", structuralPairSum}};
 
 (* the structural driver: a radical expression equal to a, or $Failed *)
+(* The recognizer is bound to a symbol before it is applied.  Applying a
+   function through a Part expression -- m[[2]][a, p, depth] -- makes a Return
+   inside that function return from *this* Do in Mathics 10.0.1 instead of
+   from the function, so the first recognizer that declined ended the search
+   silently and no structural form was ever found. *)
 structural[a_, p_, depth_] := Catch[Module[{r},
   If[depth <= 0, Return[$Failed]];
   Do[
-    r = m[[2]][a, p, depth];
+    With[{recognizer = m[[2]]}, r = recognizer[a, p, depth]];
     If[okQ[r] && RadicalExpressionQ[r], $methodUsed = m[[1]]; Throw[r, moduleTag]],
     {m, structuralMethods}];
   $Failed], moduleTag];
