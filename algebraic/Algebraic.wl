@@ -202,6 +202,8 @@ $kNative = <|
   "Ordering" -> probe[Ordering[{3, 1, 2}], {2, 3, 1}],
   "ArrayReshape" -> probe[ArrayReshape[{1, 2, 3, 4}, {2, 2}], {{1, 2}, {3, 4}}],
   "MemoryConstrained" -> probe[MemoryConstrained[1 + 1, 10^8], 2],
+  "OptionNames" -> (Options[probeOptions] = {"s" -> 1};
+    probe[First /@ Options[probeOptions], {"s"}]),
   "PolynomialRemainder" -> probe[PolynomialRemainder[kx^3, kx^2 - 1, kx], kx],
   "PolynomialGCD" -> probe[PolynomialGCD[kx^2 - 1, kx^2 - 2 kx + 1], kx - 1],
   "Resultant" -> probe[Resultant[kx^2 - 2, kx^2 - 3, kx], 1],
@@ -257,7 +259,7 @@ If[kNativeQ["Lookup"],
 
 If[kNativeQ["AssociateTo"],
   kAssociateTo[s_, rules_] := AssociateTo[s, rules],
-  kAssociateTo[s_, rules_] := (s = Join[s, If[Head[rules] === List, Association @@ rules, Association[rules]]])];
+  kAssociateTo[s_, rules_] := (s = Join[s, Association @@ Flatten[{rules}]])];
 SetAttributes[kAssociateTo, HoldFirst];
 
 (* Merge accepts a list of associations or a list of rules; the package uses
@@ -705,6 +707,21 @@ If[kNativeQ["RootReduce"],
    one-element list, which Mathics does not implement at all. *)
 kOrderingFirst[l_List] := First[kOrdering[l]];
 
+(* The declared option names of a symbol.  Mathics 10.0.1 turns a string
+   option name into a symbol when Options[head] = {...} is assigned, and
+   returns the options as RuleDelayed, so Options[head] does not give the
+   declared names back; OptionValue does accept either form.  Every option
+   read this way is declared with a string name. *)
+If[kNativeQ["OptionNames"],
+  kOptionNames[head_] := First /@ Options[head],
+  kOptionNames[head_] := Replace[First /@ Options[head], s_Symbol :> SymbolName[s], {1}]];
+
+(* The default option values of a symbol, as an association keyed by the
+   declared names.  Association @@ Options[head] would be keyed by whatever
+   the kernel stored, which is not the same thing. *)
+kDefaultConfig[head_] :=
+  Association @@ Table[n -> OptionValue[head, {}, n], {n, kOptionNames[head]}];
+
 (* Decompose and AlgebraicDecompose use the same outermost-first order, so the
    package's own functional decomposition supplies the operation directly.
    AlgebraicDecompose normalises every component after the first to be monic
@@ -751,8 +768,58 @@ gramData[b_List] := Module[{n = Length[b], bstar = b, mu, i, j, d},
       {j, 1, i - 1}], {i, n}];
   {mu, Table[bstar[[i]] . bstar[[i]], {i, n}]}];
 
+(* An integer relation among numerical values, as a proposal.  Wolfram's
+   FindIntegerNullVector is itself a heuristic and the one caller certifies
+   every candidate it leads to exactly, so a relation that does not hold costs
+   one reduction and nothing else.  The fallback scales the values to integers,
+   LLL-reduces the lattice spanned by (e_i, scaled v_i), and accepts the
+   shortest row whose last entry is small enough for the relation to be
+   plausible.  It declines more than twelve values: the exact rational
+   Gram-Schmidt below is not fast enough for a larger lattice, and no caller
+   needs one. *)
+If[kNativeQ["FindIntegerNullVector"],
+  kFindIntegerNullVector[vec_] := FindIntegerNullVector[vec],
+  kFindIntegerNullVector[vec_List] := Module[
+    {n = Length[vec], digits, ints, rows, red, cand, bound},
+    If[n < 2 || n > 12 || ! AllTrue[vec, NumberQ], Return[$Failed]];
+    digits = Replace[Precision /@ vec, MachinePrecision -> 15, {1}];
+    If[! AllTrue[digits, NumberQ], Return[$Failed]];
+    digits = Floor[2 Min[digits]/3];
+    If[digits < 8, Return[$Failed]];
+    ints = Round[10^digits vec];
+    If[! AllTrue[ints, IntegerQ], Return[$Failed]];
+    rows = Table[Append[UnitVector[n, i], ints[[i]]], {i, n}];
+    red = lllReduce[rows];
+    bound = 10^Max[1, Floor[digits/3]];
+    cand = Select[red, Most[#] =!= ConstantArray[0, n] && Abs[Last[#]] <= bound &];
+    If[cand === {}, $Failed, Most[First[SortBy[cand, Most[#] . Most[#] &]]]]]];
+
 (* ------------------------------------------------------------------ *)
-(* 0.6  The kernel report                                             *)
+(* 0.6  Names the caller and the package must share                   *)
+(* ------------------------------------------------------------------ *)
+
+(* Two System names appear in package input or output but are absent from
+   Mathics 10.0.1.  Read inside the private context an absent name would
+   become a private symbol, so caller input would not match the package's
+   patterns and the package's output would print with a private context
+   prefix.  Creating the inert System symbol aligns the syntax; it does not
+   supply an implementation, and on a kernel that has the function this does
+   nothing at all.
+
+     Inactive          wraps Plus or Times in the "Expression" field of a
+                       decomposition, so that the field can be read without
+                       collapsing the sum or product.  Inert is all that is
+                       needed: the package never asks Inactive to do anything.
+     AlgebraicNumber   is one head of the exact algebraic grammar.  Mathics
+                       has no algebraic-number arithmetic, so no such object
+                       can arise there; aligning the name only makes
+                       ExactAlgebraicQ answer False about it instead of
+                       silently not recognising the head. *)
+Scan[If[Names["System`" <> #] === {}, Symbol["System`" <> #]] &,
+  {"Inactive", "AlgebraicNumber"}];
+
+(* ------------------------------------------------------------------ *)
+(* 0.7  The kernel report                                             *)
 (* ------------------------------------------------------------------ *)
 
 (* Select applied to an Association tests the wrong thing in Mathics 10.0.1
@@ -808,7 +875,7 @@ red[z : (_Integer | _Rational)] := z;
 red[z_] := Module[{r},
   If[!FreeQ[z, _Real], fail["InexactCoefficient", "Approximate coefficients are not accepted."]];
   r = kCheck[kRootReduce[z], $Failed];
-  If[r === $Failed || !FreeQ[r, _RootReduce],
+  If[r === $Failed || !FreeQ[r, _RootReduce | _kRootReduce],
     fail["AlgebraicArithmetic", "Exact algebraic-number reduction failed."]];
   r
 ];
@@ -857,8 +924,7 @@ subtract[a_List, b_List] := add[a, -b];
 multiply[a_List, b_List, limit_: Infinity] := Module[{size},
   If[zeroQ[a] || zeroQ[b], Return[{0}]];
   size = Min[Length[a] + Length[b] - 1, limit];
-  trim[red /@ Take[ListConvolve[
-    kTakeUpTo[a, size], kTakeUpTo[b, size], {1, -1}, 0], size]]
+  trim[red /@ Take[kConvolve[kTakeUpTo[a, size], kTakeUpTo[b, size]], size]]
 ];
 digitCompose[digits_List, h_List] := Module[{d = Length[h] - 1},
   If[d > 0 && Last[h] === 1 && AllTrue[Most[h], # === 0 &] &&
@@ -1285,7 +1351,7 @@ galoisGroupNumerically[roots_List, nums_List, prec_, maxOrder_, maxTries_] :=
         Throw[failure["GaloisGroup", "Could not determine the Galois group"], failTag]],
       {k, n}];
     perms = orbit;
-    set = Association[Thread[perms -> Range[Length[perms]]]];
+    set = Association @@ Thread[perms -> Range[Length[perms]]];
     If[! kKeyExistsQ[set, Range[n]], Throw[failure["GaloisGroup", "Identity missing"], failTag]];
     mt = Table[set[perms[[i]][[perms[[j]]]]], {i, Length[perms]}, {j, Length[perms]}];
     If[! FreeQ[mt, _Missing], Throw[failure["GaloisGroup", "Closure check failed"], failTag]];
@@ -2542,7 +2608,7 @@ Options[DenestReport] = Options[Strad];
 (* ------------------------------------------------------------------ *)
 
 $active = False;
-$cfg = Association[Options[Strad]];
+$cfg = kDefaultConfig[Strad];
 $deadline = Infinity;
 $stats = <||>; $limits = <||>; $trace = {}; $records = {}; $memo = <||>; $inProgress = <||>;
 $recursion = 0; $lastCertificateMethod = "None";
@@ -2599,12 +2665,15 @@ resolveOptions[head_Symbol, raw_List] := Module[{rules, names, unknown, cfg, bad
    rules = flattenRules[raw];
    If[! AllTrue[rules, MatchQ[#, _Rule | _RuleDelayed] &],
     Return[Failure["InvalidOption", <|"MessageTemplate" -> "Options must be rules.", "Rules" -> rules|>]]];
-   names = First /@ Options[head];
+   names = kOptionNames[head];
    unknown = Complement[First /@ rules, names];
    If[unknown =!= {},
     Return[Failure["UnknownOption", <|"MessageTemplate" -> "Unknown option(s): `Keys`.", "Keys" -> unknown|>]]];
    (* effective defaults of the head actually called, first explicit rule wins *)
-   cfg = Association[Table[With[{name = key}, name -> OptionValue[head, rules, name]], {key, names}]];
+   (* Association applied to anything but a literal list of rules retains the
+      unevaluated expression in Mathics 10.0.1, so the rules are built first
+      and applied. *)
+   cfg = Association @@ Table[With[{name = key}, name -> OptionValue[head, rules, name]], {key, names}];
    bad = Join[
      Select[{"AllLevels", "Verbose", "Trace", "Factor", "NumericPrefilter"}, ! booleanQ[cfg[#]] &],
      Select[{"MaxTrials", "MultiplierCap", "MaxTraceEntries", "MaxRecursion", "Patience", "DiscriminantBatchCap", "MaxCosets"}, ! nonnegativeIntegerQ[cfg[#]] &],
@@ -2704,7 +2773,7 @@ smallQ[e_] := If[LeafCount[e] > $cfg["MaxLeafCount"], limitHit["MaxLeafCount"]; 
 (* RootReduce is a canonicalizer: a reduced difference that is a nonzero exact
    algebraic number (an integer, rational, Gaussian rational, Root object or
    explicit radical form such as 2 Sqrt[2]) proves inequality *)
-canonicalNonzeroQ[e_] := e =!= 0 && exactQ[e] && FreeQ[e, RootReduce];
+canonicalNonzeroQ[e_] := e =!= 0 && exactQ[e] && FreeQ[e, RootReduce | kRootReduce];
 
 (* heuristic pruning by significance arithmetic, used only by the search gate;
    it can lose a candidate, never accept one, and never decides EqualityStatus *)
@@ -2730,7 +2799,7 @@ certify[a_, b_] := Module[{d, r},
 
 SetAttributes[standalone, HoldAll];
 standalone[body_, failure_] := If[TrueQ[$active], body,
-   Block[{$active = True, $cfg = Association[Options[Strad]], $deadline = AbsoluteTime[] + 20,
+   Block[{$active = True, $cfg = kDefaultConfig[Strad], $deadline = AbsoluteTime[] + 20,
      $stats = newStats[], $limits = <||>, $trace = {}, $records = {}, $memo = <||>, $inProgress = <||>,
      $recursion = 0, $lastCertificateMethod = "None", $Assumptions = True},
     kCheck[TimeConstrained[kMemoryConstrained[body, 1073741824], 20 $kTimeScale, failure], failure]]];
@@ -2943,7 +3012,7 @@ surdRelation[u_List, rho_] := Module[{sign, vec, rel, cand},
    If[sign === 0, Return[{}]];
    vec = bounded[N[Prepend[Sqrt[u], Sqrt[sign rho]], 80 + 10 Length[u]]];
    If[! ListQ[vec] || ! AllTrue[vec, NumberQ], Return[{}]];
-   rel = bounded[FindIntegerNullVector[vec]];
+   rel = bounded[kFindIntegerNullVector[vec]];
    If[! ListQ[rel] || ! AllTrue[rel, IntegerQ] || First[rel] === 0, Return[{}]];
    cand = -(Rest[rel] . Sqrt[u])/First[rel];
    If[sign === -1, cand = I cand];
