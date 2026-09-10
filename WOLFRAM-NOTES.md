@@ -1,8 +1,8 @@
 # Notes on subtle Wolfram Language behaviour
 
-Findings collected while developing the root-decomposition and
-polynomial-decompose packages (Wolfram 15.0.1, Windows). Kept as a checklist
-for future work on exact algebraic-number code.
+Findings collected while developing the projects in this repository
+(Wolfram 15.0.1, Windows). Kept as a checklist for future work on exact
+algebraic-number code.
 
 ## Control flow
 
@@ -290,3 +290,43 @@ for future work on exact algebraic-number code.
   the formula steps and substitute once at the end, without `Expand`.
 - `RootReduce[expr - a]` for an expression with 10^5 leaves does not finish in 5
   minutes; report the numerical check honestly instead of waiting.
+
+## Findings from the radical-denesting review (Wolfram 15.0.1, September 2026)
+
+Collected in `radical-denest/code-review/`; each was observed in a kernel there.
+
+- `PossibleZeroQ[a - b]` with the default method **assumes zero** when it cannot
+  decide, and says so only through the message `PossibleZeroQ::ztest1`. The
+  denesting battery drew it on 20 of 31 classical inputs and 272 of 340 random
+  ones, so a checker that quiets messages silently accepts every undecided
+  candidate. Test with `RootReduce[a - b] === 0` first and
+  `PossibleZeroQ[a - b, Method -> "ExactAlgebraics"]` as a fallback, each under
+  a time limit, and treat undecided as not equal.
+  (`unified-A/sec_findings.tex`, `unified-A/sec_experiments.tex`)
+- `Catch[expr, _]` does **not** catch an untagged `Throw[x]`: the throw escapes
+  and the enclosing call returns `Hold[Throw[x]]` instead of a value.
+  Quarantining a user-supplied function needs a plain `Catch[expr]` nested
+  inside the tagged one. (`unified-C`, issue C20)
+- `Sort[list, pred]` with a predicate that is `False` for every pair returns the
+  list **reversed** — non-strict comparators are legal, so a typo such as
+  `#1[[1]] <= #[[2]] &` silently feeds reversed input to the next stage instead
+  of failing. Prefer `SortBy[list, First]`. (`unified-A/sec_findings.tex`)
+- A `Root` object need not be an algebraic number: `Root[#^5 + # - Pi &, 1]` and
+  `Root[#^3 - # + a &, 1]` stay unevaluated, have `Precision` `Infinity`, and
+  pass any test for an exact head. Validate the defining polynomial, its
+  coefficients and the root index before treating a `Root` as algebraic.
+  (`unified-C`, issue C01)
+- `Root` with algebraic, non-rational coefficients auto-evaluates into a
+  triangular-system form: `Root[#^3 + Sqrt[2] # + 1 &, 1]` becomes
+  `Root[{-2 + #1^2 &, 1 + #1 #2 + #2^3 &}, {2, 1}]` — a *list* of pure functions
+  with a list of indices, which the pattern `Root[f_Function, k_Integer]` misses.
+  (`unified-C`, issue C01)
+- `Factor` and `FactorList` of `x^k - rho` with `Extension -> Automatic` may
+  canonicalize the radicals of `rho` into `Root` objects, after which the linear
+  factors come back opaque. Pass the radicals of `rho` as an explicit
+  `Extension` when the factors must stay in radical form.
+  (`radical-denest/corrected/StradFixed3.wl`, `radicalExtension`)
+- `Sqrt[-rho]` for a `rho` that evaluates to a positive number becomes
+  `I Sqrt[rho]` before any helper sees it, so a routine meant to handle a
+  negative radicand must be handed the radicand, not the square root.
+  (`unified-C`, Section 9)

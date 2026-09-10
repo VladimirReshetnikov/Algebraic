@@ -1,11 +1,12 @@
 (* ::Package:: *)
 
-(* StradFixed2.wl -- second corrected version of src/original/Strad.wl.
+(* StradFixed2.wl -- second corrected version of
+   radical-denest/original/Strad.wl.
 
    Successor of StradFixed.wl (RadicalDenest`). It answers the three reviews of
-   the first corrected version (src/code-review/review-4, review-5, review-6)
-   and the probing session recorded in KNOWN_GAPS.md. The report in
-   src/code-review/unified-B explains every change.
+   the first corrected version (review-4, review-5, review-6, no longer in the
+   repository) and the probing session recorded in KNOWN_GAPS.md. The report in
+   radical-denest/code-review/unified-B explains every change.
 
    Contract (for an exact algebraic input E and every exact algebraic island of
    a symbolic host):

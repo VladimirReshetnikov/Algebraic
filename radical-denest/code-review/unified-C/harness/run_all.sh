@@ -1,8 +1,8 @@
 #!/bin/bash
 # Runs every unified-C experiment sequentially (single Wolfram license seat).
-H="C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/code-review/unified-C/harness"
-T="C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/code-review/unified-C/tests"
-L="C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/code-review/unified-C/logs"
+H="C:/Algebraic/radical-denest/code-review/unified-C/harness"
+T="C:/Algebraic/radical-denest/code-review/unified-C/tests"
+L="C:/Algebraic/radical-denest/code-review/unified-C/logs"
 wait_free() { until ! tasklist 2>/dev/null | grep -qi 'WolframKernel.exe'; do sleep 5; done; }
 for s in exp_battery3 exp_new2 exp_fuzz3 repro_fuzz_slow probe_gaps3_1 probe_gaps3_2 probe_gaps3_3 probe_gaps3_4 probe_reviews2 differential3; do
   wait_free

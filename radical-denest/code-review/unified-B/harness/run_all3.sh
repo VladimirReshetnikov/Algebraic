@@ -1,6 +1,6 @@
 #!/bin/bash
-H="C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/code-review/unified-B/harness"
-L="C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/code-review/unified-B/logs"
+H="C:/Algebraic/radical-denest/code-review/unified-B/harness"
+L="C:/Algebraic/radical-denest/code-review/unified-B/logs"
 until grep -q 'ALL-DONE-2' "$L/run_all2.txt" 2>/dev/null; do sleep 15; done
 until ! tasklist 2>/dev/null | grep -qi 'wolfram.exe\|WolframKernel.exe'; do sleep 5; done
 echo "=== probe_reviews_fixed start $(date +%T)"

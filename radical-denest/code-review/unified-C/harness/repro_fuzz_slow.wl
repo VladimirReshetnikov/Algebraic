@@ -1,7 +1,7 @@
 (* Replays the random inputs of exp_fuzz3.wl (same seed, same generator order) without
    running Strad, then times the inputs of the chosen families one by one and prints the
    slow ones with their DenestReport statistics.  Diagnostic aid for unified-C, Section 7. *)
-Get["C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/corrected/StradFixed3.wl"];
+Get["C:/Algebraic/radical-denest/corrected/StradFixed3.wl"];
 Needs["RadicalDenest3`"];
 SeedRandom[20260905];
 sqf = {2, 3, 5, 6, 7, 10, 11, 13, 15, 17};

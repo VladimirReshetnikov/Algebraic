@@ -5,8 +5,9 @@ Main deliverables:
 - `unified_analysis_B.pdf` — the report: the three reviews of the first
   corrected version (`../review-4`, `../review-5`, `../review-6`) compared and
   assessed, their findings consolidated with the probing results of
-  `src/corrected/KNOWN_GAPS.md` into a catalogue of 23 issues, the design of the
-  second corrected version `src/corrected/StradFixed2.wl`, the mathematics of
+  `radical-denest/corrected/KNOWN_GAPS.md` into a catalogue of 23 issues, the
+  design of the second corrected version
+  `radical-denest/corrected/StradFixed2.wl`, the mathematics of
   its new fast paths, and the executed experiments.
 - `unified_analysis_B.tex` — LaTeX source (ProveIt house style). Build with
   three passes of `pdflatex` from this directory; the appendix reads
@@ -24,10 +25,10 @@ Main deliverables:
   inputs, contracts kept from unified-A) and its fresh-kernel runner.
 - `logs/*.txt` — raw transcripts of every run reported in the document.
 
-The implementation itself is `src/corrected/StradFixed2.wl` (context
-`RadicalDenest2\``); `src/corrected/README.md` documents its interface. The
-first unified analysis, whose corrected version is reviewed here, is
-`../unified-A`.
+The implementation itself is `radical-denest/corrected/StradFixed2.wl` (context
+`RadicalDenest2\``); `radical-denest/corrected/README.md` documents its
+interface. The first unified analysis, whose corrected version is reviewed
+here, is `../unified-A`.
 
 Kernel used for every execution: 15.0.1 for Microsoft Windows (64-bit)
 (July 2, 2026), one kernel at a time.

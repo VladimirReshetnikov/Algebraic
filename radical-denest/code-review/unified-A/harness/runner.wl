@@ -1,5 +1,5 @@
 (* Generic experiment runner for Strad.wl analysis *)
-$srcFile = "C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/original/Strad.wl";
+$srcFile = "C:/Algebraic/radical-denest/original/Strad.wl";
 $printAttrsBefore = Attributes[Print];
 Get[$srcFile];
 $printAttrsAfter = Attributes[Print];

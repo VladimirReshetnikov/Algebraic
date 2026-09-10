@@ -1,5 +1,5 @@
 (* Third probe: hypothesis tests for the misses of probes 1-2 and more cases of the same shapes. *)
-Get["C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/corrected/StradFixed2.wl"];
+Get["C:/Algebraic/radical-denest/corrected/StradFixed2.wl"];
 Print["Kernel: ", $Version];
 depth[e_] := RadicalDenest2`RadicalDepth[e];
 eq[a_, b_] := Quiet[TrueQ[RootReduce[a - b] === 0] || TrueQ[PossibleZeroQ[a - b, Method -> "ExactAlgebraics"]]];

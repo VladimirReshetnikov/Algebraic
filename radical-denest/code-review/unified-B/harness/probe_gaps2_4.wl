@@ -1,5 +1,5 @@
 (* Fourth probe: the factorizer's effect (S05, P13), profiling of P13, and a few more shapes. *)
-Get["C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/corrected/StradFixed2.wl"];
+Get["C:/Algebraic/radical-denest/corrected/StradFixed2.wl"];
 Print["Kernel: ", $Version];
 depth[e_] := RadicalDenest2`RadicalDepth[e];
 eq[a_, b_] := Quiet[TrueQ[RootReduce[a - b] === 0] || TrueQ[PossibleZeroQ[a - b, Method -> "ExactAlgebraics"]]];

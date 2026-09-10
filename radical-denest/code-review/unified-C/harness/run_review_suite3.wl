@@ -2,7 +2,7 @@
    for ITS OWN proposed StradFixed3.wl, in a fresh kernel, without writing into the
    review directory.  Usage: wolframscript -file run_review_suite3.wl 7|8|9   *)
 review = Last[$ScriptCommandLine];
-base = "C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/code-review/";
+base = "C:/Algebraic/radical-denest/code-review/";
 {package, suite} = Switch[review,
   "7", {base <> "review-7/code/StradFixed3.wl", base <> "review-7/tests/StradFixed3.wlt"},
   "8", {base <> "review-8/code/StradFixed3.wl", base <> "review-8/tests/StradFixed3.wlt"},

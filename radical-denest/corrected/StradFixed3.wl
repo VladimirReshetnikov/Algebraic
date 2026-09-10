@@ -1,10 +1,12 @@
 (* ::Package:: *)
 
-(* StradFixed3.wl -- third corrected version of src/original/Strad.wl.
+(* StradFixed3.wl -- third corrected version of
+   radical-denest/original/Strad.wl.
 
-   Successor of StradFixed2.wl (RadicalDenest3`). It answers the three reviews
-   of the second corrected version (src/code-review/review-7, review-8,
-   review-9). The report in src/code-review/unified-C explains every change.
+   Successor of StradFixed2.wl (RadicalDenest2`). It answers the three reviews
+   of the second corrected version (radical-denest/code-review/review-7,
+   review-8, review-9). The report in radical-denest/code-review/unified-C
+   explains every change.
 
    Contract (for an exact algebraic input E and every exact algebraic island of
    a symbolic host):
@@ -32,7 +34,7 @@
    means that the enabled bounded methods found nothing cheaper. The kernel
    limits are cooperative and are not an operating-system sandbox.
 
-   Context: RadicalDenest3`. The package can be loaded next to RadicalDenest3`
+   Context: RadicalDenest3`. The package can be loaded next to RadicalDenest2`
    and RadicalDenest` for differential testing. Author: analysis session of
    5 September 2026. *)
 

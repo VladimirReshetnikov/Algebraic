@@ -1,5 +1,5 @@
 (* Battery of unified-A (exp_fixed.wl) run against StradFixed2.wl *)
-Get["C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/code-review/unified-B/harness/runner2.wl"];
+Get["C:/Algebraic/radical-denest/code-review/unified-B/harness/runner2.wl"];
 rows = {};
 add[r_] := AppendTo[rows, r];
 Print["=== A. Classical denesting identities via Strad (fixed) ==="];

@@ -1,6 +1,6 @@
 (* The round-3 reviews' never-executed probes, run against the SECOND corrected
    version StradFixed2.wl (the version they reviewed). *)
-Get["C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/corrected/StradFixed2.wl"];
+Get["C:/Algebraic/radical-denest/corrected/StradFixed2.wl"];
 Print["Kernel: ", $Version];
 SetAttributes[tc, HoldAll];
 tc[e_] := TimeConstrained[e, 120, $Aborted];

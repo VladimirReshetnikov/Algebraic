@@ -1,5 +1,5 @@
 (* Experiment runner for the second corrected version StradFixed3.wl *)
-$srcFile = "C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/corrected/StradFixed3.wl";
+$srcFile = "C:/Algebraic/radical-denest/corrected/StradFixed3.wl";
 $printAttrsBefore = Attributes[Print];
 Get[$srcFile];
 $printAttrsAfter = Attributes[Print];

@@ -11,13 +11,20 @@ radicals?*](https://mathematica.stackexchange.com/q/206618/7288): express a
 polynomial with exact algebraic coefficients as a composition of
 indecomposable polynomials, and enumerate or certify all normalized answers.
 The root-to-radicals project expresses solvable algebraic numbers in radicals
-using structural family recognizers and Galois descent.
+using structural family recognizers and Galois descent. The radical-denest
+project removes nested root extractions -- `Sqrt[5 + 2 Sqrt[6]]` becomes
+`Sqrt[2] + Sqrt[3]` -- by reviewing, correcting and certifying an existing
+Wolfram program through three rounds of code review, with a survey of the
+denesting literature alongside.
 
 ## Layout
 
 | Path | Contents |
 | --- | --- |
 | `docs/mathematica.stackexchange.com/` | Archived questions and their answers (`.md`, `.tex`, `.pdf`, `.url`). |
+| `docs/report/` | radical-denest: *Radical Denesting: A Unified Research Guide* (48 pages, 103 annotated bibliography entries), with `verify.py` and its 59 exact SymPy checks of the identities used. |
+| `docs/literature/` | radical-denest: the freely available sources cited by the guide -- 102 assets (54 PDFs, 49 TeX sources) covering 66 works, indexed by `download_manifest.json` (per-file SHA-256, origin URL, retrieval method), with six re-typeset scans and 26 assets that could not be retrieved. |
+| `docs/scripts/` | radical-denest: the three download packages that were compared, the one selected and corrected to produce `docs/literature/`, and the record of both download passes. |
 | `root-decomposition/` | Algebraic-number sums and products: theory, implementations, tests and nine source reports. |
 | `root-decomposition/article/` | The unified article `root-decomposition.tex` / `.pdf`: complete theory with proofs, the algorithms, examples and a comparison of the nine reports. |
 | `root-decomposition/RootDecomposition.wl` | Wolfram Language package: `RootSumDecomposition`, `RootProductDecomposition`, `RootGaloisData`, lower bounds, bounded search, verification. |
@@ -31,9 +38,14 @@ using structural family recognizers and Galois descent.
 | `polynomial-decompose/python/` | Exact Python implementation using SymPy number fields, regression tests, benchmarks, and native Wolfram cross-checks. |
 | `polynomial-decompose/reports/` | Three original reports, preserved with their sources, PDFs, code, tests, licenses, and historical validation results. |
 | `root-to-radicals/` | Radical expressions: Wolfram and Python implementations, native and Python tests, independent cross-language checks, and the accompanying article. |
+| `radical-denest/` | Radical denesting: the program under review, its three corrected versions, and three rounds of code review with kernel experiments. |
+| `radical-denest/original/Strad.wl`, `radical-denest/corrected/` | The 585-line program under review, and `StradFixed.wl`, `StradFixed2.wl`, `StradFixed3.wl` in separate contexts, with `KNOWN_GAPS.md` and a usage README. |
+| `radical-denest/code-review/unified-A` … `unified-C` | Three rounds of unified analysis (62, 34 and 41 pages, TeX and PDF): catalogued defects with kernel evidence, the design of each corrected version, harnesses, logs, generated tables, and regression suites of 144 and 230 tests. |
+| `radical-denest/code-review/review-7` … `review-9` | Three independent reviews of `StradFixed2.wl` at a pinned commit, each with a report, a proposed `StradFixed3.wl`, a native test suite and executed SymPy checks. |
+| `radical-denest/README.md` | The program, what each round of review found and fixed, the literature survey, and the build requirements. |
 | `benchmarks/` | Reproducible comparisons of all three Python solvers against an immutable Git revision, with exact output checks and raw timing samples. |
 | `WOLFRAM-NOTES.md` | Subtle Wolfram Language behaviour discovered while developing and running the code. |
-| `LICENSE`, `polynomial-decompose/LICENSE` | MIT-0 for the original project; MIT for polynomial-decompose, retaining its report 3 source notice. Original reports retain their own licenses. |
+| `LICENSE`, `polynomial-decompose/LICENSE` | MIT-0 for the original project and for radical-denest; MIT for polynomial-decompose, retaining its report 3 source notice. Original reports and reviews retain their own licenses, and the sources under `docs/literature/` remain under the terms of their publishers. |
 
 ## Decomposing algebraic numbers
 
@@ -117,3 +129,52 @@ certificates, the original radical-coefficient example, and reproducible
 validation commands. The [unified article](polynomial-decompose/article/polynomial-decompose.pdf)
 proves the algorithm and compares the three reports and the posted
 derivative-factorization approach.
+
+## Denesting radicals
+
+`Strad` rewrites an exact algebraic expression with fewer nested root
+extractions and certifies every rewrite against its input by exact algebra;
+an expression it cannot improve comes back unchanged.
+
+```wolfram
+Get["radical-denest/corrected/StradFixed3.wl"];
+Strad[Sqrt[5 + 2 Sqrt[6]]]          (* Sqrt[2] + Sqrt[3] *)
+Strad[(239 + 169 Sqrt[2])^(1/7)]    (* 1 + Sqrt[2] *)
+DenestReport[Sqrt[5 + 2 Sqrt[6]]]   (* result, status, limits, statistics, certificates *)
+```
+
+`wolframscript -file radical-denest/code-review/unified-C/tests/run_tests.wls`
+runs the 230-test regression suite of the current version. The three rounds of
+review, with their harnesses and logs, are in `radical-denest/code-review/`;
+the mathematics and the literature are in
+[`docs/report/radical_denesting_unified.pdf`](docs/report/radical_denesting_unified.pdf)
+with the cited sources themselves under `docs/literature/`. See
+[`radical-denest/README.md`](radical-denest/README.md) for what each round
+found and fixed.
+
+## Merged history
+
+`radical-denest/` and the `docs/report/`, `docs/literature/` and `docs/scripts/`
+subtrees come from a separate repository,
+[RadicalDenest](https://github.com/VladimirReshetnikov/RadicalDenest), merged
+here with its full history: 27 commits with their original hashes, so the
+commits and blob hashes cited by the review articles still resolve. The merge
+moved `src/` to `radical-denest/` and left `docs/` where it was.
+
+Neither `git log --follow` nor the default history simplification crosses a
+merge commit, so the pre-merge history of a moved file is reached through its
+old path with `--full-history`:
+
+```
+git log --full-history -- src/corrected/StradFixed3.wl
+git log --full-history -- src/code-review/unified-B
+```
+
+Paths that did not move need nothing special (`git log -- docs/report/`).
+
+The review artifacts name the upstream `src/...` paths deliberately: the
+`SOURCE_MANIFEST.json` files, the `article.tex` citations of
+`github.com/VladimirReshetnikov/RadicalDenest/tree/<sha>/src/...` and the
+pinned copies of reviewed sources record what was reviewed at a pinned commit,
+and rewriting them would falsify that record.
+

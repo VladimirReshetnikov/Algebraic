@@ -1,6 +1,6 @@
 (* Battery of unified-A (exp_fixed.wl) and unified-B (exp_battery2.wl) run against
    the third corrected version StradFixed3.wl, followed by the round-3 cases (cases_new.wl). *)
-Get["C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/code-review/unified-C/harness/runner3.wl"];
+Get["C:/Algebraic/radical-denest/code-review/unified-C/harness/runner3.wl"];
 rows = {};
 add[r_] := AppendTo[rows, r];
 Print["=== A. Classical denesting identities via Strad (fixed) ==="];
@@ -131,6 +131,6 @@ add@runCase["Q08", Strad[(-7 - 5 Sqrt[2])^(1/3)], (-1)^(1/3) (1 + Sqrt[2])];
 Print["=== V. Verbose trace of one run ==="];
 Print[Strad[Sqrt[5 + 2 Sqrt[6]] (1 + 2^(1/3)), "Verbose" -> True]];
 Print[Strad[(2^(1/3) - 1)^(1/3), "Verbose" -> True]];
-Get["C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/code-review/unified-C/harness/cases_new.wl"];
+Get["C:/Algebraic/radical-denest/code-review/unified-C/harness/cases_new.wl"];
 Put[rows, "C:/Users/vresh/AppData/Local/Temp/claude/C--RadicalDenest--claude-worktrees-strad-denesting-analysis-6158e6/8331ac58-d8d2-4638-b75d-79549acb84bf/scratchpad/exp_battery3_rows.m"];
 Print["DONE"];

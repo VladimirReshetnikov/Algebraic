@@ -1,7 +1,7 @@
 (* Differential run of StradFixed2 and StradFixed3 on the corpus of review-8's
    tests/differential.wls (both packages loaded in one kernel; distinct contexts). *)
-Get["C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/corrected/StradFixed2.wl"];
-Get["C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/corrected/StradFixed3.wl"];
+Get["C:/Algebraic/radical-denest/corrected/StradFixed2.wl"];
+Get["C:/Algebraic/radical-denest/corrected/StradFixed3.wl"];
 Print["Kernel: ", $Version];
 corpus = {
  Sqrt[3 + 2 Sqrt[2]], Sqrt[5 + 2 Sqrt[6]], Sqrt[4 + 3 Sqrt[2]],

@@ -1,5 +1,5 @@
 (* Randomized fuzz of the ORIGINAL Strad over structured families *)
-Get["C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/original/Strad.wl"];
+Get["C:/Algebraic/radical-denest/original/Strad.wl"];
 SeedRandom[20260905];
 SetAttributes[capture, HoldAll];
 capture[expr_] := Module[{msgs = {}, res},

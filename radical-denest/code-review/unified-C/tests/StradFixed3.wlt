@@ -1,7 +1,8 @@
-(* Regression suite for src/corrected/StradFixed3.wl (context RadicalDenest3`).
+(* Regression suite for radical-denest/corrected/StradFixed3.wl
+   (context RadicalDenest3`).
 
    Groups:  R4-*, R5-*, R6-* translate the suites of review-4/5/6 (kept from unified-B),
-            G-*  are the fifteen inputs of src/corrected/KNOWN_GAPS.md,
+            G-*  are the fifteen inputs of radical-denest/corrected/KNOWN_GAPS.md,
             A-*  are contracts kept from the unified-A battery,
             C-*  translate the suites of review-7 (C-R7), review-8 (C-R8) and
                  review-9 (C-R9) onto the names, arities and contracts of

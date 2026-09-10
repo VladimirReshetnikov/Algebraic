@@ -3,7 +3,7 @@
    unified-B (StradFixed2), exp_new2.wl (round-3 cases on StradFixed2), the fuzz
    results of exp_fuzz2.wl / exp_fuzz3.wl and the differential rows of differential3.wl. *)
 scratch = "C:/Users/vresh/AppData/Local/Temp/claude/C--RadicalDenest--claude-worktrees-strad-denesting-analysis-6158e6/8331ac58-d8d2-4638-b75d-79549acb84bf/scratchpad/";
-outdir = "C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/code-review/unified-C/tables/";
+outdir = "C:/Algebraic/radical-denest/code-review/unified-C/tables/";
 If[! DirectoryQ[outdir], CreateDirectory[outdir]];
 
 texEscape[s_String] := StringReplace[s, {"\\" -> "\\textbackslash{}", "&" -> "\\&", "%" -> "\\%", "$" -> "\\$", "#" -> "\\#", "_" -> "\\_", "{" -> "\\{", "}" -> "\\}", "~" -> "\\textasciitilde{}", "^" -> "\\textasciicircum{}"}];

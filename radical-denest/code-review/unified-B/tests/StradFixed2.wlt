@@ -1,9 +1,10 @@
-(* Regression suite for src/corrected/StradFixed2.wl (context RadicalDenest2`).
+(* Regression suite for radical-denest/corrected/StradFixed2.wl
+   (context RadicalDenest2`).
 
    Groups:  R4-* translate tests/Regression.wlt of review-4,
             R5-* translate tests/regression.wlt of review-5,
             R6-* translate tests/StradImproved.wlt of review-6,
-            G-*  are the fifteen inputs of src/corrected/KNOWN_GAPS.md,
+            G-*  are the fifteen inputs of radical-denest/corrected/KNOWN_GAPS.md,
             A-*  are contracts kept from the unified-A battery.
    Options and report keys of the reviews' proposals were mapped onto those of
    StradFixed2 (see unified-B, Section "Translating the reviews' test suites").

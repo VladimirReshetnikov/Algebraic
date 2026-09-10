@@ -1,7 +1,7 @@
 # Corrected re-typesettings of six articles
 
 Moved from `docs/articles/` into the literature dataset on 5 September 2026. Each article now lives in
-`papers/<record>/retypeset-2026/` (Berndt-Chan-Zhang under `berndt98`, Jeffrey-Rich under `jeffrey`,
+`papers/<record>-<title-slug>/retypeset-2026/` (Berndt-Chan-Zhang under `berndt98`, Jeffrey-Rich under `jeffrey`,
 Gkioulekas under `gkioulekas`, Landau 1989 under `landau92`, Scheinerman under `scheinerman`, Borodin et al. under `bfht`);
 the directory names below refer to the file basenames.
 
@@ -92,7 +92,7 @@ verification aid written for this edition, not code taken from the article.
 It needs only Python's standard library:
 
 ```sh
-python scheinerman2000/verify_intervals.py
+python papers/scheinerman-When-Close-Enough-Is-Close-Enough/retypeset-2026/verify_intervals.py
 ```
 
 It uses integer fixed-point interval endpoints at scale `10^180`, outward

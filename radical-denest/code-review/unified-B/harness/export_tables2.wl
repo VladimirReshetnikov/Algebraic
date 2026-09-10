@@ -2,7 +2,7 @@
    Reads the row files written by exp_battery2.wl (and unified-A's exp_fixed.wl
    for the side-by-side comparison) and the fuzz results of exp_fuzz2.wl. *)
 scratch = "C:/Users/vresh/AppData/Local/Temp/claude/C--RadicalDenest--claude-worktrees-strad-denesting-analysis-6158e6/8331ac58-d8d2-4638-b75d-79549acb84bf/scratchpad/";
-outdir = "C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/code-review/unified-B/tables/";
+outdir = "C:/Algebraic/radical-denest/code-review/unified-B/tables/";
 If[! DirectoryQ[outdir], CreateDirectory[outdir]];
 
 texEscape[s_String] := StringReplace[s, {"\\" -> "\\textbackslash{}", "&" -> "\\&", "%" -> "\\%", "$" -> "\\$", "#" -> "\\#", "_" -> "\\_", "{" -> "\\{", "}" -> "\\}", "~" -> "\\textasciitilde{}", "^" -> "\\textasciicircum{}"}];

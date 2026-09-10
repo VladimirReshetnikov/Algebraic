@@ -1,5 +1,5 @@
 (* Randomized fuzz of the second corrected version StradFixed2 over the same families and seed *)
-Get["C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/corrected/StradFixed2.wl"];
+Get["C:/Algebraic/radical-denest/corrected/StradFixed2.wl"];
 Needs["RadicalDenest2`"];
 SeedRandom[20260905];
 SetAttributes[capture, HoldAll];

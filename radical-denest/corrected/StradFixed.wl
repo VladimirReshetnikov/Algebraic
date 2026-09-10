@@ -1,6 +1,7 @@
 (* ::Package:: *)
 
-(* StradFixed.wl -- a corrected and hardened version of src/original/Strad.wl
+(* StradFixed.wl -- a corrected and hardened version of
+   radical-denest/original/Strad.wl
 
    The architecture of the original (wrapper -> marker -> multiplier search ->
    minimal polynomial / polynomial GCD -> roots-of-unity orbit) is retained.

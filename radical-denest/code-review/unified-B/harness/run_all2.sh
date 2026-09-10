@@ -1,9 +1,9 @@
 #!/bin/bash
 # Second chain: waits for run_all.sh to finish, then runs the reviews' own native
 # suites against their proposals, the unified-B regression suite, and the table export.
-H="C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/code-review/unified-B/harness"
-T="C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/code-review/unified-B/tests"
-L="C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/code-review/unified-B/logs"
+H="C:/Algebraic/radical-denest/code-review/unified-B/harness"
+T="C:/Algebraic/radical-denest/code-review/unified-B/tests"
+L="C:/Algebraic/radical-denest/code-review/unified-B/logs"
 until grep -q 'ALL-DONE' "$L/run_all.txt" 2>/dev/null; do sleep 15; done
 until ! tasklist 2>/dev/null | grep -qi 'wolfram.exe\|WolframKernel.exe'; do sleep 5; done
 for r in 4 5 6; do

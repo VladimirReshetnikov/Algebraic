@@ -1,4 +1,4 @@
-Get["C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/original/Strad.wl"];
+Get["C:/Algebraic/radical-denest/original/Strad.wl"];
 trace[label_, e_] := (Print["\n########## ", label, " ##########"];
   Print[AbsoluteTiming[TimeConstrained[e, 300, $TimedOut]]]);
 trace["Sqrt[5+2Sqrt[6]]", DenestRadicals3[Sqrt[5 + 2 Sqrt[6]]]];

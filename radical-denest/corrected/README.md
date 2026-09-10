@@ -4,9 +4,9 @@ Three generations of the corrected denester live here.
 
 | File | Context | Produced by | Reviewed by |
 |---|---|---|---|
-| `StradFixed.wl` | ``RadicalDenest` `` | `src/code-review/unified-A` (first unified analysis) | review-4, review-5, review-6 (no longer in the repository; assessed in unified-B); probing session (`KNOWN_GAPS.md`) |
-| `StradFixed2.wl` | ``RadicalDenest2` `` | `src/code-review/unified-B` (second unified analysis) | `src/code-review/review-7`, `review-8`, `review-9` |
-| `StradFixed3.wl` | ``RadicalDenest3` `` | `src/code-review/unified-C` (third unified analysis) | — |
+| `StradFixed.wl` | ``RadicalDenest` `` | `radical-denest/code-review/unified-A` (first unified analysis) | review-4, review-5, review-6 (no longer in the repository; assessed in unified-B); probing session (`KNOWN_GAPS.md`) |
+| `StradFixed2.wl` | ``RadicalDenest2` `` | `radical-denest/code-review/unified-B` (second unified analysis) | `radical-denest/code-review/review-7`, `review-8`, `review-9` |
+| `StradFixed3.wl` | ``RadicalDenest3` `` | `radical-denest/code-review/unified-C` (third unified analysis) | — |
 
 `StradFixed3.wl` is the current version. The earlier versions are kept because
 the analyses, the reviews and `KNOWN_GAPS.md` refer to them; the three packages
@@ -15,7 +15,7 @@ use different contexts and can be loaded side by side for differential testing.
 ## StradFixed3.wl
 
 ```wl
-Get["src/corrected/StradFixed3.wl"];
+Get["radical-denest/corrected/StradFixed3.wl"];
 Strad[Sqrt[118 + 2 Sqrt[210] + 14 Sqrt[55] + 2 Sqrt[462]]]   (* Sqrt[6] + Sqrt[35] + Sqrt[77]: coset search *)
 Strad[(239 + 169 Sqrt[2])^(1/7)]                 (* 1 + Sqrt[2]: odd-index trace-norm recipe *)
 Strad[Sqrt[28^(1/3) - 3]]                        (* (-1 - 28^(1/3) + 98^(1/3))/3: Honsbeek with a rational summand *)
@@ -56,15 +56,15 @@ New options (defaults): `"MaxOddIndex"` (9), `"DiscriminantBatchCap"` (24),
 `"MaxCosets"` (16); `"NumericPrefilter"` now defaults to `False`. All other
 options and public symbols are those of `StradFixed2.wl`.
 
-See `src/code-review/unified-C/unified_analysis_C.pdf` for the catalogue of the
-22 issues it addresses, the design changes, the mathematics and the executed
-experiments; the regression suite is
-`src/code-review/unified-C/tests/StradFixed3.wlt` (230 tests).
+See `radical-denest/code-review/unified-C/unified_analysis_C.pdf` for the
+catalogue of the 23 issues it addresses, the design changes, the mathematics
+and the executed experiments; the regression suite is
+`radical-denest/code-review/unified-C/tests/StradFixed3.wlt` (230 tests).
 
 ## StradFixed2.wl
 
 ```wl
-Get["src/corrected/StradFixed2.wl"];
+Get["radical-denest/corrected/StradFixed2.wl"];
 Strad[Sqrt[5 + 2 Sqrt[6]]]                       (* Sqrt[2] + Sqrt[3] *)
 Strad[(41 - 29 Sqrt[2])^(1/5)]                   (* (-1)^(1/5) (Sqrt[2] - 1): principal branch kept *)
 Strad[(7 20^(1/3) - 19)^(1/6)]                   (* (5/3)^(1/3) - (2/3)^(1/3) *)
@@ -108,12 +108,12 @@ Options (defaults): `"AllLevels"` (False), `"Verbose"` (False), `"Trace"`
 `"MaxLeafCount"` (20000), `"MaxPasses"` (4), `"MaxRecursion"` (3),
 `"Patience"` (25), `"NumericPrefilter"` (True), `"MaxTraceEntries"` (200).
 
-See `src/code-review/unified-B/unified_analysis_B.pdf` for the catalogue of the
-23 issues it addresses, the design, the mathematics of the fast paths and the
-executed experiments; the regression suite is
-`src/code-review/unified-B/tests/StradFixed2.wlt`. Its three reviews are
-`src/code-review/review-7`, `review-8` and `review-9`; their findings are
-addressed by `StradFixed3.wl`.
+See `radical-denest/code-review/unified-B/unified_analysis_B.pdf` for the
+catalogue of the 23 issues it addresses, the design, the mathematics of the
+fast paths and the executed experiments; the regression suite is
+`radical-denest/code-review/unified-B/tests/StradFixed2.wlt`. Its three
+reviews are `radical-denest/code-review/review-7`, `review-8` and `review-9`;
+their findings are addressed by `StradFixed3.wl`.
 
 ## StradFixed.wl
 
@@ -122,7 +122,7 @@ radical markers, multiplier search with minimal polynomials and polynomial
 GCDs over algebraic extensions, roots-of-unity orbit) but certifies every
 result against the input by exact algebra and adds budgets, a visited set, a
 quadratic-surd fast path and candidate polishing. See
-`src/code-review/unified-A/unified_analysis.pdf`, Section 7, for its change
-list and Section 5 for its test results. Its known gaps are listed in
-`KNOWN_GAPS.md`; the reviews of it are `src/code-review/review-4`, `review-5`
-and `review-6`.
+`radical-denest/code-review/unified-A/unified_analysis.pdf`, Section 7, for
+its change list and Section 5 for its test results. Its known gaps are listed
+in `KNOWN_GAPS.md`; the reviews of it were review-4, review-5 and review-6, no
+longer in the repository (assessed in unified-B).

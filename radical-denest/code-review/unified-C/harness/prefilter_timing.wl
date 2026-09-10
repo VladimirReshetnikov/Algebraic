@@ -1,5 +1,5 @@
 (* Times the slowest battery rows with the numeric prefilter off (default) and on. *)
-Get["C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/corrected/StradFixed3.wl"];
+Get["C:/Algebraic/radical-denest/corrected/StradFixed3.wl"];
 Print["Kernel: ", $Version];
 cases = {
   "L09" -> Hold[(5 + 2 Sqrt[6])^(1/6)],

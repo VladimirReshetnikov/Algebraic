@@ -5,9 +5,9 @@ Main deliverables:
 - `unified_analysis_C.pdf` — the report: the three reviews of the second
   corrected version (`../review-7`, `../review-8`, `../review-9`) compared and
   assessed, their findings consolidated with this session's observations into
-  a catalogue of 22 issues, the design changes of the third corrected version
-  `src/corrected/StradFixed3.wl`, the mathematics of its three coverage
-  extensions (odd-index trace–norm criterion, square-class coset search,
+  a catalogue of 23 issues, the design changes of the third corrected version
+  `radical-denest/corrected/StradFixed3.wl`, the mathematics of its three
+  coverage extensions (odd-index trace–norm criterion, square-class coset search,
   Honsbeek with rational summands), and the executed experiments.
 - `unified_analysis_C.tex` — LaTeX source (ProveIt house style). Build with
   three passes of `pdflatex` from this directory; the appendix reads
@@ -31,10 +31,10 @@ Main deliverables:
   fresh-kernel runner.
 - `logs/*.txt` — raw transcripts of every run reported in the document.
 
-The implementation itself is `src/corrected/StradFixed3.wl` (context
-`RadicalDenest3\``); `src/corrected/README.md` documents its interface. The
-second unified analysis, whose corrected version is reviewed here, is
-`../unified-B`; the first is `../unified-A`.
+The implementation itself is `radical-denest/corrected/StradFixed3.wl` (context
+`RadicalDenest3\``); `radical-denest/corrected/README.md` documents its
+interface. The second unified analysis, whose corrected version is reviewed
+here, is `../unified-B`; the first is `../unified-A`.
 
 Kernel used for every execution: 15.0.1 for Microsoft Windows (64-bit)
 (July 2, 2026), one kernel at a time.

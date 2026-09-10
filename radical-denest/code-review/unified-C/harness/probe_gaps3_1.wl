@@ -1,5 +1,5 @@
 (* Probe the corrected denester with denestable inputs from the literature guide. *)
-Get["C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/corrected/StradFixed3.wl"];
+Get["C:/Algebraic/radical-denest/corrected/StradFixed3.wl"];
 Print["Kernel: ", $Version];
 depth[e_] := RadicalDenest3`RadicalDepth[e];
 eq[a_, b_] := Quiet[TrueQ[RootReduce[a - b] === 0] || TrueQ[PossibleZeroQ[a - b, Method -> "ExactAlgebraics"]]];

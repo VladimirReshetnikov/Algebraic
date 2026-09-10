@@ -1,5 +1,5 @@
 (* The reviews' never-executed probes against the FIRST corrected version StradFixed.wl. *)
-Get["C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/corrected/StradFixed.wl"];
+Get["C:/Algebraic/radical-denest/corrected/StradFixed.wl"];
 Print["Kernel: ", $Version];
 Clear[x];
 Print["R4 F01 / R5 F1 / R6 F01  zero solver in symbolic host: ",

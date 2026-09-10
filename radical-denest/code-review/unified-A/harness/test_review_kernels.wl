@@ -1,5 +1,5 @@
 (* Execute the three reviews' proposed (never executed) single-trial kernels on common cases *)
-base = "C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/code-review/";
+base = "C:/Algebraic/radical-denest/code-review/";
 Print["Kernel: ", $Version];
 eq[a_, b_] := Quiet[TrueQ[RootReduce[a - b] === 0]];
 SetAttributes[try, HoldAll];

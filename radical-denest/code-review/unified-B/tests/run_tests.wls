@@ -1,5 +1,6 @@
 #!/usr/bin/env wolframscript
-(* Runs tests/StradFixed2.wlt against src/corrected/StradFixed2.wl in a fresh
+(* Runs tests/StradFixed2.wlt against radical-denest/corrected/StradFixed2.wl
+   in a fresh
    kernel and prints one line per test plus a summary. Exit code 1 on failure. *)
 Module[{here, package, report, results, failed},
   here = DirectoryName[$InputFileName];

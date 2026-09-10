@@ -1,6 +1,6 @@
 (* Randomized fuzz of the third corrected version StradFixed3 over the families and seed of
    unified-A/B (F1-F10) plus four new families (F11-F14) for the round-3 methods *)
-Get["C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/corrected/StradFixed3.wl"];
+Get["C:/Algebraic/radical-denest/corrected/StradFixed3.wl"];
 Needs["RadicalDenest3`"];
 SeedRandom[20260905];
 SetAttributes[capture, HoldAll];

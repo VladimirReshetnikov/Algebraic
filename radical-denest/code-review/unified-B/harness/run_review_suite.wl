@@ -2,7 +2,7 @@
    ITS OWN proposed StradImproved.wl, in a fresh kernel, without writing into the
    review's directory.  Usage: wolframscript -file run_review_suite.wl 4|5|6   *)
 review = Last[$ScriptCommandLine];
-base = "C:/RadicalDenest/.claude/worktrees/strad-denesting-analysis-6158e6/src/code-review/";
+base = "C:/Algebraic/radical-denest/code-review/";
 {package, suite} = Switch[review,
   "4", {base <> "review-4/StradImproved.wl", base <> "review-4/tests/Regression.wlt"},
   "5", {base <> "review-5/code/StradImproved.wl", base <> "review-5/tests/regression.wlt"},
