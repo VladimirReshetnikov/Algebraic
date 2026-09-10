@@ -44,7 +44,7 @@ denesting literature alongside.
 | `radical-denest/code-review/review-7` … `review-9` | Three independent reviews of `StradFixed2.wl` at a pinned commit, each with a report, a proposed `StradFixed3.wl`, a native test suite and executed SymPy checks. |
 | `radical-denest/README.md` | The program, what each round of review found and fixed, the literature survey, and the build requirements. |
 | `benchmarks/` | Reproducible comparisons of all three Python solvers against an immutable Git revision, with exact output checks and raw timing samples. |
-| `WOLFRAM-NOTES.md` | Subtle Wolfram Language behaviour discovered while developing and running the code. |
+| `WOLFRAM-NOTES.md`, `MATHICS-NOTES.md` | Subtle Wolfram Language and [Mathics3](https://mathics.org/) behaviour discovered while developing and running the code, and the portability differences between the two kernels. |
 | `LICENSE`, `polynomial-decompose/LICENSE` | MIT-0 for the original project and for radical-denest; MIT for polynomial-decompose, retaining its report 3 source notice. Original reports and reviews retain their own licenses, and the sources under `docs/literature/` remain under the terms of their publishers. |
 
 ## Decomposing algebraic numbers
