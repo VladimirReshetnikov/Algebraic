@@ -64,6 +64,12 @@ VerificationTest[AlgebraicDecompose[Root[#^3 - 2 &, 1] x^2 + x^4],
   AlgebraicDecompose[Root[#^3 - 2 &, 1] x^2 + x^4, x], TestID -> "inferred variable beside a Root coefficient"]
 VerificationTest[MatchQ[AlgebraicDecompose[x^4 + y], _Failure] && MatchQ[AlgebraicDecompose[7], _Failure],
   True, TestID -> "inferred variable needs exactly one"]
+VerificationTest[Module[{p = Expand[(x^2 + Cos[Pi/9] x + 1) /. x -> x^3 + Cos[Pi/9] x], c},
+  c = AlgebraicDecompose[p, x];
+  {Exponent[#, x] & /@ c, VerifyAlgebraicDecomposition[p, c, x], RootReduce[Coefficient[c[[2]], x, 1] - Cos[Pi/9]] === 0}],
+  {{2, 3}, True, True}, TestID -> "trigonometric coefficients at rational multiples of Pi"]
+VerificationTest[MatchQ[AlgebraicDecompose[x^4 + Cos[1] x, x], _Failure], True,
+  TestID -> "a transcendental trigonometric coefficient is refused"]
 VerificationTest[AlgebraicDecompose[x^4, x], {x^2, x^2},
   TestID -> "single-derivative-factor-counterexample"]
 VerificationTest[AlgebraicDecompose[x^8, x], {x^2, x^2, x^2},

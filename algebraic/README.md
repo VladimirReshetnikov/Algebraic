@@ -124,7 +124,11 @@ in seconds rather than running for hours. The companion matrix whose
 eigenvalues seed the root values is balanced (`x = s y` with `s` the
 root-radius bound) because SymPy's eigenvalue solver raised
 `PrecisionExhausted` -- uncatchable -- on the raw coefficients of a
-degree-12 resolvent. Nothing containing a `Root` object is handed to Mathics'
+degree-12 resolvent. Exact algebraic coefficients are recognised by shape on Mathics: Gaussian
+rationals, radicals, `Root` and `AlgebraicNumber` objects, and trigonometric
+functions of rational multiples of `π` (`Cos[π/7]` is reduced through the
+root of unity `e^{iπ/7}` to the same `Root` object the Wolfram kernel's
+`RootReduce` gives). Nothing containing a `Root` object is handed to Mathics'
 `PossibleZeroQ`, `MinimalPolynomial` or `N`, each of which makes SymPy
 refine every non-real root for ten seconds and more: the exact zero test
 rejects at machine precision and decides the rest by elimination, which

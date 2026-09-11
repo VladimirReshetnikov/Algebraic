@@ -1171,6 +1171,12 @@ If[kNativeQ["RootReduce"],
     (* a root of unity written as an exponential: the Wolfram kernel reduces
        Exp[2 Pi I/5] to a Root object of the cyclotomic polynomial *)
     rootOfUnityFormQ[e], rootOfUnityReduce[e],
+    (* each distinct trigonometric atom is reduced once and its Root object
+       substituted, so that a polynomial in one such atom stays a polynomial
+       in one Root object (the cheap path) instead of a fresh elimination
+       through the root of unity for every coefficient *)
+    ! FreeQ[e, (Cos | Sin | Tan | Cot | Sec | Csc)[_?rationalPiMultipleQ]],
+      kRootReduce[Expand[e /. t : (Cos | Sin | Tan | Cot | Sec | Csc)[_?rationalPiMultipleQ] :> trigAtomReduce[t]]],
     (* a polynomial in one Root object: its representative modulo the
        minimal polynomial, in milliseconds (elimination and the numerical
        root index took seconds per coefficient of a decomposition) *)
@@ -1262,11 +1268,28 @@ If[kNativeQ["AlgebraicsRoot"],
      minimal polynomial, and for Pi or Sin[1] that raises a Python exception
      no Quiet or Check can catch *)
   kAlgebraicQ[e_] := algebraicShapeQ[e]];
+(* A trigonometric function of a rational multiple of Pi is an algebraic
+   number; the Wolfram kernel's RootReduce turns it into a Root object, and
+   on other kernels trigToRootsOfUnity writes it through the root of unity
+   E^(I Pi r) -- Cos[r Pi] = (z + z^(n - 1))/2, z^n = 1 -- for the reduction
+   of section 0.5 to canonicalise. *)
+rationalPiMultipleQ[a_] := a === Pi || (Head[a] === Times && Length[a] === 2 && a[[2]] === Pi && kRationalQ[a[[1]]]);
+trigOfRationalPiQ[e_] := MemberQ[{Cos, Sin, Tan, Cot, Sec, Csc}, Head[e]] && Length[e] === 1 && rationalPiMultipleQ[First[e]];
+trigAtomReduce[t_] := kMemo["trigAtom", t, kRootReduce[Expand[trigToRootsOfUnity[t]]]];
+trigToRootsOfUnity[e_] := e /. {
+  Cos[a_?rationalPiMultipleQ] :> With[{z = kRootReduce[E^(I a)], n = 2 Denominator[a/Pi]}, (z + z^(n - 1))/2],
+  Sin[a_?rationalPiMultipleQ] :> With[{z = kRootReduce[E^(I a)], n = 2 Denominator[a/Pi]}, (z - z^(n - 1))/(2 I)],
+  Tan[a_?rationalPiMultipleQ] :> With[{z = kRootReduce[E^(I a)], n = 2 Denominator[a/Pi]}, (z - z^(n - 1))/(I (z + z^(n - 1)))],
+  Cot[a_?rationalPiMultipleQ] :> With[{z = kRootReduce[E^(I a)], n = 2 Denominator[a/Pi]}, I (z + z^(n - 1))/(z - z^(n - 1))],
+  Sec[a_?rationalPiMultipleQ] :> With[{z = kRootReduce[E^(I a)], n = 2 Denominator[a/Pi]}, 2/(z + z^(n - 1))],
+  Csc[a_?rationalPiMultipleQ] :> With[{z = kRootReduce[E^(I a)], n = 2 Denominator[a/Pi]}, 2 I/(z - z^(n - 1))]};
+
 (* an expression built from Gaussian rationals, Root and AlgebraicNumber
    objects by Plus, Times and Power with a rational exponent *)
 algebraicShapeQ[e_] := Which[
   kGaussianQ[e], True,
   Head[e] === Root || Head[e] === AlgebraicNumber, True,
+  trigOfRationalPiQ[e], True,
   AtomQ[e], False,
   Head[e] === Plus || Head[e] === Times, AllTrue[List @@ e, algebraicShapeQ],
   Head[e] === Power && Length[e] === 2, kRationalQ[e[[2]]] && algebraicShapeQ[e[[1]]],

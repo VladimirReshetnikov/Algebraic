@@ -375,6 +375,17 @@ Measured with `z = N[7874506561843/12500000000000 - 545561817985861 I/10^14,
   `False` in Mathics; the same for `Rational[_, _]`. Test the head and
   `Re`/`Im` instead. `Exp[x]` is `Power[E, x]` in both kernels, so a rule
   written on `Exp[...]` never fires either.
+- **What counts as an algebraic number without asking SymPy.** On this
+  kernel the package decides "is this an exact algebraic number" by shape
+  (`algebraicShapeQ`): Gaussian rationals, `Root` and `AlgebraicNumber`
+  objects, and trigonometric functions (`Cos`, `Sin`, `Tan`, `Cot`, `Sec`,
+  `Csc`) of a rational multiple of `Pi`, combined by `Plus`, `Times` and
+  `Power` with a rational exponent. `Cos[Pi/7]` is accepted as is and
+  reduced through the root of unity `E^(I Pi/7)` (`Cos[r Pi] = (z + z^(n -
+  1))/2`), where the Wolfram kernel's `RootReduce` gives the same `Root`
+  object; `Cos[1]`, `Pi` or `Cos[ArcCos[1/3]]` are refused rather than
+  handed to `Element[..., Algebraics]`, which makes SymPy compute a minimal
+  polynomial and raise for anything transcendental.
 - **`f[Plus[a__], w_]` does not do what it does in Wolfram.** Under a
   `Flat` head the sequence pattern binds `a` to the whole sum
   (`k[1 + x + y, 2]` with `k[Plus[a__], w_] := {a}` gives `{1 + x + y}`),
