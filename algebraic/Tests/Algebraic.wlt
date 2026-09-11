@@ -880,7 +880,7 @@ VerificationTest[RootRadicalReport[1.5][[1]], "Inexact", {RootToRadicals::inexac
 VerificationTest[RootRadicalReport[Pi][[1]], "NotAlgebraic", {Algebraic::notalg}, TestID -> "transcendental input"];
 VerificationTest[RootRadicalReport[Root[#^3 - 2 &, 1], Method -> "Nope"][[1]], "InvalidOptions", {RootToRadicals::opts}, TestID -> "invalid option"];
 
-(* Regression suite for radical-denest/corrected/StradFixed3.wl
+(* Regression suite for radical-denest/DenestRadicals.wl
    (context Algebraic`).
 
    Groups:  R4-*, R5-*, R6-* translate the suites of review-4/5/6 (kept from unified-B),

@@ -1,6 +1,6 @@
 # RadicalDenest
 
-> The third corrected version, `corrected/StradFixed3.wl`, is also section 4 of the unified package [`../algebraic/`](../algebraic/README.md) (`Algebraic.wl`, context ``Algebraic`​``), together with its 230-test suite; this directory keeps the program under review, the three corrected versions and the review record.
+> The third corrected version, `DenestRadicals.wl`, is also section 4 of the unified package [`../algebraic/`](../algebraic/README.md) (`Algebraic.wl`, context ``Algebraic`​``), together with its 230-test suite; this directory keeps the program under review, the three corrected versions and the review record.
 
 Analysis, correction and literature survey of `Strad.wl`, a Wolfram Language
 program that denests radicals: it rewrites an expression such as
@@ -8,8 +8,8 @@ program that denests radicals: it rewrites an expression such as
 `(1 - 2^(1/3) + 4^(1/3))/9^(1/3)`, whenever an expression with fewer nested
 root extractions exists and can be found.
 
-This project has three parts: the program and its corrected versions
-(`original/`, `corrected/`), three rounds of code review with kernel
+This project has three parts: the program and its corrected version
+(`original/Strad.wl`, `DenestRadicals.wl`), three rounds of code review with kernel
 experiments (`code-review/`), and a research guide to the mathematical and
 computer-algebra literature on radical denesting together with the freely
 available sources themselves (`../docs/`, at the root of the enclosing
@@ -44,7 +44,7 @@ The literature survey is not inside this directory: it sits at `../docs/report/`
 `../docs/literature/` and `../docs/scripts/`, in the root of the enclosing
 repository, beside documentation belonging to the other projects.
 
-## The program and its corrections (`original/`, `corrected/`)
+## The program and its corrections (`original/`, `DenestRadicals.wl`)
 
 `original/Strad.wl` is the input to the whole project. Its architecture is
 a marker wrapper around radicals, a multiplier search using minimal polynomials
@@ -77,7 +77,7 @@ a better incumbent, that index reductions depended on recursive progress, that
 failed searches were memoized without their budget, and that its multi-surd
 solver missed the square-class cosets.
 
-`corrected/StradFixed3.wl` is the current version. It validates `Root` and
+`DenestRadicals.wl` is the current version. It validates `Root` and
 `AlgebraicNumber` payloads, classifies equality by exact algebra only, threads
 incumbents through every stage, offers index reductions before recursion, keeps
 a budget-aware memo, runs every kernel operation and the report costs inside
@@ -114,7 +114,7 @@ is reproducible from `unified-B/harness/` and recorded in `unified-B/logs/`.
 `StradFixed3.wl` in the context ``RadicalDenest3`​``, a native test suite that
 its author could not run, and executed SymPy checks.
 
-Those three proposals and this project's own `corrected/StradFixed3.wl` all
+Those three proposals and this project's own `DenestRadicals.wl` all
 declare the same public context ``RadicalDenest3`​``, so at most one of the four
 can be loaded in a single kernel session.
 
@@ -178,3 +178,52 @@ Line endings are LF (`../.gitattributes`, `../.editorconfig`); PDFs and images
 are binary. Log files are ignored by git (`.gitignore` in this directory), so
 recorded transcripts are stored with a `.txt` extension. Everything is released
 under the MIT-0 license of the enclosing repository (`../LICENSE`).
+
+## DenestRadicals.wl -- the corrected denester
+
+```wl
+Get["algebraic/Algebraic.wl"];   (* the unified package; radical-denest/DenestRadicals.wl is the standalone source *)
+DenestRadicals[Sqrt[118 + 2 Sqrt[210] + 14 Sqrt[55] + 2 Sqrt[462]]]   (* Sqrt[6] + Sqrt[35] + Sqrt[77]: coset search *)
+DenestRadicals[(239 + 169 Sqrt[2])^(1/7)]                 (* 1 + Sqrt[2]: odd-index trace-norm recipe *)
+DenestRadicals[Sqrt[28^(1/3) - 3]]                        (* (-1 - 28^(1/3) + 98^(1/3))/3: Honsbeek with a rational summand *)
+DenestRadicals[(3 + 2 Sqrt[2])^(1/6), "MaxRecursion" -> 0]   (* (1 + Sqrt[2])^(1/3): index reduction without recursion *)
+ExactAlgebraicQ[Root[#^5 + # - Pi &, 1]]         (* False: exact is not algebraic *)
+EqualityStatus[Sqrt[2], -Sqrt[2]]                (* "Different", decided by exact algebra *)
+DenestRadicals[Sqrt[2], 17]                               (* Failure["InvalidOption", ...] *)
+DenestReport[Sqrt[5 + 2 Sqrt[6]]]                (* adds ResultChanged, CertificateKind, CertificatesTruncated *)
+```
+
+Contract (the earlier versions StradFixed.wl and StradFixed2.wl, whose contract this refines, are gone from the repository; the reviews under `code-review/` describe them): The exact
+input grammar admits rationals, Gaussian rationals, their `Plus`, `Times` and
+rational-`Power` combinations, `Root` objects whose defining polynomial (single
+or triangular-system form) has coefficients in that grammar and a valid index,
+and `AlgebraicNumber` objects with an admitted generator and Gaussian-rational
+coefficients; other exact objects are opaque host nodes. `EqualityStatus` is
+decided by exact algebra in every branch; `"NumericPrefilter"` (now `False` by
+default) only prunes search candidates. Every proposal stage receives and
+returns its incumbent. Unchanged results are memoized together with the budget
+that produced them and are reused only by searches with no larger budget. The
+classification of the input and the report costs run inside the resource
+region. Malformed calls such as `DenestRadicals[e, 17]` and `DenestRadicals[]` return a
+`Failure`.
+
+Beyond the second version: the trace–norm criterion for every
+odd index up to `"MaxOddIndex"` (default 9) via the Dickson recurrences; a
+Honsbeek recognizer that accepts any two-term sum of terms with rational cubes,
+including rational summands and terms like `2^(2/3) 7^(1/3)`; a square-class
+coset search for multi-surd square roots (an integer-relation stage per coset
+certified by `RootReduce`, then rational systems), which finds
+`Sqrt[6] + Sqrt[35] + Sqrt[77]`, `Sqrt[6] + Sqrt[10] + Sqrt[21]`,
+`Sqrt[10] + Sqrt[15] + Sqrt[35]`, `Sqrt[30] + Sqrt[42] + Sqrt[70]` and
+`(Sqrt[2] + Sqrt[3] + Sqrt[5])/2` without the multiplier search; index
+reductions such as `(3 + 2 Sqrt[2])^(1/4) -> Sqrt[1 + Sqrt[2]]` offered before
+recursion.
+
+New options (defaults): `"MaxOddIndex"` (9), `"DiscriminantBatchCap"` (24),
+`"MaxCosets"` (16); `"NumericPrefilter"` now defaults to `False`. Public symbols: `Strad` (kept as a name in this standalone file; the unified package calls it `DenestRadicals`), `DenestRadicals`, `DenestCore`, `DenestReport`, `EqualityStatus`, `CertifiedEqualQ`, `ExactAlgebraicQ`, `RadicalExpressionQ`, `RadicalDepth`, `RadicalCost`, `RationalizeDenominator`, `Factorc`.
+
+See `radical-denest/code-review/unified-C/unified_analysis_C.pdf` for the
+catalogue of the 23 issues it addresses, the design changes, the mathematics
+and the executed experiments; the regression suite is
+`radical-denest/code-review/unified-C/tests/DenestRadicals.wlt` (230 tests).
+

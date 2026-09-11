@@ -25,7 +25,7 @@
    root-decomposition/RootDecomposition.wl,
    polynomial-decompose/AlgebraicDecomposition.wl,
    root-to-radicals/RootToRadicals.wl and
-   radical-denest/corrected/StradFixed3.wl; see algebraic/README.md for what
+   radical-denest/DenestRadicals.wl; see algebraic/README.md for what
    changed in the merge.
 
    The package runs in the Wolfram kernel and in Mathics3 (https://mathics.org).
@@ -3305,7 +3305,7 @@ RootSolvableQ[a_, opts : OptionsPattern[RootToRadicals]] := Module[{in = inputDa
 
 (* ================================================================ *)
 
-(* From radical-denest/corrected/StradFixed3.wl (context RadicalDenest3`).
+(* From radical-denest/DenestRadicals.wl (context RadicalDenest3`).
    DenestRadicals rewrites an exact algebraic expression with fewer nested root
    extractions.  Its contract is unchanged by the merge:
 

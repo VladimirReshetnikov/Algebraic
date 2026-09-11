@@ -34,7 +34,7 @@ notebook, and a comparison of the nine reports); this file documents the softwar
 ## Wolfram Language package
 
 ```wolfram
-Get["RootToRadicals.wl"];
+Get["algebraic/Algebraic.wl"];   (* from the repository root; the unified package has every function of this project *)
 RootToRadicals[Root[-1 - #^2 - #^3 + #^4 + #^6 &, 2]]
 (* (-4 (2/(3 (9 + Sqrt[849])))^(1/3) + ((9 + Sqrt[849])/2)^(1/3)/3^(2/3) + Sqrt[4 + (...)^2])/2 *)
 RootToRadicals[Root[6 + 25 # - 25 #^3 + 5 #^5 &, 5]]

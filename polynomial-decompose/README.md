@@ -31,7 +31,7 @@ algebraic coefficient fields can still involve algebraic-number algorithms.
 | --- | --- |
 | [`article/polynomial-decompose.tex`](article/polynomial-decompose.tex), [PDF](article/polynomial-decompose.pdf) | Unified theory, proofs, examples, implementation contracts, and comparison of the three reports. |
 | [`AlgebraicDecomposition.wl`](AlgebraicDecomposition.wl) | Native Wolfram package. |
-| [`AlgebraicDecomposition.wlt`](AlgebraicDecomposition.wlt), [`RunTests.wl`](RunTests.wl), [`Examples.wl`](Examples.wl) | Native tests, test runner, and worked examples. |
+| [`AlgebraicDecomposition.wlt`](AlgebraicDecomposition.wlt), [`RunTests.wl`](RunTests.wl) | Native tests and test runner; the worked examples are in [`../algebraic/Examples.wl`](../algebraic/Examples.wl). |
 | [`python/algebraic_decompose.py`](python/algebraic_decompose.py) | Exact Python implementation using SymPy number fields, with optional FLINT acceleration for rational polynomial arithmetic. |
 | [`python/test_algebraic_decompose.py`](python/test_algebraic_decompose.py), [`python/benchmark.py`](python/benchmark.py) | Python regression and performance checks. |
 | [`python/verify_wolfram.py`](python/verify_wolfram.py) | Cross-language checks of complete chains, all pairs, and Python certificates in a native Wolfram kernel. |
@@ -103,7 +103,7 @@ size, and the number of output chains can dominate runtime.
 From this directory:
 
 ```wolfram
-Get["AlgebraicDecomposition.wl"];
+Get["algebraic/Algebraic.wl"];   (* from the repository root; the unified package has every function of this project *)
 Clear[x];
 p = 3 + 3 Sqrt[2] + (14 + 4 Sqrt[2]) x + (12 + 26 Sqrt[2]) x^2
   + (56 + 8 Sqrt[2]) x^3 + (8 + 48 Sqrt[2]) x^4
@@ -253,7 +253,6 @@ Reproduce these checks with:
 ```powershell
 # From polynomial-decompose/:
 wolfram -script RunTests.wl
-wolfram -script Examples.wl
 
 # From polynomial-decompose/python/:
 python -m unittest -v test_algebraic_decompose

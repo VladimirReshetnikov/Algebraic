@@ -23,7 +23,7 @@ the complete theory with proofs; this file documents the software.
 | --- | --- |
 | `RootDecomposition.wl` | Wolfram Language package (Wolfram 15.0.1). |
 | `RootDecomposition.wlt`, `RunTests.wl` | Regression tests (`wolfram -script RunTests.wl`). |
-| `Examples.wl` | Worked examples (`Get["Examples.wl"]`). |
+| `../algebraic/Examples.wl` | Worked examples of all four operations, run from the repository root. |
 | `python/rootdecomp.py` | Independent Python implementation on python-flint (+ SymPy for the input-field factorization). |
 | `python/test_rootdecomp.py` | Python regression suite; failures exit nonzero. |
 | `python/verify_wolfram.py` | Independent exact verification of Python results in a native Wolfram kernel. |
@@ -35,7 +35,7 @@ the complete theory with proofs; this file documents the software.
 ## Wolfram Language package
 
 ```wolfram
-Get["RootDecomposition.wl"];
+Get["algebraic/Algebraic.wl"];   (* from the repository root; the unified package has every function of this project *)
 ap = Root[-1 - # + 3 #^3 - #^4 + #^5 - 3 #^6 + 2 #^7 + #^9 &, 1];
 as = Root[8 - 4 # + 24 #^2 - 15 #^3 + 3 #^5 + 6 #^6 + #^9 &, 1];
 

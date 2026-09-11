@@ -244,7 +244,7 @@ Collected in `radical-denest/code-review/`; each was observed in a kernel there.
   canonicalize the radicals of `rho` into `Root` objects, after which the linear
   factors come back opaque. Pass the radicals of `rho` as an explicit
   `Extension` when the factors must stay in radical form.
-  (`radical-denest/corrected/StradFixed3.wl`, `radicalExtension`)
+  (`radical-denest/DenestRadicals.wl`, `radicalExtension`)
 - `Sqrt[-rho]` for a `rho` that evaluates to a positive number becomes
   `I Sqrt[rho]` before any helper sees it, so a routine meant to handle a
   negative radicand must be handed the radicand, not the square root.
