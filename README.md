@@ -20,7 +20,7 @@ denesting literature alongside.
 ## The unified package
 
 The four operations are also one package: `algebraic/Algebraic.wl` (one
-Wolfram Language context, `Algebraic``, in one self-contained file, running
+Wolfram Language context, ``Algebraic`​``, in one self-contained file, running
 in the Wolfram kernel and in [Mathics3](https://mathics.org/)) and
 `algebraic/python/` (one importable Python package with three modules; the
 denester has no Python implementation). The projects below are the sources
