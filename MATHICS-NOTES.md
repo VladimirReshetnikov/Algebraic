@@ -376,6 +376,23 @@ Measured with `z = N[7874506561843/12500000000000 - 545561817985861 I/10^14,
   all -- the same for `Times[a__]`. `f[e_Plus, w_]` with `List @@ e` works.
   `f[Plus[a_, b__], w_]` also works, binding `a` to the first term.
 
+### `TimeConstrained` does not stop a long SymPy computation
+
+`TimeConstrained[expr, t, fail]` is implemented with a timer thread that
+raises `TimeoutException` in the evaluating thread through
+`PyThreadState_SetAsyncExc` (`timed_threads.ThreadingTimeout`). The
+exception is an `Exception`, and the `except Exception` clauses between
+the timer and the work swallow it: a `TimeConstrained[..., 300]` around
+the degree-9 product example ran for an hour, a 30 s budget around
+`DenestReport` once ran for 2.4 hours, and the three-argument form was no
+better. Where the whole computation is Mathics-level (loops, pattern
+matching) the cooperative `check_stopped` does end it, which is why
+`Strad`'s own budgets are honoured on cheaper inputs. The test driver
+`run_mathics.py` enforces its limit itself: it evaluates each statement
+in a worker thread, sets the evaluation's `stopped` flag past the limit,
+then raises a `BaseException` subclass in the thread until it ends; the
+statement is reported as `TIMEOUT` and the kernel goes on.
+
 ### Where the Galois engine stops on Mathics
 
 With the numerics of section 0.5b in place, `RootGaloisData[Root[#^3 - 2
