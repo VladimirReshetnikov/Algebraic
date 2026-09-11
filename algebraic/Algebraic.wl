@@ -763,8 +763,12 @@ selectFactor[poly_, value_] := Catch[Module[
   If[fl === {}, Throw[$Failed, ktag]];
   If[Length[fl] === 1, Throw[primitiveIn[First[fl], kx], ktag]];
   Do[
-    v = kCheck[N[value, prec], $Failed];
+    (* kN, not N: the kernel's N of a non-real Root object costs ten
+       seconds and more per root in Mathics *)
+    v = kCheck[kN[value, prec], $Failed];
     If[! kFiniteNumberQ[v], Throw[$Failed, ktag]];
+    (* the value zero: its minimal polynomial is the factor kx *)
+    If[TrueQ[Abs[v] < 10^(-prec/2)] && MemberQ[fl, kx], Throw[kx, ktag]];
     res = scaledResidual[#, v, prec] & /@ fl;
     If[! AllTrue[res, kFiniteNumberQ[#] || # === Infinity &], Throw[$Failed, ktag]];
     ord = kOrdering[res];
@@ -777,8 +781,9 @@ selectFactor[poly_, value_] := Catch[Module[
 
 (* |f(v)| divided by the size of the largest term of f at v, so that the
    comparison does not depend on the scale of f. *)
-scaledResidual[f_, v_, prec_] := Module[{c = clOf[f, kx], r, terms, scale},
-  terms = kCheck[Table[N[c[[i]] v^(i - 1), prec], {i, Length[c]}], $Failed];
+scaledResidual[f_, v_, prec_] := Module[{c = clOf[f, kx], r, terms, scale, pw},
+  pw = kPowerList[v, Length[c] - 1];   (* not v^(i - 1): machine precision for a complex v in Mathics *)
+  terms = kCheck[Table[N[c[[i]] pw[[i]], prec], {i, Length[c]}], $Failed];
   If[! ListQ[terms] || ! AllTrue[terms, kFiniteNumberQ], Return[Infinity]];
   r = Total[terms];
   scale = Max[Abs /@ terms];
@@ -998,7 +1003,9 @@ rootValuesCompute[c_List, prec_] := Module[{n = clDeg[c], m, scale, seeds, polis
   seeds = Table[If[Abs[Im[z]] < 10^-9 scale,
     Round[Re[z] 10^14]/10^14, Round[Re[z] 10^14]/10^14 + I Round[Im[z] 10^14]/10^14], {z, m}];
   polished = Quiet[polishRoot[c, #, prec] & /@ seeds];
-  If[MemberQ[polished, $Failed], Return[$Failed]];
+  If[MemberQ[polished, $Failed],
+    If[TrueQ[$galoisDebug], Print["rootValues: polishing failed for ", Short[c, 1], " at ", prec, " seeds ", seeds]];
+    Return[$Failed]];
   tol = 10^(-Floor[prec/2]) scale;
   (* two seeds converging to one root: a repeated root, or a lost one *)
   Do[If[Abs[polished[[i]] - polished[[j]]] < tol, Return[$Failed]], {i, n}, {j, i + 1, n}];
@@ -1016,7 +1023,20 @@ kRootValue[r_Root, prec_] := Module[{poly, c, vals},
   If[! AllTrue[c, kRationalQ] || r[[2]] < 1, Return[N[r, prec]]];
   c = c LCM @@ (Denominator /@ c);
   vals = If[! IntegerQ[prec] || prec <= 16, machineRootsOrdered[c], kRootValues[c, prec]];
-  If[vals === $Failed || r[[2]] > Length[vals], N[r, prec], vals[[r[[2]]]]]];
+  If[ListQ[vals] && r[[2]] <= Length[vals], Return[vals[[r[[2]]]]]];
+  (* the polished list failed (a repeated root, a lost root, two ordering
+     keys too close): polish this one root from its machine value; the
+     kernel's own N[Root] is the last resort and costs ten seconds and more
+     per non-real root *)
+  If[TrueQ[$galoisDebug], Print["kRootValue: no ordered values for ", Short[c, 1], " index ", r[[2]], " at ", prec]];
+  vals = machineRootsOrdered[c];
+  If[ListQ[vals] && r[[2]] <= Length[vals] && IntegerQ[prec] && prec > 16,
+    With[{m = vals[[r[[2]]]]},
+      With[{z = Quiet[polishRoot[c, If[Abs[Im[m]] < 10^-9 Max[1, Abs[m]], Round[Re[m] 10^14]/10^14,
+          Round[Re[m] 10^14]/10^14 + I Round[Im[m] 10^14]/10^14], prec]]},
+        If[z =!= $Failed, Return[N[z, prec]]]]]];
+  If[TrueQ[$galoisDebug], Print["kRootValue: native N for ", Short[r, 1], " at ", prec]];
+  N[r, prec]];
 
 (* the bottom-up evaluator; w is the working precision *)
 numValue[r_Root, w_] := kRootValue[r, w];
@@ -1076,6 +1096,7 @@ nativeMinimalPolynomial[a_, v_] := Module[{p},
   If[! kNativeQ["MinimalPolynomial"], Return[$Failed]];
   (* SymPy raises an uncatchable exception for a non-algebraic argument *)
   If[! kNativeQ["RootReduce"] && ! algebraicShapeQ[a], Return[$Failed]];
+  If[TrueQ[$galoisDebug] && ! FreeQ[a, _Root], Print["nativeMinimalPolynomial on ", Short[a, 1]]];
   p = kCheck[MinimalPolynomial[a, v], $Failed];
   If[Head[p] === MinimalPolynomial || ! TrueQ[PolynomialQ[p, v]], $Failed, p]];
 
@@ -1092,7 +1113,9 @@ If[kNativeQ["RootReduce"],
       p = TimeConstrained[nativeMinimalPolynomial[a, v], 3 $kTimeScale, $Failed];
       If[p =!= $Failed, Return[p]]];
     p = minPolyOfTree[a];
-    If[p === $Failed, Return[nativeMinimalPolynomial[a, v]]];
+    (* no native fallback for an expression with Root objects: SymPy's
+       minimal_polynomial refines every non-real CRootOf for minutes *)
+    If[p === $Failed, Return[If[FreeQ[a, _Root], nativeMinimalPolynomial[a, v], $Failed]]];
     Expand[p /. kx -> v]]];
 
 (* The unique root index of mp at which the value of z is attained.
@@ -1121,7 +1144,8 @@ kRootIndex[mp_, z_, degree_Integer] := Catch[Module[
     If[ListQ[vals] && Length[vals] === degree && kFiniteNumberQ[zv],
       dists = Abs[vals - zv]; ord = kOrdering[dists]; scale = Max[1, Abs[zv]];
       If[TrueQ[dists[[ord[[1]]]] < 10^-7 scale] && TrueQ[dists[[ord[[2]]]] > 10^6 dists[[ord[[1]]]]],
-        Throw[ord[[1]], ktag]]]];
+        Throw[ord[[1]], ktag]]];
+    If[TrueQ[$galoisDebug], Print["index: machine order ", If[ListQ[vals], "ambiguous margins", "unavailable"], ", polishing"]]];
   Do[
     zv = kCheck[kN[z, prec], $Failed];
     If[! kFiniteNumberQ[zv], Throw[$Failed, ktag]];
@@ -1188,8 +1212,9 @@ If[kNativeQ["RootReduce"],
     If[q <= 2, Return[e]];
     k = kRootIndex[mp, e, Exponent[mp, kx]];
     If[k === $Failed, e, kRootReduce[kRootObject[mp, kx, k]]]];
-  rootReduceByElimination[e_] := Module[{mp, c, deg, k, r},
+  rootReduceByElimination[e_] := Module[{mp, c, deg, k, r, t0 = AbsoluteTime[]},
     mp = kMinimalPolynomial[e, kx];
+    If[TrueQ[$galoisDebug], Print["reduce: minimal polynomial of ", Short[e, 1], " in ", Round[AbsoluteTime[] - t0, 0.01], " s, degree ", Exponent[mp, kx]]];
     If[mp === $Failed, Return[e]];
     c = clOf[mp, kx]; deg = clDeg[c];
     Which[
@@ -1204,6 +1229,7 @@ If[kNativeQ["RootReduce"],
             TrueQ[Abs[kN[#, 40] - v] < 10^-20 Max[1, Abs[v]]] &]];
         If[Length[r] === 1, Return[First[r]]]];
     k = kRootIndex[mp, e, deg];
+    If[TrueQ[$galoisDebug], Print["reduce: index ", k, " after ", Round[AbsoluteTime[] - t0, 0.01], " s"]];
     If[k === $Failed, e, kRootObject[mp, kx, k]]]];
 
 (* An exact zero test.  The canonical reduction decides it in the Wolfram
@@ -1214,9 +1240,12 @@ kExactZeroQ[e_] := If[kNativeQ["RootReduce"],
   (* Mathics: its exact zero test is fast on radicals and decides them
      through SymPy; elimination is the second opinion and the only one for
      an expression it cannot handle *)
-  If[Head[e] =!= Root && singleRootPolynomialQ[e] && singleRootReduce[e] =!= $Failed,
+  Which[
+    (* a machine-precision value far from zero settles it *)
+    With[{v = kCheck[kN[e], $Failed]}, kFiniteNumberQ[v] && TrueQ[Abs[v] > 10^-6]], False,
+    Head[e] =!= Root && singleRootPolynomialQ[e] && singleRootReduce[e] =!= $Failed,
     singleRootReduce[e] === 0,
-    TrueQ[Quiet[kPossibleZeroQ[e]]] || TrueQ[Quiet[kRootReduce[e]] === 0]]];
+    True, TrueQ[Quiet[kPossibleZeroQ[e]]] || TrueQ[Quiet[kRootReduce[e]] === 0]]];
 
 If[kNativeQ["NumericQRoot"],
   kNumericQ[e_] := NumericQ[e],

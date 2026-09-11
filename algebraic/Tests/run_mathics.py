@@ -48,6 +48,14 @@ def evaluate_bounded(evaluation, query, seconds):
     outcome = {}
 
     def run():
+        # ALGEBRAIC_PROFILE=<file>: profile the evaluation thread with cProfile
+        # and write the statistics when the statement ends or is cut off
+        profile_path = os.environ.get("ALGEBRAIC_PROFILE")
+        profiler = None
+        if profile_path:
+            import cProfile
+            profiler = cProfile.Profile()
+            profiler.enable()
         try:
             evaluation.evaluate(query, timeout=None)
             outcome["result"] = "ok"
@@ -55,6 +63,10 @@ def evaluate_bounded(evaluation, query, seconds):
             outcome["result"] = "timeout"
         except BaseException as exc:  # reported by the caller
             outcome["result"] = exc
+        finally:
+            if profiler is not None:
+                profiler.disable()
+                profiler.dump_stats(profile_path)
 
     worker = threading.Thread(target=run, daemon=True)
     worker.start()
