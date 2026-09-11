@@ -110,6 +110,23 @@ Measured on Mathics3 10.0.1, with Wolfram 15.0.1 giving the same answers
 | `RootSumDecomposition`, `RootProductDecomposition` | available within the same limit; `Sqrt[2] + Sqrt[3]` in 17 s; the degree-9 product example of `Examples.wl` does not finish in an hour |
 | `RootToRadicals` | the structural recognizers in milliseconds (`Root[#^4 - 10 #^2 + 1 &, 4]` in 1.2 s); the Galois-Kummer descent within the engine's limit |
 
+Four things keep the Mathics run within hours rather than days, and are
+worth knowing when reading times. A polynomial in one `Root` object is
+reduced modulo its minimal polynomial to the unique representative of
+lower degree -- structurally canonical, so equal values are identical
+expressions -- instead of through elimination and a numerical root index:
+a coefficient reduction went from 3.3 s to 0.26 s, an exact non-zero test
+from 4.2 s to 0.3 s, and the decomposition of a polynomial with a
+quintic-`Root` coefficient from 28 s to 5 s. The Galois engine refuses a
+resolvent step whose resultant would exceed degree 48
+(`Failure["EngineLimit", ...]`, counted as unavailable by the test runner)
+in seconds rather than running for hours. The companion matrix whose
+eigenvalues seed the root values is balanced (`x = s y` with `s` the
+root-radius bound) because SymPy's eigenvalue solver raised
+`PrecisionExhausted` -- uncatchable -- on the raw coefficients of a
+degree-12 resolvent. And the test driver imposes its own wall-clock limit
+per statement, since `TimeConstrained` cannot interrupt SymPy there.
+
 The engine's limit on Mathics is the exact minimal polynomial of a
 resolvent sum: each step adds a root to a primitive element of the field
 found so far, and the elimination (section 0.5a) produces a resultant of

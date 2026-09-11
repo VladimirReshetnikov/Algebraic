@@ -13,7 +13,7 @@ the test it happened in, and the run continues.  Output is flushed after
 every statement, so progress is visible while the run is going.
 
 Each statement also gets a wall-clock limit (ALGEBRAIC_TEST_TIMEOUT
-seconds, default 180): the kernel's own TimeConstrained does not stop a
+seconds, default 120): the kernel's own TimeConstrained does not stop a
 long SymPy computation here, so the driver evaluates in a worker thread
 and, past the limit, raises a BaseException in it -- which the
 `except Exception` clauses on the way cannot swallow -- and reports the
@@ -97,7 +97,7 @@ def main():
             text = getattr(out, "text", None)
             print(text if text is not None else str(out), flush=True)
 
-    limit = float(os.environ.get("ALGEBRAIC_TEST_TIMEOUT", "180"))
+    limit = float(os.environ.get("ALGEBRAIC_TEST_TIMEOUT", "120"))
 
     def feed(path):
         """Evaluate every top-level statement of a file; count Python aborts and timeouts."""

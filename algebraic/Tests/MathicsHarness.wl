@@ -48,8 +48,8 @@ Protect[Normal];
 SetAttributes[BeginTestSection, HoldAll];
 BeginTestSection[___] := Null; EndTestSection[___] := Null;
 
-unavailableQ[v_] := Head[v] === Failure && v[[1]] === "KernelPrecision" ||
-  ! FreeQ[v, Failure["KernelPrecision", _]];
+unavailableQ[v_] := Head[v] === Failure && MemberQ[{"KernelPrecision", "EngineLimit"}, v[[1]]] ||
+  ! FreeQ[v, Failure["KernelPrecision" | "EngineLimit", _]];
 
 SetAttributes[VerificationTest, HoldAll];
 (* the message list is typed: an untyped optional argument would take a

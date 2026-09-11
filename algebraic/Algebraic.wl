@@ -820,7 +820,8 @@ minPolyOfTree[e_] := Which[
     minPolyOfPower[e[[1]], e[[2]]],
   True, $Failed];
 
-minPolyOfRoot[r_] := Module[{poly},
+minPolyOfRoot[r_] := kMemo["minPolyOfRoot", r, minPolyOfRootCompute[r]];
+minPolyOfRootCompute[r_] := Module[{poly},
   poly = kCheck[Expand[r[[1]][kx]], $Failed];
   If[poly === $Failed || ! TrueQ[PolynomialQ[poly, kx]] ||
      ! FreeQ[poly, _Real] || Exponent[poly, kx] < 1, Return[$Failed]];
@@ -942,12 +943,20 @@ polishRoot[c_List, seed_, prec_] := Catch[Module[{n = clDeg[c], z, d, k, work = 
    kernel's own N[Root[f, k]] isolates one non-real root in four to ten
    seconds, Solve[N[p] == 0, x] takes forty seconds at degree 9, and a
    Durand-Kerner iteration written in the language sixty at degree 6. *)
-machineRoots[c_List] := Module[{n = clDeg[c], cm, m, ev},
+machineRoots[c_List] := Module[{n = clDeg[c], cm, m, ev, s, cs},
   If[n < 1, Return[$Failed]];
+  If[TrueQ[$galoisDebug], Print["machineRoots: degree ", n, " coefficients ", Short[c, 1]]];
   cm = N[c/Last[c]];
-  m = Table[Which[j === n, -cm[[i]], i === j + 1, 1., True, 0.], {i, n}, {j, n}];
+  (* balanced: with x = s y and s the root-radius bound every entry of the
+     companion matrix is at most 1 in size.  On the raw coefficients of a
+     degree-12 resolvent (up to 2 10^14) the eigenvalue solver raised
+     SymPy's PrecisionExhausted, which no Quiet or Check catches. *)
+  s = Max[Table[Abs[cm[[i]]]^(1/(n - i + 1)), {i, n}]];
+  If[! TrueQ[s > 0], s = 1.];
+  cs = Table[cm[[i]]/s^(n - i + 1), {i, n}];
+  m = Table[Which[j === n, -cs[[i]], i === j + 1, 1., True, 0.], {i, n}, {j, n}];
   ev = kCheck[Eigenvalues[m], $Failed];
-  If[! ListQ[ev] || Length[ev] =!= n || ! AllTrue[ev, kFiniteNumberQ], $Failed, ev]];
+  If[! ListQ[ev] || Length[ev] =!= n || ! AllTrue[ev, kFiniteNumberQ], $Failed, s ev]];
 
 (* Wolfram's order of the roots of a polynomial: the real roots increasing,
    then the non-real roots by increasing real part, then by increasing
@@ -1109,10 +1118,29 @@ If[kNativeQ["RootReduce"],
     (* a root of unity written as an exponential: the Wolfram kernel reduces
        Exp[2 Pi I/5] to a Root object of the cyclotomic polynomial *)
     rootOfUnityFormQ[e], rootOfUnityReduce[e],
-    (* a Root object of an irreducible polynomial is its own canonical form *)
-    Head[e] === Root && Length[e] >= 2 && IntegerQ[e[[2]]] &&
-      TrueQ[kMemo["irreducibleRoot", e[[1]], irreducibleRootFunctionQ[e[[1]]]]], e,
+    (* a polynomial in one Root object: its representative modulo the
+       minimal polynomial, in milliseconds (elimination and the numerical
+       root index took seconds per coefficient of a decomposition) *)
+    Head[e] =!= Root && singleRootPolynomialQ[e], With[{v = singleRootReduce[e]},
+      If[v === $Failed, kMemo["rootReduce", e, rootReduceByElimination[e]], v]],
     True, kMemo["rootReduce", e, rootReduceByElimination[e]]];
+  (* The unique representative of degree below deg f of a polynomial in the
+     Root object r of the irreducible f: structurally canonical, so equal
+     values give identical expressions, which is what the exact zero test
+     and every === on reduced coefficients need.  The Wolfram kernel returns
+     a Root object of the same value; in degree one and two the rational or
+     the radical is returned here as well. *)
+  singleRootReduce[e_] := Module[{r, f, g, v},
+    r = First[Cases[e, _Root, {0, Infinity}]];
+    f = minPolyOfRoot[r];
+    If[f === $Failed || Exponent[f, kx] < 1, Return[$Failed]];
+    g = clMod[clOf[e /. r -> ey, ey], clOf[f /. kx -> ey, ey]];
+    If[g === $Failed, Return[$Failed]];
+    v = clTo[g, ey];
+    Which[
+      FreeQ[v, ey], v,
+      Exponent[f, kx] <= 2, Expand[v /. ey -> kRootReduce[r]],
+      True, Expand[v /. ey -> r]]];
   (* degree three and up: in degree one and two the canonical form is the
      rational or the radical, as in the Wolfram kernel *)
   irreducibleRootFunctionQ[f_] := Module[{poly = kCheck[Expand[f[kx]], $Failed]},
@@ -1140,10 +1168,13 @@ If[kNativeQ["RootReduce"],
       deg < 1, Return[e],
       deg === 1, Return[Cancel[-c[[1]]/c[[2]]]],
       deg === 2,
-        r = Select[{(-c[[2]] + Sqrt[c[[2]]^2 - 4 c[[3]] c[[1]]])/(2 c[[3]]),
-                    (-c[[2]] - Sqrt[c[[2]]^2 - 4 c[[3]] c[[1]]])/(2 c[[3]])},
-              TrueQ[Quiet[PossibleZeroQ[e - #]]] &];
-        If[r =!= {}, Return[First[r]]]];
+        (* the two candidates differ by Sqrt of the discriminant, so forty
+           digits decide; PossibleZeroQ took thirty seconds here *)
+        r = Module[{v = kN[e, 40]},
+          Select[Expand /@ {(-c[[2]] + Sqrt[c[[2]]^2 - 4 c[[3]] c[[1]]])/(2 c[[3]]),
+                  (-c[[2]] - Sqrt[c[[2]]^2 - 4 c[[3]] c[[1]]])/(2 c[[3]])},
+            TrueQ[Abs[kN[#, 40] - v] < 10^-20 Max[1, Abs[v]]] &]];
+        If[Length[r] === 1, Return[First[r]]]];
     k = kRootIndex[mp, e, deg];
     If[k === $Failed, e, kRootObject[mp, kx, k]]]];
 
@@ -1155,7 +1186,9 @@ kExactZeroQ[e_] := If[kNativeQ["RootReduce"],
   (* Mathics: its exact zero test is fast on radicals and decides them
      through SymPy; elimination is the second opinion and the only one for
      an expression it cannot handle *)
-  TrueQ[Quiet[kPossibleZeroQ[e]]] || TrueQ[Quiet[kRootReduce[e]] === 0]];
+  If[Head[e] =!= Root && singleRootPolynomialQ[e] && singleRootReduce[e] =!= $Failed,
+    singleRootReduce[e] === 0,
+    TrueQ[Quiet[kPossibleZeroQ[e]]] || TrueQ[Quiet[kRootReduce[e]] === 0]]];
 
 If[kNativeQ["NumericQRoot"],
   kNumericQ[e_] := NumericQ[e],
@@ -1877,6 +1910,13 @@ roundInteger[z_] := Module[{r},
 
 roundIntegerMatrix[m_] := Map[roundInteger, m, {2}];
 
+(* The elimination of section 0.5a produces a resultant of degree deg(theta)
+   deg(f) whose irreducible factor the kernel must find; the Wolfram kernel's
+   MinimalPolynomial does that natively, the interpreted kFactorList does not
+   finish a degree-72 one.  Above this limit the engine returns
+   Failure["EngineLimit", ...] at once. *)
+$kResolventLimit = If[kNativeQ["RootReduce"], Infinity, 48];
+
 galoisGroupNumerically[roots_List, nums_List, prec_, maxOrder_, maxTries_] :=
   Module[{n = Length[roots], orbit, vals, thetaExact = 0, tower = {}, k, w, newTheta, m, md, mroots,
           cand, matched, idx, used, ok, perms, set, mt, lastDeg, tol, dists, pos, rprec},
@@ -1888,6 +1928,12 @@ galoisGroupNumerically[roots_List, nums_List, prec_, maxOrder_, maxTries_] :=
       Do[
         w = kRandomChoice[Complement[Range[1, Max[60, maxTries]], used]];
         AppendTo[used, w];
+        (* the next elimination is a resultant of degree Length[orbit] n; on a
+           kernel without a native factoriser it is refused beyond
+           $kResolventLimit rather than left to run for hours *)
+        If[Length[orbit] n > $kResolventLimit,
+          Throw[failure["EngineLimit", "The Galois engine on this kernel stops at a resolvent of this size",
+            <|"ResultantDegree" -> Length[orbit] n, "Limit" -> $kResolventLimit|>], failTag]];
         newTheta = kRootReduce[thetaExact + w roots[[k]]];
         m = minimalPolynomialOf[newTheta];
         If[m === $Failed, Continue[]];

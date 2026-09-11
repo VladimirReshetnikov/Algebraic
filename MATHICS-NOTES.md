@@ -399,6 +399,19 @@ in a worker thread, sets the evaluation's `stopped` flag past the limit,
 then raises a `BaseException` subclass in the thread until it ends; the
 statement is reported as `TIMEOUT` and the kernel goes on.
 
+### Arithmetic in one algebraic number: reduce, do not eliminate
+
+A polynomial in a single `Root` object `b` of an irreducible `f` has a
+unique representative of degree below `deg f`, computable by one
+polynomial remainder. On Mathics the package returns that representative
+from `kRootReduce` (and decides `kExactZeroQ` from it), where the Wolfram
+kernel would return a new `Root` object of the same value: the
+representative is structurally canonical, so `===` on reduced coefficients
+is an exact equality test, and it costs milliseconds against seconds for
+the elimination plus numerical root index that a fresh `Root` object
+needs. The eight functions of the functional decomposition, whose
+coefficients live in such a field, got five to fifty times faster.
+
 ### Where the Galois engine stops on Mathics
 
 With the numerics of section 0.5b in place, `RootGaloisData[Root[#^3 - 2
@@ -429,6 +442,14 @@ symbol in Mathics: a stand-in definition needs `Unprotect` first.
   the requested precision and sorts the list into the Wolfram kernel's
   `Root` order itself. (An earlier note here said `Eigenvalues` of a
   numerical matrix was wrong or slow; that was on an exact matrix.)
+- **`Eigenvalues` of a badly scaled machine matrix aborts the
+  interpreter.** On the companion matrix of a degree-12 resolvent with
+  coefficients up to `2*10^14`, SymPy's `_eigenvals_eigenvects_mpmath`
+  raised `PrecisionExhausted`, which no `Quiet` or `Check` catches; at 30
+  digits it failed on a plain quartic. Balancing the polynomial first (`x =
+  s y`, `s` the root-radius bound, every entry then at most 1) makes the
+  same matrix solve in 0.6 s with residual `10^-13`; the roots are `s`
+  times the eigenvalues.
 - Durand-Kerner written in the language is not an option: 61 s for a
   sextic, 411 s for degree 12, at a millisecond or more per scalar
   operation.
