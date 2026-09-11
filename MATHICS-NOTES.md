@@ -155,6 +155,10 @@ looks plausible.
   radicals can return `Indeterminate`, which is how `DenestRadicals[(2^(1/3) -
   1)^(1/3)]` reached it inside the coefficient-list division of section 0.
   Test coefficients for `Indeterminate` before comparing them.
+- **`table[key] = value` on a Module-local association is refused**
+  (`Tag Association in <|...|>[key] is Protected`) where the Wolfram kernel
+  extends the association; the entry is silently missing afterwards.
+  `kAssociateTo[table, key -> value]` everywhere.
 - **Assignment through a negative part index writes a different element.**
   `Module[{l = {1, 2, 3}}, l[[-1]] = 9; l]` gives `{1, 9, 3}`. The positive
   form `l[[Length[l]]] = 9` is correct. (The package had one such assignment,
@@ -440,7 +444,15 @@ coefficient (over 600 s) and a Gaussian binary-sum search (over 300 s)
   `_iszero` asks the assumptions system whether the entry is zero, which
   evaluates it;
 - `z^n` of a complex bignum inside the factor-selection residual (the
-  machine-precision `Power` defect, which also made the selection wrong).
+  machine-precision `Power` defect, which also made the selection wrong);
+- **any `Expand`, `PolynomialQ`, `Coefficient` or `Exponent` on an
+  expression containing a `Root` object**: converting it to SymPy builds a
+  `CRootOf`, whose constructor factors the polynomial and isolates every
+  root (`_indexed_root`, `_get_complexes`, `dup_zz_factor` in the profile of
+  a cubic Galois descent: about 80 s of 240). `kExpand` and `kPolynomialQ`
+  replace the `Root` objects by symbols around the call and put them back;
+  the reductions of that descent went from 10-24 s to 4-9 s each and the
+  descent from over 240 s to 108 s.
 
 The package now keeps `Root` objects away from all of these on that
 kernel: `kN`/`kRootValue` evaluate through the ordered eigenvalues and
