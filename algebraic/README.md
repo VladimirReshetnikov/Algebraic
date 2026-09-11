@@ -9,7 +9,7 @@ that were developed as separate projects in this repository:
 | functional decomposition of a polynomial with exact algebraic coefficients, `p = f(g(x))` | `AlgebraicDecompose` and seven companions | `algebraic.polynomial_decomposition` | [`polynomial-decompose/`](../polynomial-decompose) |
 | an algebraic number as a sum or a product of algebraic numbers of the smallest possible maximum degree | `RootSumDecomposition`, `RootProductDecomposition`, `RootGaloisData`, … | `algebraic.root_decomposition` | [`root-decomposition/`](../root-decomposition) |
 | an algebraic number by radicals whenever its Galois group is solvable | `RootToRadicals`, `RootRadicalReport`, `RootSolvableQ` | `algebraic.radicals` | [`root-to-radicals/`](../root-to-radicals) |
-| removal of nested root extractions, certified by exact algebra | `Strad`, `DenestReport`, `EqualityStatus`, … | — | [`radical-denest/`](../radical-denest) |
+| removal of nested root extractions, certified by exact algebra | `DenestRadicals`, `DenestReport`, `EqualityStatus`, … | — | [`radical-denest/`](../radical-denest) |
 
 The Wolfram package runs in the Wolfram kernel and in
 [Mathics3](https://mathics.org/). The four source projects keep their
@@ -22,17 +22,17 @@ each part came from.
 ```wolfram
 Get["algebraic/Algebraic.wl"];
 
-AlgebraicDecompose[(x^2 + Sqrt[2] x)^3 + x^2 + Sqrt[2] x, x]
-(* {x + x^3, Sqrt[2] x + x^2} *)
+AlgebraicDecompose[(x^2 + √2 x)^3 + x^2 + √2 x, x]
+(* {x + x^3, √2 x + x^2} *)
 
 RootProductDecomposition[Root[-1 - # + 3 #^3 - #^4 + #^5 - 3 #^6 + 2 #^7 + #^9 &, 1]]["Expression"]
 (* Inactive[Times][Root[1 + # + #^3 &, 1], Root[1 - # + #^3 &, 1]] *)
 
 RootToRadicals[Root[#^4 - 10 #^2 + 1 &, 4]]
-(* Sqrt[5 + 2 Sqrt[6]] *)
+(* Sqrt[5 + 2 √6] *)
 
-Strad[Sqrt[5 + 2 Sqrt[6]]]
-(* Sqrt[2] + Sqrt[3] *)
+DenestRadicals[Sqrt[5 + 2 √6]]
+(* √2 + √3 *)
 
 AlgebraicKernelReport[]
 (* which System functions the kernel supplies, which the package had to, and
@@ -64,7 +64,7 @@ packages loaded side by side:
   predicate inside the radical grammar. The pair kept (section 5 of the
   file) checks the arity of a `Power` node, treats `Root` and
   `AlgebraicNumber` as opaque, and gives depth 0 to a head outside the
-  grammar (`Sin[Sqrt[2]]`, a list), as the radical descent did; the denester
+  grammar (`Sin[√2]`, a list), as the radical descent did; the denester
   had taken the maximum over the parts of any head, which its own
   candidates never exercised.
 * `rationalQ` and `positiveIntegerQ` were defined three times, identically;
@@ -103,11 +103,11 @@ Measured on Mathics3 10.0.1, with Wolfram 15.0.1 giving the same answers
 | | Mathics3 10.0.1 |
 | --- | --- |
 | `AlgebraicDecompose`, all eight functions | available; the algebraic-coefficient example in 1 s |
-| `Strad` and the denesting family | available; `Sqrt[5 + 2 Sqrt[6]]` in 1.7 s, `(239 + 169 Sqrt[2])^(1/7)` in 1.9 s; the Kummer multipliers that need factorisation over an extension are not tried, the other methods are; `(2^(1/3) - 1)^(1/3)` is not denested within a two-minute budget |
+| `DenestRadicals` and the denesting family | available; `Sqrt[5 + 2 √6]` in 1.7 s, `(239 + 169 √2)^(1/7)` in 1.9 s; the Kummer multipliers that need factorisation over an extension are not tried, the other methods are; `(2^(1/3) - 1)^(1/3)` is not denested within a two-minute budget |
 | `EqualityStatus`, `CertifiedEqualQ`, `RadicalCost`, the grammar | available, exact |
 | `RootDecompositionLowerBound`, `RootDecompositionVerify`, `RootSolvableQ` | available; the lower bound scans ten primes rather than forty, which leaves it rigorous but not always as sharp; `RootSolvableQ` answers from the Frobenius tests when they decide, and otherwise needs the Galois group -- the solvable quintic `#^5 - 5 # + 12` did not finish in ten minutes |
-| `RootGaloisData` | available for small splitting fields: `#^3 - 2` (order 6) in 41 s, `#^4 - 10 #^2 + 1` with its subfield lattice in 18 s; `Sqrt[2] 3^(1/3)` (degree 6, order 12) reaches its full group at the third resolvent in a few minutes and then does not finish -- see below |
-| `RootSumDecomposition`, `RootProductDecomposition` | available within the same limit; `Sqrt[2] + Sqrt[3]` in 17 s; the degree-9 product example of `Examples.wl` does not finish in an hour |
+| `RootGaloisData` | available for small splitting fields: `#^3 - 2` (order 6) in 41 s, `#^4 - 10 #^2 + 1` with its subfield lattice in 18 s; `√2 3^(1/3)` (degree 6, order 12) reaches its full group at the third resolvent in a few minutes and then does not finish -- see below |
+| `RootSumDecomposition`, `RootProductDecomposition` | available within the same limit; `√2 + √3` in 17 s; the degree-9 product example of `Examples.wl` does not finish in an hour |
 | `RootToRadicals` | the structural recognizers in milliseconds (`Root[#^4 - 10 #^2 + 1 &, 4]` in 1.2 s); the Galois-Kummer descent within the engine's limit |
 
 Four things keep the Mathics run within hours rather than days, and are

@@ -889,7 +889,7 @@ VerificationTest[RootRadicalReport[Root[#^3 - 2 &, 1], Method -> "Nope"][[1]], "
 
 Begin["AlgebraicTests`Denest`"];
 ClearAll[d, eq, depth, improves, x, y, f, h];
-d[e_, opts___] := Algebraic`Strad[e, opts];
+d[e_, opts___] := Algebraic`DenestRadicals[e, opts];
 eq[a_, b_] := TrueQ[RootReduce[a - b] === 0];
 depth[e_] := Algebraic`RadicalDepth[e];
 improves[e_, target_, opts___] := Module[{v = d[e, opts]}, eq[v, target] && depth[v] < depth[e]];
@@ -900,8 +900,8 @@ VerificationTest[Algebraic`CertifiedEqualQ[Sqrt[3 - 2 Sqrt[2]], 1 - Sqrt[2]], Fa
 VerificationTest[Algebraic`CertifiedEqualQ[Sqrt[2], Sqrt[2] + 10^-100], False, TestID -> "R4-no-numerical-tolerance-acceptance"]
 VerificationTest[Algebraic`CertifiedEqualQ[x, x], False, TestID -> "R4-symbolic-equality-is-not-algebraic-certificate"]
 VerificationTest[{Algebraic`ExactAlgebraicQ[Pi], Algebraic`ExactAlgebraicQ[N[Sqrt[2]]], Algebraic`ExactAlgebraicQ[(1 + I)/2]}, {False, False, True}, TestID -> "R4-supported-exact-domain"]
-VerificationTest[Block[{Algebraic`Private`$cfg = Association[Options[Algebraic`Strad]]}, Algebraic`Private`validPolynomialQ[$Failed, x]], False, TestID -> "R4-failed-is-not-an-accepted-polynomial"]
-VerificationTest[Block[{Algebraic`Private`$cfg = Association[Options[Algebraic`Strad]]}, Algebraic`Private`validPolynomialQ[7, x]], False, TestID -> "R4-constant-is-not-a-minimal-polynomial"]
+VerificationTest[Block[{Algebraic`Private`$cfg = Association[Options[Algebraic`DenestRadicals]]}, Algebraic`Private`validPolynomialQ[$Failed, x]], False, TestID -> "R4-failed-is-not-an-accepted-polynomial"]
+VerificationTest[Block[{Algebraic`Private`$cfg = Association[Options[Algebraic`DenestRadicals]]}, Algebraic`Private`validPolynomialQ[7, x]], False, TestID -> "R4-constant-is-not-a-minimal-polynomial"]
 VerificationTest[Algebraic`RadicalDepth[Root[#^5 - # - 1 &, 1]], 0, TestID -> "R4-root-payload-is-opaque"]
 VerificationTest[First[Algebraic`RadicalCost[Root[#^5 - # - 1 &, 1]]], 1, TestID -> "R4-root-representation-is-not-free"]
 VerificationTest[Algebraic`RadicalCost[{}], {0, 0, 0, LeafCount[{}], 0}, TestID -> "R4-empty-list-metrics"]
@@ -923,7 +923,7 @@ VerificationTest[Module[{e = (x + 1) (x - 1)}, SameQ[Algebraic`Factorc[e], e]], 
 VerificationTest[Algebraic`CertifiedEqualQ[Algebraic`RationalizeDenominator[1/(1 + Sqrt[2])], Sqrt[2] - 1], True, TestID -> "R4-horner-inverse"]
 VerificationTest[Algebraic`CertifiedEqualQ[Algebraic`RationalizeDenominator[x/(1 + Sqrt[2])] /. x -> 1, Sqrt[2] - 1], True, TestID -> "R4-symbolic-numerator-local-inverse-certificate"]
 VerificationTest[Algebraic`CertifiedEqualQ[Sqrt[I] (-1 + I), -Sqrt[2]], True, TestID -> "R4-aggregate-positive-factor-is-not-termwise-license"]
-VerificationTest[Module[{saved = Options[Algebraic`Strad], e = Sqrt[5 + 2 Sqrt[6]], r}, SetOptions[Algebraic`Strad, "TimeBudget" -> 0]; r = d[e]; SetOptions[Algebraic`Strad, Sequence @@ saved]; SameQ[r, e]], True, TestID -> "R4-setoptions-strad-is-effective"]
+VerificationTest[Module[{saved = Options[Algebraic`DenestRadicals], e = Sqrt[5 + 2 Sqrt[6]], r}, SetOptions[Algebraic`DenestRadicals, "TimeBudget" -> 0]; r = d[e]; SetOptions[Algebraic`DenestRadicals, Sequence @@ saved]; SameQ[r, e]], True, TestID -> "R4-setoptions-strad-is-effective"]
 VerificationTest[Module[{saved = Options[Algebraic`DenestRadicals], e = Sqrt[5 + 2 Sqrt[6]], r}, SetOptions[Algebraic`DenestRadicals, "TimeBudget" -> 0]; r = Algebraic`DenestRadicals[e]; SetOptions[Algebraic`DenestRadicals, Sequence @@ saved]; SameQ[r, e]], True, TestID -> "R4-setoptions-wrapper-is-effective"]
 VerificationTest[Module[{r = Algebraic`DenestReport[Sqrt[5 + 2 Sqrt[6]], "TimeBudget" -> 0]}, r["Statistics"]["Trials"] === 0 && MemberQ[r["Limits"], "TimeBudget"] && SameQ[r["Result"], Sqrt[5 + 2 Sqrt[6]]]], True, TestID -> "R4-zero-budget-no-work"]
 VerificationTest[And @@ (FailureQ[d[Sqrt[1 + Sqrt[2]], #]] & /@ {"MultiplierCap" -> Infinity, "MultiplierCap" -> -1, "MultiplierCap" -> 1/2, "MaxTrials" -> -1, "TimeBudget" -> Infinity, "TimeBudget" -> -1, "MaxRootIndex" -> 0, "AllLevels" -> "yes", "Bogus" -> 1}), True, TestID -> "R4-invalid-options-fail-explicitly"]
@@ -955,7 +955,7 @@ VerificationTest[Module[{a = Sqrt[5 + 2 Sqrt[6]], r}, r = Algebraic`DenestReport
 VerificationTest[FailureQ[Algebraic`DenestReport[Sqrt[5 + 2 Sqrt[6]], "MaxTrials" -> -1]], True, TestID -> "R5-invalid-integer-option"]
 VerificationTest[FailureQ[Algebraic`DenestReport[Sqrt[5 + 2 Sqrt[6]], "TimeBudget" -> "bad"]], True, TestID -> "R5-invalid-time-option"]
 VerificationTest[FailureQ[Algebraic`DenestReport[Sqrt[5 + 2 Sqrt[6]], "UnknownOption" -> 1]], True, TestID -> "R5-unknown-option-rejected"]
-VerificationTest[Module[{defaults = Options[Algebraic`Strad], a = Sqrt[5 + 2 Sqrt[6]], result}, SetOptions[Algebraic`Strad, "TimeBudget" -> 0]; result = d[a]; SetOptions[Algebraic`Strad, Sequence @@ defaults]; SameQ[result, a]], True, TestID -> "R5-SetOptions-on-alias-is-honored"]
+VerificationTest[Module[{defaults = Options[Algebraic`DenestRadicals], a = Sqrt[5 + 2 Sqrt[6]], result}, SetOptions[Algebraic`DenestRadicals, "TimeBudget" -> 0]; result = d[a]; SetOptions[Algebraic`DenestRadicals, Sequence @@ defaults]; SameQ[result, a]], True, TestID -> "R5-SetOptions-on-alias-is-honored"]
 VerificationTest[Module[{a = Sqrt[5 + 2 Sqrt[6]], r}, r = Algebraic`DenestReport[a, "MaxTrials" -> 0]; r["Statistics"]["Trials"] === 0 && eq[r["Result"], a] && depth[r["Result"]] === 1], True, TestID -> "R5-zero-trials-disables-only-multiplier-search"]
 VerificationTest[Module[{r = Algebraic`DenestReport[{Sqrt[2 + Sqrt[2]], Sqrt[3 + Sqrt[3]]}, "MaxTrials" -> 1, "TimeBudget" -> 30]}, r["Statistics"]["Trials"] <= 2], True, TestID -> "R5-per-island-list-trial-budget"]
 VerificationTest[Module[{a = Sqrt[5 + 2 Sqrt[6]], b}, b = d[a, True]; SameQ[d[b, True], b]], True, TestID -> "R5-simple-idempotence"]
@@ -966,7 +966,7 @@ VerificationTest[Module[{a = Sqrt[5 + 2 Sqrt[6]], r}, r = Algebraic`DenestReport
 VerificationTest[Module[{a = Sqrt[5 + 2 Sqrt[6]], r}, r = Algebraic`DenestReport[a, "MaxTraceEntries" -> 0]; r["Certificates"] === {} && eq[r["Result"], a]], True, TestID -> "R5-bounded-certificate-records"]
 VerificationTest[Module[{a = (2^(1/3) - 1)^(1/3), b}, b = Algebraic`DenestCore[a, "Multipliers" -> {9}, "Factor" -> False]; eq[b, a] && depth[b] == 1], True, TestID -> "R5-ramanujan-cubic-multiplier-nine"]
 
-(* ---------------- R6: review-6, tests/StradImproved.wlt ---------------- *)
+(* ---------------- R6: review-6, tests/DenestRadicalsImproved.wlt ---------------- *)
 VerificationTest[improves[Sqrt[3 + 2 Sqrt[2]], 1 + Sqrt[2], "MaxTrials" -> 0], True, TestID -> "R6-direct-plus"]
 VerificationTest[improves[Sqrt[3 - 2 Sqrt[2]], Sqrt[2] - 1, "MaxTrials" -> 0], True, TestID -> "R6-direct-minus"]
 VerificationTest[improves[Sqrt[5 + 2 Sqrt[6]], Sqrt[2] + Sqrt[3], "MaxTrials" -> 0], True, TestID -> "R6-two-surds"]
@@ -1000,7 +1000,7 @@ VerificationTest[FailureQ[d[Sqrt[2], "MaxTrials" -> -1]], True, TestID -> "R6-ne
 VerificationTest[FailureQ[d[Sqrt[2], "TimeBudget" -> -1]], True, TestID -> "R6-negative-budget-invalid"]
 VerificationTest[FailureQ[d[Sqrt[2], "AllLevels" -> "yes"]], True, TestID -> "R6-boolean-option-invalid"]
 VerificationTest[FailureQ[d[Sqrt[2], "NotAnOption" -> 1]], True, TestID -> "R6-unknown-option-invalid"]
-VerificationTest[Module[{saved = Options[Algebraic`Strad], out}, SetOptions[Algebraic`Strad, "TimeBudget" -> 0]; out = d[Sqrt[3 + 2 Sqrt[2]]]; SetOptions[Algebraic`Strad, Sequence @@ saved]; out], Sqrt[3 + 2 Sqrt[2]], TestID -> "R6-setoptions-respected"]
+VerificationTest[Module[{saved = Options[Algebraic`DenestRadicals], out}, SetOptions[Algebraic`DenestRadicals, "TimeBudget" -> 0]; out = d[Sqrt[3 + 2 Sqrt[2]]]; SetOptions[Algebraic`DenestRadicals, Sequence @@ saved]; out], Sqrt[3 + 2 Sqrt[2]], TestID -> "R6-setoptions-respected"]
 VerificationTest[d[Sqrt[3 + 2 Sqrt[2]], "TimeBudget" -> 0, "TimeBudget" -> 30], Sqrt[3 + 2 Sqrt[2]], TestID -> "R6-first-explicit-option-wins"]
 VerificationTest[Algebraic`DenestReport[Sqrt[1 + Sqrt[2]], "MultiplierCap" -> 0]["Statistics"]["Trials"], 0, TestID -> "R6-zero-cap-no-search"]
 VerificationTest[Module[{r = Algebraic`DenestReport[{Sqrt[2 + Sqrt[2]], Sqrt[1 + Sqrt[3]]}, "MaxTrials" -> 1, "MultiplierCap" -> 2, "TimeBudget" -> 10]}, r["Statistics"]["Trials"] <= 2], True, TestID -> "R6-per-island-list-trials"]
@@ -1064,13 +1064,13 @@ VerificationTest[Algebraic`EqualityStatus[0, 10^-100], "Different", TestID -> "C
 VerificationTest[Algebraic`EqualityStatus[(-8)^(1/3), -2], "Different", TestID -> "C-R7-principal-not-real-cube-root"]
 VerificationTest[Algebraic`CertifiedEqualQ[Pi, Pi], False, TestID -> "C-R7-outside-grammar-not-certified"]
 VerificationTest[Block[{Algebraic`Private`numericallyDifferentQ = (True &)}, Algebraic`EqualityStatus[Sqrt[5 + 2 Sqrt[6]], Sqrt[2] + Sqrt[3]]], "Equal", TestID -> "C-R7-injected-numeric-hint-cannot-decide"]
-VerificationTest[FailureQ /@ {Algebraic`Strad[1, 17], Algebraic`Strad[], Algebraic`Strad[1, "Typo" -> 1], Algebraic`Strad[1, "TimeBudget" -> Infinity], Algebraic`Strad[1, "MaxTrials" -> -1], Algebraic`Strad[1, "AllLevels" -> 1], Algebraic`Strad[1, "MaxSolveDegree" -> 5]}, ConstantArray[True, 7], TestID -> "C-R7-malformed-and-invalid-options-fail"]
+VerificationTest[FailureQ /@ {Algebraic`DenestRadicals[1, 17], Algebraic`DenestRadicals[], Algebraic`DenestRadicals[1, "Typo" -> 1], Algebraic`DenestRadicals[1, "TimeBudget" -> Infinity], Algebraic`DenestRadicals[1, "MaxTrials" -> -1], Algebraic`DenestRadicals[1, "AllLevels" -> 1], Algebraic`DenestRadicals[1, "MaxSolveDegree" -> 5]}, ConstantArray[True, 7], TestID -> "C-R7-malformed-and-invalid-options-fail"]
 VerificationTest[FailureQ /@ {Algebraic`DenestRadicals[], Algebraic`DenestCore[], Algebraic`DenestReport[], Algebraic`DenestReport[1, 2, 3]}, {True, True, True, True}, TestID -> "C-R7-every-entry-point-rejects-malformed-calls"]
 VerificationTest[Algebraic`DenestReport[Sqrt[5 + 2 Sqrt[6]], "TimeBudget" -> 0]["Status"], "Disabled", TestID -> "C-R7-zero-budget-disabled"]
 VerificationTest[Algebraic`DenestReport[1, "TimeBudget" -> 0][[{"InitialCost", "FinalCost"}]], <|"InitialCost" -> Missing["NotComputed"], "FinalCost" -> Missing["NotComputed"]|>, TestID -> "C-R7-disabled-no-unbudgeted-cost"]
 VerificationTest[Algebraic`DenestReport[1, {"MaxTrials" -> 0}, "TimeBudget" -> 0]["Options"]["MaxTrials"], 0, TestID -> "C-R7-nested-option-list"]
 VerificationTest[Algebraic`DenestReport[1, "MaxTrials" -> 0, "MaxTrials" -> 3]["Options"]["MaxTrials"], 0, TestID -> "C-R7-first-option-wins"]
-VerificationTest[Module[{old = Options[Algebraic`Strad], r}, SetOptions[Algebraic`Strad, "TimeBudget" -> 0]; r = Algebraic`Strad[Sqrt[5 + 2 Sqrt[6]]]; Options[Algebraic`Strad] = old; r], Sqrt[5 + 2 Sqrt[6]], TestID -> "C-R7-setoptions-entrypoint"]
+VerificationTest[Module[{old = Options[Algebraic`DenestRadicals], r}, SetOptions[Algebraic`DenestRadicals, "TimeBudget" -> 0]; r = Algebraic`DenestRadicals[Sqrt[5 + 2 Sqrt[6]]]; Options[Algebraic`DenestRadicals] = old; r], Sqrt[5 + 2 Sqrt[6]], TestID -> "C-R7-setoptions-entrypoint"]
 VerificationTest[{Algebraic`RadicalDepth[Sqrt[1 + Sqrt[2]]], Algebraic`RadicalDepth[Root[#^5 + Sqrt[2] # + 1 &, 1]], Algebraic`RadicalCost[Root[#^5 + Sqrt[2] # + 1 &, 1]][[3]]}, {2, 0, 0}, TestID -> "C-R7-opaque-depth-and-radical-count"]
 VerificationTest[Algebraic`RadicalCost[1 + 2^100 I][[5]] > Algebraic`RadicalCost[1 + I][[5]], True, TestID -> "C-R7-complex-bit-size"]
 VerificationTest[improves[(41 - 29 Sqrt[2])^(1/5), (-1)^(1/5) (Sqrt[2] - 1)], True, TestID -> "C-R7-negative-fifth-root"]
@@ -1113,7 +1113,7 @@ VerificationTest[session[Block[{Algebraic`Private`powerProposals = Function[{tar
 VerificationTest[Algebraic`ExactAlgebraicQ[AlgebraicNumber[Root[#^3 - # - 1 &, 1], {1, 2, 3}]], True, TestID -> "C-R9-domain-algebraic-number"]
 VerificationTest[Algebraic`EqualityStatus[Sqrt[3 + 2 Sqrt[2]], -1 - Sqrt[2]], "Different", TestID -> "C-R9-equality-wrong-branch"]
 VerificationTest[Algebraic`Private`bitSize[1 + I] > 0, True, TestID -> "C-R9-cost-gaussian-bits"]
-VerificationTest[FailureQ /@ {Algebraic`DenestCore[Sqrt[2], "MaxTrials" -> -1], Algebraic`DenestReport[Sqrt[2], "MaxCosets" -> 5/2], Algebraic`Strad[Sqrt[2], 123]}, {True, True, True}, TestID -> "C-R9-option-failures"]
+VerificationTest[FailureQ /@ {Algebraic`DenestCore[Sqrt[2], "MaxTrials" -> -1], Algebraic`DenestReport[Sqrt[2], "MaxCosets" -> 5/2], Algebraic`DenestRadicals[Sqrt[2], 123]}, {True, True, True}, TestID -> "C-R9-option-failures"]
 VerificationTest[MissingQ[Algebraic`DenestReport[Sqrt[2], "TimeBudget" -> 0]["InitialCost"]], True, TestID -> "C-R9-zero-budget-no-post-cost"]
 VerificationTest[Algebraic`DenestCore[Sqrt[3 + 2 Sqrt[2]], "MaxTrials" -> 0], 1 + Sqrt[2], TestID -> "C-R9-direct-quadratic"]
 VerificationTest[Algebraic`DenestCore[Sqrt[3 - 2 Sqrt[2]], "MaxTrials" -> 0], Sqrt[2] - 1, TestID -> "C-R9-quadratic-negative-coefficient"]

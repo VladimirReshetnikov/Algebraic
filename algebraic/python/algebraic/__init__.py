@@ -19,7 +19,7 @@ its engine by putting a sibling directory on ``sys.path``; here it is an
 ordinary package import.
 
 The Wolfram Language counterpart is ``algebraic/Algebraic.wl``, which carries
-a fourth operation, radical denesting (``Strad``), that has no Python
+a fourth operation, radical denesting (``DenestRadicals``), that has no Python
 implementation.
 
 The names below are the ones a caller normally needs; everything else stays

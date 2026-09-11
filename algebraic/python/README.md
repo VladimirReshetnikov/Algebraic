@@ -10,7 +10,7 @@ that were developed as separate top-level modules, in one importable package:
 | `algebraic.radicals` | an algebraic number by radicals whenever its Galois group is solvable | the Galois engine of `root_decomposition`, plus SymPy for the low-degree formulas |
 
 The Wolfram Language counterpart is [`../Algebraic.wl`](../Algebraic.wl). It
-carries a fourth operation, radical denesting (`Strad`), which has no Python
+carries a fourth operation, radical denesting (`DenestRadicals`), which has no Python
 implementation; that asymmetry is the only difference in scope between the
 two packages.
 

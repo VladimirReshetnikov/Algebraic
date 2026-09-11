@@ -14,7 +14,7 @@
      * expression of an algebraic number by radicals whenever its Galois group
        is solvable                                   RootToRadicals
      * removal of nested root extractions from an exact algebraic expression
-                                                     Strad
+                                                     DenestRadicals
 
    The merge is not a bundle.  The Galois engine (numerical resolvents, tower
    basis, trace-form coordinates) is written once and used by the sum/product
@@ -99,8 +99,7 @@ RootSolvableQ::usage = "RootSolvableQ[a] gives True if the Galois group of the m
 (* Denesting                                                          *)
 (* ------------------------------------------------------------------ *)
 
-Strad::usage = "Strad[expr, opts] denests the exact algebraic radicals occurring in expr and returns an expression certified equal to expr. Strad[expr, True, opts] also processes inner nesting levels and repeats passes while they improve the result.";
-DenestRadicals::usage = "DenestRadicals[expr, opts] is the option-driven form of Strad with its own option defaults.";
+DenestRadicals::usage = "DenestRadicals[expr, opts] denests the exact algebraic radicals occurring in expr and returns an expression certified equal to expr. DenestRadicals[expr, True, opts] also processes inner nesting levels and repeats passes while they improve the result.";
 DenestCore::usage = "DenestCore[problem, opts] denests one exact algebraic number without traversing a symbolic host.";
 DenestReport::usage = "DenestReport[expr, opts] returns an Association with the result (\"Result\"), \"Status\", \"Limits\", \"Statistics\", \"Certificates\", \"ElapsedSeconds\", \"Options\" and an optional bounded \"Trace\".";
 EqualityStatus::usage = "EqualityStatus[a, b] is \"Equal\", \"Different\" or \"Unknown\" for exact algebraic numbers a and b, decided by exact algebra only (a canonical algebraic reduction, then an exact zero test) within a time limit; inputs outside the supported grammar give \"Unknown\".";
@@ -383,7 +382,7 @@ If[kNativeQ["MemoryConstrained"],
    10.0.1 a Check takes its failure branch when any message was issued, or any
    Print performed, earlier in the same top-level evaluation -- inside a
    Module, several calls deep, and regardless of an inner Quiet.  A caller
-   that prints progress, or the "Verbose" option of Strad, would therefore
+   that prints progress, or the "Verbose" option of DenestRadicals, would therefore
    turn every later Check into a spurious failure.
 
    kCheck evaluates its first argument with messages suppressed and decides
@@ -1483,7 +1482,7 @@ AlgebraicKernelReport[] := Module[{native, emulated},
       "RootSolvableQ" -> True,
       "RootToRadicals" -> If[kNativeQ["RootPrecision"], True,
         "Only the structural recognizers; the Galois-Kummer descent needs the Galois engine."],
-      "Strad" -> If[kNativeQ["FactorExtension"], True,
+      "DenestRadicals" -> If[kNativeQ["FactorExtension"], True,
         "Kummer multipliers found by factorisation over an extension are not available; the other denesting methods are."]|>|>];
 
 galoisNote := If[kNativeQ["RootPrecision"], True,
@@ -3294,7 +3293,7 @@ RootSolvableQ[a_, opts : OptionsPattern[RootToRadicals]] := Module[{in = inputDa
 (* ================================================================ *)
 
 (* From radical-denest/corrected/StradFixed3.wl (context RadicalDenest3`).
-   Strad rewrites an exact algebraic expression with fewer nested root
+   DenestRadicals rewrites an exact algebraic expression with fewer nested root
    extractions.  Its contract is unchanged by the merge:
 
      * every replaced island is certified equal to the island it replaces by
@@ -3314,7 +3313,7 @@ RootSolvableQ[a_, opts : OptionsPattern[RootToRadicals]] := Module[{in = inputDa
    without a memory limit the memory budget is not enforced; the time budget
    still is, and AlgebraicKernelReport[] says so. *)
 
-Options[Strad] = {"AllLevels" -> False, "Verbose" -> False, "Trace" -> False,
+Options[DenestRadicals] = {"AllLevels" -> False, "Verbose" -> False, "Trace" -> False,
    "Multipliers" -> Automatic, "Solver" -> Automatic, "Factor" -> True,
    "MaxTrials" -> 120, "TimeBudget" -> 120, "OperationTime" -> 30,
    "CertifyTime" -> 20, "MemoryBudget" -> 1073741824,
@@ -3322,16 +3321,15 @@ Options[Strad] = {"AllLevels" -> False, "Verbose" -> False, "Trace" -> False,
    "MaxSolveDegree" -> 4, "MaxLeafCount" -> 20000, "MaxPasses" -> 4,
    "MaxRecursion" -> 3, "Patience" -> 25, "NumericPrefilter" -> False, "MaxTraceEntries" -> 200,
    "MaxOddIndex" -> 9, "DiscriminantBatchCap" -> 24, "MaxCosets" -> 16};
-Options[DenestRadicals] = Options[Strad];
-Options[DenestCore] = Options[Strad];
-Options[DenestReport] = Options[Strad];
+Options[DenestCore] = Options[DenestRadicals];
+Options[DenestReport] = Options[DenestRadicals];
 
 (* ------------------------------------------------------------------ *)
 (* session state (dynamically scoped by run[]), statistics, tracing   *)
 (* ------------------------------------------------------------------ *)
 
 $active = False;
-$cfg = kDefaultConfig[Strad];
+$cfg = kDefaultConfig[DenestRadicals];
 $deadline = Infinity;
 $stats = <||>; $limits = <||>; $trace = {}; $records = {}; $memo = <||>; $inProgress = <||>;
 $recursion = 0; $lastCertificateMethod = "None";
@@ -3529,7 +3527,7 @@ certify[a_, b_] := Module[{d, r},
 
 SetAttributes[standalone, HoldAll];
 standalone[body_, failure_] := If[TrueQ[$active], body,
-   Block[{$active = True, $cfg = kDefaultConfig[Strad], $deadline = AbsoluteTime[] + 20,
+   Block[{$active = True, $cfg = kDefaultConfig[DenestRadicals], $deadline = AbsoluteTime[] + 20,
      $stats = newStats[], $limits = <||>, $trace = {}, $records = {}, $memo = <||>, $inProgress = <||>,
      $recursion = 0, $lastCertificateMethod = "None", $Assumptions = True},
     kCheck[TimeConstrained[kMemoryConstrained[body, 1073741824], 20 $kTimeScale, failure], failure]]];
@@ -4196,15 +4194,12 @@ invoke[e_, head_Symbol, rules_List, report_, core_] := Module[{cfg, result},
    If[TrueQ[report], result, result["Result"]]];
 
 (* every argument sequence reaches the option validator, so a malformed call
-   such as Strad[e, 17] returns a Failure instead of staying unevaluated *)
-Strad[e_, all : (True | False), args___] := invoke[e, Strad, {"AllLevels" -> all, args}, False, False];
-Strad[e_, args___] := invoke[e, Strad, {args}, False, False];
+   such as DenestRadicals[e, 17] returns a Failure instead of staying unevaluated *)
 DenestRadicals[e_, all : (True | False), args___] := invoke[e, DenestRadicals, {"AllLevels" -> all, args}, False, False];
 DenestRadicals[e_, args___] := invoke[e, DenestRadicals, {args}, False, False];
 DenestCore[e_, args___] := invoke[e, DenestCore, {args}, False, True];
 DenestReport[e_, all : (True | False), args___] := invoke[e, DenestReport, {"AllLevels" -> all, args}, True, False];
 DenestReport[e_, args___] := invoke[e, DenestReport, {args}, True, False];
-Strad[] := Failure["InvalidArguments", <|"MessageTemplate" -> "An expression is required."|>];
 DenestRadicals[] := Failure["InvalidArguments", <|"MessageTemplate" -> "An expression is required."|>];
 DenestCore[] := Failure["InvalidArguments", <|"MessageTemplate" -> "An expression is required."|>];
 DenestReport[] := Failure["InvalidArguments", <|"MessageTemplate" -> "An expression is required."|>];

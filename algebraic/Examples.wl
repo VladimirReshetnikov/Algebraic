@@ -84,9 +84,9 @@ showHeavy["Cyclic quintic 2 cos(2 Pi/11): ", RootToRadicals[Root[#^5 + #^4 - 4 #
 showHeavy["Sextic of the question: ", RootRadicalReport[Root[-1 - #^2 - #^3 + #^4 + #^6 &, 2]]];
 
 (* ---- 4. denesting ---------------------------------------------------- *)
-show["Strad: ", Strad[Sqrt[5 + 2 Sqrt[6]]]];
-show["Strad: ", Strad[(239 + 169 Sqrt[2])^(1/7)]];
-showHeavy["Strad, Ramanujan: ", Strad[(2^(1/3) - 1)^(1/3)]];
+show["DenestRadicals: ", DenestRadicals[Sqrt[5 + 2 Sqrt[6]]]];
+show["DenestRadicals: ", DenestRadicals[(239 + 169 Sqrt[2])^(1/7)]];
+showHeavy["DenestRadicals, Ramanujan: ", DenestRadicals[(2^(1/3) - 1)^(1/3)]];
 rep = DenestReport[Sqrt[5 + 2 Sqrt[6]]];
 show["Report: ", rep["Result"], " ", rep["Status"], " cost ", rep["InitialCost"], " -> ", rep["FinalCost"]];
 show["EqualityStatus: ", EqualityStatus[Sqrt[2] + Sqrt[3], Sqrt[5 + 2 Sqrt[6]]]];

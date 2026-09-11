@@ -344,7 +344,7 @@ the runner wrote one line per test).
   `kNativeQ["FindIntegerNullVector"]` looked up a key the probe table did
   not have, `TrueQ[Missing[...]]` is `False`, and the Wolfram kernel ran the
   interpreted LLL fallback -- which declines more than twelve values -- in
-  place of the native function. `Strad` of the square root of `(Sqrt[2] +
+  place of the native function. `DenestRadicals` of the square root of `(Sqrt[2] +
   Sqrt[3] + Sqrt[5] + Sqrt[7] + Sqrt[11])^2` expanded, 1.25 s in the
   original package, took the whole 60 s budget and returned its input,
   because the sixteen-surd relation `FindIntegerNullVector` finds in 0.1 s

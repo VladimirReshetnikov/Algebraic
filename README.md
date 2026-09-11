@@ -12,8 +12,8 @@ polynomial with exact algebraic coefficients as a composition of
 indecomposable polynomials, and enumerate or certify all normalized answers.
 The root-to-radicals project expresses solvable algebraic numbers in radicals
 using structural family recognizers and Galois descent. The radical-denest
-project removes nested root extractions -- `Sqrt[5 + 2 Sqrt[6]]` becomes
-`Sqrt[2] + Sqrt[3]` -- by reviewing, correcting and certifying an existing
+project removes nested root extractions -- `Sqrt[5 + 2 √6]` becomes
+`√2 + √3` -- by reviewing, correcting and certifying an existing
 Wolfram program through three rounds of code review, with a survey of the
 denesting literature alongside.
 
@@ -30,10 +30,10 @@ changed and exactly what Mathics can and cannot run.
 
 ```wolfram
 Get["algebraic/Algebraic.wl"];
-AlgebraicDecompose[(x^2 + Sqrt[2] x)^3 + x^2 + Sqrt[2] x, x]      (* {x + x^3, Sqrt[2] x + x^2} *)
+AlgebraicDecompose[(x^2 + √2 x)^3 + x^2 + √2 x, x]      (* {x + x^3, √2 x + x^2} *)
 RootProductDecomposition[Root[-1 - # + 3 #^3 - #^4 + #^5 - 3 #^6 + 2 #^7 + #^9 &, 1]]["Expression"]
-RootToRadicals[Root[#^4 - 10 #^2 + 1 &, 4]]                        (* Sqrt[5 + 2 Sqrt[6]] *)
-Strad[Sqrt[5 + 2 Sqrt[6]]]                                        (* Sqrt[2] + Sqrt[3] *)
+RootToRadicals[Root[#^4 - 10 #^2 + 1 &, 4]]                        (* Sqrt[5 + 2 √6] *)
+DenestRadicals[Sqrt[5 + 2 √6]]                                        (* √2 + √3 *)
 ```
 
 ```python
@@ -68,9 +68,9 @@ alg.root_to_radicals("Root[#^4 - 10 #^2 + 1 &, 4]")
 | `polynomial-decompose/reports/` | Three original reports, preserved with their sources, PDFs, code, tests, licenses, and historical validation results. |
 | `root-to-radicals/` | Radical expressions: Wolfram and Python implementations, native and Python tests, independent cross-language checks, and the accompanying article. |
 | `radical-denest/` | Radical denesting: the program under review, its three corrected versions, and three rounds of code review with kernel experiments. |
-| `radical-denest/original/Strad.wl`, `radical-denest/corrected/` | The 585-line program under review, and `StradFixed.wl`, `StradFixed2.wl`, `StradFixed3.wl` in separate contexts, with `KNOWN_GAPS.md` and a usage README. |
+| `radical-denest/original/DenestRadicals.wl`, `radical-denest/corrected/` | The 585-line program under review, and `DenestRadicalsFixed.wl`, `DenestRadicalsFixed2.wl`, `StradFixed3.wl` in separate contexts, with `KNOWN_GAPS.md` and a usage README. |
 | `radical-denest/code-review/unified-A` … `unified-C` | Three rounds of unified analysis (62, 34 and 41 pages, TeX and PDF): catalogued defects with kernel evidence, the design of each corrected version, harnesses, logs, generated tables, and regression suites of 144 and 230 tests. |
-| `radical-denest/code-review/review-7` … `review-9` | Three independent reviews of `StradFixed2.wl` at a pinned commit, each with a report, a proposed `StradFixed3.wl`, a native test suite and executed SymPy checks. |
+| `radical-denest/code-review/review-7` … `review-9` | Three independent reviews of `DenestRadicalsFixed2.wl` at a pinned commit, each with a report, a proposed `StradFixed3.wl`, a native test suite and executed SymPy checks. |
 | `radical-denest/README.md` | The program, what each round of review found and fixed, the literature survey, and the build requirements. |
 | `benchmarks/` | Reproducible comparisons of all three Python solvers against an immutable Git revision, with exact output checks and raw timing samples. |
 | `WOLFRAM-NOTES.md`, `MATHICS-NOTES.md` | Subtle Wolfram Language and [Mathics3](https://mathics.org/) behaviour discovered while developing and running the code, and the portability differences between the two kernels. |
@@ -137,8 +137,8 @@ remain in the original coefficient field in characteristic zero.
 
 ```wolfram
 Get["polynomial-decompose/AlgebraicDecomposition.wl"];
-AlgebraicDecompose[(x^2 + Sqrt[2] x)^3 + x^2 + Sqrt[2] x, x]
-(* {x^3+x, x^2+Sqrt[2] x} *)
+AlgebraicDecompose[(x^2 + √2 x)^3 + x^2 + √2 x, x]
+(* {x^3+x, x^2+√2 x} *)
 ```
 
 From `polynomial-decompose/python/`:
@@ -161,15 +161,15 @@ derivative-factorization approach.
 
 ## Denesting radicals
 
-`Strad` rewrites an exact algebraic expression with fewer nested root
+`DenestRadicals` rewrites an exact algebraic expression with fewer nested root
 extractions and certifies every rewrite against its input by exact algebra;
 an expression it cannot improve comes back unchanged.
 
 ```wolfram
 Get["radical-denest/corrected/StradFixed3.wl"];
-Strad[Sqrt[5 + 2 Sqrt[6]]]          (* Sqrt[2] + Sqrt[3] *)
-Strad[(239 + 169 Sqrt[2])^(1/7)]    (* 1 + Sqrt[2] *)
-DenestReport[Sqrt[5 + 2 Sqrt[6]]]   (* result, status, limits, statistics, certificates *)
+DenestRadicals[Sqrt[5 + 2 √6]]          (* √2 + √3 *)
+DenestRadicals[(239 + 169 √2)^(1/7)]    (* 1 + √2 *)
+DenestReport[Sqrt[5 + 2 √6]]   (* result, status, limits, statistics, certificates *)
 ```
 
 `wolframscript -file radical-denest/code-review/unified-C/tests/run_tests.wls`

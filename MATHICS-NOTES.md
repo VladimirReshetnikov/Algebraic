@@ -152,7 +152,7 @@ looks plausible.
 - **`Indeterminate == 0` aborts the evaluator** (`TypeError: Invalid NaN
   comparison`) instead of staying unevaluated, and so does any `==` whose
   operand evaluates numerically to NaN. `Cancel` of a quotient of nested
-  radicals can return `Indeterminate`, which is how `Strad[(2^(1/3) -
+  radicals can return `Indeterminate`, which is how `DenestRadicals[(2^(1/3) -
   1)^(1/3)]` reached it inside the coefficient-list division of section 0.
   Test coefficients for `Indeterminate` before comparing them.
 - **Assignment through a negative part index writes a different element.**
@@ -393,7 +393,7 @@ the degree-9 product example ran for an hour, a 30 s budget around
 `DenestReport` once ran for 2.4 hours, and the three-argument form was no
 better. Where the whole computation is Mathics-level (loops, pattern
 matching) the cooperative `check_stopped` does end it, which is why
-`Strad`'s own budgets are honoured on cheaper inputs. The test driver
+`DenestRadicals`'s own budgets are honoured on cheaper inputs. The test driver
 `run_mathics.py` enforces its limit itself: it evaluates each statement
 in a worker thread, sets the evaluation's `stopped` flag past the limit,
 then raises a `BaseException` subclass in the thread until it ends; the
