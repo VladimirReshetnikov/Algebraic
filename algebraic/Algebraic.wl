@@ -2238,7 +2238,7 @@ powerCoordinates[gd_, v_, k_Integer?positiveIntegerQ] := Module[{den = LCM @@ De
 (* Fix a denominator once.  For integral B, Norm(B)/B is integral; its conjugates permit exact
    quotient coordinates from integer traces.  Uncertain traces use one lazily cached matrix. *)
 powerDivider[gd_, v_] := Module[{den = LCM @@ Denominator[v], values, norm, reciprocals, matrix, divide},
-  If[v == 0 v, Return[failure["ZeroDenominator", "The field denominator is zero"]]];
+  If[zeroVectorQ[v], Return[failure["ZeroDenominator", "The field denominator is zero"]]];
   reciprocals = Catch[
     values = conjugates[gd, den v]; norm = roundInteger[Times @@ values];
     If[norm == 0 || AnyTrue[values, TrueQ[# == 0] &], Throw["precision", precTag]];
@@ -2259,7 +2259,7 @@ coordinateOfOne[gd_] := UnitVector[gd["Order"], 1];
 meanTrace[gd_, v_] := (v . gd["Gram"][[1]])/gd["Order"];
 
 elementToAlgebraic[gd_, v_] := Module[{reps, d, den, prec, vals, poly, cl, k, cands, mag, need, id = gd["Identity"]},
-  If[Rest[v] == 0 Rest[v], Return[First[v]]];
+  If[zeroVectorQ[Rest[v]], Return[First[v]]];
   reps = kDeleteDuplicatesBy[Range[gd["Order"]], gd["Automorphisms"][[#]] . v &];
   d = Length[reps];
   den = LCM @@ Denominator[v];
@@ -2389,6 +2389,7 @@ galoisTarget[gd_, a_, scope_] := Replace[targetOf[gd, a],
 engineExtra[fd_] := If[fd["Type"] === "InputField",
   <|"AmbientDegree" -> fd["Degree"], "AmbientGalois" -> fd["Galois"]|>, <|"GroupOrder" -> fd["Order"]|>];
 degreeList[dmax_, lb_, n_] := If[dmax === Automatic, Range[lb, n - 1], {dmax}];
+zeroVectorQ[v_] := v == 0 v;      (* exact, for rational coordinate vectors *)
 (* the input-field fast path settles the question when the ambient field is
    Galois, when only that field was asked about, or when it already reached
    the lower bound; otherwise its result is kept as a fallback *)
@@ -2537,7 +2538,7 @@ sumSearch[fd_, a_, va_, stab_, n_, lb_, dmax_, scope_, maxTerms_, method_, compl
   If[rep =!= $Failed,
     Do[mean = meanTraceOf[fd, e[[2]]]; rational += mean;
       term = e[[2]] - mean UnitVector[Length[va], 1];
-      If[term != 0 term, AppendTo[terms, term]], {e, rep}];
+      If[! zeroVectorQ[term], AppendTo[terms, term]], {e, rep}];
     terms = toExact[fd, #] & /@ terms;
     (* Centering must not add a component beyond a finite MaxTerms cap. *)
     If[rational != 0,
@@ -2569,8 +2570,8 @@ gaussianResult[gd_, a_, rep_, iMult_, lb_, scope_, automatic_] := Module[{terms 
     If[sol === $Failed, Throw["precision", precTag]];
     u = Take[sol, Length[Bf]] . Bf; w = Drop[sol, Length[Bf]] . Bf;
     Which[
-      w == 0 w, AppendTo[terms, {1, u}],
-      u == 0 u, AppendTo[terms, {I, w}],
+      zeroVectorQ[w], AppendTo[terms, {1, u}],
+      zeroVectorQ[u], AppendTo[terms, {I, w}],
       MatrixRank[{u, w}] == 1, pivot = kFirstIndex[u, _?(# != 0 &)];
         AppendTo[terms, {1 + I w[[pivot]]/u[[pivot]], u}],
       True, AppendTo[terms, {1, u}]; AppendTo[terms, {I, w}]],
@@ -3207,7 +3208,7 @@ descend[gd_, a_, primes_, resolventForm_] := Module[
      R_k = Sum_j zeta^(-kj) sigma^j(v) (Fourier form), or of R_k1 alone with R_k = c_k R_k1^m, c_k one
      level down (eigenvector form) *)
   radCompute[v_, level_] := Catch[Module[{st = steps[[level]], generators, q, zw, R, nonzero, R0rad, k1, u, divide, ck, choices = {}},
-    If[v == 0 v, Throw[0, moduleTag]];
+    If[zeroVectorQ[v], Throw[0, moduleTag]];
     generators = #["Generator"] & /@ steps[[level ;;]]; q = st["Prime"];
     If[fixedByQ[gd, v, generators], Throw[rad[v, level - 1], moduleTag]];
     (* zw[[j+1, e+1]] = zeta^e sigma^j(v), as vectors: q^2 matrix-vector products instead of matrix powers *)
