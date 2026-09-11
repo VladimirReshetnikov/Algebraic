@@ -15,6 +15,16 @@ Get[FileNameJoin[{DirectoryName[$InputFileName /. "" -> Directory[]], "Algebraic
 report = AlgebraicKernelReport[];
 Print["Kernel: ", report["Kernel"], "; operations: ", report["Operations"]];
 
+(* Every example below is printed through show, which gives each value a
+   time budget: none in the Wolfram kernel, five minutes in Mathics, where
+   the Galois engine is a hundred times slower and the degree-9 product
+   example does not finish in an hour. *)
+$exampleBudget = If[report["Kernel"] === "Mathics", 300, Infinity];
+SetAttributes[show, HoldAll];
+show[args___] := Print @@ (List @@ Map[
+  TimeConstrained[#, $exampleBudget, "(not finished within " <> ToString[$exampleBudget] <> " s on this kernel)"] &,
+  Hold[args]]);
+
 (* ---- 1. functional decomposition of polynomials ---------------------- *)
 Clear[x];
 p = 3 + 3 Sqrt[2] + (14 + 4 Sqrt[2]) x + (12 + 26 Sqrt[2]) x^2 +
@@ -36,41 +46,41 @@ Print["Explicitly truncated enumeration: ", AlgebraicDecompositions[x^12, x, "Ma
 (* ---- 2. sums and products of algebraic numbers ----------------------- *)
 ap = Root[-1 - # + 3 #^3 - #^4 + #^5 - 3 #^6 + 2 #^7 + #^9 &, 1];
 as = Root[8 - 4 # + 24 #^2 - 15 #^3 + 3 #^5 + 6 #^6 + #^9 &, 1];
-Print["Lower bound for the product example: ", RootDecompositionLowerBound[ap]];
-Print["Product example: ", RootProductDecomposition[ap]["Expression"]];
-Print["Sum example:     ", RootSumDecomposition[as]["Expression"]];
+show["Lower bound for the product example: ", RootDecompositionLowerBound[ap]];
+show["Product example: ", RootProductDecomposition[ap]["Expression"]];
+show["Sum example:     ", RootSumDecomposition[as]["Expression"]];
 (* The product root needs sextic summands globally; inside Q(ap) degree 9 is necessary. *)
-Print["Product root as a sum: ", RootSumDecomposition[ap]["Expression"]];
-Print["   restricted to Q(ap): ", RootSumDecomposition[ap, "Scope" -> "InputField"]["MaximumDegree"]];
+show["Product root as a sum: ", RootSumDecomposition[ap]["Expression"]];
+show["   restricted to Q(ap): ", RootSumDecomposition[ap, "Scope" -> "InputField"]["MaximumDegree"]];
 (* Optimal factors may lie outside the splitting field (norm exponent 2). *)
 ext = Sqrt[(1 + Sqrt[2]) (1 + Sqrt[3])];
-Print["External factors: ", RootProductDecomposition[ext]["Expression"]];
+show["External factors: ", RootProductDecomposition[ext]["Expression"]];
 (* Three quadratics attain degree 2; the optimum with at most two factors is 4. *)
 eta = (1 + Sqrt[2]) (1 + Sqrt[3]) (1 + Sqrt[5]);
-Print["Three factors: ", RootProductDecomposition[eta]["Expression"]];
+show["Three factors: ", RootProductDecomposition[eta]["Expression"]];
 (* A flat sum of three quadratics that is neither a binary sum nor a binary product. *)
 e3 = Sqrt[2] + Sqrt[3] + Sqrt[6];
-Print["Flat sum: ", RootSumDecomposition[e3]["Expression"]];
-Print["Binary sum with degree <= 3: ", RootSumDecomposition[e3, 3, "MaxTerms" -> 2]];
-Print["Two-factor product: ", RootProductDecomposition[e3, "MaxFactors" -> 2]["MaximumDegree"]];
+show["Flat sum: ", RootSumDecomposition[e3]["Expression"]];
+show["Binary sum with degree <= 3: ", RootSumDecomposition[e3, 3, "MaxTerms" -> 2]];
+show["Two-factor product: ", RootProductDecomposition[e3, "MaxFactors" -> 2]["MaximumDegree"]];
 (* Gaussian rational coefficients. *)
 g1 = I + Sqrt[2] + I Sqrt[2];
-Print["Gaussian combination: ", RootSumDecomposition[g1, "Coefficients" -> "GaussianRationals"]["Expression"]];
+show["Gaussian combination: ", RootSumDecomposition[g1, "Coefficients" -> "GaussianRationals"]["Expression"]];
 gd = RootGaloisData[ap];
-Print["Galois data: ", If[AssociationQ[gd],
+show["Galois data: ", If[AssociationQ[gd],
   {"order", gd["Order"], "exponent", gd["Exponent"], "subfield degrees", Tally[gd["SubfieldDegrees"]]}, gd]];
 
 (* ---- 3. radical expressions ------------------------------------------ *)
-Print["Solvable? x^5-5x+12: ", RootSolvableQ[Root[#^5 - 5 # + 12 &, 1]],
+show["Solvable? x^5-5x+12: ", RootSolvableQ[Root[#^5 - 5 # + 12 &, 1]],
   ";  x^5-x-1: ", RootSolvableQ[Root[#^5 - # - 1 &, 1]]];
-Print["Structural: ", RootToRadicals[Root[#^4 - 10 #^2 + 1 &, 4]]];
-Print["Cyclic quintic 2 cos(2 Pi/11): ", RootToRadicals[Root[#^5 + #^4 - 4 #^3 - 3 #^2 + 3 # + 1 &, 1]]];
-Print["Sextic of the question: ", RootRadicalReport[Root[-1 - #^2 - #^3 + #^4 + #^6 &, 2]]];
+show["Structural: ", RootToRadicals[Root[#^4 - 10 #^2 + 1 &, 4]]];
+show["Cyclic quintic 2 cos(2 Pi/11): ", RootToRadicals[Root[#^5 + #^4 - 4 #^3 - 3 #^2 + 3 # + 1 &, 1]]];
+show["Sextic of the question: ", RootRadicalReport[Root[-1 - #^2 - #^3 + #^4 + #^6 &, 2]]];
 
 (* ---- 4. denesting ---------------------------------------------------- *)
-Print["Strad: ", Strad[Sqrt[5 + 2 Sqrt[6]]]];
-Print["Strad: ", Strad[(239 + 169 Sqrt[2])^(1/7)]];
-Print["Strad, Ramanujan: ", Strad[(2^(1/3) - 1)^(1/3)]];
+show["Strad: ", Strad[Sqrt[5 + 2 Sqrt[6]]]];
+show["Strad: ", Strad[(239 + 169 Sqrt[2])^(1/7)]];
+show["Strad, Ramanujan: ", Strad[(2^(1/3) - 1)^(1/3)]];
 rep = DenestReport[Sqrt[5 + 2 Sqrt[6]]];
-Print["Report: ", rep["Result"], " ", rep["Status"], " cost ", rep["InitialCost"], " -> ", rep["FinalCost"]];
-Print["EqualityStatus: ", EqualityStatus[Sqrt[2] + Sqrt[3], Sqrt[5 + 2 Sqrt[6]]]];
+show["Report: ", rep["Result"], " ", rep["Status"], " cost ", rep["InitialCost"], " -> ", rep["FinalCost"]];
+show["EqualityStatus: ", EqualityStatus[Sqrt[2] + Sqrt[3], Sqrt[5 + 2 Sqrt[6]]]];

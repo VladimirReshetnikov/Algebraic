@@ -226,7 +226,7 @@ VerificationTest[MatchQ[VerifyAlgebraicDecompositionData[Pi x^4, <||>, x],
   _Failure], True, TestID -> "invalid-input-versus-invalid-certificate"]
 VerificationTest[BlockRandom[SeedRandom[206618];
   And @@ Table[Module[{d, m, f, g, p, pair, b, c},
-    d = RandomChoice[{2, 3, 4}]; m = RandomChoice[{2, 3}];
+    d = RandomInteger[{2, 4}]; m = RandomInteger[{2, 3}];   (* RandomChoice gives a list in Mathics *)
     f = Sum[RandomInteger[{-2, 2}] x^j, {j, 0, m - 1}] + 2 x^m;
     g = Sum[RandomInteger[{-2, 2}] Sqrt[2] x^j, {j, 0, d - 1}] + 3 x^d;
     b = Coefficient[g, x, d]; c = g /. x -> 0;
@@ -311,7 +311,7 @@ VerificationTest[Module[{h = x^4 + 2 x^3 + 3 x^2 + 5 x, p, data},
 VerificationTest[And @@ Flatten[Table[
   With[{a = {1, 2, 0, -3, 1}},
     Algebraic`Private`truncatedPower[a, m, d] ===
-      PadRight[Take[CoefficientList[(1 + 2 x - 3 x^3 + x^4)^m, x], UpTo[d]], d]],
+      PadRight[Take[CoefficientList[(1 + 2 x - 3 x^3 + x^4)^m, x], Min[d, m 4 + 1]], d]],
   {m, {1, 2, 3, 8, 17}}, {d, {1, 2, 4, 9}}]], True,
   TestID -> "truncated binary powers match full polynomial arithmetic"]
 VerificationTest[Module[{vectors, product, size},
@@ -321,7 +321,7 @@ VerificationTest[Module[{vectors, product, size},
     size = Min[Length[a] + Length[b] - 1, d];
     product = CoefficientList[Expand[FromDigits[Reverse[a], x] FromDigits[Reverse[b], x]], x];
     Algebraic`Private`multiply[a, b, d] ===
-      Algebraic`Private`trim[RootReduce /@ Take[product, UpTo[size]]],
+      Algebraic`Private`trim[RootReduce /@ Take[product, Min[size, Length[product]]]],
     {a, vectors}, {b, vectors}, {d, {1, 2, 5, Infinity}}]]], True,
   TestID -> "exact convolution matches symbolic polynomial products"]
 VerificationTest[Module[{bases, digitSets},

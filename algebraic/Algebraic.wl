@@ -1046,6 +1046,8 @@ kRootObject[poly_, v_, k_Integer] := Root[Function @@ {poly /. v -> Slot[1]}, k]
 
 nativeMinimalPolynomial[a_, v_] := Module[{p},
   If[! kNativeQ["MinimalPolynomial"], Return[$Failed]];
+  (* SymPy raises an uncatchable exception for a non-algebraic argument *)
+  If[! kNativeQ["RootReduce"] && ! algebraicShapeQ[a], Return[$Failed]];
   p = kCheck[MinimalPolynomial[a, v], $Failed];
   If[Head[p] === MinimalPolynomial || ! TrueQ[PolynomialQ[p, v]], $Failed, p]];
 
@@ -1147,7 +1149,19 @@ If[kNativeQ["NumericQRoot"],
 
 If[kNativeQ["AlgebraicsRoot"],
   kAlgebraicQ[e_] := TrueQ[Element[e, Algebraics]],
-  kAlgebraicQ[e_] := TrueQ[Element[e /. {r_Root :> Sqrt[2], a_AlgebraicNumber :> Sqrt[2]}, Algebraics]]];
+  (* structural: Mathics answers Element[e, Algebraics] by asking SymPy for a
+     minimal polynomial, and for Pi or Sin[1] that raises a Python exception
+     no Quiet or Check can catch *)
+  kAlgebraicQ[e_] := algebraicShapeQ[e]];
+(* an expression built from Gaussian rationals, Root and AlgebraicNumber
+   objects by Plus, Times and Power with a rational exponent *)
+algebraicShapeQ[e_] := Which[
+  kGaussianQ[e], True,
+  Head[e] === Root || Head[e] === AlgebraicNumber, True,
+  AtomQ[e], False,
+  Head[e] === Plus || Head[e] === Times, AllTrue[List @@ e, algebraicShapeQ],
+  Head[e] === Power && Length[e] === 2, kRationalQ[e[[2]]] && algebraicShapeQ[e[[1]]],
+  True, False];
 
 If[kNativeQ["ToRadicals"],
   kToRadicals[e_] := ToRadicals[e],
@@ -1863,6 +1877,7 @@ galoisGroupNumerically[roots_List, nums_List, prec_, maxOrder_, maxTries_] :=
         If[m === $Failed, Continue[]];
         md = Exponent[m, x];
         lastDeg = Length[orbit];
+        If[TrueQ[$galoisDebug], Print["galois: k=", k, " w=", w, " degree ", md, " orbit ", lastDeg, " prec ", prec]];
         If[md < lastDeg || Mod[md, lastDeg] != 0, Continue[]];
         If[md > maxOrder, Message[Algebraic::order, md, maxOrder];
           Throw[failure["GroupOrder", "Galois group too large", <|"Order" -> md, "Limit" -> maxOrder|>], failTag]];
@@ -1875,6 +1890,7 @@ galoisGroupNumerically[roots_List, nums_List, prec_, maxOrder_, maxTries_] :=
           pos = kOrderingFirst[dists];
           If[dists[[pos]] < tol, AppendTo[matched, c]; AppendTo[idx, pos]],
           {c, cand}];
+        If[TrueQ[$galoisDebug], Print["galois:   matched ", Length[matched], " distinct ", Length[Union[idx]], " of ", md]];
         If[Length[matched] == md && Length[Union[idx]] == md,
           orbit = matched[[All, 1]]; vals = matched[[All, 2]];
           thetaExact = newTheta;
@@ -1927,6 +1943,7 @@ elementOrder[mt_, g_, idElem_] := Module[{h = g, k = 1}, While[h != idElem, h = 
    from the enclosing function in the Wolfram kernel but only from the loop in
    Mathics. *)
 retryPrecision[compute_, prec0_] := Module[{prec = prec0, result = "precision", attempt = 0},
+  If[TrueQ[$galoisDebug], Print["galois: precision ", prec0]];
   While[attempt++ < 4 && result === "precision",
     result = Catch[compute[prec], precTag];
     If[result === "precision" && attempt < 4, Message[Algebraic::prec, prec]; prec *= 2]];

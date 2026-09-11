@@ -33,6 +33,9 @@ Cyclotomic[n_, v_] := Algebraic`Private`kCyclotomic[n, v];
 ToRadicals[e_] := Algebraic`Private`kToRadicals[e];
 SetAttributes[AssociateTo, HoldFirst];
 AssociateTo[a_, r_] := Algebraic`Private`kAssociateTo[a, r];
+KeyDrop[a_?AssociationQ, keys_] := Association @@ Select[Algebraic`Private`kNormalRules[a], ! MemberQ[Flatten[{keys}], First[#]] &];
+(* Failure["tag", <|...|>]["key"] reads the association in the Wolfram kernel *)
+Failure[tag_, a_?AssociationQ][key_String] := a[key];
 
 SetAttributes[BeginTestSection, HoldAll];
 BeginTestSection[___] := Null; EndTestSection[___] := Null;
