@@ -129,8 +129,20 @@ packages loaded side by side:
   among the roots of the Galois data for the three engines, and the
   `unknownOptions`, `rootsIn`, `rootFunctionPolynomial` and
   `clearDenominators` helpers where each had been an inline idiom in
-  several places. The file lost a few dozen lines net, and about a hundred
-  and forty lines of repeated code.
+  several places. A second pass went section by section: the Wolfram root
+  order and the seed rounding of the Mathics root numerics (`splitOrderedRoots`,
+  `roundSeed`), the single-Root reduction data (`singleRootData`), one
+  grammar walk (`algebraicGrammarQ`) behind both `RadicalExpressionQ` and the
+  Mathics shape test, six trigonometric rules as one, one debug print
+  (`galoisPrint`), the shared prologue of the sum and product engines
+  (`galoisTarget`, `engineExtra`, `degreeList`, `fastPathDecisiveQ`,
+  `notFoundFailure`, `singleComponent`, `gaussianTrivialResult`, one degree
+  loop `representationAtDegree` for the rational and the Gaussian sum
+  search), `galoisDataChecked` and `groupSolvableQ` for the radical
+  descent, and in the denester one `session` block, `boundedList`, the
+  certificate tests, `linearFactorRoots`, `firstNonempty`, `offer` and the
+  room tests of the multiplier search. Seven unused definitions went. The
+  two passes together removed about two hundred lines of repeated code.
 * The functional decomposition of section 1 is what the radical descent
   recurses through, and on a kernel without `Decompose` it is what supplies
   that operation.

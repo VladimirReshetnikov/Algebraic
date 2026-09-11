@@ -385,6 +385,26 @@ Mathics notes because the rewritten forms are the ones now in the code.
   the key stays an exact rational instead of a `Sqrt`, and the comparison
   never leaves the rationals.
 
+### A rule inside a definition must not reuse the definition's pattern names
+
+`f[c_List] := ... Replace[g[c], {r_, c_} :> Join[r, c]]` loads with
+`RuleDelayed::rhs: Pattern c_ appears on the right-hand side of rule ...`
+and the inner rule is stored with its `c` already substituted by the
+argument, so it never matches. The kernel does not rename the inner
+pattern. The deduplication pass produced one of these (the suite did not
+catch it because the Wolfram kernel never reaches that Mathics-only
+branch); the load-time message is the only signal, so a script that loads
+the package should not run with messages silenced.
+
+### Private helpers the suite calls directly
+
+`Tests/Algebraic.wlt` calls a few private names of the package on purpose
+(`primitiveIntegerCoefficients`, `kummerCandidates` with its default
+incumbent, `elementDegree`, `niceScale`, ...). A cleanup that removes or
+changes the signature of a private name has to grep the suite first; two
+of the removals of the second deduplication pass were reverted for this
+reason.
+
 ## Findings imported with the asymptotic-inverse notes
 
 The four sections below came from the separate

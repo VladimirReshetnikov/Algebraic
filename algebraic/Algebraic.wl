@@ -336,8 +336,7 @@ kIndices[l_List, patt_] := Select[Range[Length[l]], MatchQ[l[[#]], patt] &];
 
 (* The first such index, or default. *)
 kFirstIndex[l_List, patt_] := kFirstIndex[l, patt, Missing["NotFound"]];
-kFirstIndex[l_List, patt_, default_] := Module[{r = default},
-  Catch[Do[If[MatchQ[l[[i]], patt], Throw[r = i, ktag]], {i, Length[l]}], ktag]; r];
+kFirstIndex[l_List, patt_, default_] := kSelectFirst[Range[Length[l]], MatchQ[l[[#]], patt] &, default];
 
 (* The first position at level {n} of a nested list, as {i1, ..., in}, or
    default.  Heads are never examined. *)
@@ -510,9 +509,6 @@ clOf[p_, v_] := clTrim[kCoefficientList[kExpand[p], v]];
 clTo[c_List, v_] := If[c === {}, 0, kExpand[Total[Table[c[[i]] v^(i - 1), {i, Length[c]}]]]];
 clDeg[c_List] := Length[c] - 1;
 clLC[c_List] := If[c === {}, 0, Last[c]];
-clAdd[a_List, b_List] := clTrim[PadRight[a, Max[Length[a], Length[b]]] + PadRight[b, Max[Length[a], Length[b]]]];
-clSub[a_List, b_List] := clAdd[a, -b];
-clMul[a_List, b_List] := If[a === {} || b === {}, {}, clTrim[kConvolve[a, b]]];
 clScale[a_List, s_] := If[s === 0, {}, clTrim[s a]];
 clDeriv[c_List] := clTrim[Table[(i - 1) c[[i]], {i, 2, Length[c]}]];
 
@@ -580,11 +576,8 @@ If[kNativeQ["Discriminant"],
     If[n < 1, 0, (-1)^(n (n - 1)/2) clResultant[c, clDeriv[c]]/clLC[c]]]];
 
 (* {{content,1},{f1,e1},...} with primitive integer f_i, as FactorList gives. *)
-factorPairs[e_] := Module[{parts},
-  parts = If[Head[e] === Times, List @@ e, {e}];
-  Join @@ (Which[
-      Head[#] === Power && IntegerQ[#[[2]]] && #[[2]] > 0, {{#[[1]], #[[2]]}},
-      True, {{#, 1}}] & /@ parts)];
+factorPairs[e_] := Replace[If[Head[e] === Times, List @@ e, {e}],
+  {Power[b_, n_Integer /; n > 0] :> {b, n}, f_ :> {f, 1}}, {1}];
 
 If[kNativeQ["FactorList"],
   kFactorList[p_] := FactorList[p],
@@ -713,6 +706,9 @@ kRationalQ[e_] := IntegerQ[e] || Head[e] === Rational;
 degenerateQ[v_] := ! FreeQ[v, Indeterminate | ComplexInfinity | DirectedInfinity];
 kFiniteNumberQ[v_] := NumberQ[v] && ! degenerateQ[v];
 kGaussianQ[e_] := kRationalQ[e] || (Head[e] === Complex && kRationalQ[Re[e]] && kRationalQ[Im[e]]);
+positiveIntegerQ[v_] := IntegerQ[v] && v > 0;
+componentLimitQ[v_] := v === Infinity || positiveIntegerQ[v];      (* a cap on a count *)
+degreeLimitQ[v_] := v === Automatic || positiveIntegerQ[v];        (* a cap on a degree *)
 
 (* ------------------------------------------------------------------ *)
 (* 0.5a  Minimal polynomials by elimination                           *)
@@ -776,7 +772,7 @@ eliminateY[p_, q_] := Module[{pp, qq},
    guessing would be wrong, and confirming with an exact zero test would call
    the reduction this function is part of computing. *)
 selectFactor[poly_, value_] := Catch[Module[
-  {fl, prec = 60, v, res, ord, attempt},
+  {fl, prec = 60, v, res, attempt},
   If[poly === 0 || ! TrueQ[kPolynomialQ[poly, kx]], Throw[$Failed, ktag]];
   fl = Select[First /@ kFactorList[kExpand[poly]], Exponent[#, kx] >= 1 &];
   If[fl === {}, Throw[$Failed, ktag]];
@@ -820,12 +816,16 @@ singleRootPolynomialQ[e_] := Module[{roots = rootsIn[e]},
   Length[roots] === 1 && Head[roots[[1]]] === Root &&
     With[{g = e /. roots[[1]] -> ey}, TrueQ[kPolynomialQ[g, ey]] &&
       AllTrue[kCoefficientList[g, ey], kRationalQ]]];
-minPolyInSingleRoot[e_] := Module[{r = First[rootsIn[e]], f, g, el},
+(* {the Root object of e, its minimal polynomial in kx, the representative of
+   e modulo it as a polynomial in ey}, or $Failed *)
+singleRootData[e_] := Module[{r = First[rootsIn[e]], f, g},
   f = minPolyOfRoot[r];
-  If[f === $Failed, Return[$Failed]];
+  If[f === $Failed || Exponent[f, kx] < 1, Return[$Failed]];
   g = clMod[clOf[e /. r -> ey, ey], clOf[f /. kx -> ey, ey]];
-  If[g === $Failed, Return[$Failed]];
-  g = clTo[g, ey];
+  If[g === $Failed, $Failed, {r, f, clTo[g, ey]}]];
+minPolyInSingleRoot[e_] := Module[{d = singleRootData[e], r, f, g, el},
+  If[d === $Failed, Return[$Failed]];
+  {r, f, g} = d;
   If[FreeQ[g, ey], Return[primitiveIn[Denominator[g] kx - Numerator[g], kx]]];
   el = eliminateY[f, kx - g];
   If[el === $Failed, $Failed, selectFactor[el, e]]];
@@ -961,9 +961,12 @@ polishRoot[c_List, seed_, prec_] := Catch[Module[{n = clDeg[c], z, d, k, work = 
    kernel's own N[Root[f, k]] isolates one non-real root in four to ten
    seconds, Solve[N[p] == 0, x] takes forty seconds at degree 9, and a
    Durand-Kerner iteration written in the language sixty at degree 6. *)
+SetAttributes[galoisPrint, HoldAll];       (* the trace of the numerics and the Galois engine *)
+galoisPrint[args__] := If[TrueQ[$galoisDebug], Print[args]];
+
 machineRoots[c_List] := Module[{n = clDeg[c], cm, m, ev, s, cs},
   If[n < 1, Return[$Failed]];
-  If[TrueQ[$galoisDebug], Print["machineRoots: degree ", n, " coefficients ", Short[c, 1]]];
+  galoisPrint["machineRoots: degree ", n, " coefficients ", Short[c, 1]];
   cm = N[c/Last[c]];
   (* balanced: with x = s y and s the root-radius bound every entry of the
      companion matrix is at most 1 in size.  On the raw coefficients of a
@@ -991,13 +994,26 @@ rootOrderedQ[a_, b_, tol_] := Which[
    N[Root] takes four to ten seconds per non-real root) and what decides a
    root index when the margins allow. *)
 machineRootsOrdered[c_List] := kMemo["machineRootsOrdered", c, machineRootsOrderedCompute[c]];
-machineRootsOrderedCompute[c_List] := Catch[Module[{m, scale, tol, reals, complexes, i, a, b},
+(* the real roots increasing, then the non-real roots in the Wolfram order,
+   as {reals, complexes}; $Failed when the non-real roots do not pair up *)
+splitOrderedRoots[vals_List, tol_] := Module[{reals, complexes},
+  reals = Sort[Re /@ Select[vals, Abs[Im[#]] < tol &]];
+  complexes = Sort[Select[vals, Abs[Im[#]] >= tol &], rootOrderedQ[#1, #2, tol] &];
+  If[OddQ[Length[complexes]], $Failed, {reals, complexes}]];
+
+(* an exact seed for polishing: the machine value rounded, not Rationalized --
+   with a tolerance Mathics' Rationalize can hand back the machine number
+   itself, and N[machineReal, 100] stays a machine number *)
+roundSeed[z_, scale_] := If[Abs[Im[z]] < 10^-9 scale,
+  Round[Re[z] 10^14]/10^14, Round[Re[z] 10^14]/10^14 + I Round[Im[z] 10^14]/10^14];
+
+machineRootsOrderedCompute[c_List] := Catch[Module[{m, scale, tol, split, reals, complexes, i, a, b},
   m = machineRoots[c];
   If[m === $Failed, Throw[$Failed, ktag]];
   scale = Max[1, Max[Abs[m]]]; tol = 10^-9 scale;
-  reals = Sort[Re /@ Select[m, Abs[Im[#]] < tol &]];
-  complexes = Sort[Select[m, Abs[Im[#]] >= tol &], rootOrderedQ[#1, #2, tol] &];
-  If[OddQ[Length[complexes]], Throw[$Failed, ktag]];
+  split = splitOrderedRoots[m, tol];
+  If[split === $Failed, Throw[$Failed, ktag]];
+  {reals, complexes} = split;
   Do[If[Abs[reals[[i]] - reals[[i + 1]]] < 10^4 tol, Throw[$Failed, ktag]], {i, Length[reals] - 1}];
   Do[a = complexes[[i]]; b = complexes[[i + 1]];
     If[Abs[Re[a] - Re[b]] < 10^4 tol && Abs[Abs[Im[a]] - Abs[Im[b]]] < 10^4 tol && Abs[Im[a] - Im[b]] < 10^4 tol,
@@ -1005,27 +1021,19 @@ machineRootsOrderedCompute[c_List] := Catch[Module[{m, scale, tol, reals, comple
   Join[reals, complexes]], ktag];
 
 kRootValues[c_List, prec_Integer] := kMemo["rootValues", {c, prec}, rootValuesCompute[c, prec]];
-rootValuesCompute[c_List, prec_] := Module[{n = clDeg[c], m, scale, seeds, polished, tol, reals, complexes, i, j},
+rootValuesCompute[c_List, prec_] := Module[{n = clDeg[c], m, scale, seeds, polished, tol, i, j},
   m = machineRoots[c];
   If[m === $Failed, Return[$Failed]];
   scale = Max[1, Max[Abs[m]]];
-  (* exact seeds by rounding, not Rationalize: with a tolerance Mathics'
-     Rationalize can hand back the machine number itself, and N[machineReal,
-     100] stays a machine number, so the polishing never left machine
-     precision *)
-  seeds = Table[If[Abs[Im[z]] < 10^-9 scale,
-    Round[Re[z] 10^14]/10^14, Round[Re[z] 10^14]/10^14 + I Round[Im[z] 10^14]/10^14], {z, m}];
+  seeds = roundSeed[#, scale] & /@ m;
   polished = Quiet[polishRoot[c, #, prec] & /@ seeds];
   If[MemberQ[polished, $Failed],
-    If[TrueQ[$galoisDebug], Print["rootValues: polishing failed for ", Short[c, 1], " at ", prec, " seeds ", seeds]];
+    galoisPrint["rootValues: polishing failed for ", Short[c, 1], " at ", prec, " seeds ", seeds];
     Return[$Failed]];
   tol = 10^(-Floor[prec/2]) scale;
   (* two seeds converging to one root: a repeated root, or a lost one *)
   Do[If[Abs[polished[[i]] - polished[[j]]] < tol, Return[$Failed]], {i, n}, {j, i + 1, n}];
-  reals = Sort[Re /@ Select[polished, Abs[Im[#]] < tol &]];
-  complexes = Sort[Select[polished, Abs[Im[#]] >= tol &], rootOrderedQ[#1, #2, tol] &];
-  If[OddQ[Length[complexes]], Return[$Failed]];
-  Join[reals, complexes]];
+  Replace[splitOrderedRoots[polished, tol], {reals_, complexes_} :> Join[reals, complexes]]];
 
 (* the value of Root[f, k] at precision prec *)
 kRootValue[r_Root, prec_] := Module[{poly = rootFunctionPolynomial[r[[1]]], c, vals},
@@ -1039,14 +1047,13 @@ kRootValue[r_Root, prec_] := Module[{poly = rootFunctionPolynomial[r[[1]]], c, v
      keys too close): polish this one root from its machine value; the
      kernel's own N[Root] is the last resort and costs ten seconds and more
      per non-real root *)
-  If[TrueQ[$galoisDebug], Print["kRootValue: no ordered values for ", Short[c, 1], " index ", r[[2]], " at ", prec]];
+  galoisPrint["kRootValue: no ordered values for ", Short[c, 1], " index ", r[[2]], " at ", prec];
   vals = machineRootsOrdered[c];
   If[ListQ[vals] && r[[2]] <= Length[vals] && IntegerQ[prec] && prec > 16,
     With[{m = vals[[r[[2]]]]},
-      With[{z = Quiet[polishRoot[c, If[Abs[Im[m]] < 10^-9 Max[1, Abs[m]], Round[Re[m] 10^14]/10^14,
-          Round[Re[m] 10^14]/10^14 + I Round[Im[m] 10^14]/10^14], prec]]},
+      With[{z = Quiet[polishRoot[c, roundSeed[m, Max[1, Abs[m]]], prec]]},
         If[z =!= $Failed, Return[N[z, prec]]]]]];
-  If[TrueQ[$galoisDebug], Print["kRootValue: native N for ", Short[r, 1], " at ", prec]];
+  galoisPrint["kRootValue: native N for ", Short[r, 1], " at ", prec];
   N[r, prec]];
 
 (* the bottom-up evaluator; w is the working precision *)
@@ -1060,7 +1067,6 @@ numValue[e_Plus, w_] := Plus @@ (numValue[#, w] & /@ (List @@ e));
 numValue[e_Times, w_] := Times @@ (numValue[#, w] & /@ (List @@ e));
 numValue[Power[b_, n_Integer], w_] := kIntPower[numValue[b, w], n];
 numValue[Power[b_, q_], w_] := numPower[numValue[b, w], numValue[q, w]];
-numValue[Sqrt[b_], w_] := numPower[numValue[b, w], N[1/2, w]];
 numValue[Exp[a_], w_] := numExp[numValue[a, w]];
 numValue[Log[a_], w_] := numLog[numValue[a, w]];
 numValue[Abs[a_], w_] := Abs[numValue[a, w]];
@@ -1085,7 +1091,7 @@ If[kNativeQ["ComplexPower"],
   kN[e_, prec_] := N[e, prec],
   kN[e_] := If[FreeQ[e, _Root], N[e], N[numValue[e, 16]]];
   kN[e_, MachinePrecision] := kN[e];
-  kN[e_, prec_] := If[FreeQ[e, _Root | _Complex | _Power | Sqrt | Exp | Log], N[e, prec],
+  kN[e_, prec_] := If[FreeQ[e, _Root | _Complex | _Power | Log], N[e, prec],
     N[numValue[e, prec + 10], prec]]];
 
 (* whether the values above deliver the digits they claim; decides the
@@ -1107,7 +1113,7 @@ nativeMinimalPolynomial[a_, v_] := Module[{p},
   If[! kNativeQ["MinimalPolynomial"], Return[$Failed]];
   (* SymPy raises an uncatchable exception for a non-algebraic argument *)
   If[! kNativeQ["RootReduce"] && ! algebraicShapeQ[a], Return[$Failed]];
-  If[TrueQ[$galoisDebug] && ! FreeQ[a, _Root], Print["nativeMinimalPolynomial on ", Short[a, 1]]];
+  If[! FreeQ[a, _Root], galoisPrint["nativeMinimalPolynomial on ", Short[a, 1]]];
   p = kCheck[MinimalPolynomial[a, v], $Failed];
   If[Head[p] === MinimalPolynomial || ! TrueQ[kPolynomialQ[p, v]], $Failed, p]];
 
@@ -1145,12 +1151,14 @@ If[kNativeQ["RootReduce"],
 (* The index of the smallest distance when it is below tol and the next
    smallest is more than ratio times larger; $Failed otherwise.  The root
    index selection and the factor selection both decide this way. *)
-nearestByMargin[dists_List, tol_, ratio_] := Module[{ord = kOrdering[dists]},
+nearestByMargin[dists_List, tol_, ratio_, floor_: 0] := Module[{ord = kOrdering[dists]},
   If[TrueQ[dists[[ord[[1]]]] < tol] &&
-      (Length[dists] === 1 || TrueQ[dists[[ord[[2]]]] > ratio dists[[ord[[1]]]]]), ord[[1]], $Failed]];
+      (Length[dists] === 1 || TrueQ[dists[[ord[[2]]]] > Max[ratio dists[[ord[[1]]]], floor]]), ord[[1]], $Failed]];
+(* the two roots of c0 + c1 x + c2 x^2, the + sign first *)
+quadraticRoots[{c0_, c1_, c2_}] := (-c1 + {1, -1} Sqrt[c1^2 - 4 c2 c0])/(2 c2);
 
 kRootIndex[mp_, z_, degree_Integer] := Catch[Module[
-  {prec = 60, zv, vals, dists, ord, scale, attempt, c},
+  {prec = 60, zv, vals, attempt, c},
   If[degree === 1, Throw[1, ktag]];
   (* machine precision first: the ordered eigenvalues and the evaluator's
      machine value of z decide when the nearest root is a million times
@@ -1161,7 +1169,7 @@ kRootIndex[mp_, z_, degree_Integer] := Catch[Module[
     zv = kCheck[kN[z], $Failed];
     If[ListQ[vals] && Length[vals] === degree && kFiniteNumberQ[zv],
       With[{k = nearestByMargin[Abs[vals - zv], 10^-7 Max[1, Abs[zv]], 10^6]}, If[k =!= $Failed, Throw[k, ktag]]]];
-    If[TrueQ[$galoisDebug], Print["index: machine order ", If[ListQ[vals], "ambiguous margins", "unavailable"], ", polishing"]]];
+    galoisPrint["index: machine order ", If[ListQ[vals], "ambiguous margins", "unavailable"], ", polishing"]];
   Do[
     zv = kCheck[kN[z, prec], $Failed];
     If[! kFiniteNumberQ[zv], Throw[$Failed, ktag]];
@@ -1192,8 +1200,8 @@ If[kNativeQ["RootReduce"],
        object (or radical) first *)
     ! FreeQ[e, _?rootOfUnityFormQ] && ! rootOfUnityFormQ[e],
       kRootReduce[kExpand[e /. t_?rootOfUnityFormQ :> kMemo["rootOfUnity", t, rootOfUnityReduce[t]]]],
-    ! FreeQ[e, (Cos | Sin | Tan | Cot | Sec | Csc)[_?rationalPiMultipleQ]],
-      kRootReduce[kExpand[e /. t : (Cos | Sin | Tan | Cot | Sec | Csc)[_?rationalPiMultipleQ] :> trigAtomReduce[t]]],
+    ! FreeQ[e, _?trigOfRationalPiQ],
+      kRootReduce[kExpand[e /. t_?trigOfRationalPiQ :> trigAtomReduce[t]]],
     (* a polynomial in one Root object: its representative modulo the
        minimal polynomial, in milliseconds (elimination and the numerical
        root index took seconds per coefficient of a decomposition) *)
@@ -1204,13 +1212,9 @@ If[kNativeQ["RootReduce"],
      form -- that stays the Root object, which does not depend on which
      generator the expression happened to contain -- so kRootReduce does
      not return it. *)
-  singleRootReduce[e_] := Module[{r, f, g, v},
-    r = First[rootsIn[e]];
-    f = minPolyOfRoot[r];
-    If[f === $Failed || Exponent[f, kx] < 1, Return[$Failed]];
-    g = clMod[clOf[e /. r -> ey, ey], clOf[f /. kx -> ey, ey]];
-    If[g === $Failed, Return[$Failed]];
-    v = clTo[g, ey];
+  singleRootReduce[e_] := Module[{d = singleRootData[e], r, f, v},
+    If[d === $Failed, Return[$Failed]];
+    {r, f, v} = d;
     Which[
       FreeQ[v, ey], v,
       Exponent[f, kx] <= 2, kExpand[v /. ey -> kRootReduce[r]],
@@ -1230,12 +1234,11 @@ If[kNativeQ["RootReduce"],
     q = Denominator[r];
     If[q === 1, Return[1]]; If[q === 2, Return[-1]];
     mp = kCyclotomic[q, kx];
-    If[q <= 2, Return[e]];
     k = kRootIndex[mp, e, Exponent[mp, kx]];
     If[k === $Failed, e, kRootReduce[kRootObject[mp, kx, k]]]];
   rootReduceByElimination[e_] := Module[{mp, c, deg, k, r, t0 = AbsoluteTime[]},
     mp = kMinimalPolynomial[e, kx];
-    If[TrueQ[$galoisDebug], Print["reduce: minimal polynomial of ", Short[e, 1], " in ", Round[AbsoluteTime[] - t0, 0.01], " s, degree ", Exponent[mp, kx]]];
+    galoisPrint["reduce: minimal polynomial of ", Short[e, 1], " in ", Round[AbsoluteTime[] - t0, 0.01], " s, degree ", Exponent[mp, kx]];
     If[mp === $Failed, Return[e]];
     c = clOf[mp, kx]; deg = clDeg[c];
     Which[
@@ -1244,13 +1247,11 @@ If[kNativeQ["RootReduce"],
       deg === 2,
         (* the two candidates differ by Sqrt of the discriminant, so forty
            digits decide; PossibleZeroQ took thirty seconds here *)
-        r = Module[{v = kN[e, 40]},
-          Select[kExpand /@ {(-c[[2]] + Sqrt[c[[2]]^2 - 4 c[[3]] c[[1]]])/(2 c[[3]]),
-                  (-c[[2]] - Sqrt[c[[2]]^2 - 4 c[[3]] c[[1]]])/(2 c[[3]])},
-            TrueQ[Abs[kN[#, 40] - v] < 10^-20 Max[1, Abs[v]]] &]];
+        r = With[{v = kN[e, 40]},
+          Select[kExpand /@ quadraticRoots[c], TrueQ[Abs[kN[#, 40] - v] < 10^-20 Max[1, Abs[v]]] &]];
         If[Length[r] === 1, Return[First[r]]]];
     k = kRootIndex[mp, e, deg];
-    If[TrueQ[$galoisDebug], Print["reduce: index ", k, " after ", Round[AbsoluteTime[] - t0, 0.01], " s"]];
+    galoisPrint["reduce: index ", k, " after ", Round[AbsoluteTime[] - t0, 0.01], " s"];
     If[k === $Failed, e, kRootObject[mp, kx, k]]]];
 
 (* An exact zero test.  The canonical reduction decides it in the Wolfram
@@ -1292,24 +1293,26 @@ If[kNativeQ["AlgebraicsRoot"],
 rationalPiMultipleQ[a_] := a === Pi || (Head[a] === Times && Length[a] === 2 && a[[2]] === Pi && kRationalQ[a[[1]]]);
 trigOfRationalPiQ[e_] := MemberQ[{Cos, Sin, Tan, Cot, Sec, Csc}, Head[e]] && Length[e] === 1 && rationalPiMultipleQ[First[e]];
 trigAtomReduce[t_] := kMemo["trigAtom", t, kRootReduce[kExpand[trigToRootsOfUnity[t]]]];
-trigToRootsOfUnity[e_] := e /. {
-  Cos[a_?rationalPiMultipleQ] :> With[{z = kRootReduce[E^(I a)], n = 2 Denominator[a/Pi]}, (z + z^(n - 1))/2],
-  Sin[a_?rationalPiMultipleQ] :> With[{z = kRootReduce[E^(I a)], n = 2 Denominator[a/Pi]}, (z - z^(n - 1))/(2 I)],
-  Tan[a_?rationalPiMultipleQ] :> With[{z = kRootReduce[E^(I a)], n = 2 Denominator[a/Pi]}, (z - z^(n - 1))/(I (z + z^(n - 1)))],
-  Cot[a_?rationalPiMultipleQ] :> With[{z = kRootReduce[E^(I a)], n = 2 Denominator[a/Pi]}, I (z + z^(n - 1))/(z - z^(n - 1))],
-  Sec[a_?rationalPiMultipleQ] :> With[{z = kRootReduce[E^(I a)], n = 2 Denominator[a/Pi]}, 2/(z + z^(n - 1))],
-  Csc[a_?rationalPiMultipleQ] :> With[{z = kRootReduce[E^(I a)], n = 2 Denominator[a/Pi]}, 2 I/(z - z^(n - 1))]};
+trigToRootsOfUnity[e_] := e /. t_?trigOfRationalPiQ :>
+  With[{z = kRootReduce[E^(I First[t])], n = 2 Denominator[First[t]/Pi]},
+    Switch[Head[t],
+      Cos, (z + z^(n - 1))/2, Sin, (z - z^(n - 1))/(2 I),
+      Tan, (z - z^(n - 1))/(I (z + z^(n - 1))), Cot, I (z + z^(n - 1))/(z - z^(n - 1)),
+      Sec, 2/(z + z^(n - 1)), Csc, 2 I/(z - z^(n - 1))]];
 
-(* an expression built from Gaussian rationals, Root and AlgebraicNumber
-   objects by Plus, Times and Power with a rational exponent *)
-algebraicShapeQ[e_] := Which[
-  kGaussianQ[e], True,
-  Head[e] === Root || Head[e] === AlgebraicNumber, True,
-  trigOfRationalPiQ[e], True,
+(* an expression built from the leaves leafQ admits by Plus, Times and Power
+   with a rational exponent; the radical grammar of section 5 and the
+   algebraic shape below are the two instances *)
+algebraicGrammarQ[e_, leafQ_] := Which[
+  leafQ[e], True,
   AtomQ[e], False,
-  Head[e] === Plus || Head[e] === Times, AllTrue[List @@ e, algebraicShapeQ],
-  Head[e] === Power && Length[e] === 2, kRationalQ[e[[2]]] && algebraicShapeQ[e[[1]]],
+  Head[e] === Plus || Head[e] === Times, AllTrue[List @@ e, algebraicGrammarQ[#, leafQ] &],
+  Head[e] === Power && Length[e] === 2, kRationalQ[e[[2]]] && algebraicGrammarQ[e[[1]], leafQ],
   True, False];
+(* an expression built from Gaussian rationals, Root and AlgebraicNumber
+   objects and trigonometric values by Plus, Times and rational Power *)
+algebraicShapeQ[e_] := algebraicGrammarQ[e,
+  kGaussianQ[#] || Head[#] === Root || Head[#] === AlgebraicNumber || trigOfRationalPiQ[#] &];
 
 If[kNativeQ["ToRadicals"],
   kToRadicals[e_] := ToRadicals[e],
@@ -1597,19 +1600,16 @@ checkOptions[s_Symbol, opts_List] := If[unknownOptions[s, opts] =!= {},
   fail["UnknownOption", "An unknown option was supplied."]];
 unknownOptions[head_Symbol, rules_List] := Complement[First /@ Flatten[rules], kOptionNames[head]];
 
-expression[v_List, x_] := kExpand[Fold[#1 x + #2 &, 0, Reverse[v]]];
+expression[v_List, x_] := kExpand[kHorner[v, x]];
 properDegrees[n_Integer] := If[n < 4, {}, Select[Divisors[n], 1 < # < n &]];
 properDegreeQ[n_Integer, d_] := IntegerQ[d] && 1 < d < n && Mod[n, d] === 0;
 
-add[a_List, b_List] := trim[red /@
-  (PadRight[a, Max[Length[a], Length[b]]] +
-   PadRight[b, Max[Length[a], Length[b]]])];
+add[a_List, b_List] := With[{m = Max[Length[a], Length[b]]},
+  trim[red /@ (PadRight[a, m] + PadRight[b, m])]];
 subtract[a_List, b_List] := add[a, -b];
-multiply[a_List, b_List, limit_: Infinity] := Module[{size},
-  If[zeroQ[a] || zeroQ[b], Return[{0}]];
-  size = Min[Length[a] + Length[b] - 1, limit];
-  trim[red /@ Take[kConvolve[kTakeUpTo[a, size], kTakeUpTo[b, size]], size]]
-];
+multiply[a_List, b_List, limit_: Infinity] := If[zeroQ[a] || zeroQ[b], {0},
+  With[{size = Min[Length[a] + Length[b] - 1, limit]},
+    trim[red /@ Take[kConvolve[kTakeUpTo[a, size], kTakeUpTo[b, size]], size]]]];
 digitCompose[digits_List, h_List] := Module[{d = Length[h] - 1},
   If[d > 0 && Last[h] === 1 && AllTrue[Most[h], # === 0 &] &&
       AllTrue[digits, Length[#] <= d &],
@@ -1739,8 +1739,11 @@ allChains[c_List, limit_] := Module[{pairs, atomic, walk, out = {}, capTag = Uni
   out
 ];
 
-AlgebraicDecompose[p_, x_Symbol] := Catch[Module[{c = prepare[p, x]},
-  expression[#, x] & /@ checkedChain[c, oneChain[c]]], $failureTag];
+(* every entry point of this section prepares its input the same way *)
+prepared[p_, x_, f_] := Catch[f[prepare[p, x]], $failureTag];
+
+AlgebraicDecompose[p_, x_Symbol] := prepared[p, x,
+  Function[c, expression[#, x] & /@ checkedChain[c, oneChain[c]]]];
 (* the variable is inferred when the polynomial has exactly one *)
 AlgebraicDecompose[p_] := Catch[Module[{vars = polynomialVariables[p]},
   If[Length[vars] =!= 1,
@@ -1758,7 +1761,7 @@ AlgebraicDecompositions[p_, x_Symbol, opts : OptionsPattern[]] := Catch[
   Module[{c, limit, chains},
     checkOptions[AlgebraicDecompositions, {opts}];
     limit = OptionValue["MaxDecompositions"];
-    If[!(limit === Infinity || (IntegerQ[limit] && limit > 0)),
+    If[! componentLimitQ[limit],
       fail["InvalidLimit", "MaxDecompositions must be a positive integer or Infinity."]];
     c = prepare[p, x]; chains = allChains[c, limit];
     If[Length[chains] > limit,
@@ -1766,17 +1769,14 @@ AlgebraicDecompositions[p_, x_Symbol, opts : OptionsPattern[]] := Catch[
         <|"Complete" -> False, "Limit" -> limit,
           "PartialDecompositions" -> Map[expression[#, x] &, Take[chains, limit], {2}]|>]];
     Map[expression[#, x] &, chains, {2}]], $failureTag];
-AlgebraicDecompositionPairs[p_, x_Symbol] := Catch[
-  Map[expression[#, x] &, allPairs[prepare[p, x]], {2}], $failureTag];
-AlgebraicRightDecompose[p_, x_Symbol, d_] := Catch[Module[{c, pair},
-  c = prepare[p, x]; checkDegree[c, d]; pair = rightPair[c, d];
-  If[pair === None, Missing["NotDecomposable", d], expression[#, x] & /@ pair]], $failureTag];
+AlgebraicDecompositionPairs[p_, x_Symbol] := prepared[p, x, Function[c, Map[expression[#, x] &, allPairs[c], {2}]]];
+AlgebraicRightDecompose[p_, x_Symbol, d_] := prepared[p, x, Function[c, checkDegree[c, d];
+  With[{pair = rightPair[c, d]},
+    If[pair === None, Missing["NotDecomposable", d], expression[#, x] & /@ pair]]]];
 
-AlgebraicDecompositionData[p_, x_Symbol, d_] := Catch[Module[{c},
-  c = prepare[p, x]; checkDegree[c, d]; publicTest[c, d, x]],
-  $failureTag];
-AlgebraicDecompositionData[p_, x_Symbol] := Catch[Module[{c = prepare[p, x]},
-  exhaustiveData[c, publicTest[c, #, x] & /@ properDegrees[Length[c] - 1]]], $failureTag];
+AlgebraicDecompositionData[p_, x_Symbol, d_] := prepared[p, x, Function[c, checkDegree[c, d]; publicTest[c, d, x]]];
+AlgebraicDecompositionData[p_, x_Symbol] := prepared[p, x,
+  Function[c, exhaustiveData[c, publicTest[c, #, x] & /@ properDegrees[Length[c] - 1]]]];
 
 ComposeDecomposition[parts_List, x_Symbol] := Catch[Module[{vs},
   checkVariable[x];
@@ -1894,9 +1894,6 @@ VerifyAlgebraicDecomposition[___] := invalid[];
 failure[tag_String, msg_String, extra_: <||>] :=
   Failure[tag, Join[<|"MessageTemplate" -> msg|>, extra]];
 
-positiveIntegerQ[v_] := IntegerQ[v] && v > 0;
-componentLimitQ[v_] := v === Infinity || positiveIntegerQ[v];
-degreeLimitQ[v_] := v === Automatic || positiveIntegerQ[v];
 engineOptionsQ[scope_, engine_, prec_, order_, tries_] :=
   MemberQ[{"Global", "InputField"}, scope] && MemberQ[{Automatic, "InputField", "SplittingField"}, engine] &&
   IntegerQ[prec] && prec >= 30 && positiveIntegerQ[order] && positiveIntegerQ[tries];
@@ -1907,15 +1904,13 @@ degreeFailure[d_, lb_] := failure["DegreeBound", "The requested maximum degree i
    it in the Wolfram kernel, and an exact algebraic zero test backs it up on a
    kernel whose reduction can leave an expression alone. *)
 rootObject[poly_, k_Integer] := kRootObject[poly, x, k];
-
 primitiveIntegerCoefficients[coeffs_] := Last[clPrimitive[coeffs]];
+rootValuesAt[poly_, prec_] := Table[kN[rootObject[poly, j], prec], {j, Exponent[poly, x]}];
 
 (* Expand is explicit: FromDigits builds a Horner form, which the Wolfram
    kernel expands on its own and Mathics does not, and the result is compared
    structurally in several places. *)
 primitiveIntegerPolynomial[poly_] := primitiveIn[poly, x];
-
-polynomialHeight[poly_] := Max[Abs[kCoefficientList[primitiveIntegerPolynomial[poly], x]]];
 
 minimalPolynomialOf[a_] := kMemo["minimalPolynomialOf", a, minimalPolynomialCompute[a]];
 minimalPolynomialCompute[a_] := Module[{p},
@@ -1930,7 +1925,7 @@ rootIndexOf[a_, poly_] := Module[{n = Exponent[poly, x], vals, av, k},
   If[Head[a] === Root && IntegerQ[a[[2]]] && 1 <= a[[2]] <= n &&
       kExactZeroQ[a - rootObject[poly, a[[2]]]], Return[a[[2]]]];
   av = kN[a, 40];
-  vals = Table[kN[rootObject[poly, j], 40], {j, n}];
+  vals = rootValuesAt[poly, 40];
   k = kOrderingFirst[Abs[vals - av]];
   If[kExactZeroQ[a - rootObject[poly, k]], Return[k]];
   (* Fixed-precision nearest-root matching may tie for very close roots.
@@ -1972,9 +1967,10 @@ frobeniusCycleType[poly_, p_] := kFactorDegreesMod[poly, x, p];
 
 frobeniusExponentMultiple[poly_, maxPrimesIn_: Automatic] :=
   kMemo["frobeniusExponentMultiple", {poly, Replace[maxPrimesIn, Automatic :> $kFrobeniusPrimes]}, frobeniusExponentMultipleCompute[poly, maxPrimesIn]];
+(* the primes dividing this one are the primes the cycle-type scans skip *)
+frobeniusModulus[poly_] := kDiscriminant[poly, x] Coefficient[poly, x, Exponent[poly, x]];
 frobeniusExponentMultipleCompute[poly_, maxPrimesIn_] := Module[
-  {maxPrimes = Replace[maxPrimesIn, Automatic :> $kFrobeniusPrimes],
-   bad = kDiscriminant[poly, x] Coefficient[poly, x, Exponent[poly, x]], ps},
+  {maxPrimes = Replace[maxPrimesIn, Automatic :> $kFrobeniusPrimes], bad = frobeniusModulus[poly], ps},
   ps = kTakeUpTo[Select[Prime[Range[maxPrimes + 10]], Mod[bad, #] != 0 &], maxPrimes];
   LCM @@ Prepend[Flatten[frobeniusCycleType[poly, #] & /@ ps], 1]];
 
@@ -2042,11 +2038,11 @@ galoisGroupNumerically[roots_List, nums_List, prec_, maxOrder_, maxTries_] :=
         If[m === $Failed, Continue[]];
         md = Exponent[m, x];
         lastDeg = Length[orbit];
-        If[TrueQ[$galoisDebug], Print["galois: k=", k, " w=", w, " degree ", md, " orbit ", lastDeg, " prec ", prec]];
+        galoisPrint["galois: k=", k, " w=", w, " degree ", md, " orbit ", lastDeg, " prec ", prec];
         If[md < lastDeg || Mod[md, lastDeg] != 0, Continue[]];
         If[md > maxOrder, Message[Algebraic::order, md, maxOrder];
           Throw[failure["GroupOrder", "Galois group too large", <|"Order" -> md, "Limit" -> maxOrder|>], failTag]];
-        mroots = If[md == 1, {kN[newTheta, rprec]}, Table[kN[rootObject[m, j], rprec], {j, md}]];
+        mroots = If[md == 1, {kN[newTheta, rprec]}, rootValuesAt[m, rprec]];
         cand = Join @@ Table[{Append[orbit[[i]], j], vals[[i]] + w nums[[j]]},
                   {i, Length[orbit]}, {j, Complement[Range[n], orbit[[i]]]}];
         matched = {}; idx = {};
@@ -2055,7 +2051,7 @@ galoisGroupNumerically[roots_List, nums_List, prec_, maxOrder_, maxTries_] :=
           pos = kOrderingFirst[dists];
           If[dists[[pos]] < tol, AppendTo[matched, c]; AppendTo[idx, pos]],
           {c, cand}];
-        If[TrueQ[$galoisDebug], Print["galois:   matched ", Length[matched], " distinct ", Length[Union[idx]], " of ", md]];
+        galoisPrint["galois:   matched ", Length[matched], " distinct ", Length[Union[idx]], " of ", md];
         If[Length[matched] == md && Length[Union[idx]] == md,
           orbit = matched[[All, 1]]; vals = matched[[All, 2]];
           thetaExact = newTheta;
@@ -2108,7 +2104,7 @@ elementOrder[mt_, g_, idElem_] := Module[{h = g, k = 1}, While[h != idElem, h = 
    from the enclosing function in the Wolfram kernel but only from the loop in
    Mathics. *)
 retryPrecision[compute_, prec0_] := Module[{prec = prec0, result = "precision", attempt = 0},
-  If[TrueQ[$galoisDebug], Print["galois: precision ", prec0]];
+  galoisPrint["galois: precision ", prec0];
   While[attempt++ < 4 && result === "precision",
     result = Catch[compute[prec], precTag];
     If[result === "precision" && attempt < 4, Message[Algebraic::prec, prec]; prec *= 2]];
@@ -2173,21 +2169,24 @@ buildGaloisDataAtPrecision[poly_, prec_, maxOrder_, maxTries_] := Module[
     "RootCoordinates" -> rootCoords, "Automorphisms" -> auts, "Subgroups" -> subs,
     "PrimitiveElement" -> gg["PrimitiveElement"]|>];
 
+(* the leading coefficient c of an integer polynomial and its monic integral
+   model c^(n-1) f(x/c), whose roots are c times the roots of f *)
+monicModel[poly_] := With[{c = Coefficient[poly, x, Exponent[poly, x]]},
+  {c, kExpand[c^(Exponent[poly, x] - 1) (poly /. x -> x/c)]}];
+
 RootGaloisData[a_, opts : OptionsPattern[]] := Module[{in},
   in = inputData[a];
   If[kFailureQ[in], Return[in]];
   RootGaloisData[in["Polynomial"], x, opts]];
 
-RootGaloisData[poly0_, var_Symbol, OptionsPattern[]] := Module[{poly, c, n, res, mon, key},
+RootGaloisData[poly0_, var_Symbol, OptionsPattern[]] := Module[{poly, c, res, mon, key},
   If[! kPolynomialQ[poly0, var] || ! FreeQ[poly0, _Real] ||
       ! And @@ (kRationalQ /@ kCoefficientList[poly0, var]) || Exponent[poly0, var] < 1,
     Return[failure["InvalidPolynomial", "Expected a nonconstant polynomial with exact rational coefficients"]]];
   If[! engineOptionsQ["Global", Automatic, OptionValue["WorkingPrecision"], OptionValue["MaxGroupOrder"], OptionValue["MaxTries"]] ||
       ! MemberQ[{True, False}, OptionValue["Cache"]], Return[failure["InvalidOptions", "Invalid Galois computation options"]]];
   poly = primitiveIntegerPolynomial[poly0 /. var -> x];
-  n = Exponent[poly, x];
-  c = Coefficient[poly, x, n];
-  mon = kExpand[c^(n - 1) (poly /. x -> x/c)];
+  {c, mon} = monicModel[poly];
   If[! kSquareFreeQ[mon], Return[failure["NotSquareFree", "The polynomial is not squarefree"]]];
   (* Scale and OriginalPolynomial belong to the input, not just its integral model.
      Include resource limits so a cached large group cannot bypass a smaller cap. *)
@@ -2271,7 +2270,7 @@ elementToAlgebraic[gd_, v_] := Module[{reps, d, den, prec, vals, poly, cl, k, ca
   poly = kExpand[Times @@ (x - vals[[reps]])];
   cl = roundInteger /@ kCoefficientList[poly, x];
   poly = primitiveIntegerPolynomial[FromDigits[Reverse[cl], x] /. x -> den x];
-  cands = Table[kN[rootObject[poly, j], prec], {j, d}];
+  cands = rootValuesAt[poly, prec];
   k = kOrderingFirst[Abs[cands - vals[[id]]/den]];
   kRootReduce[rootObject[poly, k]]];
 
@@ -2300,10 +2299,8 @@ powerSums[P_, n_] := Module[{s},
   s[k_] := s[k] = -k Coefficient[P, x, n - k] - Sum[Coefficient[P, x, n - i] s[k - i], {i, k - 1}];
   Table[s[j], {j, 0, n - 1}]];
 
-inputFieldData[poly_] := Module[{n, c, P, Pz, theta, fac, factors, principal, subfields, newS, traces, galois, m, rows, eqs, r, key, data},
-  n = Exponent[poly, x];
-  c = Coefficient[poly, x, n];
-  P = kExpand[c^(n - 1) (poly /. x -> x/c)];
+inputFieldData[poly_] := Module[{n = Exponent[poly, x], c, P, Pz, theta, fac, factors, principal, subfields, newS, traces, galois, m, rows, eqs, r, key, data},
+  {c, P} = monicModel[poly];
   Pz = P /. x -> z;
   key = {"InputField", poly};
   If[kKeyExistsQ[$galoisCache, key], Return[$galoisCache[key]]];
@@ -2380,17 +2377,40 @@ makeResult[a_, op_, terms_, lb_, scope_, method_, optimal_, scopeOptimal_, extra
     "Expression" -> Inactive[op] @@ terms, "Method" -> method|>, extra]];
 
 (* the index of a among the roots of the Galois data and its coordinates,
-   or the failure the three engines report; a caller unpacks it with
-   Replace[targetOf[gd, a], {f_Failure :> Return[f], tv_ :> ({target, va} = tv)}] *)
+   or the failure the three engines report *)
 targetOf[gd_, a_] := With[{target = locateTarget[gd, a]},
   If[target === $Failed, failure["RootIndex", "Could not locate the input among the roots"],
     {target, gd["RootCoordinates"][[target]]/gd["Scale"]}]];
+(* the coordinates of a and the stabilizer an "InputField" scope restricts
+   the search to, or the failure *)
+galoisTarget[gd_, a_, scope_] := Replace[targetOf[gd, a],
+  {t_, v_} :> {v, If[scope === "InputField", stabilizerOf[gd, t], None]}];
+(* the engine-dependent extra keys of a result, and the degrees a search walks *)
+engineExtra[fd_] := If[fd["Type"] === "InputField",
+  <|"AmbientDegree" -> fd["Degree"], "AmbientGalois" -> fd["Galois"]|>, <|"GroupOrder" -> fd["Order"]|>];
+degreeList[dmax_, lb_, n_] := If[dmax === Automatic, Range[lb, n - 1], {dmax}];
+(* the input-field fast path settles the question when the ambient field is
+   Galois, when only that field was asked about, or when it already reached
+   the lower bound; otherwise its result is kept as a fallback *)
+fastPathDecisiveQ[fd_, scope_, engine_, res_, lb_] := fd["Galois"] || scope === "InputField" ||
+  engine === "InputField" || (! kFailureQ[res] && res["MaximumDegree"] == lb);
+preferResult[res_, fallback_] := If[res =!= $Failed && ! kFailureQ[res], res, fallback];
+notFoundFailure[dmax_, extra_: <||>] := failure["NotFound", "No representation with the requested maximum degree",
+  Join[<|"MaximumDegree" -> dmax|>, extra]];
+(* the one-component answer under a cap of one component *)
+singleComponent[a_, op_, n_, lb_, dmax_, scope_, method_, what_, extra_: <||>] :=
+  If[dmax === Automatic || n <= dmax,
+    makeResult[a, op, {kRootReduce[a]}, lb, scope, method, lb == n, True, extra],
+    failure["NotFound", "The input itself exceeds the degree bound for a single " <> what]];
+(* the Gaussian trivial result, written without makeResult *)
+gaussianTrivialResult[a_, n_, lb_, scope_, method_, optimal_, scopeOptimal_, extra_: <||>] :=
+  Join[<|"Terms" -> {{1, kRootReduce[a]}}, "Degrees" -> {n}, "MaximumDegree" -> n, "LowerBound" -> lb,
+    "Optimal" -> optimal, "ScopeOptimal" -> scopeOptimal, "Scope" -> scope, "Verified" -> True,
+    "Expression" -> Inactive[Plus][kRootReduce[a]], "Method" -> method, "Coefficients" -> "GaussianRationals"|>, extra];
 
 (* locate c*a among the roots of the Galois data; returns the index *)
-locateTarget[gd_, a_] := Module[{c = gd["Scale"], pos},
-  (* kIndices returns the indices themselves, not Position's {{i}} *)
-  pos = kTakeUpTo[kIndices[gd["Roots"], _?(kExactZeroQ[# - c a] &)], 1];
-  If[pos === {}, $Failed, First[pos]]];
+locateTarget[gd_, a_] := With[{c = gd["Scale"]},
+  kFirstIndex[gd["Roots"], _?(kExactZeroQ[# - c a] &), $Failed]];
 
 stabilizerOf[gd_, target_] := Select[Range[gd["Order"]], gd["Permutations"][[#, target]] == target &];
 
@@ -2417,7 +2437,6 @@ candidateFields[gd_, d_, stab_: None] := Module[{subs = eligibleFields[gd, d, st
     If[gd["Type"] === "Galois", SubsetQ[H["Elements"], #["Elements"]],
       fieldContainsQ[#["FixedField"], H["FixedField"]]] &]]]];
 
-rowSpaceBasis[rows_] := canonicalRows[rows];
 
 (* Solve v in the sum of the given spaces (each an association with a "Basis" of rows);
    returns the list of {space, contribution vector} or $Failed. *)
@@ -2460,15 +2479,9 @@ RootSumDecomposition[a_, dmax : Except[_Rule | _RuleDelayed], OptionsPattern[]] 
   gaussian = coeffs === "GaussianRationals";
   lb = If[n == 1, 1, If[gaussian, gaussianPrimeBound[n], lowerBoundFromPolynomial[in["Polynomial"]]]];
   If[dmax =!= Automatic && dmax < lb, Return[degreeFailure[dmax, lb]]];
-  trivial := If[gaussian,
-    <|"Terms" -> {{1, kRootReduce[a]}}, "Degrees" -> {n}, "MaximumDegree" -> n, "LowerBound" -> lb,
-      "Optimal" -> (lb == n), "ScopeOptimal" -> (lb == n), "Scope" -> scope, "Verified" -> True,
-      "Expression" -> Inactive[Plus][kRootReduce[a]], "Method" -> "Trivial", "Coefficients" -> "GaussianRationals"|>,
+  trivial := If[gaussian, gaussianTrivialResult[a, n, lb, scope, "Trivial", lb == n, lb == n],
     makeResult[a, Plus, {kRootReduce[a]}, lb, scope, "Trivial", lb == n, lb == n]];
-  If[OptionValue["MaxTerms"] === 1,
-    Return[If[dmax === Automatic || n <= dmax,
-      makeResult[a, Plus, {kRootReduce[a]}, lb, scope, "SingleTerm", lb == n, True],
-      failure["NotFound", "The input itself exceeds the degree bound for a single term"]]]];
+  If[OptionValue["MaxTerms"] === 1, Return[singleComponent[a, Plus, n, lb, dmax, scope, "SingleTerm", "term"]]];
   If[n == 1 || (dmax =!= Automatic && dmax >= n) || lb == n, Return[trivial]];
   (* Everything below this point needs the Galois engine, directly or through
      the input-field fast path, so a kernel whose Root numerics are not what
@@ -2488,14 +2501,13 @@ sumDecompositionCore[a_, in_, dmax_, lb0_, scope_, gaussian_, maxTerms_, prec_, 
     If[fd =!= $Failed,
       res = sumSearch[fd, a, fd["TargetCoordinates"], None, n, lb, dmax, scope, maxTerms,
         If[fd["Galois"], "GaloisInputField", "InputFieldSubfields"], fd["Galois"]];
-      If[fd["Galois"] || scope === "InputField" || engine === "InputField" ||
-          (! kFailureQ[res] && res["MaximumDegree"] == lb), Return[res]]]];
+      If[fastPathDecisiveQ[fd, scope, engine, res, lb], Return[res]]]];
   If[gaussian && kPolynomialRemainder[poly, x^2 + 1, x] =!= 0, poly = kExpand[poly (x^2 + 1)]];
   gd = RootGaloisData[poly, x, "WorkingPrecision" -> prec, "MaxGroupOrder" -> maxOrder, "MaxTries" -> maxTries];
-  If[kFailureQ[gd], Return[If[res =!= $Failed && ! kFailureQ[res], res, gd]]];
-  Module[{c = gd["Scale"], target, iCoord, iMult},
-    Replace[targetOf[gd, a], {f_Failure :> Return[f], tv_ :> ({target, va} = tv)}];
-    stab = If[scope === "InputField", stabilizerOf[gd, target], None];
+  If[kFailureQ[gd], Return[preferResult[res, gd]]];
+  Module[{c = gd["Scale"], tv = galoisTarget[gd, a, scope], iCoord, iMult},
+    If[kFailureQ[tv], Return[tv]];
+    {va, stab} = tv;
     lb = Max[lb, If[gaussian, gaussianExponentBound[gd["Exponent"]], exponentBound[gd["Exponent"]]]];
     If[gaussian,
       iCoord = gd["RootCoordinates"][[kFirstIndex[gd["Roots"], _?(kExactZeroQ[# - c I] &)]]]/c;
@@ -2508,55 +2520,46 @@ sumDecompositionCore[a_, in_, dmax_, lb0_, scope_, gaussian_, maxTerms_, prec_, 
       If[scope === "Global", "SplittingFieldFixedSpaces", "InputFieldSubfields"], scope === "Global"]]];
 
 (* additive search in a field-data structure; complete within the field, globally complete if completeQ *)
-sumSearch[fd_, a_, va_, stab_, n_, lb_, dmax_, scope_, maxTerms_, method_, completeQ_] := Module[{dlist, res, extra},
-  extra = If[fd["Type"] === "InputField", <|"AmbientDegree" -> fd["Degree"], "AmbientGalois" -> fd["Galois"]|>, <|"GroupOrder" -> fd["Order"]|>];
-  dlist = If[dmax === Automatic, Range[lb, n - 1], {dmax}];
-  res = Catch[
-    Do[
-      Module[{cf, spaces, rep, rational = 0, terms = {}, mean, term, atLowerBound},
-        cf = candidateFields[fd, d, stab];
-        spaces = Table[<|"Index" -> H["Index"], "Field" -> H["FixedField"], "Basis" -> H["FixedField"]|>, {H, cf}];
-        rep = findSumRepresentation[spaces, va, maxTerms];
-        If[rep =!= $Failed,
-          Do[mean = meanTraceOf[fd, e[[2]]]; rational += mean;
-            term = e[[2]] - mean UnitVector[Length[va], 1];
-            If[term != 0 term, AppendTo[terms, term]], {e, rep}];
-          terms = toExact[fd, #] & /@ terms;
-          (* Centering must not add a component beyond a finite MaxTerms cap. *)
-          If[rational != 0,
-            If[maxTerms =!= Infinity && Length[terms] >= maxTerms,
-              terms[[1]] = kRootReduce[terms[[1]] + rational], AppendTo[terms, rational]]];
-          If[terms === {}, terms = {0}];
-          atLowerBound = Max[termDegrees[terms]] == lb;
-          Throw[makeResult[a, Plus, terms, lb, scope, method,
-            atLowerBound || ((dmax === Automatic) && completeQ && maxTerms === Infinity),
-            (dmax === Automatic && (completeQ || scope === "InputField")) || atLowerBound, extra], foundTag]]],
-      {d, dlist}];
-    $Failed, foundTag];
-  If[res =!= $Failed, Return[res]];
+(* the first degree in dlist at which the maximal fields represent va, as
+   the representation; basis gives the coefficient space of one field *)
+representationAtDegree[fd_, va_, stab_, dlist_, maxTerms_, basis_] := Catch[
+  Do[
+    With[{spaces = Table[<|"Index" -> H["Index"], "Field" -> H["FixedField"], "Basis" -> basis[H]|>,
+        {H, candidateFields[fd, d, stab]}]},
+      With[{rep = findSumRepresentation[spaces, va, maxTerms]},
+        If[rep =!= $Failed, Throw[rep, foundTag]]]],
+    {d, dlist}];
+  $Failed, foundTag];
+
+sumSearch[fd_, a_, va_, stab_, n_, lb_, dmax_, scope_, maxTerms_, method_, completeQ_] := Module[
+  {extra = engineExtra[fd], rep, rational = 0, terms = {}, mean, term, atLowerBound},
+  rep = representationAtDegree[fd, va, stab, degreeList[dmax, lb, n], maxTerms, #["FixedField"] &];
+  If[rep =!= $Failed,
+    Do[mean = meanTraceOf[fd, e[[2]]]; rational += mean;
+      term = e[[2]] - mean UnitVector[Length[va], 1];
+      If[term != 0 term, AppendTo[terms, term]], {e, rep}];
+    terms = toExact[fd, #] & /@ terms;
+    (* Centering must not add a component beyond a finite MaxTerms cap. *)
+    If[rational != 0,
+      If[maxTerms =!= Infinity && Length[terms] >= maxTerms,
+        terms[[1]] = kRootReduce[terms[[1]] + rational], AppendTo[terms, rational]]];
+    If[terms === {}, terms = {0}];
+    atLowerBound = Max[termDegrees[terms]] == lb;
+    Return[makeResult[a, Plus, terms, lb, scope, method,
+      atLowerBound || ((dmax === Automatic) && completeQ && maxTerms === Infinity),
+      (dmax === Automatic && (completeQ || scope === "InputField")) || atLowerBound, extra]]];
   If[dmax === Automatic,
     makeResult[a, Plus, {kRootReduce[a]}, lb, scope, "CompleteSearch", (completeQ && maxTerms === Infinity) || n == lb,
       completeQ || scope === "InputField" || n == lb, extra],
-    failure["NotFound", "No representation with the requested maximum degree", Join[<|"MaximumDegree" -> dmax, "Scope" -> scope|>, extra]]]];
+    notFoundFailure[dmax, Join[<|"Scope" -> scope|>, extra]]]];
 
-gaussianSumSearch[gd_, a_, va_, iMult_, n_, lb_, dmax_, scope_, maxTerms_, stab_] := Module[{dlist, res},
-  dlist = If[dmax === Automatic, Range[lb, n - 1], {dmax}];
-  res = Catch[
-    Do[
-      Module[{cf, spaces, rep},
-        cf = candidateFields[gd, d, stab];
-        spaces = Table[<|"Index" -> H["Index"], "Field" -> H["FixedField"],
-          "Basis" -> rowSpaceBasis[Join[H["FixedField"], Map[iMult . # &, H["FixedField"]]]]|>, {H, cf}];
-        rep = findSumRepresentation[spaces, va, maxTerms];
-        If[rep =!= $Failed, Throw[gaussianResult[gd, a, rep, iMult, lb, scope, dmax === Automatic], foundTag]]],
-      {d, dlist}];
-    $Failed, foundTag];
-  If[res =!= $Failed, Return[res]];
+gaussianSumSearch[gd_, a_, va_, iMult_, n_, lb_, dmax_, scope_, maxTerms_, stab_] := Module[{rep},
+  rep = representationAtDegree[gd, va, stab, degreeList[dmax, lb, n], maxTerms,
+    canonicalRows[Join[#["FixedField"], Map[iMult . # &, #["FixedField"]]]] &];
+  If[rep =!= $Failed, Return[gaussianResult[gd, a, rep, iMult, lb, scope, dmax === Automatic]]];
   If[dmax === Automatic,
-    <|"Terms" -> {{1, kRootReduce[a]}}, "Degrees" -> {n}, "MaximumDegree" -> n, "LowerBound" -> lb, "Optimal" -> (scope === "Global" || n == lb),
-      "ScopeOptimal" -> True, "Scope" -> scope, "Verified" -> True, "Expression" -> Inactive[Plus][kRootReduce[a]],
-      "Method" -> "CompleteSearch", "Coefficients" -> "GaussianRationals", "GroupOrder" -> gd["Order"]|>,
-    failure["NotFound", "No representation with the requested maximum degree", <|"MaximumDegree" -> dmax, "Scope" -> scope|>]]];
+    gaussianTrivialResult[a, n, lb, scope, "CompleteSearch", scope === "Global" || n == lb, True, <|"GroupOrder" -> gd["Order"]|>],
+    notFoundFailure[dmax, <|"Scope" -> scope|>]]];
 
 (* Gaussian mode: each contribution e in E + iE is split as u + i w with u, w in E. *)
 gaussianResult[gd_, a_, rep_, iMult_, lb_, scope_, automatic_] := Module[{terms = {}, Bf, sol, u, w, degs, pivot, verified},
@@ -2628,7 +2631,7 @@ principalRoot[u_, t_Integer] := If[t == 1, u, kRootReduce[Power[u, 1/t]]];
 compositumDegreeBound[fd_, fields_] := If[fd["Type"] === "Galois",
   fd["Order"]/Length[Intersection @@ (#["Elements"] & /@ fields)], Times @@ (#["Index"] & /@ fields)];
 
-twoFactorSearch[fd_, va_, a_, n_, d_, stab_, scope_, ma_] := Module[{tmax, subs, pairs, mt},
+twoFactorSearch[fd_, a_, n_, d_, stab_, scope_, ma_] := Module[{tmax, subs, pairs, mt},
   tmax = If[scope === "Global" && stab === None && (fd["Type"] === "Galois" || fd["Galois"]), Min[d, Floor[d^2/n]], 1];
   Catch[
     Do[
@@ -2646,7 +2649,7 @@ twoFactorSearch[fd_, va_, a_, n_, d_, stab_, scope_, ma_] := Module[{tmax, subs,
 
 (* choose a small nullspace vector: LLL-reduce the integer basis, take the shortest E-part *)
 shortestVector[ns_, len_] := Module[{ints, red},
-  ints = Map[# LCM @@ Denominator[#] &, ns];
+  ints = clearDenominators /@ ns;
   red = If[Length[ints] > 1, kLatticeReduce[ints], ints];
   First[kMinimalBy[red, With[{h = Take[#, len]}, h . h] &]]];
 
@@ -2739,16 +2742,10 @@ RootProductDecomposition[a_, dmax : Except[_Rule | _RuleDelayed], OptionsPattern
   If[dmax =!= Automatic && dmax < lb, Return[degreeFailure[dmax, lb]]];
   trivial := makeResult[a, Times, {kRootReduce[a]}, lb, scope, "Trivial", lb == n, lb == n, <|"TwoFactorOptimal" -> (lb == n), "NormExponent" -> 1|>];
   If[OptionValue["MaxFactors"] === 1,
-    Return[If[dmax === Automatic || n <= dmax,
-      makeResult[a, Times, {kRootReduce[a]}, lb, scope, "SingleFactor", lb == n, True,
-        <|"TwoFactorOptimal" -> (lb == n), "NormExponent" -> 1|>],
-      failure["NotFound", "The input itself exceeds the degree bound for a single factor"]]]];
+    Return[singleComponent[a, Times, n, lb, dmax, scope, "SingleFactor", "factor",
+      <|"TwoFactorOptimal" -> (lb == n), "NormExponent" -> 1|>]]];
   If[n == 1 || (dmax =!= Automatic && dmax >= n) || lb == n, Return[trivial]];
-  (* Everything below this point needs the Galois engine, directly or through
-     the input-field fast path, so a kernel whose Root numerics are not what
-     they report is refused here.  The answers above -- the trivial and
-     single-term ones, the lower bound and the degree checks -- are exact and
-     stay available. *)
+  (* the engine refusal, as in RootSumDecomposition *)
   If[! kNativeQ["RootPrecision"], Return[kernelPrecisionFailure[]]];
   retryPrecision[Function[prec, productDecompositionCore[a, in, dmax, lb, scope, OptionValue["MaxFactors"], OptionValue["RecursionDepth"],
     OptionValue["TensorTest"], prec, OptionValue["MaxGroupOrder"], OptionValue["MaxTries"], OptionValue["Engine"], bd]],
@@ -2762,13 +2759,12 @@ productDecompositionCore[a_, in_, dmax_, lb0_, scope_, maxFactors_, depth_, tens
     If[fd =!= $Failed,
       res = productSearch[fd, a, fd["TargetCoordinates"], None, n, lb, dmax, scope, maxFactors, depth, tensorQ, prec, maxOrder, maxTries, engine,
         fd["Galois"] || scope === "InputField", bounded];
-      If[fd["Galois"] || scope === "InputField" || engine === "InputField" || (! kFailureQ[res] && res["MaximumDegree"] == lb),
-        Return[res]]]];
+      If[fastPathDecisiveQ[fd, scope, engine, res, lb], Return[res]]]];
   gd = RootGaloisData[in["Polynomial"], x, "WorkingPrecision" -> prec, "MaxGroupOrder" -> maxOrder, "MaxTries" -> maxTries];
-  If[kFailureQ[gd], Return[If[res =!= $Failed && ! kFailureQ[res], res, gd]]];
-  Module[{c = gd["Scale"], target, va, stab},
-    Replace[targetOf[gd, a], {f_Failure :> Return[f], tv_ :> ({target, va} = tv)}];
-    stab = If[scope === "InputField", stabilizerOf[gd, target], None];
+  If[kFailureQ[gd], Return[preferResult[res, gd]]];
+  Module[{tv = galoisTarget[gd, a, scope], va, stab},
+    If[kFailureQ[tv], Return[tv]];
+    {va, stab} = tv;
     lb = Max[lb, exponentBound[gd["Exponent"]]];
     If[lb >= n,
       If[dmax =!= Automatic && dmax < n, Return[degreeFailure[dmax, lb]]];
@@ -2776,14 +2772,13 @@ productDecompositionCore[a_, in_, dmax_, lb0_, scope_, maxFactors_, depth_, tens
     productSearch[gd, a, va, stab, n, lb, dmax, scope, maxFactors, depth, tensorQ, prec, maxOrder, maxTries, engine, True, bounded]]];
 
 productSearch[fd_, a_, va_, stab_, n_, lb_, dmax_, scope_, maxFactors_, depth_, tensorQ_, prec_, maxOrder_, maxTries_, engine_, completeQ_, bounded_] := Module[
-  {dlist, twoDegrees, d, two, best, terms, degs, res, tens, sub, extra, remaining, f, parts, ma, atLowerBound},
-  extra = If[fd["Type"] === "InputField", <|"AmbientDegree" -> fd["Degree"], "AmbientGalois" -> fd["Galois"]|>, <|"GroupOrder" -> fd["Order"]|>];
-  dlist = If[dmax === Automatic, Range[lb, n - 1], {dmax}];
+  {dlist = degreeList[dmax, lb, n], twoDegrees, d, two, best, terms, degs, res, tens, sub, extra = engineExtra[fd],
+   remaining, f, parts, ma, atLowerBound},
   twoDegrees = Select[dlist, #^2 >= n &];
   (* 1. two-factor algorithm (norm-intersection criterion; complete when the ambient field is Galois) *)
   two = $Failed;
   If[twoDegrees =!= {}, ma = multMatrix[fd, va]];
-  Do[two = twoFactorSearch[fd, va, a, n, d, stab, scope, ma]; If[two =!= $Failed, Break[]], {d, twoDegrees}];
+  Do[two = twoFactorSearch[fd, a, n, d, stab, scope, ma]; If[two =!= $Failed, Break[]], {d, twoDegrees}];
   If[two === $Failed && dmax === Automatic, two = <|"Terms" -> {kRootReduce[a]}, "Exponent" -> 1, "FieldDegrees" -> {n}|>];
   best = If[two === $Failed, $Failed,
     atLowerBound = Max[termDegrees[two["Terms"]]] == lb;
@@ -2826,13 +2821,12 @@ productSearch[fd_, a_, va_, stab_, n_, lb_, dmax_, scope_, maxFactors_, depth_, 
         Join[<|"TwoFactorOptimal" -> False, "NormExponent" -> 1|>, extra]]]];
   (* 4. small bounded dictionary search (quadratic dictionary only; larger catalogs are enormous) *)
   If[scope === "Global" && bounded =!= None && (best === $Failed || best["MaximumDegree"] > lb),
-    Module[{bd = bounded, dd, upper = If[best === $Failed, dmax, best["MaximumDegree"] - 1]},
-      Do[
-        res = RootBoundedDecomposition[a, Times, dd, bd[[1]], Min[bd[[2]], maxFactors]];
-        If[! kFailureQ[res] && res["Verified"] && (best === $Failed || res["MaximumDegree"] < best["MaximumDegree"]),
-          best = Join[res, <|"Scope" -> scope, "TwoFactorOptimal" -> False, "NormExponent" -> 1|>, extra]; Break[]],
-        {dd, lb, Min[2, upper]}]]];
-  If[best === $Failed, failure["NotFound", "No representation with the requested maximum degree", <|"MaximumDegree" -> dmax|>], best]];
+    Do[
+      res = RootBoundedDecomposition[a, Times, dd, bounded[[1]], Min[bounded[[2]], maxFactors]];
+      If[! kFailureQ[res] && res["Verified"] && (best === $Failed || res["MaximumDegree"] < best["MaximumDegree"]),
+        best = Join[res, <|"Scope" -> scope, "TwoFactorOptimal" -> False, "NormExponent" -> 1|>, extra]; Break[]],
+      {dd, lb, Min[2, If[best === $Failed, dmax, best["MaximumDegree"] - 1]]}]];
+  If[best === $Failed, notFoundFailure[dmax], best]];
 
 (* ------------------------------------------------------------------ *)
 (* Bounded dictionary search                                          *)
@@ -2873,7 +2867,8 @@ RootBoundedDecomposition[a_, op : (Plus | Times), d_Integer, h_Integer, r_Intege
   res = Catch[search[{}, 1, r]; $Failed, foundTag];
   If[res === $Failed,
     failure["NotFoundWithinBounds", "No decomposition found within the bounds", <|"Degree" -> d, "Height" -> h, "Components" -> r|>],
-    makeResult[a, op, res, lb, "Bounded", "DictionarySearch", Max[termDegrees[res]] == lb, Max[termDegrees[res]] == lb]]];
+    With[{atLowerBound = Max[termDegrees[res]] == lb},
+      makeResult[a, op, res, lb, "Bounded", "DictionarySearch", atLowerBound, atLowerBound]]]];
 
 RootBoundedDecomposition[_, _, _, _, _] := failure["InvalidBounds", "Expected Plus or Times and positive integer bounds"];
 
@@ -2897,7 +2892,7 @@ RootBoundedDecomposition[_, _, _, _, _] := failure["InvalidBounds", "Expected Pl
    context, so the sixteen aliases into another package's private context
    that this code used to open are gone. *)
 
-okQ[r_] := r =!= $Failed && ! kFailureQ[r];      (* a usable result of a recursive step *)
+okQ[r_] := ! kFailureQ[r];      (* a usable result of a recursive step *)
 
 (* ------------------------------------------------------------------ *)
 (* Radical grammar                                                     *)
@@ -2912,15 +2907,13 @@ okQ[r_] := r =!= $Failed && ! kFailureQ[r];      (* a usable result of a recursi
 $prec = 60;
 
 (* the candidate closest to the target value, if it is clearly separated from the others *)
-selectCandidate[cands_List, target_] := Module[{d, ord},
-  If[cands === {}, Return[$Failed]];
-  d = Abs[kN[cands, $prec] - kN[target, $prec]];
-  ord = kOrdering[d];
-  If[d[[ord[[1]]]] < 10^-20 && (Length[d] == 1 || d[[ord[[2]]]] > 10^-15), cands[[ord[[1]]]], $Failed]];
+selectCandidate[cands_List, target_] := If[cands === {}, $Failed,
+  With[{k = nearestByMargin[Abs[kN[cands, $prec] - kN[target, $prec]], 10^-20, 0, 10^-15]},
+    If[k === $Failed, $Failed, cands[[k]]]]];
 
 (* exact verification with a time limit; True, False or Indeterminate (numerically equal, not proved) *)
 verifyExact[expr_, a_, limit_] := Module[{r = TimeConstrained[kExactZeroQ[expr - a], limit, Indeterminate]},
-  If[r === Indeterminate && ! (Abs[kN[expr - a, 200]] < 10^-150), False, r]];
+  If[r === Indeterminate && ! TrueQ[Abs[kN[expr - a, 200]] < 10^-150], False, r]];
 
 (* does the polynomial fac (exact algebraic coefficients, possibly of height 10^100) vanish at a?  The
    evaluation precision exceeds the cancellation between the terms, and the residual is compared with
@@ -2938,8 +2931,7 @@ vanishesAtQ[fac_, a_] := Module[{n = Exponent[fac, x], cl, prec, na, terms},
 (* ------------------------------------------------------------------ *)
 
 (* prime degree n: a solvable transitive group lies in AGL(1,n), whose cycle types are 1^n, n, 1 d^((n-1)/d) *)
-agl1TypeQ[degs_, n_] := degs === {n} || degs === ConstantArray[1, n] ||
-  (First[degs] == 1 && Length[Union[Rest[degs]]] == 1);
+agl1TypeQ[degs_, n_] := degs === {n} || (First[degs] == 1 && Length[Union[Rest[degs]]] == 1);
 
 (* a single prime cycle of length l > n/2 (the rest fixed) makes a transitive group primitive; a
    solvable primitive group has prime-power degree n = p^k and lies in AGL(k,p), where an element
@@ -2955,7 +2947,7 @@ frobeniusNonsolvableQ[poly_, maxPrimesIn_: Automatic] :=
 frobeniusNonsolvableCompute[poly_, maxPrimesIn_] := Catch[Module[
   {n = Exponent[poly, x], maxPrimes = Replace[maxPrimesIn, Automatic :> $kFrobeniusPrimesSolvable], bad, p = 2, count = 0},
   bad = If[PrimeQ[n], ! agl1TypeQ[#, n] &, singlePrimeCycleQ[#, n] &];
-  With[{d = kDiscriminant[poly, x] Coefficient[poly, x, n]},
+  With[{d = frobeniusModulus[poly]},
     While[count < maxPrimes,
       p = NextPrime[p];
       If[Mod[d, p] == 0, Continue[]];
@@ -2980,6 +2972,11 @@ orderLimitFailure[poly_, maxOrder_] := With[{mult = frobeniusExponentMultiple[po
 galoisData[poly_, maxOrder_, prec_] := With[{gd = RootGaloisData[poly, x, "MaxGroupOrder" -> maxOrder, "WorkingPrecision" -> prec]},
   If[kFailureQ[gd] && gd[[1]] === "GroupOrder",
     failure["ResourceLimit", "The Galois group is larger than \"MaxGroupOrder\"", gd[[2]]], gd]];
+(* the same after the Frobenius bound on the group order has been checked
+   against the cap, which is cheaper than building the group *)
+galoisDataChecked[poly_, maxOrder_, prec_] := With[{limit = orderLimitFailure[poly, maxOrder]},
+  If[limit =!= None, limit, galoisData[poly, maxOrder, prec]]];
+groupSolvableQ[gd_] := solvableQ[gd["MultiplicationTable"], gd["Identity"], Range[gd["Order"]]];
 
 (* ------------------------------------------------------------------ *)
 (* Structural layer                                                    *)
@@ -2988,7 +2985,7 @@ galoisData[poly_, maxOrder_, prec_] := With[{gd = RootGaloisData[poly, x, "MaxGr
 $method = Automatic; $opts = {}; $methodUsed = None; $galoisInfo = <||>; $extension = None;
 
 monic[p_] := kExpand[p/Coefficient[p, x, Exponent[p, x]]];
-binomialQ[g_] := Exponent[g - Coefficient[g, x, Exponent[g, x]] x^Exponent[g, x] - Coefficient[g, x, 0], x] <= 0;
+binomialQ[g_] := With[{n = Exponent[g, x]}, Exponent[g - Coefficient[g, x, n] x^n - Coefficient[g, x, 0], x] <= 0];
 formulaSolvableQ[g_] := Exponent[g, x] <= 4 || binomialQ[g];
 
 (* the radical expression of an exact algebraic number, or $Failed *)
@@ -2997,7 +2994,6 @@ sub[a_, depth_] := With[{r = radicalsOf[a, depth]}, If[okQ[r], r, $Failed]];
 (* explicit formulas for degrees 2 and 3 (Solve can spend a long time simplifying large radical
    coefficients); the coefficient list is low to high *)
 rootOrbit[root_, n_] := root (-1)^(2 Range[0, n - 1]/n);
-quadraticRoots[{c0_, c1_, c2_}] := (-c1 + {1, -1} Sqrt[c1^2 - 4 c2 c0])/(2 c2);
 
 cubicRoots[{d0_, c0_, b0_, a0_}] := Module[{b = b0/a0, c = c0/a0, d = d0/a0, pp, qq, branches},
   pp = c - b^2/3; qq = 2 b^3/27 - b c/3 + d;
@@ -3039,11 +3035,9 @@ structuralExtension[a_, p_, depth_] := Catch[Module[{gens, fac = p, rads, sel},
     If[fac === $Failed, Throw[$Failed, moduleTag]],
     {i, Length[gens]}];
   If[! formulaSolvableQ[fac], Return[$Failed]];
-  rads = Table[If[RadicalExpressionQ[g], g, Block[{$extension = None}, sub[g, depth - 1]]], {g, gens}];
+  rads = Block[{$extension = None}, Table[sub[g, depth - 1], {g, gens}]];   (* a radical g comes back as is *)
   If[MemberQ[rads, $Failed], Return[$Failed]];
-  sel = solveAndSelect[fac, 0, a];
-  If[sel === $Failed, Return[$Failed]];
-  sel = sel /. Thread[gens -> rads];
+  sel = solveAndSelect[fac, 0, a] /. Thread[gens -> rads];
   If[RadicalExpressionQ[sel], sel, $Failed]], moduleTag];
 
 (* 1. functional decomposition p = g1(g2(...gk(x))), peeled from the outside: v_i = (g_{i+1} o ... o g_k)(a)
@@ -3077,7 +3071,7 @@ structuralReciprocal[a_, p_, depth_] := Module[{rd = reciprocalDecomposition[p],
   If[rd === $Failed, Return[$Failed]];
   c = rd[[1]];
   yrad = sub[kRootReduce[a + c/a], depth - 1];        (* a + c/a is a root of P *)
-  If[yrad === $Failed, $Failed, selectCandidate[quadraticRoots[{c, -yrad, 1}], a]]];
+  If[yrad === $Failed, $Failed, solveAndSelect[x^2 + c, yrad x, a]]];   (* a solves x^2 - y x + c = 0 *)
 
 (* 3. Dickson polynomials: the centered polynomial is D_n(x, c) - b, and the roots are zeta^j u + c/(zeta^j u)
    with u^n a root of s^2 - b s + c^n *)
@@ -3108,7 +3102,7 @@ structuralPairSum[a_, p_, depth_] := Catch[Module[{n = Exponent[p, x], r2, facs,
   r2 = pairSumPolynomial[p];
   If[r2 === $Failed, Return[$Failed]];
   facs = SortBy[Select[First /@ kFactorList[r2], 2 <= Exponent[#, x] <= Min[6, n - 1] &], Exponent[#, x] &];
-  na = kN[a, 40]; nroots = Table[kN[rootObject[p, j], 40], {j, n}];
+  na = kN[a, 40]; nroots = rootValuesAt[p, 40];
   Do[
     y0 = rootObject[g, j];
     If[Min[Abs[kN[y0, 40] - na - nroots]] > 10^-15, Continue[]];   (* y0 = a + a' for a conjugate a' *)
@@ -3162,15 +3156,16 @@ solvableQ[mt_, idElem_, H_] := Catch[Module[{cur = Sort[H], nxt},
 
 (* composition series with prime quotients, from H down to 1: at each step a normal subgroup of prime
    index containing the commutator subgroup (obtained by enlarging the latter while staying proper) *)
-primeSeries[mt_, idElem_, H0_] := Catch[Module[{H = Sort[H0], steps = {}, N, p},
+primeSeries[mt_, idElem_, H0_] := Catch[Module[{H = Sort[H0], steps = {}, normal, p},
   While[Length[H] > 1,
-    N = commutatorSubgroup[mt, idElem, H];
-    If[N === H, Throw[$Failed, moduleTag]];
-    Do[If[! MemberQ[N, g], With[{J = groupClosure[mt, idElem, Append[N, g]]}, If[Length[J] < Length[H], N = J]]], {g, H}];
-    p = Length[H]/Length[N];
+    normal = commutatorSubgroup[mt, idElem, H];
+    If[normal === H, Throw[$Failed, moduleTag]];
+    Do[If[! MemberQ[normal, g],
+        With[{J = groupClosure[mt, idElem, Append[normal, g]]}, If[Length[J] < Length[H], normal = J]]], {g, H}];
+    p = Length[H]/Length[normal];
     If[! PrimeQ[p], Throw[$Failed, moduleTag]];
-    AppendTo[steps, <|"Group" -> H, "Normal" -> N, "Generator" -> First[Complement[H, N]], "Prime" -> p|>];
-    H = N];
+    AppendTo[steps, <|"Group" -> H, "Normal" -> normal, "Generator" -> First[Complement[H, normal]], "Prime" -> p|>];
+    H = normal];
   steps], moduleTag];
 
 fixedByQ[gd_, v_, elems_] := AllTrue[elems, gd["Automorphisms"][[#]] . v == v &];
@@ -3181,14 +3176,15 @@ fixedByQ[gd_, v_, elems_] := AllTrue[elems, gd["Automorphisms"][[#]] . v == v &]
 
 (* the descent proper, for Galois data gd of p(x) Prod Phi_q(x); may throw "precision" *)
 descend[gd_, a_, primes_, resolventForm_] := Module[
-  {ord = gd["Order"], c = gd["Scale"], target, va, zetaIdx, zetaMult, zeta, H, steps, baseBasis, rad, radCompute, branch},
-  Replace[targetOf[gd, a], {f_Failure :> Return[f], tv_ :> ({target, va} = tv)}];
+  {ord = gd["Order"], c = gd["Scale"], tv = targetOf[gd, a], va, zetaIdx, zetaMult, zeta, H, steps, baseBasis, rad, radCompute, branch},
+  If[kFailureQ[tv], Return[tv]];
+  va = Last[tv];
   (* roots of unity zeta_q = Exp[2 Pi I/q] among the (scaled) roots, as multiplication matrices and as
-     radical symbols; zeta_2 = -1 is handled by the same tables *)
+     radical symbols; zeta_2 = -1 is handled by the same multiplication table *)
   zetaIdx = Association @@ Table[q -> kFirstIndex[gd["Roots"], _?(kExactZeroQ[# - c Exp[2 Pi I/q]] &)], {q, primes}];
   zetaMult = Association @@ Table[q -> multiplicationMatrixOfElement[gd, gd["RootCoordinates"][[zetaIdx[q]]]/c], {q, primes}];
   kAssociateTo[zetaMult, 2 -> -IdentityMatrix[ord]];   (* assignment into an association is refused in Mathics *)
-  zeta = Association @@ Table[q -> (-1)^(2/q), {q, primes}]; kAssociateTo[zeta, 2 -> -1];
+  zeta = Association @@ Table[q -> (-1)^(2/q), {q, primes}];
   H = Select[Range[ord], Function[s, AllTrue[Values[zetaIdx], gd["Permutations"][[s, #]] == # &]]];
   steps = primeSeries[gd["MultiplicationTable"], gd["Identity"], H];
   If[steps === $Failed, Return[failure["NotSolvable", "Could not build a prime composition series"]]];
@@ -3234,15 +3230,13 @@ descend[gd_, a_, primes_, resolventForm_] := Module[
     First[SortBy[choices, LeafCount]]], moduleTag];
   <|"Expression" -> Catch[rad[va, Length[steps]], radTag], "ExtendedGroupOrder" -> ord, "SeriesPrimes" -> (#["Prime"] & /@ steps)|>];
 
-galoisRadicals[a_, p_] := Catch[Module[{maxOrder, prec, form, gd0, order, primes, poly, gd, res, limit},
+galoisRadicals[a_, p_] := Catch[Module[{maxOrder, prec, form, gd0, order, primes, poly, gd, res},
   {maxOrder, prec, form} = OptionValue[RootToRadicals, $opts, {"MaxGroupOrder", "WorkingPrecision", "Resolvents"}];
-  limit = orderLimitFailure[p, maxOrder];
-  If[limit =!= None, Return[limit]];
-  gd0 = galoisData[p, maxOrder, prec];
+  gd0 = galoisDataChecked[p, maxOrder, prec];
   If[kFailureQ[gd0], Return[gd0]];
   order = gd0["Order"];
   $galoisInfo = <|"GaloisGroupOrder" -> order|>;
-  If[! solvableQ[gd0["MultiplicationTable"], gd0["Identity"], Range[order]],
+  If[! groupSolvableQ[gd0],
     Message[RootToRadicals::notsolv, "order " <> ToString[order]];
     Return[failure["NotSolvable", "The Galois group is not solvable", <|"GaloisGroupOrder" -> order|>]]];
   primes = Select[First /@ FactorInteger[order], OddQ];
@@ -3305,12 +3299,12 @@ validOptionsQ[opts_] := With[{o = OptionValue[RootToRadicals, opts, #] &},
    Expand would only enlarge is kept as it is *)
 tidyRadicals[e_] := With[{t = kExpand[e]}, If[LeafCount[t] < LeafCount[e], t, e]];
 
-RootRadicalReport[a_, opts : OptionsPattern[]] := Catch[Module[{t0 = AbsoluteTime[], in, r, ver},
-  If[! validOptionsQ[Flatten[{opts}]], Message[RootToRadicals::opts, Flatten[{opts}]]; Return[failure["InvalidOptions", "Invalid options"]]];
+RootRadicalReport[a_, opts : OptionsPattern[]] := Catch[Module[{t0 = AbsoluteTime[], o = Flatten[{opts}], in, r, ver},
+  If[! validOptionsQ[o], Message[RootToRadicals::opts, o]; Return[failure["InvalidOptions", "Invalid options"]]];
   If[! FreeQ[a, _Real], Message[RootToRadicals::inexact, a]; Return[failure["Inexact", "Inexact input"]]];
   in = inputData[a];
   If[kFailureQ[in], Return[in]];
-  Block[{$method = OptionValue[Method], $opts = Flatten[{opts}], $methodUsed = None, $galoisInfo = <||>,
+  Block[{$method = OptionValue[Method], $opts = o, $methodUsed = None, $galoisInfo = <||>,
          $prec = Max[60, OptionValue["WorkingPrecision"]], $extension = OptionValue["Extension"]},
     r = radicalsOf[a, OptionValue["MaxDepth"]];
     If[kFailureQ[r], Throw[Failure[r[[1]], Join[r[[2]], $galoisInfo, <|"Degree" -> in["Degree"], "Time" -> AbsoluteTime[] - t0|>]], moduleTag]];
@@ -3325,15 +3319,13 @@ RootToRadicals[a_, opts : OptionsPattern[]] := With[{r = RootRadicalReport[a, op
     r["Verified"] === False, failure["VerificationFailed", "The candidate expression is not equal to the input"],
     True, r["Expression"]]];
 
-RootSolvableQ[a_, opts : OptionsPattern[RootToRadicals]] := Module[{in = inputData[a], p, limit, gd},
+RootSolvableQ[a_, opts : OptionsPattern[RootToRadicals]] := Module[{in = inputData[a], p, gd},
   If[kFailureQ[in], Return[in]];
   If[in["Degree"] <= 4, Return[True]];
   p = in["Polynomial"];
   If[frobeniusNonsolvableQ[p], Return[False]];
-  limit = orderLimitFailure[p, OptionValue["MaxGroupOrder"]];
-  If[limit =!= None, Return[limit]];
-  gd = galoisData[p, OptionValue["MaxGroupOrder"], OptionValue["WorkingPrecision"]];
-  If[kFailureQ[gd], gd, solvableQ[gd["MultiplicationTable"], gd["Identity"], Range[gd["Order"]]]]];
+  gd = galoisDataChecked[p, OptionValue["MaxGroupOrder"], OptionValue["WorkingPrecision"]];
+  If[kFailureQ[gd], gd, groupSolvableQ[gd]]];
 
 (* ================================================================ *)
 
@@ -3406,20 +3398,26 @@ trace[tag_String, data_: <||>] := If[TrueQ[$cfg["Trace"]] &&
    limit, clipped to the remaining session time, with messages silenced and
    failures turned into $Failed. *)
 SetAttributes[bounded, HoldAll];
-bounded[body_, kind_: "Operation"] := Module[{seconds, value},
-   seconds = Min[remaining[], If[kind === "Certificate", $cfg["CertifyTime"], $cfg["OperationTime"]]];
-   If[seconds <= 0,
-    limitHit[If[remaining[] <= 0, "TimeBudget", kind <> "Time"]]; Return[$Failed]];
+bounded[body_, kind_: "Operation"] := Module[
+   {timeKey = If[kind === "Certificate", "CertifyTime", "OperationTime"], seconds, value},
+   seconds = Min[remaining[], $cfg[timeKey]];
+   If[seconds <= 0, limitHit[If[remaining[] <= 0, "TimeBudget", timeKey]]; Return[$Failed]];
    bump["Operations"];
    value = kCheckMessages[TimeConstrained[body, seconds, operationTimedOut], operationFailed];
    Which[
     value === operationTimedOut,
-     bump["OperationTimeouts"]; trace["OperationTimeout"];
-     limitHit[If[kind === "Certificate", "CertifyTime", "OperationTime"]];
+     bump["OperationTimeouts"]; trace["OperationTimeout"]; limitHit[timeKey];
      If[remaining[] <= 0, limitHit["TimeBudget"]]; $Failed,
     value === operationFailed || value === $Failed || value === $Aborted,
      bump["OperationFailures"]; $Failed,
     True, value]];
+(* a bounded operation whose result must be a list; default otherwise *)
+SetAttributes[boundedList, HoldFirst];
+boundedList[body_, default_: {}] := With[{v = bounded[body]}, If[ListQ[v], v, default]];
+(* certificates, one bounded operation each: an exact zero and an exact sign *)
+certifiedZeroQ[d_] := TrueQ[bounded[kRootReduce[d], "Certificate"] === 0];
+certifiedPositiveQ[e_] := TrueQ[bounded[e > 0, "Certificate"]];
+certifiedNegativeQ[e_] := TrueQ[bounded[e < 0, "Certificate"]];
 
 (* ------------------------------------------------------------------ *)
 (* option resolution and validation                                   *)
@@ -3429,10 +3427,9 @@ finiteNonnegativeQ[v_] := MatchQ[v, _Integer | _Rational | _Real] && TrueQ[0 <= 
 nonnegativeIntegerQ[v_] := IntegerQ[v] && v >= 0;
 booleanQ[v_] := v === True || v === False;
 
-flattenRules[items_List] := Flatten[Replace[items, l_List :> flattenRules[l], {1}], 1];
 
 resolveOptions[head_Symbol, raw_List] := Module[{rules, names, unknown, cfg, bad},
-   rules = flattenRules[raw];
+   rules = Flatten[raw];
    If[! AllTrue[rules, MatchQ[#, _Rule | _RuleDelayed] &],
     Return[failure["InvalidOption", "Options must be rules.", <|"Rules" -> rules|>]]];
    names = kOptionNames[head];
@@ -3443,7 +3440,7 @@ resolveOptions[head_Symbol, raw_List] := Module[{rules, names, unknown, cfg, bad
    (* Association applied to anything but a literal list of rules retains the
       unevaluated expression in Mathics 10.0.1, so the rules are built first
       and applied. *)
-   cfg = Association @@ Table[With[{name = key}, name -> OptionValue[head, rules, name]], {key, names}];
+   cfg = Association @@ Table[key -> OptionValue[head, rules, key], {key, names}];
    bad = Join[
      Select[{"AllLevels", "Verbose", "Trace", "Factor", "NumericPrefilter"}, ! booleanQ[cfg[#]] &],
      Select[{"MaxTrials", "MultiplierCap", "MaxTraceEntries", "MaxRecursion", "Patience", "DiscriminantBatchCap", "MaxCosets"}, ! nonnegativeIntegerQ[cfg[#]] &],
@@ -3462,12 +3459,7 @@ resolveOptions[head_Symbol, raw_List] := Module[{rules, names, unknown, cfg, bad
 
 opaqueQ[e_] := MatchQ[e, _Root | _AlgebraicNumber];
 
-RadicalExpressionQ[e_] := Which[
-   kGaussianQ[e], True,
-   AtomQ[e], False,
-   MemberQ[{Plus, Times}, Head[e]], AllTrue[List @@ e, RadicalExpressionQ],
-   Head[e] === Power && Length[e] === 2, kRationalQ[e[[2]]] && RadicalExpressionQ[e[[1]]],
-   True, False];
+RadicalExpressionQ[e_] := algebraicGrammarQ[e, kGaussianQ];
 
 (* A Root object is admitted only when its defining function gives a nonconstant
    univariate polynomial whose coefficients are explicit algebraic numbers of the
@@ -3539,7 +3531,6 @@ bitSize[e_] := Which[
 
 RadicalCost[e_] := {opaqueCount[e], RadicalDepth[e], radicalNodes[e], LeafCount[e], bitSize[e]};
 cheaperQ[new_, old_] := Order[RadicalCost[new], RadicalCost[old]] === 1;
-pickCheapest[list_List] := First[SortBy[list, RadicalCost]];
 smallQ[e_] := If[LeafCount[e] > $cfg["MaxLeafCount"], limitHit["MaxLeafCount"]; False, True];
 
 (* ------------------------------------------------------------------ *)
@@ -3574,10 +3565,15 @@ certify[a_, b_] := Module[{d, r},
     True, bump["CertificatesUnknown"]; "Unknown"]];
 
 SetAttributes[standalone, HoldAll];
+(* one denesting session: the shared state every stage reads, for a body
+   evaluated with the given configuration and time budget in seconds *)
+SetAttributes[session, HoldRest];
+session[cfg_, seconds_, body_] :=
+  Block[{$active = True, $cfg = cfg, $deadline = AbsoluteTime[] + seconds,
+    $stats = newStats[], $limits = <||>, $trace = {}, $records = {}, $memo = <||>, $inProgress = <||>,
+    $recursion = 0, $lastCertificateMethod = "None", $Assumptions = True}, body];
 standalone[body_, failure_] := If[TrueQ[$active], body,
-   Block[{$active = True, $cfg = kDefaultConfig[DenestRadicals], $deadline = AbsoluteTime[] + 20,
-     $stats = newStats[], $limits = <||>, $trace = {}, $records = {}, $memo = <||>, $inProgress = <||>,
-     $recursion = 0, $lastCertificateMethod = "None", $Assumptions = True},
+   session[kDefaultConfig[DenestRadicals], 20,
     kCheck[TimeConstrained[kMemoryConstrained[body, 1073741824], 20 $kTimeScale, failure], failure]]];
 
 EqualityStatus[a_, b_] := standalone[certify[a, b], "Unknown"];
@@ -3620,10 +3616,10 @@ acceptWithPolish[candidate_, target_, incumbent_, method_String] := Module[{best
 (* certified denominator inverse                                      *)
 (* ------------------------------------------------------------------ *)
 
-validPolynomialQ[p_, x_, minimum_Integer: 1] := Module[{degree},
+validPolynomialQ[p_, x_] := Module[{degree},
    If[! FreeQ[p, $Failed | $Aborted | operationFailed | operationTimedOut] || ! TrueQ[kPolynomialQ[p, x]], Return[False]];
    degree = Exponent[p, x];
-   IntegerQ[degree] && degree >= minimum && degree <= $cfg["MaxDegree"]];
+   IntegerQ[degree] && 1 <= degree <= $cfg["MaxDegree"]];
 
 rationalizeRaw[e_] := Module[{t, num, den, p, c, inv, result},
    t = bounded[Together[e]];
@@ -3693,16 +3689,14 @@ quadraticOddRoots[{a_, b_, c_}, q_Integer] := Module[{norm, n, d0 = 2, d1 = $x, 
    roots = rationalRoots[d1 - 2 a];
    Do[den = s1 /. $x -> t;
     If[den =!= 0, beta = t/2 + b Sqrt[c]/den;
-     If[TrueQ[bounded[kRootReduce[beta^q - (a + b Sqrt[c])] === 0, "Certificate"]], AppendTo[out, beta]]],
+     If[certifiedZeroQ[beta^q - (a + b Sqrt[c])], AppendTo[out, beta]]],
     {t, roots}];
    out];
-cubicInQuadratic[parts_List] := quadraticOddRoots[parts, 3];
 
-rationalRoots[p_] := Module[{fl},
-   fl = bounded[kFactorList[p]];
-   If[fl === $Failed || ! ListQ[fl], Return[{}]];
-   DeleteDuplicates[Select[Cases[fl, {f_, _Integer} /; kPolynomialQ[f, $x] && Exponent[f, $x] === 1 :>
-       -Coefficient[f, $x, 0]/Coefficient[f, $x, 1]], kRationalQ]]];
+(* the roots of the linear factors of a factor list *)
+linearRoot[f_] := -Coefficient[f, $x, 0]/Coefficient[f, $x, 1];
+linearFactorRoots[fl_List] := Cases[fl, {f_, _Integer} /; kPolynomialQ[f, $x] && Exponent[f, $x] === 1 :> linearRoot[f]];
+rationalRoots[p_] := DeleteDuplicates[Select[linearFactorRoots[boundedList[kFactorList[p]]], kRationalQ]];
 
 (* Honsbeek: Sqrt[A + B] with A^3, B^3 nonzero rationals, A + B > 0 real *)
 (* Honsbeek: Sqrt[A + B] where A^3 and B^3 are nonzero rationals (a rational
@@ -3734,15 +3728,9 @@ honsbeekSquareRoots[rho_] := Module[{terms, a, b, ratio, roots, den, num, out = 
    radicands and of the coefficients (at most "MaxCosets" cosets).  By the
    single-coset theorem, a square root of rho that is a rational combination of
    square roots of integers has its support in one such coset. *)
-squarefreeClass[n_Integer] := Module[{fl},
-   fl = bounded[FactorInteger[Abs[n]]];
-   If[fl === $Failed || ! ListQ[fl], Return[$Failed]];
-   Times @@ (#[[1]]^Mod[#[[2]], 2] & /@ fl)];
-
 (* the primes dividing any of the integers (signs and units ignored) *)
-classPrimes[classes_List] := Module[{fl},
-   fl = bounded[Union @@ (Select[First /@ FactorInteger[Abs[#]], PrimeQ] & /@ DeleteCases[classes, 0 | 1 | -1])];
-   If[fl === $Failed || ! ListQ[fl], {}, fl]];
+classPrimes[classes_List] :=
+   boundedList[Union @@ (Select[First /@ FactorInteger[Abs[#]], PrimeQ] & /@ DeleteCases[classes, 0 | 1 | -1])];
 
 (* the coset unknown sets: each is a sorted list of squarefree integers *)
 cosetBases[radicands_List, primes_List] := Module[{vec, classOf, hVectors, h, all, cosets = {}, seen = <||>, rep},
@@ -3784,7 +3772,7 @@ surdSystem[u_List, coeffs_Association] := Module[{vars, cand, sq, basis, eqs, so
 surdRelation[u_List, rho_] := Module[{sign, vec, rel, cand},
    If[u === {} || Length[u] > 32, Return[{}]];
    (* Sign[] of a sum with negative terms can stay unevaluated; the comparisons decide numerically *)
-   sign = Which[TrueQ[bounded[rho > 0, "Certificate"]], 1, TrueQ[bounded[rho < 0, "Certificate"]], -1, True, 0];
+   sign = Which[certifiedPositiveQ[rho], 1, certifiedNegativeQ[rho], -1, True, 0];
    If[sign === 0, Return[{}]];
    vec = bounded[kN[Prepend[Sqrt[u], Sqrt[sign rho]], 80 + 10 Length[u]]];
    If[! ListQ[vec] || ! AllTrue[vec, NumberQ], Return[{}]];
@@ -3792,7 +3780,7 @@ surdRelation[u_List, rho_] := Module[{sign, vec, rel, cand},
    If[! ListQ[rel] || ! AllTrue[rel, IntegerQ] || First[rel] === 0, Return[{}]];
    cand = -(Rest[rel] . Sqrt[u])/First[rel];
    If[sign === -1, cand = I cand];
-   If[TrueQ[bounded[kRootReduce[cand^2 - rho], "Certificate"] === 0], {cand, -cand}, {}]];
+   If[certifiedZeroQ[cand^2 - rho], {cand, -cand}, {}]];
 
 (* a summand c Sqrt[r] with rational c and r > 0 as {squarefree radicand, coefficient};
    the kernel writes Sqrt[6]/2 as Sqrt[3/2], which is Sqrt[6] with coefficient 1/2 *)
@@ -3805,7 +3793,11 @@ surdTerm[t_] := Which[
      {Numerator[t[[2, 1]]] Denominator[t[[2, 1]]], t[[1]]/Denominator[t[[2, 1]]]}],
    True, $Failed];
 
-multiSurdSquareRoots[rho_] := Module[{e, terms, parsed, surds, coeffs, primes, extra, cosets, sets, out = {}},
+(* the first f[U] over the sets that is not empty, within the time budget *)
+firstNonempty[f_, sets_List] := Module[{out = {}},
+   Do[If[expiredQ[], Break[]]; out = f[U]; If[out =!= {}, Break[]], {U, sets}]; out];
+
+multiSurdSquareRoots[rho_] := Module[{e, terms, parsed, surds, coeffs, primes, extra, cosets, out},
    e = bounded[kExpand[rho]];
    If[e === $Failed, Return[{}]];
    terms = If[Head[e] === Plus, List @@ e, {e}];
@@ -3822,18 +3814,10 @@ multiSurdSquareRoots[rho_] := Module[{e, terms, parsed, surds, coeffs, primes, e
    extra = classPrimes[Flatten[{Numerator[#], Denominator[#]} & /@ Select[Values[coeffs], kRationalQ]]];
    cosets = cosetBases[surds, Union[primes, extra]];
    (* stage 1: certified integer-relation proposals, one per coset *)
-   Do[If[expiredQ[], Break[]];
-    out = surdRelation[U, e];
-    If[out =!= {}, Break[]],
-    {U, cosets}];
+   out = firstNonempty[surdRelation[#, e] &, cosets];
    If[out =!= {}, Return[out]];
    (* stage 2: the rational systems *)
-   sets = DeleteDuplicates[Join[{Union[{1}, primes], Union[{1}, primes, surds]}, cosets]];
-   Do[If[expiredQ[], Break[]];
-    out = surdSystem[U, coeffs];
-    If[out =!= {}, Break[]],
-    {U, sets}];
-   out];
+   firstNonempty[surdSystem[#, coeffs] &, DeleteDuplicates[Join[{Union[{1}, primes], Union[{1}, primes, surds]}, cosets]]]];
 
 (* Gaussian square root: Sqrt[a + b I] with a^2 + b^2 a rational square *)
 gaussianSquareRoots[z_] := Module[{a = Re[z], b = Im[z], n},
@@ -3844,20 +3828,19 @@ gaussianSquareRoots[z_] := Module[{a = Re[z], b = Im[z], n},
 unity[k_Integer, q_Integer] := (-1)^(Mod[2 k, 2 q]/q);
 
 (* candidates for rho^(1/q), rho exact, produced by the shape-specific recipes *)
-rootCandidates[rho_, q_Integer] := Module[{parts, out = {}, sign = 1, r = rho, neg},
+rootCandidates[rho_, q_Integer] := Module[{parts, out = {}, r = rho, neg},
    If[q === 2 && Head[rho] === Complex, Return[gaussianSquareRoots[rho]]];
-   neg = TrueQ[bounded[rho < 0, "Certificate"]];
+   neg = certifiedNegativeQ[rho];
    If[neg, r = -rho];
    Which[
     q === 2,
      parts = quadraticParts[r];
      If[parts =!= $Failed, out = quadraticSquareRoots[parts]];
-     out = Join[out, honsbeekSquareRoots[r], multiSurdSquareRoots[r]];
-     If[neg, out = I out],
+     out = Join[out, honsbeekSquareRoots[r], multiSurdSquareRoots[r]],
     OddQ[q] && q >= 3 && q <= $cfg["MaxOddIndex"],
      parts = quadraticParts[r];
-     If[parts =!= $Failed, out = quadraticOddRoots[parts, q]];
-     If[neg, out = (-1)^(1/q) out]];
+     If[parts =!= $Failed, out = quadraticOddRoots[parts, q]]];
+   If[neg, out = (-1)^(1/q) out];      (* (-1)^(1/2) is I *)
    out];
 
 (* ------------------------------------------------------------------ *)
@@ -3881,14 +3864,13 @@ radicalForms[z_] := Module[{out = {z}, r},
    DeleteDuplicates[Select[out, exactQ]]];
 
 (* roots gamma of x^k == rho lying in the field generated by the radicals of rho *)
-linearRoots[rho_, k_Integer] := Module[{fl, roots},
-   fl = bounded[kFactorListExtension[$x^k - rho, radicalExtension[rho]]];
-   If[fl === $Failed || ! ListQ[fl],
-    fl = bounded[kFactorListExtension[$x^k - rho, Automatic]]];
-   If[fl === $Failed || ! ListQ[fl], Return[{}]];
-   roots = Cases[fl, {f_, _Integer} /; kPolynomialQ[f, $x] && Exponent[f, $x] === 1 :>
-      bounded[Together[-Coefficient[f, $x, 0]/Coefficient[f, $x, 1]]]];
-   DeleteDuplicates[Select[Flatten[radicalForms /@ DeleteCases[roots, $Failed]], exactQ]]];
+(* the exact radical forms of a list of roots, failures dropped *)
+exactRadicalForms[roots_List] := DeleteDuplicates[Select[Flatten[radicalForms /@ DeleteCases[roots, $Failed]], exactQ]];
+linearRoots[rho_, k_Integer] := Module[{fl},
+   fl = boundedList[kFactorListExtension[$x^k - rho, radicalExtension[rho]], $Failed];
+   If[fl === $Failed, fl = boundedList[kFactorListExtension[$x^k - rho, Automatic], $Failed]];
+   If[fl === $Failed, Return[{}]];
+   exactRadicalForms[bounded[Together[#]] & /@ linearFactorRoots[fl]]];
 
 (* denest a sub-problem recursively under the shared budget *)
 recurse[sub_] := If[$recursion >= $cfg["MaxRecursion"] || expiredQ[], sub,
@@ -3901,23 +3883,25 @@ recurse[sub_] := If[$recursion >= $cfg["MaxRecursion"] || expiredQ[], sub,
    before any recursion, so an index reduction that is already cheaper does
    not depend on recursive progress. *)
 kummerCandidates[target_, rho_, p_Integer, q_Integer, incumbent_: Automatic] :=
-  Module[{best = If[incumbent === Automatic, target, incumbent], gammas, k, rest, sub, dens, reduced},
+  Module[{best = If[incumbent === Automatic, target, incumbent], gammas, k, rest, sub, dens, reduced, offer},
+   (* the orbit of z under the n-th roots of unity, raised to the power p *)
+   offer[z_, n_Integer, method_String] :=
+     Do[best = acceptWithPolish[bounded[kExpand[(z unity[l, n])^p]], target, best, method], {l, 0, n - 1}];
    Do[
     If[expiredQ[], Break[]];
     gammas = linearRoots[rho, k];
     rest = q/k;
     If[rest === 1,
-     Do[best = acceptWithPolish[bounded[kExpand[(gamma unity[l, q])^p]], target, best, "LinearFactor"], {gamma, gammas}, {l, 0, q - 1}],
+     Do[offer[gamma, q, "LinearFactor"], {gamma, gammas}],
      (* rho = gamma^k, so target = (gamma zeta_k^j)^(p/rest) zeta_rest^l for some j, l;
         the distinct values gamma zeta_k^j are each processed once *)
      dens = DeleteDuplicates[DeleteCases[Flatten[Table[bounded[kExpand[gamma unity[j, k]]], {gamma, gammas}, {j, 0, k - 1}]], $Failed]];
      Do[
       If[expiredQ[], Break[]];
       reduced = den^(1/rest);
-      Do[best = acceptWithPolish[bounded[kExpand[(reduced unity[l, rest])^p]], target, best, "IndexReduction"], {l, 0, rest - 1}];
+      offer[reduced, rest, "IndexReduction"];
       sub = recurse[reduced];
-      If[sub =!= reduced && exactQ[sub],
-       Do[best = acceptWithPolish[bounded[kExpand[(sub unity[l, rest])^p]], target, best, "IndexReduction/Recursive"], {l, 0, rest - 1}]],
+      If[sub =!= reduced && exactQ[sub], offer[sub, rest, "IndexReduction/Recursive"]],
       {den, dens}]];
     If[RadicalDepth[best] <= 1, Break[]],
     {k, Reverse[Rest[Divisors[q]]]}];
@@ -3926,11 +3910,10 @@ kummerCandidates[target_, rho_, p_Integer, q_Integer, incumbent_: Automatic] :=
 (* negative real radicand: rho^(p/q) = (-1)^(p/q) (-rho)^(p/q); the modulus is
    denested recursively and the phase-separated candidate is offered whether
    or not the recursion changed the modulus *)
-negativeRadicandCandidate[target_, rho_, p_Integer, q_Integer, incumbent_: Automatic] :=
-  Module[{best = If[incumbent === Automatic, target, incumbent], sub},
-   If[! TrueQ[bounded[rho < 0, "Certificate"]], Return[best]];
-   sub = recurse[(-rho)^(p/q)];
-   acceptWithPolish[bounded[kExpand[(-1)^(p/q) sub]], target, best, "NegativeRadicand"]];
+negativeRadicandCandidate[target_, rho_, p_Integer, q_Integer, incumbent_] :=
+  If[! certifiedNegativeQ[rho], incumbent,
+   With[{sub = recurse[(-rho)^(p/q)]},
+    acceptWithPolish[bounded[kExpand[(-1)^(p/q) sub]], target, incumbent, "NegativeRadicand"]]];
 
 (* ------------------------------------------------------------------ *)
 (* the multiplier search (bounded FIFO queue, single admission gate)  *)
@@ -3951,8 +3934,8 @@ complementaryMultiplier[term_] := Times @@ (complementaryFactor /@ If[Head[term]
 
 multiplierSearch[target_, initialBest_] := Module[
    {best = initialBest, q, rho, queue = {}, seen = <||>, admitted = 0, proposed = 0, cursor = 1,
-    cap = $cfg["MultiplierCap"], proposalCap, admit, seeds, terms, m, theta, p, degree, gcd, gd, roots,
-    mroot, candidate, disc, primes, j, digits, batch, sol, trials = 0, sinceImprovement = 0, bestDegree = Infinity},
+    cap = $cfg["MultiplierCap"], proposalCap, admit, offer, roomQ, batchRoomQ, seeds, terms, m, theta, p, degree, gcd, gd,
+    roots, mroot, candidate, disc, primes, j, digits, batch, sol, trials = 0, sinceImprovement = 0, bestDegree = Infinity},
    If[cap === 0 || $cfg["MaxTrials"] === 0 || expiredQ[], Return[best]];
    q = reductionIndex[target]; If[q === $Failed, Return[best]];
    rho = bounded[kExpand[target^q]]; If[rho === $Failed || ! exactQ[rho], Return[best]];
@@ -3975,12 +3958,19 @@ multiplierSearch[target_, initialBest_] := Module[
      If[kKeyExistsQ[seen, key], bump["DuplicateMultipliers"]; Return[False]];
      kAssociateTo[seen, key -> True]; AppendTo[queue, value];
      admitted++; bump["MultipliersAdmitted"]; True];
+   (* a candidate for the target; an improvement resets the patience counter *)
+   offer[value_, method_String] := Module[{before = best},
+     best = acceptWithPolish[value, target, best, method];
+     If[best =!= before, sinceImprovement = 0]];
+   (* room for another proposal, and within one discriminant batch *)
+   roomQ[] := admitted < cap && proposed < proposalCap && ! expiredQ[];
+   batchRoomQ[] := admitted < cap && proposed < proposalCap && batch < $cfg["DiscriminantBatchCap"] && ! expiredQ[];
    If[ListQ[$cfg["Multipliers"]],
     seeds = $cfg["Multipliers"],
     terms = DeleteCases[Replace[#, {Times[a___, _?kRationalQ, b___] :> a*b, _?kRationalQ -> 0, Complex[a_, b_] :> Sign[b] I}] & /@
         If[Head[rho] === Plus, List @@ rho, {rho}], 0];
     seeds = Join[{1}, DeleteCases[complementaryMultiplier /@ terms, 1], {2, 3, 5}]];
-   Do[If[admitted >= cap || proposed >= proposalCap || expiredQ[], Break[]]; admit[seed], {seed, seeds}];
+   Do[If[! roomQ[], Break[]]; admit[seed], {seed, seeds}];
    While[cursor <= Length[queue] && ! expiredQ[],
     (* "MaxTrials" bounds the trials spent on this island; "Patience" stops the
        search when an improvement exists (found by an earlier stage or by this
@@ -4006,45 +3996,39 @@ multiplierSearch[target_, initialBest_] := Module[
      gd = Exponent[gcd, $x];
      If[gd < q,
       roots = Join[roots, Which[
-         gd === 1, {-Coefficient[gcd, $x, 0]/Coefficient[gcd, $x, 1]},
+         gd === 1, {linearRoot[gcd]},
          gd <= $cfg["MaxSolveDegree"],
           sol = bounded[kSolveRadicals[gcd == 0, $x]];
           If[ListQ[sol], Select[$x /. sol, exactQ], {}],
          True, {}]]]];
-    roots = DeleteDuplicates[Select[Flatten[radicalForms /@ roots], exactQ]];
+    roots = exactRadicalForms[roots];
     If[roots =!= {},
-     Module[{},
-      mroot = bounded[m^(1/q)];
-      If[mroot =!= $Failed,
+     mroot = bounded[m^(1/q)];
+     If[mroot =!= $Failed,
+      Do[If[expiredQ[], Break[]];
        Do[If[expiredQ[], Break[]];
-        Do[If[expiredQ[], Break[]];
-         candidate = bounded[kExpand[z/mroot unity[k, q]]];
-         Module[{before = best},
-          best = acceptWithPolish[candidate, target, best, "MultiplierOrbit"];
-          If[best =!= before, sinceImprovement = 0]];
-         (* a certified but not cheaper candidate (e.g. gamma^(1/3) with gamma in Q(rho))
-            may itself be denestable: try it recursively *)
-         If[candidate =!= $Failed && RadicalDepth[candidate] <= RadicalDepth[target] && candidate =!= target &&
-           certify[candidate, target] === "Equal",
-          Module[{before = best},
-           best = acceptWithPolish[recurse[candidate], target, best, "MultiplierOrbit/Recursive"];
-           If[best =!= before, sinceImprovement = 0]]],
-         {k, 0, q - 1}],
-        {z, roots}]]]];
+        candidate = bounded[kExpand[z/mroot unity[k, q]]];
+        offer[candidate, "MultiplierOrbit"];
+        (* a certified but not cheaper candidate (e.g. gamma^(1/3) with gamma in Q(rho))
+           may itself be denestable: try it recursively *)
+        If[candidate =!= $Failed && RadicalDepth[candidate] <= RadicalDepth[target] && candidate =!= target &&
+          certify[candidate, target] === "Equal",
+         offer[recurse[candidate], "MultiplierOrbit/Recursive"]],
+        {k, 0, q - 1}],
+       {z, roots}]]];
     If[RadicalDepth[best] <= 1, Break[]];
     (* discriminant primes of a promising trial (smallest degree seen so far): stream
        prime powers and a bounded prefix of mixed-radix products *)
-    If[! ListQ[$cfg["Multipliers"]] && degree <= bestDegree && admitted < cap && proposed < proposalCap && ! expiredQ[],
+    If[! ListQ[$cfg["Multipliers"]] && degree <= bestDegree && roomQ[],
      disc = bounded[kDiscriminant[p, $x]];
      If[IntegerQ[disc] && disc =!= 0,
-      primes = bounded[kTakeUpTo[Select[First /@ FactorInteger[Abs[disc]], PrimeQ], 8]];
-      If[! ListQ[primes], primes = {}];
+      primes = boundedList[kTakeUpTo[Select[First /@ FactorInteger[Abs[disc]], PrimeQ], 8]];
       batch = 0;
-      Do[If[admitted >= cap || proposed >= proposalCap || batch >= $cfg["DiscriminantBatchCap"] || expiredQ[], Break[]];
-       Do[If[admitted >= cap || proposed >= proposalCap || batch >= $cfg["DiscriminantBatchCap"] || expiredQ[], Break[]];
+      Do[If[! batchRoomQ[], Break[]];
+       Do[If[! batchRoomQ[], Break[]];
         batch++; admit[m prime^e], {e, 1, q - 1}], {prime, primes}];
       j = 1;
-      While[primes =!= {} && j < q^Length[primes] && batch < $cfg["DiscriminantBatchCap"] && admitted < cap && proposed < proposalCap && ! expiredQ[],
+      While[primes =!= {} && j < q^Length[primes] && batchRoomQ[],
        digits = IntegerDigits[j, q, Length[primes]]; j++; batch++;
        admit[m Times @@ MapThread[Power, {primes, digits}]]]]]];
    If[admitted >= cap, limitHit["MultiplierCap"]];
@@ -4056,7 +4040,7 @@ multiplierSearch[target_, initialBest_] := Module[
 (* ------------------------------------------------------------------ *)
 
 (* whole-island proposals that do not depend on the shape *)
-genericProposals[target_, incumbent_] := Module[{best = incumbent, r, mp, solver},
+genericProposals[target_, incumbent_] := Module[{best = incumbent, r, solver},
    solver = $cfg["Solver"];
    If[solver =!= Automatic,
     r = bounded[Catch[Catch[solver[target], _, $Failed &]]];
@@ -4067,7 +4051,7 @@ genericProposals[target_, incumbent_] := Module[{best = incumbent, r, mp, solver
    r = bounded[kRootReduce[target], "Certificate"];
    If[r =!= $Failed,
     best = accept[r, target, best, "RootReduce"];
-    If[opaqueQ[r] && Head[r] === Root && kPolynomialQ[First[r][$x], $x] && Exponent[First[r][$x], $x] <= 4,
+    If[Head[r] === Root && kPolynomialQ[First[r][$x], $x] && Exponent[First[r][$x], $x] <= 4,
      best = acceptWithPolish[bounded[kToRadicals[r]], target, best, "RootReduce/ToRadicals"]]];
    best = accept[bounded[kSimplify[target]], target, best, "Simplify"];
    If[TrueQ[$cfg["Factor"]], best = accept[bounded[kFactor[target]], target, best, "Factor"]];
@@ -4082,8 +4066,7 @@ powerProposals[target_, incumbent_] := Module[{best = incumbent, rho, p, q, root
    If[q > $cfg["MaxRootIndex"], limitHit["MaxRootIndex"]; Return[best]];
    (* shape-specific recipes for the q-th root, then the integer power p *)
    before = best;
-   cands = bounded[rootCandidates[rho, q]];
-   If[! ListQ[cands], cands = {}];
+   cands = boundedList[rootCandidates[rho, q]];
    Do[best = acceptWithPolish[bounded[kExpand[c^p]], target, best, "FastPath"], {c, cands}];
    If[best =!= before, bump["FastPathAccepted"]];
    If[RadicalDepth[best] <= 1, Return[best]];
@@ -4146,19 +4129,20 @@ combineProposals[target_, incumbent_] := Module[{best = incumbent, r},
    best = accept[bounded[kExpand[incumbent]], target, best, "Combine/Expand"];
    best];
 
+(* the components of e denested as islands of their own, and the cheaper of two forms *)
+rebuildChildren[e_] := If[Head[e] === Power, Power[island[First[e]], Last[e]], Map[island, e]];
+cheaperOf[new_, old_] := If[new =!= old && cheaperQ[new, old], new, old];
 island[e_] := Module[{current = e, rebuilt},
    If[expiredQ[], Return[e]];
    If[RadicalDepth[e] < 2 && FreeQ[e, _Root | _AlgebraicNumber], Return[e]];
    If[MatchQ[e, Power[_, _Rational]],
     If[TrueQ[$cfg["AllLevels"]],
      (* the radicand is an island of its own; congruence carries its certificate *)
-     rebuilt = Power[island[First[e]], Last[e]];
-     If[rebuilt =!= e && cheaperQ[rebuilt, e], current = rebuilt]];
+     current = cheaperOf[rebuildChildren[e], e]];
     Return[improveNumber[current]]];
    If[MemberQ[{Plus, Times}, Head[e]] || MatchQ[e, Power[_, _Integer]],
     (* components first: each component certified against itself *)
-    rebuilt = If[Head[e] === Power, Power[island[First[e]], Last[e]], Map[island, e]];
-    If[rebuilt =!= e && cheaperQ[rebuilt, e], current = rebuilt];
+    current = cheaperOf[rebuildChildren[e], e];
     If[RadicalDepth[current] >= 2 || ! FreeQ[current, _Root | _AlgebraicNumber],
      rebuilt = improveNumber[current];
      If[rebuilt =!= current, current = rebuilt]];
@@ -4186,9 +4170,7 @@ walk[e_] := Module[{h},
 (* ------------------------------------------------------------------ *)
 
 run[e_, cfg_Association, coreOnly_: False] :=
-  Block[{$active = True, $cfg = cfg, $deadline = AbsoluteTime[] + cfg["TimeBudget"],
-    $stats = newStats[], $limits = <||>, $trace = {}, $records = {}, $memo = <||>, $inProgress = <||>,
-    $recursion = 0, $lastCertificateMethod = "None", $Assumptions = True},
+  session[cfg, cfg["TimeBudget"],
    Module[{committed = {e, Missing["NotComputed"]}, initialCost = Missing["NotComputed"], candidate, candidateCost,
      outcome = Null, started = AbsoluteTime[], passes, status, numericInput = False},
     passes = If[TrueQ[cfg["AllLevels"]] && ! coreOnly, cfg["MaxPasses"], 1];
@@ -4217,8 +4199,7 @@ run[e_, cfg_Association, coreOnly_: False] :=
           {pass, passes}]],
         cfg["MemoryBudget"], memoryStopped],
        cfg["TimeBudget"], timeStopped];
-     If[outcome === memoryStopped, limitHit["MemoryBudget"]];
-     If[outcome === timeStopped, limitHit["TimeBudget"]]];
+     Which[outcome === memoryStopped, limitHit["MemoryBudget"], outcome === timeStopped, limitHit["TimeBudget"]]];
     status = Which[
       outcome === timeStopped, "Timeout",
       outcome === memoryStopped, "MemoryLimit",
