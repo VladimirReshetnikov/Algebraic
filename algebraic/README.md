@@ -105,7 +105,7 @@ Measured on Mathics3 10.0.1, with Wolfram 15.0.1 giving the same answers
 | `AlgebraicDecompose`, all eight functions | available; the algebraic-coefficient example in 1 s |
 | `Strad` and the denesting family | available; `Sqrt[5 + 2 Sqrt[6]]` in 1.7 s, `(239 + 169 Sqrt[2])^(1/7)` in 1.9 s; the Kummer multipliers that need factorisation over an extension are not tried, the other methods are; `(2^(1/3) - 1)^(1/3)` is not denested within a two-minute budget |
 | `EqualityStatus`, `CertifiedEqualQ`, `RadicalCost`, the grammar | available, exact |
-| `RootDecompositionLowerBound`, `RootDecompositionVerify`, `RootSolvableQ` | available; the lower bound scans ten primes rather than forty, which leaves it rigorous but not always as sharp |
+| `RootDecompositionLowerBound`, `RootDecompositionVerify`, `RootSolvableQ` | available; the lower bound scans ten primes rather than forty, which leaves it rigorous but not always as sharp; `RootSolvableQ` answers from the Frobenius tests when they decide, and otherwise needs the Galois group -- the solvable quintic `#^5 - 5 # + 12` did not finish in ten minutes |
 | `RootGaloisData` | available for small splitting fields: `#^3 - 2` (order 6) in 41 s, `#^4 - 10 #^2 + 1` with its subfield lattice in 18 s; `Sqrt[2] 3^(1/3)` (degree 6, order 12) reaches its full group at the third resolvent in a few minutes and then does not finish -- see below |
 | `RootSumDecomposition`, `RootProductDecomposition` | available within the same limit; `Sqrt[2] + Sqrt[3]` in 17 s; the degree-9 product example of `Examples.wl` does not finish in an hour |
 | `RootToRadicals` | the structural recognizers in milliseconds (`Root[#^4 - 10 #^2 + 1 &, 4]` in 1.2 s); the Galois-Kummer descent within the engine's limit |

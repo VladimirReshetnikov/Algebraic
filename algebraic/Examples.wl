@@ -72,12 +72,12 @@ showHeavy["Two-factor product: ", RootProductDecomposition[e3, "MaxFactors" -> 2
 (* Gaussian rational coefficients. *)
 g1 = I + Sqrt[2] + I Sqrt[2];
 showHeavy["Gaussian combination: ", RootSumDecomposition[g1, "Coefficients" -> "GaussianRationals"]["Expression"]];
-gd = RootGaloisData[ap];
+gd = If[$mathics, $Failed, RootGaloisData[ap]];   (* the degree-9 group: beyond the engine's limit in Mathics *)
 showHeavy["Galois data: ", If[AssociationQ[gd],
   {"order", gd["Order"], "exponent", gd["Exponent"], "subfield degrees", Tally[gd["SubfieldDegrees"]]}, gd]];
 
 (* ---- 3. radical expressions ------------------------------------------ *)
-show["Solvable? x^5-5x+12: ", RootSolvableQ[Root[#^5 - 5 # + 12 &, 1]],
+showHeavy["Solvable? x^5-5x+12: ", RootSolvableQ[Root[#^5 - 5 # + 12 &, 1]],
   ";  x^5-x-1: ", RootSolvableQ[Root[#^5 - # - 1 &, 1]]];
 show["Structural: ", RootToRadicals[Root[#^4 - 10 #^2 + 1 &, 4]]];
 showHeavy["Cyclic quintic 2 cos(2 Pi/11): ", RootToRadicals[Root[#^5 + #^4 - 4 #^3 - 3 #^2 + 3 # + 1 &, 1]]];
