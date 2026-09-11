@@ -52,7 +52,7 @@ Engine-level messages are issued from the package symbol `Algebraic`
 
 ### What the merge changed
 
-It is one context, `Algebraic``, in one self-contained file — not four
+It is one context, ``Algebraic`​``, in one self-contained file — not four
 packages loaded side by side:
 
 * `RootToRadicals` used to open sixteen assignments into

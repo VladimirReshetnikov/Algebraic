@@ -1,6 +1,6 @@
 # RadicalDenest
 
-> The third corrected version, `corrected/StradFixed3.wl`, is also section 4 of the unified package [`../algebraic/`](../algebraic/README.md) (`Algebraic.wl`, context `Algebraic``), together with its 230-test suite; this directory keeps the program under review, the three corrected versions and the review record.
+> The third corrected version, `corrected/StradFixed3.wl`, is also section 4 of the unified package [`../algebraic/`](../algebraic/README.md) (`Algebraic.wl`, context ``Algebraic`​``), together with its 230-test suite; this directory keeps the program under review, the three corrected versions and the review record.
 
 Analysis, correction and literature survey of `Strad.wl`, a Wolfram Language
 program that denests radicals: it rewrites an expression such as
@@ -111,11 +111,11 @@ is reproducible from `unified-B/harness/` and recorded in `unified-B/logs/`.
 
 `review-7`, `review-8` and `review-9` are three independent reviews of
 `StradFixed2.wl` at commit `9000d6f`. Each contains a report, a proposed
-`StradFixed3.wl` in the context `RadicalDenest3\``, a native test suite that
+`StradFixed3.wl` in the context ``RadicalDenest3`​``, a native test suite that
 its author could not run, and executed SymPy checks.
 
 Those three proposals and this project's own `corrected/StradFixed3.wl` all
-declare the same public context `RadicalDenest3\``, so at most one of the four
+declare the same public context ``RadicalDenest3`​``, so at most one of the four
 can be loaded in a single kernel session.
 
 `unified-C/unified_analysis_C.pdf` (third round) compares and assesses those

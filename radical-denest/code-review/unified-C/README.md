@@ -32,7 +32,7 @@ Main deliverables:
 - `logs/*.txt` — raw transcripts of every run reported in the document.
 
 The implementation itself is `radical-denest/corrected/StradFixed3.wl` (context
-`RadicalDenest3\``); `radical-denest/corrected/README.md` documents its
+``RadicalDenest3`​``); `radical-denest/corrected/README.md` documents its
 interface. The second unified analysis, whose corrected version is reviewed
 here, is `../unified-B`; the first is `../unified-A`.
 

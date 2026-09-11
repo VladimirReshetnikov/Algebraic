@@ -4,7 +4,7 @@ Prepared for Vladimir Reshetnikov, September 2026.
 
 Start with `article.pdf` (the full technical review). Its self-contained LaTeX
 source is `article.tex`. The proposed standalone Wolfram Language package is
-`StradFixed3.wl`, in the separate public context ``RadicalDenest3` ``. It does not
+`StradFixed3.wl`, in the separate public context ``RadicalDenest3`​``. It does not
 load or overwrite the original package.
 
 ## Reviewed baseline

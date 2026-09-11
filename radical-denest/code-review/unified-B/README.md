@@ -26,7 +26,7 @@ Main deliverables:
 - `logs/*.txt` — raw transcripts of every run reported in the document.
 
 The implementation itself is `radical-denest/corrected/StradFixed2.wl` (context
-`RadicalDenest2\``); `radical-denest/corrected/README.md` documents its
+``RadicalDenest2`​``); `radical-denest/corrected/README.md` documents its
 interface. The first unified analysis, whose corrected version is reviewed
 here, is `../unified-A`.
 

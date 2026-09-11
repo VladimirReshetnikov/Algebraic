@@ -23,7 +23,7 @@ This is a derivative, not a byte-identical patch, and native validation remains 
 
 Local exact acceptance, branch-sensitive principal-value checks, assumption isolation, direct/indirect quadratic paths, Gaussian roots, cubic trace/norm reconstruction, Honsbeek quartic construction, linear-factor and residual-index search, degree-four polynomial-GCD reconstruction, Horner rationalization, shared time controls, centralized multiplier admission, and bounded repeated passes.
 
-The new package context is ``RadicalDenest3` ``. Loading it does not overwrite ``RadicalDenest2` ``.
+The new package context is ``RadicalDenest3`​``. Loading it does not overwrite ``RadicalDenest2`​``.
 
 ## Tradeoffs
 

@@ -4,9 +4,9 @@ Three generations of the corrected denester live here.
 
 | File | Context | Produced by | Reviewed by |
 |---|---|---|---|
-| `StradFixed.wl` | ``RadicalDenest` `` | `radical-denest/code-review/unified-A` (first unified analysis) | review-4, review-5, review-6 (no longer in the repository; assessed in unified-B); probing session (`KNOWN_GAPS.md`) |
-| `StradFixed2.wl` | ``RadicalDenest2` `` | `radical-denest/code-review/unified-B` (second unified analysis) | `radical-denest/code-review/review-7`, `review-8`, `review-9` |
-| `StradFixed3.wl` | ``RadicalDenest3` `` | `radical-denest/code-review/unified-C` (third unified analysis) | — |
+| `StradFixed.wl` | ``RadicalDenest`​`` | `radical-denest/code-review/unified-A` (first unified analysis) | review-4, review-5, review-6 (no longer in the repository; assessed in unified-B); probing session (`KNOWN_GAPS.md`) |
+| `StradFixed2.wl` | ``RadicalDenest2`​`` | `radical-denest/code-review/unified-B` (second unified analysis) | `radical-denest/code-review/review-7`, `review-8`, `review-9` |
+| `StradFixed3.wl` | ``RadicalDenest3`​`` | `radical-denest/code-review/unified-C` (third unified analysis) | — |
 
 `StradFixed3.wl` is the current version. The earlier versions are kept because
 the analyses, the reviews and `KNOWN_GAPS.md` refer to them; the three packages

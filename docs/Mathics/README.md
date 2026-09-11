@@ -613,7 +613,7 @@ Mathics keeps a particularly useful machine-readable file:
 SYMBOLS_MANIFEST.txt
 ```
 
-in `mathics-core`. The current manifest contains about **1,345 registered names**, roughly **1,330 under `System`` and `System`` subcontexts**. ([GitHub][15])
+in `mathics-core`. The current manifest contains about **1,345 registered names**, roughly **1,330 under ``System`​`` and ``System`​`` subcontexts**. ([GitHub][15])
 
 So, very approximately,
 
@@ -848,7 +848,7 @@ The difference between Mathematica and Mathics is **much smaller at the language
 
 If one stripped Mathematica down to something resembling the kernel of Mathematica 2–5—expression trees, patterns, rules, symbolic arithmetic, basic calculus, matrices, lists, procedural/functional programming and graphics—the comparison would be fairly close.
 
-But today's Wolfram Language has grown into a 7,000+-symbol computational platform. Mathics has deliberately concentrated on reproducing the *language substrate* plus a useful classical-CAS subset. That makes its roughly 1,330 `System`` symbols more capable than their raw 19% count suggests, while still leaving an enormous gap in total functionality.
+But today's Wolfram Language has grown into a 7,000+-symbol computational platform. Mathics has deliberately concentrated on reproducing the *language substrate* plus a useful classical-CAS subset. That makes its roughly 1,330 ``System`​`` symbols more capable than their raw 19% count suggests, while still leaving an enormous gap in total functionality.
 
 And the deepest remaining compatibility problem isn't parsing `x /. a_ -> f[a]`; Mathics already handles that sort of thing. It's reproducing all the pathological consequences of Mathematica's evaluator—**holding, rule rewriting, upvalues, pattern specificity, attributes, sequence handling, and repeated evaluation—with bug-for-bug-quality fidelity**. The Mathics developers clearly recognize this: their 2026 roadmap explicitly proposes architectural evaluator changes rather than merely adding another batch of functions. ([GitHub][4])
 

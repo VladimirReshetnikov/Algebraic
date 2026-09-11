@@ -483,9 +483,9 @@ symbol in Mathics: a stand-in definition needs `Unprotect` first.
 ### Testing
 
 `VerificationTest`, `TestReport` and `TestResultObject` are absent; the
-names are not even in ``System` ``, so `VerificationTest[1 + 1, 2]` is the
+names are not even in ``System`​``, so `VerificationTest[1 + 1, 2]` is the
 inert `VerificationTest[2, 2]`. That absence is what makes a portable runner
-possible: a `VerificationTest` defined in `` Global` `` before the suite is
+possible: a `VerificationTest` defined in ``Global`​`` before the suite is
 read is the one the suite's calls resolve to, and the same `.wlt` file runs
 under `TestReport` in the Wolfram kernel and under that definition here.
 `BeginTestSection`/`EndTestSection` need the same treatment.

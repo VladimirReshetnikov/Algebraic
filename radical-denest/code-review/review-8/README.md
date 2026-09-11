@@ -6,7 +6,7 @@ Prepared for Vladimir Reshetnikov, September 5, 2026.
 
 - `article.pdf` — detailed review, mathematical proofs, findings, validation boundaries, and complete proposed source listing.
 - `article.tex` — editable LaTeX source. Compile from this directory; it includes `code/StradFixed3.wl` by relative path.
-- `code/StradFixed3.wl` — self-contained proposed derivative in the separate ``RadicalDenest3` `` context.
+- `code/StradFixed3.wl` — self-contained proposed derivative in the separate ``RadicalDenest3`​`` context.
 - `tests/StradFixed3.wlt` — 52 native Wolfram regression tests, **not executed here**.
 - `tests/run_tests.wls` — native test runner; writes a report only when actually run.
 - `tests/probe_original.wls` — source-specific diagnostic probes of the original package.

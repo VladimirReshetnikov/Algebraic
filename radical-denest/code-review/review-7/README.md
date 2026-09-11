@@ -17,7 +17,7 @@ establish native Wolfram behavior or performance.
 - `article.tex`, `article.pdf`: analysis, source-line references, findings matrix,
   mathematical proofs, compatibility changes, test evidence and bibliography.
 - `code/StradFixed2.pinned.wl`: byte-exact reviewed original.
-- `code/StradFixed3.wl`: standalone proposed revision in context ``RadicalDenest3` ``.
+- `code/StradFixed3.wl`: standalone proposed revision in context ``RadicalDenest3`​``.
 - `code/StradFixed2-to-3.patch`: unified diff, including the context rename.
 - `code/build_improved.py`: checks the original Git blob and reproduces the revision
   through 36 checked edit groups. The generated code has 816 lines.
@@ -90,7 +90,7 @@ existing deployed implementation with the proposal before native testing.
 
 ### Deliberate compatibility changes
 
-The public context is ``RadicalDenest3` ``. Opaque admission is conservative:
+The public context is ``RadicalDenest3`​``. Opaque admission is conservative:
 rational-polynomial `Root` presentations with valid integer selectors and
 `AlgebraicNumber` objects with admitted generators and rational coefficients are
 recognized; other valid algebraic presentations can remain unsupported.
