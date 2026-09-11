@@ -181,8 +181,20 @@ reaches an operation the kernel report marks unavailable counts as
 "unavailable" rather than as a failure when it returns the documented
 `KernelPrecision` failure. Both counts are printed.
 
+What the Mathics run reports, beyond the Galois-engine limit above, falls
+into three kinds that are the interpreter's, not the package's: tests that
+wrap their value in a two-argument `Check` (Mathics takes the failure
+branch for any message issued earlier in the same evaluation, so four
+tests of section 2 report `$Failed` for correct values); tests whose
+expected value is a `Root` object of a quadratic, which Mathics leaves
+unevaluated where the Wolfram kernel and the package reduce it to a
+radical; and `AlgebraicNumber` coefficients, which the package treats as
+inert on that kernel. Two tests use `Trace`, which aborts the Mathics
+interpreter.
+
 `Examples.wl` reproduces the worked examples of the four projects in one
-script.
+script; on Mathics it announces the examples that lie beyond the engine's
+limit there and runs the rest in about four minutes.
 
 ## Python
 

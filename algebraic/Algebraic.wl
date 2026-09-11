@@ -1106,6 +1106,9 @@ If[kNativeQ["RootReduce"],
   kRootReduce[e_] := Which[
     kGaussianQ[e], e,
     ! FreeQ[e, _Real], e,
+    (* a root of unity written as an exponential: the Wolfram kernel reduces
+       Exp[2 Pi I/5] to a Root object of the cyclotomic polynomial *)
+    rootOfUnityFormQ[e], rootOfUnityReduce[e],
     (* a Root object of an irreducible polynomial is its own canonical form *)
     Head[e] === Root && Length[e] >= 2 && IntegerQ[e[[2]]] &&
       TrueQ[kMemo["irreducibleRoot", e[[1]], irreducibleRootFunctionQ[e[[1]]]]], e,
@@ -1116,6 +1119,19 @@ If[kNativeQ["RootReduce"],
     poly =!= $Failed && TrueQ[PolynomialQ[poly, kx]] && FreeQ[poly, _Real] &&
       Exponent[poly, kx] >= 3 &&
       AllTrue[kCoefficientList[poly, kx], kRationalQ] && kIrreduciblePolynomialQ[poly]];
+  (* E^(I Pi r) with r rational, tested structurally: a pattern Complex[0, _]
+     does not match the atomic Complex in Mathics *)
+  rootOfUnityFormQ[e_] := Head[e] === Power && Length[e] === 2 && e[[1]] === E &&
+    Head[e[[2]]] === Times && Length[e[[2]]] === 2 && e[[2, 2]] === Pi &&
+    Head[e[[2, 1]]] === Complex && Re[e[[2, 1]]] === 0 && kRationalQ[Im[e[[2, 1]]]];
+  rootOfUnityReduce[e_] := Module[{r = Im[First[e[[2]]]]/2, q, mp, k},
+    (* e = E^(2 Pi I r) (Exp[x] is Power[E, x]); a primitive root of unity of order Denominator[r] *)
+    q = Denominator[r];
+    If[q === 1, Return[1]]; If[q === 2, Return[-1]];
+    mp = kCyclotomic[q, kx];
+    If[q <= 2, Return[e]];
+    k = kRootIndex[mp, e, Exponent[mp, kx]];
+    If[k === $Failed, e, kRootReduce[kRootObject[mp, kx, k]]]];
   rootReduceByElimination[e_] := Module[{mp, c, deg, k, r},
     mp = kMinimalPolynomial[e, kx];
     If[mp === $Failed, Return[e]];
