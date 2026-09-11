@@ -106,9 +106,18 @@ Measured on Mathics3 10.0.1, with Wolfram 15.0.1 giving the same answers
 | `Strad` and the denesting family | available; `Sqrt[5 + 2 Sqrt[6]]` in 1.7 s, `(239 + 169 Sqrt[2])^(1/7)` in 1.9 s; the Kummer multipliers that need factorisation over an extension are not tried, the other methods are; `(2^(1/3) - 1)^(1/3)` is not denested within a two-minute budget |
 | `EqualityStatus`, `CertifiedEqualQ`, `RadicalCost`, the grammar | available, exact |
 | `RootDecompositionLowerBound`, `RootDecompositionVerify`, `RootSolvableQ` | available; the lower bound scans ten primes rather than forty, which leaves it rigorous but not always as sharp |
-| `RootGaloisData` | available; `#^3 - 2` (order 6) in 41 s, `#^4 - 10 #^2 + 1` with its subfield lattice in 18 s |
-| `RootSumDecomposition`, `RootProductDecomposition` | available; `Sqrt[2] + Sqrt[3]` in 17 s |
-| `RootToRadicals` | available; the structural recognizers in milliseconds, the Galois-Kummer descent through the engine above |
+| `RootGaloisData` | available for small splitting fields: `#^3 - 2` (order 6) in 41 s, `#^4 - 10 #^2 + 1` with its subfield lattice in 18 s; `Sqrt[2] 3^(1/3)` (degree 6, order 12) reaches its full group at the third resolvent in a few minutes and then does not finish -- see below |
+| `RootSumDecomposition`, `RootProductDecomposition` | available within the same limit; `Sqrt[2] + Sqrt[3]` in 17 s; the degree-9 product example of `Examples.wl` does not finish in an hour |
+| `RootToRadicals` | the structural recognizers in milliseconds (`Root[#^4 - 10 #^2 + 1 &, 4]` in 1.2 s); the Galois-Kummer descent within the engine's limit |
+
+The engine's limit on Mathics is the exact minimal polynomial of a
+resolvent sum: each step adds a root to a primitive element of the field
+found so far, and the elimination (section 0.5a) produces a resultant of
+degree `deg(theta) * deg(f)` whose irreducible factor must then be found.
+The Wolfram kernel's `MinimalPolynomial` does that natively; on Mathics
+the package factors with its own interpreted `kFactorList`, and a
+degree-72 resultant (a degree-12 element plus a sextic root) is beyond
+it. Set ``Algebraic`Private`$galoisDebug = True`` to watch the search.
 
 Two properties of the interpreter had to be worked around for the last
 three rows, and neither shows in `Precision` or `Accuracy`. For a complex

@@ -376,6 +376,19 @@ Measured with `z = N[7874506561843/12500000000000 - 545561817985861 I/10^14,
   all -- the same for `Times[a__]`. `f[e_Plus, w_]` with `List @@ e` works.
   `f[Plus[a_, b__], w_]` also works, binding `a` to the first term.
 
+### Where the Galois engine stops on Mathics
+
+With the numerics of section 0.5b in place, `RootGaloisData[Root[#^3 - 2
+&, 1]]` takes 41 s and the quartic `#^4 - 10 #^2 + 1` with its subfield
+lattice 18 s. `Sqrt[2] 3^(1/3)` (degree 6, group order 12) reaches its
+full group at the third resolvent -- 6 s, 7 s and 21 s for the three
+reductions -- and then stalls: the fourth resolvent is a degree-12
+element plus a sextic root, whose elimination is a degree-72 resultant,
+and the interpreted `kFactorList` that has to pick its irreducible factor
+does not finish in twenty minutes. The Wolfram kernel's `MinimalPolynomial`
+does the same step in milliseconds. `Failure` is a protected Global
+symbol in Mathics: a stand-in definition needs `Unprotect` first.
+
 ### Every root of a polynomial numerically
 
 - `NSolve`, `NRoots` and `Roots` are not implemented. `Solve[N[p] == 0, x]`
