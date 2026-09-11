@@ -361,6 +361,14 @@ Measured with `z = N[7874506561843/12500000000000 - 545561817985861 I/10^14,
   reason. The load-time probe `"ComplexPower"` (`N[q, 40]^6` against the
   exact value) decides whether any of this is needed; on the Wolfram
   kernel it is not.
+- **A conditional definition evaluates its left-hand side on reload.**
+  `f[x_, y_] /; cond := rhs` is safe when `f` has no definitions, but once
+  it has one -- on the second `Get` of the package, which a test harness
+  and an example script both do -- Mathics evaluates `f[x_, y_]` with that
+  definition, and the rule is attached to the head of whatever came out
+  (`Tag Association in <|...|> is Protected`, plus the messages the body
+  issued on pattern arguments). The Wolfram kernel holds the left-hand
+  side. Put the condition inside the body.
 - **`f[Plus[a__], w_]` does not do what it does in Wolfram.** Under a
   `Flat` head the sequence pattern binds `a` to the whole sum
   (`k[1 + x + y, 2]` with `k[Plus[a__], w_] := {a}` gives `{1 + x + y}`),

@@ -1940,11 +1940,13 @@ kernelPrecisionFailure[] := failure["KernelPrecision",
   "The Galois engine needs Root objects to evaluate to the precision they report, and this kernel returns fewer correct digits than that. The operations that do not use it are unaffected; see AlgebraicKernelReport[].",
   <|"Kernel" -> $Version|>];
 
-buildGaloisData[poly_, prec0_, maxOrder_, maxTries_] /; ! kNativeQ["RootPrecision"] :=
-  kernelPrecisionFailure[];
-
+(* The refusal is the first statement of the body, not a conditional
+   definition: in Mathics a definition lhs /; cond := rhs evaluates lhs when
+   the symbol already has a definition, which a second Get of this file
+   does, and the guard then lands on the value's head instead. *)
 buildGaloisData[poly_, prec0_, maxOrder_, maxTries_] :=
-  retryPrecision[Function[prec, Catch[buildGaloisDataAtPrecision[poly, prec, maxOrder, maxTries], failTag]], prec0];
+  If[! kNativeQ["RootPrecision"], kernelPrecisionFailure[],
+    retryPrecision[Function[prec, Catch[buildGaloisDataAtPrecision[poly, prec, maxOrder, maxTries], failTag]], prec0]];
 
 basisValues[nums_, perms_, tower_, basisExp_] := Module[{gens = tower[[All, 1]], pw},
   pw = Table[kPowerList[nums[[i]], Max[Flatten[{0, basisExp}]]], {i, Length[nums]}];
