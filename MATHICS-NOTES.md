@@ -241,9 +241,10 @@ which is what makes the package portable at all.
 - `Root[f, k]` exists, with the **same root ordering as Wolfram** — real roots
   first in increasing order, then conjugate pairs — checked on `#^3 - 2`,
   `#^4 - # - 1` and `#^2 - 2`.
-- `N[Root[f, k], p]` works at arbitrary precision and for non-real roots, and
-  so does `N[expr, p]` for an `expr` built from `Root` objects by `Plus`,
-  `Times`, `Power` and `Sqrt`.
+- `N[Root[f, k], p]` works at arbitrary precision and for non-real roots;
+  `N[expr, p]` for an `expr` built from `Root` objects by `Plus`, `Times`,
+  `Power` and `Sqrt` runs but is machine-accurate as soon as a non-real
+  value meets `Power`, `Sqrt` or division (next section).
 - `MinimalPolynomial` handles radicals, `Root` objects, and arithmetic
   combinations of them: `MinimalPolynomial[Root[#^3 - 2 &, 1] + Sqrt[2], x]`
   is the correct degree-6 polynomial, in about five milliseconds. It refuses
@@ -253,19 +254,25 @@ which is what makes the package portable at all.
   `Root[#^3 - 2 &, 1]^3 - 2`. `FullSimplify` proves the same nested-radical
   identity. Do not pass `Method -> "ExactAlgebraics"`; the option is not
   recognised and leaves the call unevaluated.
-- **`N[Root[f, k], p]` does not deliver the `p` digits it reports.** The
-  result carries precision `p`, and `Precision` and `Accuracy` say so, but
-  substituting it back into `f` shows how many digits are right: for
-  `#^3 - 2` about sixteen (the imaginary part of `r^3 + 2` at the complex
-  root is `1.8*10^-16`, not `0``59` as in Wolfram), and for
-  `27436 + 112 #^3 + #^6` about eleven (`27436 + 112 r^3 + r^6` is
-  `-1.1*10^-11`). `N[Sqrt[2], 60]^2 - 2` is `0``60` as expected, so the
-  loss is specific to `Root`. Any algorithm that rounds high-precision root
-  values to integers -- the numerical-resolvent Galois engine here -- would
-  round noise, and the reported precision cannot warn it. The package
-  measures the residual in a load-time probe and refuses the engine when
-  it fails, rather than trusting `Precision`. `N[Root[deg 6, k], 180]` also
-  did not return within a minute, where 60 digits took milliseconds.
+- **`N[Root[f, k], p]` is correct to `p` digits, but slow for non-real
+  roots**, and the eleven-digit residual first blamed on it was the
+  complex-arithmetic defect described in the next section: substituting the
+  value back into `27436 + 112 #^3 + #^6` with `r^3` and `r^6` gives
+  `1.1*10^-11`, evaluating the same polynomial by Horner's rule (products and
+  sums only) gives `10^-56` at `p = 60` and `10^-116` at `p = 120`. The
+  cost is the problem: the non-real root of that sextic takes 13 s at 60
+  digits and 47 s at 120, a non-real root of `#^5 - 5 #^3 + 5 # - 3` 11 s at
+  60 digits, while a real root of a quintic takes 0.05 s and every root at
+  machine precision (`N[Root[f, k]]`) 0.01 s. The package therefore takes
+  the machine value as an exact rational seed (`Round[x 10^14]/10^14`) and
+  polishes it by Newton's method at the working precision -- 0.5 s to 60
+  digits, 0.7 s to 130 -- with the residual checked and the kernel's own `N`
+  as the fallback (section 0.5b of the package). The seed must be exact:
+  `N[machineReal, 100]` stays a machine number, `N[rational, 100]` does not,
+  and `Rationalize[x, 10^-13]` can return the machine number itself.
+- **Machine-precision root ordering is the Wolfram kernel's** on every
+  polynomial checked, so the seed of `Root[f, k]` polishes to the k-th root
+  in Wolfram's order; the package relies on that.
 - `MinimalPolynomial` on a **sum or product of `Root` objects** of degree
   six and up did not finish in a minute (`Root[27436 + #^6 + 112 #^3 &, 5]
   + 7 Root[#^3 - 2 &, 3]`), although on radicals and on single `Root`
@@ -300,6 +307,52 @@ which is what makes the package portable at all.
 - `TimeConstrained` works, including the three-argument form.
   `MemoryConstrained` does not, so a memory budget is simply not enforced
   there; the time budget still is.
+
+### Complex arbitrary-precision arithmetic is partly machine precision
+
+Measured with `z = N[7874506561843/12500000000000 - 545561817985861 I/10^14,
+80]` and a Gaussian rational `q = 3/7 + 2 I/11`; every result below carries
+`Precision` 80 (or the precision asked for), so nothing warns.
+
+- **Exact** (error `10^-80`): `z + w`, `z w`, `-z`, `I z`, `z/2`, `z/7`,
+  `Times @@ list`, `Total`, `Dot`, `Norm`, `Re`, `Im`, `Abs`, `Round`,
+  `Floor`, `N[exactExpression, 80]` for an expression in Gaussian rationals
+  (`N[q^6 + 112 q^3 + 27436, 80]` in 17 ms), and every real-argument
+  function used by the package: `x^q` for real `x` (with the principal
+  value `1 + Sqrt[3] I` for `(-8)^(1/3)`), `Exp`, `Log`, `Cos`, `Sin`,
+  `Sqrt` of a negative real, `ArcTan[re, im]`.
+- **Machine precision, reported as 80 digits**: `z^n` for every integer
+  `n` other than 1 (`z^2` differs from `z z` by `10^-15`), `1/z`, `z/w`,
+  `Divide`, `Conjugate[z]` (`10^-17`), `Sqrt[z]`, `z^(1/3)`, `Exp[z]`,
+  `Log[z]`, `Exp[I theta]` for a real 80-digit `theta` (`2*10^-17`, while
+  `Cos[theta] + I Sin[theta]` is exact), `Arg[z]` (returned as a machine
+  number), and `N[Sqrt[q], 80]`, `N[q^(1/5), 80]` for a Gaussian rational
+  `q` (`2*10^-17`). `x^k /. x -> z` and `Expand[z^2]` go through the same
+  `Power`.
+- A polynomial evaluated as `c . z^Range[0, n]` is therefore wrong at the
+  eleventh digit; `Fold[#1 z + #2 &, 0, Reverse[c]]` is right. A power by
+  repeated multiplication (`Fold[#1 z &, 1, Range[n]]`) is exact; but a
+  squaring written `#1 #1` inside a pure function is `Power[#1, 2]` the
+  moment the function is defined, and hits the same defect -- so does
+  `z z` when the two factors are the same *symbol*, as in `Times[x, x]`
+  with `x` later substituted.
+- The package's `kN` (section 0.5b) evaluates an expression bottom-up on
+  this kernel -- sums and products, integer powers by repeated
+  multiplication, `1/z` from `Re` and `Im`, a complex `z^q` as
+  `Abs[z]^q (Cos[q t] + I Sin[q t])` with `t = ArcTan[Re[z], Im[z]]`, `Exp`
+  and `Log` likewise -- and hands a real base to the kernel's own `Power`.
+  With that, the residual of a sextic root at 120 digits is `2*10^-126`
+  and a nested cube-root identity checks to `10^-110`. The engine's own
+  arithmetic on root values uses `kPowerList` and `kDivide` for the same
+  reason. The load-time probe `"ComplexPower"` (`N[q, 40]^6` against the
+  exact value) decides whether any of this is needed; on the Wolfram
+  kernel it is not.
+- **`f[Plus[a__], w_]` does not do what it does in Wolfram.** Under a
+  `Flat` head the sequence pattern binds `a` to the whole sum
+  (`k[1 + x + y, 2]` with `k[Plus[a__], w_] := {a}` gives `{1 + x + y}`),
+  and next to a catch-all `f[e_, w_]` the `Plus` rule is never chosen at
+  all -- the same for `Times[a__]`. `f[e_Plus, w_]` with `List @@ e` works.
+  `f[Plus[a_, b__], w_]` also works, binding `a` to the first term.
 
 ### Testing
 

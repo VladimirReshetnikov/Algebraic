@@ -19,8 +19,10 @@ If[! MemberQ[$Packages, "Algebraic`"],
    report-03 fixtures (MIT, Copyright (c) 2026 OpenAI; see
    polynomial-decompose/reports/report-03/LICENSE). *)
 ClearAll[x, a, samePoly, sameChain, degrees, goodChain, original];
+(* the package's coefficient list rather than CoefficientList: the latter
+   aborts Mathics when an algebraic coefficient cancels only under SymPy *)
 samePoly[u_, v_] := AllTrue[
-  RootReduce /@ CoefficientList[Expand[u - v], x], # === 0 &];
+  RootReduce /@ Algebraic`Private`kCoefficientList[Expand[u - v], x], # === 0 &];
 sameChain[u_List, v_List] := Length[u] === Length[v] &&
   And @@ MapThread[samePoly, {u, v}];
 degrees[c_List] := Exponent[#, x] & /@ c;

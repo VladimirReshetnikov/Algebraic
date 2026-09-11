@@ -323,12 +323,16 @@ loop has to abort a function.
   line (`TestReport: suite.wlt | 97 Success ... Elapsed time 5s`) continuously
   to standard output. A 490-test suite had written **two gigabytes** of such
   lines before it was half done, and the redirected log stopped being
-  readable. Set `$ProgressReporting = False` **at the top of the script**:
-  it takes effect only if it is set before `TestReport` is first used, which
-  autoloads the testing framework -- set immediately before the call, inside
-  the same script, it had no effect, and neither did `Block[{$Output = {}},
-  ...]`, `Block[{$Messages = {}, $Urgent = {}}, ...]` or replacing
-  `PrintTemporary`. The report object is unaffected either way.
+  readable. Worse, a Git Bash redirection stops at 2 GB and the kernel then
+  blocks on its next write: three runs hung indefinitely at exactly that
+  size. `$ProgressReporting = False` silenced the ticker in a three-test
+  experiment when set at the top of the script, but not in the real runner,
+  where it was also at the top; `Block[{$Output = {}}, ...]`,
+  `Block[{$Messages = {}, $Urgent = {}}, ...]` and replacing
+  `PrintTemporary` did not help either. What works is filtering at the
+  shell -- `wolfram -script RunTests.wl 2>&1 | grep --line-buffered -v
+  "TestReport:" > log` -- which also keeps the kernel's standard output a
+  pipe. The report object is unaffected in every case.
 
 ### Two silently wrong constructs the merge removed
 

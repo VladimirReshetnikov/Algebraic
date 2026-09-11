@@ -86,7 +86,7 @@ symbol is ever redefined. Whether the kernel supplies a function is decided
 by evaluating it once at load time and comparing the answer with the
 known-correct one, not by testing `$Version`, so a Mathics release that
 implements a function correctly then uses it. On Mathics3 10.0.1 the layer
-supplies 33 functions, among them `RootReduce`, `Resultant`, `FactorList`,
+supplies 34 functions, among them `RootReduce`, `Resultant`, `FactorList`,
 `Cyclotomic`, `LatticeReduce`, the association vocabulary, and a minimal
 polynomial by elimination (section 0.5a) for expressions the kernel's own
 `MinimalPolynomial` cannot finish.
@@ -130,9 +130,19 @@ package before any package call.
 
 ```text
 cd algebraic/Tests
-wolfram -script RunTests.wl
-python -X utf8 -m mathics --no-readline -q -f RunTests.wl
+wolfram -script RunTests.wl > /dev/null 2>&1; cat wolfram-report.txt
+python -X utf8 run_mathics.py
 ```
+
+In the Wolfram kernel the report goes to `wolfram-report.txt`: `TestReport`
+redraws a progress line on standard output continuously, a script cannot
+switch it off, and redirected to a file it reached Git Bash's 2 GB limit
+and blocked the kernel, so standard output is discarded. `run_mathics.py`
+feeds the suite to Mathics one statement at a time -- a Python-level abort
+inside one test then ends that test, not the run -- and prints each test ID
+as it starts; `python -X utf8 -m mathics --no-readline -q -f RunTests.wl`
+also works but prints nothing until it finishes. The Mathics run takes
+hours.
 
 `Algebraic.wlt` is the four suites of the four projects — 91, 94, 75 and 230
 tests, 490 in all — with their package names mapped onto the unified

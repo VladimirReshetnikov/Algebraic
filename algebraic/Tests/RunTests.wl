@@ -3,16 +3,15 @@
        wolfram -script RunTests.wl
        python -X utf8 -m mathics --no-readline -q -f RunTests.wl
 
-   In the Wolfram kernel the suite runs through TestReport, unchanged.  Mathics
-   has neither TestReport nor VerificationTest, so the runner defines its own
-   VerificationTest in Global` before reading the suite: the same file, the
-   same expected values, the same test IDs.  Two things differ there and are
-   reported separately rather than hidden: a test that expects a particular
-   message is judged on its value only, because Mathics' messages are not the
-   Wolfram kernel's; and a test that reaches an operation the kernel report
-   marks unavailable (the Galois engine, see AlgebraicKernelReport[]) counts
-   as "unavailable", not as a failure, when it returns the documented
-   KernelPrecision failure.
+   In the Wolfram kernel the suite runs through TestReport, unchanged.  In
+   Mathics the runner reads MathicsHarness.wl, which defines the
+   VerificationTest the same suite then resolves to; see that file for what
+   is reported separately there.  For Mathics prefer
+
+       python run_mathics.py
+
+   which feeds the suite one statement at a time and survives the Python-level
+   aborts that a single Get cannot.
 
    Exit code 0 when nothing failed. *)
 
@@ -32,45 +31,36 @@ Print["Package ", $AlgebraicVersion, " on ", report["Kernel"], "; emulated: ",
 If[Names["System`TestReport"] =!= {},
 
   (* ---------------- the Wolfram kernel ---------------- *)
-  Module[{wall, tr, results, failed},
+  (* The report is also written to wolfram-report.txt.  TestReport redraws a
+     progress line on standard output with carriage returns, continuously and
+     unswitchably from a script; redirected to a file it reaches Git Bash's
+     2 GB limit and the kernel then blocks, and a line filter never sees a
+     line end.  Send standard output to the null device and read the file. *)
+  Module[{wall, tr, results, failed, report, say},
+    report = OpenWrite["wolfram-report.txt"];
+    say[args___] := (Print[args]; WriteString[report, StringJoin[ToString /@ {args}], "
+"]);
+    say["Kernel: ", $Version];
     {wall, tr} = AbsoluteTiming[TestReport["Algebraic.wlt"]];
     If[! IntegerQ[tr["TestsSucceededCount"]] || ! IntegerQ[tr["TestsFailedCount"]] ||
         tr["TestsSucceededCount"] + tr["TestsFailedCount"] == 0,
-      Print["FAILED: no valid nonempty test report was produced."]; Exit[2]];
+      say["FAILED: no valid nonempty test report was produced."]; Close[report]; Exit[2]];
     results = Values[tr["TestResults"]];
     Do[If[t["Outcome"] =!= "Success",
-        Print["FAILED ", t["TestID"], " | expected ", t["ExpectedOutput"],
-          " | actual ", t["ActualOutput"], " | messages ", t["ActualMessages"]]],
+        say["FAILED ", t["TestID"], " | expected ", ToString[t["ExpectedOutput"], InputForm],
+          " | actual ", ToString[t["ActualOutput"], InputForm], " | messages ", t["ActualMessages"]]],
       {t, results}];
-    Print["Tests succeeded: ", tr["TestsSucceededCount"], ", failed: ",
+    say["Tests succeeded: ", tr["TestsSucceededCount"], ", failed: ",
       tr["TestsFailedCount"], ", wall time: ", Round[wall, 0.1], " s"];
+    Close[report];
     Exit[If[tr["TestsFailedCount"] == 0, 0, 1]]],
 
   (* ---------------- Mathics3 ---------------- *)
-  Module[{passed = 0, failed = 0, unavailable = 0, valueOnly = 0, t0 = AbsoluteTime[]},
-    SetAttributes[VerificationTest, HoldAll];
-    SetAttributes[BeginTestSection, HoldAll];
-    BeginTestSection[___] := Null; EndTestSection[___] := Null;
-    unavailableQ[v_] := Head[v] === Failure && v[[1]] === "KernelPrecision" ||
-      ! FreeQ[v, Failure["KernelPrecision", _]];
-    VerificationTest[actual_, expected_: True, messages_: {}, opts___] := Module[
-      {id, got, want, ok, t1 = AbsoluteTime[]},
-      id = Replace[TestID /. Flatten[{opts}], TestID -> "(no id)"];
-      got = Quiet[actual];
-      want = expected;
-      If[ListQ[messages] && messages =!= {}, valueOnly++];
-      ok = TrueQ[got === want];
-      Which[
-        ok, passed++,
-        unavailableQ[got], unavailable++;
-          Print["UNAVAILABLE ", id, " (Galois engine)"],
-        True, failed++;
-          Print["FAILED ", id, " | expected ", InputForm[want], " | actual ", InputForm[got]]];
-      If[AbsoluteTime[] - t1 > 30, Print["   (", id, ": ", Round[AbsoluteTime[] - t1], " s)"]];
-      ok];
+  (* The suite is one Get here, so a Python-level abort inside a test ends the
+     run with no report; run_mathics.py feeds the same suite one statement at
+     a time and survives that.  Prefer it. *)
+  Module[{bad},
+    Get["MathicsHarness.wl"];
     Get["Algebraic.wlt"];
-    Print["Tests succeeded: ", passed, ", failed: ", failed,
-      ", unavailable in this kernel: ", unavailable,
-      " (", valueOnly, " judged on value only because they expect Wolfram messages); wall time: ",
-      Round[AbsoluteTime[] - t0], " s"];
-    Exit[If[failed == 0, 0, 1]]]];
+    bad = mathicsSummary[0];
+    Exit[If[bad == 0, 0, 1]]]];
