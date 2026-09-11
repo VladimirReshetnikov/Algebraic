@@ -196,7 +196,8 @@ hours.
 
 `Algebraic.wlt` is the four suites of the four projects — 91, 94, 75 and 230
 tests, 490 in all — with their package names mapped onto the unified
-package; nothing was removed. In the Wolfram kernel the runner uses
+package; nothing was removed, and three tests of the inferred variable of
+`AlgebraicDecompose[p]` make 493. In the Wolfram kernel the runner uses
 `TestReport`. Mathics has neither `TestReport` nor `VerificationTest`, so the
 runner defines its own `VerificationTest` before reading the same file: tests
 that expect a Wolfram message are judged on their value only, and a test that

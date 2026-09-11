@@ -48,7 +48,7 @@ alg.root_to_radicals("Root[#^4 - 10 #^2 + 1 &, 4]")
 
 | Path | Contents |
 | --- | --- |
-| `algebraic/Algebraic.wl` | The unified Wolfram package: all four operations, one context, Wolfram kernel and Mathics3. `Tests/Algebraic.wlt` (490 tests) with a runner for both kernels, `Examples.wl`, and `AlgebraicKernelReport[]`. |
+| `algebraic/Algebraic.wl` | The unified Wolfram package: all four operations, one context, Wolfram kernel and Mathics3. `Tests/Algebraic.wlt` (493 tests) with a runner for both kernels, `Examples.wl`, and `AlgebraicKernelReport[]`. |
 | `algebraic/python/` | The unified Python package `algebraic` (`polynomial_decomposition`, `root_decomposition`, `radicals`), 95 tests, a 40-case cross-check against a Wolfram kernel, and a benchmark. |
 | `docs/mathematica.stackexchange.com/` | Archived questions and their answers (`.md`, `.tex`, `.pdf`, `.url`). |
 | `docs/report/` | radical-denest: *Radical Denesting: A Unified Research Guide* (48 pages, 103 annotated bibliography entries), with `verify.py` and its 59 exact SymPy checks of the identities used. |
