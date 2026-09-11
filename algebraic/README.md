@@ -124,8 +124,14 @@ in seconds rather than running for hours. The companion matrix whose
 eigenvalues seed the root values is balanced (`x = s y` with `s` the
 root-radius bound) because SymPy's eigenvalue solver raised
 `PrecisionExhausted` -- uncatchable -- on the raw coefficients of a
-degree-12 resolvent. And the test driver imposes its own wall-clock limit
-per statement, since `TimeConstrained` cannot interrupt SymPy there.
+degree-12 resolvent. Nothing containing a `Root` object is handed to Mathics'
+`PossibleZeroQ`, `MinimalPolynomial` or `N`, each of which makes SymPy
+refine every non-real root for ten seconds and more: the exact zero test
+rejects at machine precision and decides the rest by elimination, which
+took a decomposition with a non-real quintic coefficient from over 600 s
+to 13 s and a Gaussian binary-sum search from over 300 s to 46 s. And the
+test driver imposes its own wall-clock limit per statement, since
+`TimeConstrained` cannot interrupt SymPy there.
 
 The engine's limit on Mathics is the exact minimal polynomial of a
 resolvent sum: each step adds a root to a primitive element of the field

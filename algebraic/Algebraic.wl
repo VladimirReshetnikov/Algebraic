@@ -1245,6 +1245,10 @@ kExactZeroQ[e_] := If[kNativeQ["RootReduce"],
     With[{v = kCheck[kN[e], $Failed]}, kFiniteNumberQ[v] && TrueQ[Abs[v] > 10^-6]], False,
     Head[e] =!= Root && singleRootPolynomialQ[e] && singleRootReduce[e] =!= $Failed,
     singleRootReduce[e] === 0,
+    (* PossibleZeroQ hands an expression with Root objects to SymPy's
+       minimal_polynomial, which refines every non-real CRootOf for a minute
+       or more; the elimination decides those *)
+    ! FreeQ[e, _Root], TrueQ[Quiet[kRootReduce[e]] === 0],
     True, TrueQ[Quiet[kPossibleZeroQ[e]]] || TrueQ[Quiet[kRootReduce[e]] === 0]]];
 
 If[kNativeQ["NumericQRoot"],

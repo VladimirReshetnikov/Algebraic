@@ -412,6 +412,32 @@ the elimination plus numerical root index that a fresh `Root` object
 needs. The eight functions of the functional decomposition, whose
 coefficients live in such a field, got five to fifty times faster.
 
+### Anything that refines a non-real `CRootOf` costs ten seconds
+
+An in-thread profile (`ALGEBRAIC_PROFILE` in `run_mathics.py`) of the two
+slowest cases -- a decomposition with a non-real quintic `Root`
+coefficient (over 600 s) and a Gaussian binary-sum search (over 300 s)
+-- put nearly all of the time into SymPy's `CRootOf` refinement
+(`rootoftools.eval_rational`, 8 to 13 s per call), which is reached by:
+
+- `N[Root[f, k], p]` and `N[Root[f, k]]` themselves;
+- `PossibleZeroQ` on an expression containing a `Root` object: SymPy's
+  `minimal_polynomial` (`_minpoly_add`, `_choose_factor`) refines every
+  `CRootOf` in it, 45-146 s per call;
+- native `MinimalPolynomial` on such an expression, the same way;
+- a matrix operation whose entries contain a `Root` object: the pivot test
+  `_iszero` asks the assumptions system whether the entry is zero, which
+  evaluates it;
+- `z^n` of a complex bignum inside the factor-selection residual (the
+  machine-precision `Power` defect, which also made the selection wrong).
+
+The package now keeps `Root` objects away from all of these on that
+kernel: `kN`/`kRootValue` evaluate through the ordered eigenvalues and
+Newton polishing, `kExactZeroQ` rejects at machine precision first and
+decides a `Root`-containing zero by elimination (`selectFactor` recognises
+the value zero), `kMinimalPolynomial` has no native fallback for such
+input, and residuals use `kPowerList`. The two cases take 12.6 s and 46 s.
+
 ### Where the Galois engine stops on Mathics
 
 With the numerics of section 0.5b in place, `RootGaloisData[Root[#^3 - 2

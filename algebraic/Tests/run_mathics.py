@@ -61,6 +61,9 @@ def evaluate_bounded(evaluation, query, seconds):
             outcome["result"] = "ok"
         except HardTimeout:
             outcome["result"] = "timeout"
+            if os.environ.get("ALGEBRAIC_TRACEBACK"):
+                # where the evaluation was when it was cut off
+                traceback.print_exc(limit=-40)
         except BaseException as exc:  # reported by the caller
             outcome["result"] = exc
         finally:
