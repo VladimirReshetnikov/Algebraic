@@ -3293,6 +3293,11 @@ validOptionsQ[opts_] := With[{o = OptionValue[RootToRadicals, opts, #] &},
   IntegerQ[o["WorkingPrecision"]] && o["WorkingPrecision"] >= 30 &&
   (o["Extension"] === None || AllTrue[Flatten[{o["Extension"]}], FreeQ[#, _Real] && minimalPolynomialOf[#] =!= $Failed &])];
 
+(* the expanded form when it is smaller: the Galois descent can return
+   (5 2^(1/5) + 5 2^(2/5))/5 for 2^(1/5) + 2^(2/5); a nested radical that
+   Expand would only enlarge is kept as it is *)
+tidyRadicals[e_] := With[{t = Expand[e]}, If[LeafCount[t] < LeafCount[e], t, e]];
+
 RootRadicalReport[a_, opts : OptionsPattern[]] := Catch[Module[{t0 = AbsoluteTime[], in, r, ver},
   If[! validOptionsQ[Flatten[{opts}]], Message[RootToRadicals::opts, Flatten[{opts}]]; Return[failure["InvalidOptions", "Invalid options"]]];
   If[! FreeQ[a, _Real], Message[RootToRadicals::inexact, a]; Return[failure["Inexact", "Inexact input"]]];
@@ -3302,6 +3307,7 @@ RootRadicalReport[a_, opts : OptionsPattern[]] := Catch[Module[{t0 = AbsoluteTim
          $prec = Max[60, OptionValue["WorkingPrecision"]], $extension = OptionValue["Extension"]},
     r = radicalsOf[a, OptionValue["MaxDepth"]];
     If[kFailureQ[r], Throw[Failure[r[[1]], Join[r[[2]], $galoisInfo, <|"Degree" -> in["Degree"], "Time" -> AbsoluteTime[] - t0|>]], moduleTag]];
+    r = tidyRadicals[r];
     ver = verifyExact[r, a, OptionValue["VerificationTimeLimit"]];
     If[ver =!= True, Message[RootToRadicals::verify, ver]];
     Join[<|"Expression" -> r, "Verified" -> ver, "Method" -> $methodUsed, "Degree" -> in["Degree"],
