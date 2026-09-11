@@ -121,6 +121,11 @@ RadicalDepth::usage = "RadicalDepth[e] is the maximal number of nested rational-
 (* ------------------------------------------------------------------ *)
 
 $AlgebraicVersion::usage = "$AlgebraicVersion is the version string of the Algebraic package.";
+$AlgebraicResolventLimit::usage = "$AlgebraicResolventLimit is the largest degree of a resultant the Galois engine will factor while building a resolvent tower; beyond it RootGaloisData, the decompositions and the radical descent return Failure[\"EngineLimit\", ...]. Infinity in the Wolfram kernel, 48 in Mathics, where the factorisation is interpreted.";
+$AlgebraicFrobeniusPrimes::usage = "$AlgebraicFrobeniusPrimes is the number of primes whose Frobenius cycle types RootDecompositionLowerBound and the decompositions scan for the lower bound: 40 in the Wolfram kernel, 10 in Mathics. Fewer primes leave the bound rigorous but not always as sharp.";
+$AlgebraicFrobeniusPrimesSolvable::usage = "$AlgebraicFrobeniusPrimesSolvable is the number of primes RootSolvableQ and RootToRadicals scan for a cycle type that proves the Galois group non-solvable before any group computation: 60 in the Wolfram kernel, 12 in Mathics.";
+$AlgebraicMemoLimit::usage = "$AlgebraicMemoLimit is the number of entries after which each of the package's memo tables (reductions, minimal polynomials, root values, Galois data) is emptied; 5000.";
+$AlgebraicTimeScale::usage = "$AlgebraicTimeScale multiplies the internal time limits the package gives the kernel's own algebra (a few seconds for a minimal polynomial, twenty for a factorisation over an extension): 1 in the Wolfram kernel, 4 in Mathics.";
 AlgebraicKernelReport::usage = "AlgebraicKernelReport[] returns an Association describing the running kernel: \"Kernel\" (\"Wolfram\" or \"Mathics\"), \"Version\", \"NativeFunctions\" and \"EmulatedFunctions\" (the System functions the portable layer had to supply), and \"Operations\" mapping each of the four operations to True, False or a string explaining a restriction.";
 
 (* Messages.  Engine-level messages are issued from the package symbol
@@ -239,7 +244,8 @@ kNativeQ[name_String] := With[{v = $kNative[name]},
 (* Mathics is an interpreter: internal time allowances are scaled so that a
    budget expressed in Wolfram seconds still buys the same computation.  The
    user's own "TimeBudget" and similar options are never scaled. *)
-$kTimeScale = If[kNativeQ["RootReduce"], 1, 4];
+$AlgebraicTimeScale = If[kNativeQ["RootReduce"], 1, 4];
+$kTimeScale := $AlgebraicTimeScale;
 
 (* How many primes the Frobenius scans may use.  Factorising the minimal
    polynomial modulo one prime costs milliseconds in the Wolfram kernel and
@@ -250,8 +256,10 @@ $kTimeScale = If[kNativeQ["RootReduce"], 1, 4];
    nonsolvability proof from any single prime stands on its own -- but the
    lower bound is then not always as sharp, and an optimality claim that
    depends on it can come back False where the Wolfram kernel proves True. *)
-$kFrobeniusPrimes = If[kNativeQ["FactorListModulus"], 40, 10];
-$kFrobeniusPrimesSolvable = If[kNativeQ["FactorListModulus"], 60, 12];
+$AlgebraicFrobeniusPrimes = If[kNativeQ["FactorListModulus"], 40, 10];
+$AlgebraicFrobeniusPrimesSolvable = If[kNativeQ["FactorListModulus"], 60, 12];
+$kFrobeniusPrimes := $AlgebraicFrobeniusPrimes;
+$kFrobeniusPrimesSolvable := $AlgebraicFrobeniusPrimesSolvable;
 
 (* ------------------------------------------------------------------ *)
 (* 0.1  Associations and lists                                        *)
@@ -429,7 +437,8 @@ If[kNativeQ["MatrixPower"],
    on Mathics -- and the exact reduction is asked about the same coefficient
    combinations again and again.  Each table is dropped once it holds
    $kMemoLimit entries, so a long session cannot grow without bound. *)
-$kMemoLimit = 5000;
+$AlgebraicMemoLimit = 5000;
+$kMemoLimit := $AlgebraicMemoLimit;
 $kMemo = <||>;
 SetAttributes[kMemo, HoldRest];
 kMemo[tag_String, key_, compute_] := Module[{table, value},
@@ -1495,6 +1504,9 @@ AlgebraicKernelReport[] := Module[{native, emulated},
     "NativeFunctions" -> native,
     "EmulatedFunctions" -> emulated,
     "TimeScale" -> $kTimeScale,
+    "Limits" -> <|"ResolventDegree" -> $AlgebraicResolventLimit, "FrobeniusPrimes" -> $AlgebraicFrobeniusPrimes,
+      "FrobeniusPrimesSolvable" -> $AlgebraicFrobeniusPrimesSolvable, "MemoEntries" -> $AlgebraicMemoLimit,
+      "TimeScale" -> $AlgebraicTimeScale|>,
     "Operations" -> <|
       "AlgebraicDecompose" -> True,
       "RootDecompositionLowerBound" -> True,
@@ -1965,14 +1977,14 @@ gaussianExponentBound[e_Integer] := If[MemberQ[{1, 2}, e], 1, exponentBound[e]];
 frobeniusCycleType[poly_, p_] := kFactorDegreesMod[poly, x, p];
 
 frobeniusExponentMultiple[poly_, maxPrimesIn_: Automatic] :=
-  kMemo["frobeniusExponentMultiple", {poly, maxPrimesIn}, frobeniusExponentMultipleCompute[poly, maxPrimesIn]];
+  kMemo["frobeniusExponentMultiple", {poly, Replace[maxPrimesIn, Automatic :> $kFrobeniusPrimes]}, frobeniusExponentMultipleCompute[poly, maxPrimesIn]];
 frobeniusExponentMultipleCompute[poly_, maxPrimesIn_] := Module[
   {maxPrimes = Replace[maxPrimesIn, Automatic :> $kFrobeniusPrimes],
    bad = kDiscriminant[poly, x] Coefficient[poly, x, Exponent[poly, x]], ps},
   ps = kTakeUpTo[Select[Prime[Range[maxPrimes + 10]], Mod[bad, #] != 0 &], maxPrimes];
   LCM @@ Prepend[Flatten[frobeniusCycleType[poly, #] & /@ ps], 1]];
 
-lowerBoundFromPolynomial[poly_] := kMemo["lowerBound", poly, lowerBoundCompute[poly]];
+lowerBoundFromPolynomial[poly_] := kMemo["lowerBound", {poly, $kFrobeniusPrimes}, lowerBoundCompute[poly]];
 lowerBoundCompute[poly_] := Module[{n = Exponent[poly, x], bound},
   bound = largestPrimeFactor[n];
   If[bound == n, bound, Max[bound, exponentBound[frobeniusExponentMultiple[poly]]]]];
@@ -2011,7 +2023,8 @@ roundIntegerMatrix[m_] := Map[roundInteger, m, {2}];
    MinimalPolynomial does that natively, the interpreted kFactorList does not
    finish a degree-72 one.  Above this limit the engine returns
    Failure["EngineLimit", ...] at once. *)
-$kResolventLimit = If[kNativeQ["RootReduce"], Infinity, 48];
+$AlgebraicResolventLimit = If[kNativeQ["RootReduce"], Infinity, 48];
+$kResolventLimit := $AlgebraicResolventLimit;
 
 galoisGroupNumerically[roots_List, nums_List, prec_, maxOrder_, maxTries_] :=
   Module[{n = Length[roots], orbit, vals, thetaExact = 0, tower = {}, k, w, newTheta, m, md, mroots,

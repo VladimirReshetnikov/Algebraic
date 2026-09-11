@@ -459,7 +459,10 @@ reductions -- and then stalls: the fourth resolvent is a degree-12
 element plus a sextic root, whose elimination is a degree-72 resultant,
 and the interpreted `kFactorList` that has to pick its irreducible factor
 does not finish in twenty minutes. The Wolfram kernel's `MinimalPolynomial`
-does the same step in milliseconds. `Failure` is a protected Global
+does the same step in milliseconds. The cap is `$AlgebraicResolventLimit`
+(48 here): at 60, the Galois data of the D5 quintic `x^5 + 3 x^2 + 2 x - 1`
+gets through in 505 s (its degree-50 resultant is factored), while the
+radical descent then asks for a degree-90 one and stops. `Failure` is a protected Global
 symbol in Mathics: a stand-in definition needs `Unprotect` first.
 
 ### Every root of a polynomial numerically

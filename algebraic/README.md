@@ -50,6 +50,56 @@ Engine-level messages are issued from the package symbol `Algebraic`
 (`Algebraic::inexact`, `::notalg`, `::order`, `::group`, `::prec`,
 `::verify`); the four messages of `RootToRadicals` stay on that symbol.
 
+### Limits, budgets and how to change them
+
+Every cap the package applies is an option of the function or a public
+variable; nothing is fixed in the code. Defaults are given as Wolfram /
+Mathics where they differ.
+
+| Function | Option | Default | Meaning |
+| --- | --- | --- | --- |
+| `AlgebraicDecompositions` | `"MaxDecompositions"` | `Infinity` | cap on the chains enumerated; beyond it `Failure["EnumerationLimit", ...]` carries the partial list |
+| `VerifyAlgebraicDecomposition` | `"RequireComplete"`, `"RequireNormalized"` | `False` | stricter contracts to check |
+| `RootGaloisData`, `RootSumDecomposition`, `RootProductDecomposition` | `"WorkingPrecision"` | 80 | starting precision of the numerical resolvents; doubled up to three times on a precision failure |
+| | `"MaxGroupOrder"` | 400 | largest Galois group the engine builds; beyond it `Failure["GroupOrder", ...]` |
+| | `"MaxTries"` | 12 | random resolvent weights tried per step before `Failure["GaloisGroup", ...]` |
+| `RootGaloisData` | `"Cache"` | `True` | keep the field data of a polynomial for later calls |
+| `RootSumDecomposition` | `"MaxTerms"` | `Infinity` | largest number of summands searched |
+| `RootProductDecomposition` | `"MaxFactors"` | `Infinity` | largest number of factors searched |
+| | `"RecursionDepth"` | 3 | depth of the recursive splitting of factors |
+| | `"BoundedSearch"` | `{2, 3}` | height and factor count of the final quadratic dictionary search, or `None` |
+| | `"TensorTest"` | `True` | the tensor-rank test for products of subfield elements |
+| both decompositions | `"Scope"`, `"Engine"`, `"Coefficients"` | `"Global"`, `Automatic`, `"Rationals"` | the field searched, the engine, and Gaussian-rational coefficients |
+| `RootToRadicals`, `RootRadicalReport`, `RootSolvableQ` | `"MaxGroupOrder"` | 400 | as above |
+| | `"WorkingPrecision"` | 80 | as above |
+| | `"MaxDepth"` | 6 | depth of the Galois-Kummer descent |
+| | `"VerificationTimeLimit"` | 60 s | time given to the exact verification of the radical expression |
+| | `Method`, `"Resolvents"`, `"Extension"` | `Automatic` | the recognizers used, the resolvent form, a subfield to factor over first |
+| `DenestRadicals`, `DenestCore`, `DenestReport` | `"TimeBudget"` | 120 s | the whole call |
+| | `"OperationTime"`, `"CertifyTime"` | 30 s, 20 s | each kernel operation, each exact certificate |
+| | `"MemoryBudget"` | 1 GiB | memory of the whole call (not enforced by Mathics) |
+| | `"MaxTrials"`, `"MultiplierCap"`, `"Patience"` | 120, 1000, 25 | multiplier trials per island, multipliers admitted, trials without improvement |
+| | `"MaxRootIndex"`, `"MaxDegree"`, `"MaxSolveDegree"`, `"MaxOddIndex"` | 32, 64, 4, 9 | root index, polynomial degree, degree handed to `Solve`, odd index of the trace-norm recipe |
+| | `"MaxLeafCount"`, `"MaxPasses"`, `"MaxRecursion"` | 20000, 4, 3 | size of an expression, passes over the input, recursion depth |
+| | `"DiscriminantBatchCap"`, `"MaxCosets"`, `"MaxTraceEntries"` | 24, 16, 200 | discriminant multipliers per batch, cosets in the multi-surd search, trace length |
+| | `"AllLevels"`, `"Multipliers"`, `"Solver"`, `"Factor"`, `"NumericPrefilter"`, `"Verbose"`, `"Trace"` | `False`, `Automatic`, `Automatic`, `True`, `False`, `False`, `False` | scope of the rewrite, the multiplier list, the solver, factorisation, the numeric prefilter, progress printing, the trace in `DenestReport` |
+
+The engine-level caps are public variables, assignable at any time and
+reported by `AlgebraicKernelReport[]["Limits"]`:
+
+| Variable | Wolfram / Mathics | Meaning |
+| --- | --- | --- |
+| `$AlgebraicResolventLimit` | `Infinity` / 48 | largest degree of a resultant the Galois engine factors while building a resolvent tower; beyond it the engine returns `Failure["EngineLimit", ...]` at once instead of running for hours (the interpreted factorisation on Mathics does not finish a degree-72 one; at 60 the Galois data of a quintic with group D5 gets through in about eight minutes, while its radicals need degree 90) |
+| `$AlgebraicFrobeniusPrimes` | 40 / 10 | primes scanned for the lower bound of the decompositions |
+| `$AlgebraicFrobeniusPrimesSolvable` | 60 / 12 | primes scanned for a non-solvability certificate before any group computation |
+| `$AlgebraicMemoLimit` | 5000 | entries per memo table before it is emptied |
+| `$AlgebraicTimeScale` | 1 / 4 | multiplier of the short internal time limits given to the kernel's own algebra |
+
+Two limits belong to the tools rather than the package: the Mathics test
+driver's wall-clock cap per statement (`ALGEBRAIC_TEST_TIMEOUT`, default
+120 s) and the five-minute ceiling under which `Examples.wl` skips the
+examples beyond the engine's reach on Mathics (fixed in the script).
+
 ### What the merge changed
 
 It is one context, ``Algebraic`​``, in one self-contained file — not four
