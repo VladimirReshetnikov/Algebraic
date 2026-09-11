@@ -731,6 +731,13 @@ VerificationTest[{rc["GaloisGroupOrder"], rc["ExtendedGroupOrder"], rc["SeriesPr
   TestID -> "cyclic quintic group data"];
 VerificationTest[RootRadicalReport[c5, "Resolvents" -> "Fourier"]["Verified"], True, TestID -> "cyclic quintic Fourier form"];
 VerificationTest[RootRadicalReport[c5, "Resolvents" -> "Eigenvector"]["Verified"], True, TestID -> "cyclic quintic eigenvector form"];
+VerificationTest[Module[{r = Root[-6 - 10 #1 - 10 #1^2 + #1^5 &, 1]},
+  {RootGaloisData[r]["Order"], RootToRadicals[r] === 2^(1/5) + 2^(2/5)}], {20, True},
+  TestID -> "solvable quintic with group F20 gives 2^(1/5) + 2^(2/5)"]
+VerificationTest[Module[{r = Root[-1 + 2 #1 + 3 #1^2 + #1^5 &, 1], rad},
+  rad = RootToRadicals[r];
+  {RootGaloisData[r]["Order"], RadicalExpressionQ[rad], RootReduce[rad - r] === 0}], {10, True, True},
+  TestID -> "solvable quintic with group D5 is verified in radicals"]
 VerificationTest[RootToRadicals[Root[#^5 + #^4 - 4 #^3 - 3 #^2 + 3 # + 1 &, 3]] // RadicalExpressionQ, True,
   TestID -> "cyclic quintic other conjugate"];
 
