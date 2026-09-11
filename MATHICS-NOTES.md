@@ -369,6 +369,12 @@ Measured with `z = N[7874506561843/12500000000000 - 545561817985861 I/10^14,
   (`Tag Association in <|...|> is Protected`, plus the messages the body
   issued on pattern arguments). The Wolfram kernel holds the left-hand
   side. Put the condition inside the body.
+- **A pattern `Complex[0, _Rational]` does not match the atom.**
+  `MatchQ[Complex[0, 2/5], Complex[0, _Rational]]` is `True` in the
+  Wolfram kernel (atoms with a "structural" form match such patterns) and
+  `False` in Mathics; the same for `Rational[_, _]`. Test the head and
+  `Re`/`Im` instead. `Exp[x]` is `Power[E, x]` in both kernels, so a rule
+  written on `Exp[...]` never fires either.
 - **`f[Plus[a__], w_]` does not do what it does in Wolfram.** Under a
   `Flat` head the sequence pattern binds `a` to the whole sum
   (`k[1 + x + y, 2]` with `k[Plus[a__], w_] := {a}` gives `{1 + x + y}`),
