@@ -127,6 +127,7 @@ AlgebraicKernelReport::usage = "AlgebraicKernelReport[] returns an Association d
 (* Messages.  Engine-level messages are issued from the package symbol
    Algebraic; the four sources issued them from their own package symbols. *)
 
+Algebraic::unprobed = "The portable layer asked whether `1` is native, but no load-time probe decides it; the emulation is used.";
 Algebraic::inexact = "The input `1` is not an exact algebraic number.";
 Algebraic::notalg = "Could not compute a rational minimal polynomial of `1`.";
 Algebraic::order = "The Galois group has order `1`, larger than the limit `2` (option \"MaxGroupOrder\").";
@@ -225,10 +226,16 @@ $kNative = <|
   "Decompose" -> probe[Decompose[kx^4 + kx^2, kx], {kx^2 + kx, kx^2}],
   "NumericQRoot" -> probe[NumericQ[Root[#^3 - 2 &, 1]], True],
   "AlgebraicsRoot" -> probe[Element[Root[#^3 - 2 &, 1], Algebraics], True],
-  "LatticeReduce" -> probe[Sort[Abs[LatticeReduce[{{1, 1}, {1, 0}}]]], {{0, 1}, {1, 0}}]
+  "LatticeReduce" -> probe[Sort[Abs[LatticeReduce[{{1, 1}, {1, 0}}]]], {{0, 1}, {1, 0}}],
+  "FindIntegerNullVector" -> probe[Abs[FindIntegerNullVector[N[{Sqrt[2], Sqrt[8]}, 30]]], {2, 1}]
 |>;
 
-kNativeQ[name_String] := TrueQ[$kNative[name]];
+(* A name with no probe is a bug in this file, not a missing builtin: the
+   Wolfram kernel would silently run the emulation.  It happened once, with
+   FindIntegerNullVector, and the interpreted LLL declined the sixteen surds
+   of a denesting the native function relates in 0.1 s. *)
+kNativeQ[name_String] := With[{v = $kNative[name]},
+  Which[v === True, True, v === False, False, True, Message[Algebraic::unprobed, name]; False]];
 
 (* Mathics is an interpreter: internal time allowances are scaled so that a
    budget expressed in Wolfram seconds still buys the same computation.  The
@@ -386,6 +393,17 @@ If[kNativeQ["MemoryConstrained"],
 SetAttributes[kCheck, HoldAll];
 kCheck[expr_, fail_] := Module[{r = Quiet[expr]},
   If[r === $Failed || Head[r] === Failure, fail, r]];
+
+(* Check as the denester's bounded operations use it: any message fails the
+   operation at once.  In the Wolfram kernel that is Check itself; in Mathics
+   a two-argument Check takes its failure branch for any message issued
+   earlier in the same top-level evaluation, so there the value alone
+   decides.  Without this the Wolfram kernel ran an operation that used to
+   fail on a message to its time limit, and a 1 s denesting took 60. *)
+SetAttributes[kCheckMessages, HoldAll];
+If[kNativeQ["RootReduce"],
+  kCheckMessages[expr_, fail_] := Quiet[Check[expr, fail]],
+  kCheckMessages[expr_, fail_] := kCheck[expr, fail]];
 
 (* LinearSolve returns its own unevaluated expression for an inconsistent
    system in both kernels (with LinearSolve::nosol), so an unsolvable system
@@ -893,7 +911,7 @@ kAssociateTo[$kNative, "ComplexPower" -> probe[
 kHorner[c_List, z_] := Fold[#1 z + #2 &, 0, Reverse[c]];
 
 If[kNativeQ["ComplexPower"],
-  kPowerList[z_, m_Integer] := z^Range[0, m];
+  kPowerList[z_, m_Integer] := Prepend[z^Range[1, m], 1];   (* not 0^0 for a zero root *)
   kDivide[a_, b_] := a/b;
   kIntPower[z_, n_Integer] := z^n,
   kPowerList[z_, m_Integer] := FoldList[#1 z &, 1, Range[m]];
@@ -1090,8 +1108,11 @@ If[kNativeQ["RootReduce"],
     Head[e] === Root && Length[e] >= 2 && IntegerQ[e[[2]]] &&
       TrueQ[kMemo["irreducibleRoot", e[[1]], irreducibleRootFunctionQ[e[[1]]]]], e,
     True, kMemo["rootReduce", e, rootReduceByElimination[e]]];
+  (* degree three and up: in degree one and two the canonical form is the
+     rational or the radical, as in the Wolfram kernel *)
   irreducibleRootFunctionQ[f_] := Module[{poly = kCheck[Expand[f[kx]], $Failed]},
     poly =!= $Failed && TrueQ[PolynomialQ[poly, kx]] && FreeQ[poly, _Real] &&
+      Exponent[poly, kx] >= 3 &&
       AllTrue[kCoefficientList[poly, kx], kRationalQ] && kIrreduciblePolynomialQ[poly]];
   rootReduceByElimination[e_] := Module[{mp, c, deg, k, r},
     mp = kMinimalPolynomial[e, kx];
@@ -3201,7 +3222,7 @@ bounded[body_, kind_: "Operation"] := Module[{seconds, value},
    If[seconds <= 0,
     limitHit[If[remaining[] <= 0, "TimeBudget", kind <> "Time"]]; Return[$Failed]];
    bump["Operations"];
-   value = kCheck[TimeConstrained[body, seconds, operationTimedOut], operationFailed];
+   value = kCheckMessages[TimeConstrained[body, seconds, operationTimedOut], operationFailed];
    Which[
     value === operationTimedOut,
      bump["OperationTimeouts"]; trace["OperationTimeout"];
@@ -3304,10 +3325,17 @@ algebraicFormQ[e_] := Which[
 ExactAlgebraicQ[e_] := algebraicFormQ[e] && FreeQ[e, Indeterminate | ComplexInfinity | _DirectedInfinity];
 exactQ[e_] := ExactAlgebraicQ[e];
 
+(* The two source packages disagreed on heads outside the grammar: the
+   denester took the maximum over the parts of any head, the radical descent
+   gave 0 (Sin[Sqrt[2]], HoldForm[Sqrt[2]] and {Sqrt[2]} are not radical
+   expressions, so nothing in them is a nested radical).  The latter is kept;
+   inside the grammar the two agreed, and a non-integer exponent counts as
+   one level whether or not it is rational. *)
 RadicalDepth[e_] := Which[
    AtomQ[e] || opaqueQ[e], 0,
-   MatchQ[e, Power[_, _Rational]], 1 + RadicalDepth[First[e]],
-   True, Max[Prepend[RadicalDepth /@ (List @@ e), 0]]];
+   Head[e] === Power && Length[e] === 2, RadicalDepth[First[e]] + If[IntegerQ[Last[e]], 0, 1],
+   MemberQ[{Plus, Times}, Head[e]], Max[Prepend[RadicalDepth /@ (List @@ e), 0]],
+   True, 0];
 
 (* recursive traversals that stop at opaque objects; Gaussian atoms are priced
    through their components *)

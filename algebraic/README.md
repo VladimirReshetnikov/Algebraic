@@ -61,9 +61,12 @@ packages loaded side by side:
   now share one private context and the aliases are gone.
 * `RadicalExpressionQ` and `RadicalDepth` were defined independently by the
   radical descent and by the denester and had converged on the same
-  predicate. The stricter pair, which checks the arity of a `Power` node and
-  treats `Root` and `AlgebraicNumber` as opaque, is the one kept (section 5 of
-  the file).
+  predicate inside the radical grammar. The pair kept (section 5 of the
+  file) checks the arity of a `Power` node, treats `Root` and
+  `AlgebraicNumber` as opaque, and gives depth 0 to a head outside the
+  grammar (`Sin[Sqrt[2]]`, a list), as the radical descent did; the denester
+  had taken the maximum over the parts of any head, which its own
+  candidates never exercised.
 * `rationalQ` and `positiveIntegerQ` were defined three times, identically;
   `rationalRoots` meant two different things and the one that takes m-th
   roots of a rational is now `rationalMthRoots`.
@@ -85,35 +88,47 @@ for one System function; the algorithms call only those, and no System
 symbol is ever redefined. Whether the kernel supplies a function is decided
 by evaluating it once at load time and comparing the answer with the
 known-correct one, not by testing `$Version`, so a Mathics release that
-implements a function correctly then uses it. On Mathics3 10.0.1 the layer
-supplies 34 functions, among them `RootReduce`, `Resultant`, `FactorList`,
-`Cyclotomic`, `LatticeReduce`, the association vocabulary, and a minimal
-polynomial by elimination (section 0.5a) for expressions the kernel's own
-`MinimalPolynomial` cannot finish.
+implements a function correctly then uses it (and a name with no probe is
+reported as `Algebraic::unprobed` rather than silently emulated). On
+Mathics3 10.0.1 the layer supplies about forty functions, among them
+`RootReduce`, `Resultant`, `FactorList`, `Cyclotomic`, `LatticeReduce`,
+`FindIntegerNullVector`, `Transpose` of a one-row matrix, the association
+vocabulary, a minimal polynomial by elimination (section 0.5a) for
+expressions the kernel's own `MinimalPolynomial` cannot finish, and the
+numerical evaluation of section 0.5b.
 
-Measured on Mathics3 10.0.1, with Wolfram 15.0.1 giving the same answers:
+Measured on Mathics3 10.0.1, with Wolfram 15.0.1 giving the same answers
+(the Wolfram kernel does each of these in well under a second):
 
 | | Mathics3 10.0.1 |
 | --- | --- |
 | `AlgebraicDecompose`, all eight functions | available; the algebraic-coefficient example in 1 s |
-| `Strad` and the denesting family | available; `Sqrt[5 + 2 Sqrt[6]]` in 1 s, `(239 + 169 Sqrt[2])^(1/7)` in 1.9 s; the Kummer multipliers that need factorisation over an extension are not tried, the other methods are |
+| `Strad` and the denesting family | available; `Sqrt[5 + 2 Sqrt[6]]` in 1.7 s, `(239 + 169 Sqrt[2])^(1/7)` in 1.9 s; the Kummer multipliers that need factorisation over an extension are not tried, the other methods are; `(2^(1/3) - 1)^(1/3)` is not denested within a two-minute budget |
 | `EqualityStatus`, `CertifiedEqualQ`, `RadicalCost`, the grammar | available, exact |
 | `RootDecompositionLowerBound`, `RootDecompositionVerify`, `RootSolvableQ` | available; the lower bound scans ten primes rather than forty, which leaves it rigorous but not always as sharp |
-| `RootToRadicals` | the structural recognizers only: `Root[#^3 - 2 &, 1]` gives `2^(1/3)`, `Root[#^4 - 10 #^2 + 1 &, 4]` gives `Sqrt[5 + 2 Sqrt[6]]` |
-| `RootGaloisData`, `RootSumDecomposition`, `RootProductDecomposition`, the Galois-Kummer descent | **not available**: they return `Failure["KernelPrecision", …]` |
+| `RootGaloisData` | available; `#^3 - 2` (order 6) in 41 s, `#^4 - 10 #^2 + 1` with its subfield lattice in 18 s |
+| `RootSumDecomposition`, `RootProductDecomposition` | available; `Sqrt[2] + Sqrt[3]` in 17 s |
+| `RootToRadicals` | available; the structural recognizers in milliseconds, the Galois-Kummer descent through the engine above |
 
-The reason for the last row is a property of the interpreter, not of the
-package: `N[Root[f, k], p]` in Mathics3 10.0.1 returns a number that carries
-precision `p` and reports it through `Precision` and `Accuracy`, but for a
-polynomial of degree six it agrees with the root to about eleven digits. The
-numerical-resolvent Galois engine rounds traces of such values to integers,
-so on that kernel it would round noise into a plausible wrong group. A
-load-time probe measures the residual rather than trusting the reported
-precision, and where it fails the engine refuses. `AlgebraicKernelReport[]`
-says so. Everything in the table was checked case by case against the
-Wolfram kernel; [MATHICS-NOTES.md](../MATHICS-NOTES.md) records every
-evaluator difference met on the way, several of which produce a plausible
-wrong value rather than an error.
+Two properties of the interpreter had to be worked around for the last
+three rows, and neither shows in `Precision` or `Accuracy`. For a complex
+number carrying `p` digits, Mathics computes `z^n`, `1/z`, `Conjugate[z]`,
+`Sqrt[z]`, `Exp`, `Log` and `Arg` at machine precision and returns the
+result with precision `p`; sums, products and the real-argument functions
+are exact. And `N[Root[f, k]]` takes four to ten seconds per non-real root
+of a fresh polynomial, at machine precision as well, where the Galois
+engine needs every root of every resolvent. Section 0.5b of the package
+therefore evaluates expressions bottom-up with the operations that are
+exact (`kN`), finds all roots of a polynomial at once as the eigenvalues
+of the companion matrix and polishes them by Newton's method, and puts the
+list into the Wolfram kernel's `Root` order. Two load-time probes,
+`"ComplexPower"` and `"RootPrecision"`, decide whether any of this is
+needed and whether the result is trusted; on a kernel where the second
+fails the engine refuses with `Failure["KernelPrecision", ...]` and
+`AlgebraicKernelReport[]` says so. Everything in the table was checked
+case by case against the Wolfram kernel; [MATHICS-NOTES.md](../MATHICS-NOTES.md)
+records every evaluator difference met on the way, several of which
+produce a plausible wrong value rather than an error.
 
 Install and run:
 

@@ -334,6 +334,43 @@ loop has to abort a function.
   "TestReport:" > log` -- which also keeps the kernel's standard output a
   pipe. The report object is unaffected in every case.
 
+### Three regressions the merged suite caught in the Wolfram kernel
+
+All three were invisible in the Mathics runs and found only because the
+490-test suite finally ran to completion in the Wolfram kernel (145 s once
+the runner wrote one line per test).
+
+- **A portable name with no load-time probe is emulated on every kernel.**
+  `kNativeQ["FindIntegerNullVector"]` looked up a key the probe table did
+  not have, `TrueQ[Missing[...]]` is `False`, and the Wolfram kernel ran the
+  interpreted LLL fallback -- which declines more than twelve values -- in
+  place of the native function. `Strad` of the square root of `(Sqrt[2] +
+  Sqrt[3] + Sqrt[5] + Sqrt[7] + Sqrt[11])^2` expanded, 1.25 s in the
+  original package, took the whole 60 s budget and returned its input,
+  because the sixteen-surd relation `FindIntegerNullVector` finds in 0.1 s
+  was never asked for. `AlgebraicKernelReport[]` could not show it: it
+  lists the keys of the probe table, and this key was absent. `kNativeQ`
+  now issues `Algebraic::unprobed` for an unknown name, and a grep of
+  `kNativeQ["..."]` against `"..." -> probe[` is part of the checklist.
+- **`Check` versus a value test in the denester's `bounded`.** The
+  original wrapped every bounded operation in `Quiet[Check[..., failed]]`:
+  any message fails the operation at once. The portable `kCheck` judges
+  the value only (Mathics' two-argument `Check` fires for any message
+  issued earlier in the same top-level evaluation), and an operation that
+  used to fail on its first message ran to its time limit. `bounded` uses
+  `kCheckMessages`: `Check` in the Wolfram kernel, the value test in
+  Mathics.
+- **`z^Range[0, m]` is `0^0` for a zero root.** The Galois engine's basis
+  values were written `Prepend[Table[z^e, {e, 1, m}], 1]` for that reason;
+  a rewrite to `z^Range[0, m]` raised `Power::indet` on the two tests with
+  a zero root and failed them. `kPowerList` prepends the 1 again.
+
+Also from that run: the radical descent and the denester disagreed on
+`RadicalDepth` of heads outside the radical grammar (`Sin[Sqrt[2]]`, a
+list, `HoldForm`): 0 in the descent, the maximum over the parts in the
+denester. The descent's rule is kept; nothing the denester generates has
+such a head.
+
 ### Two silently wrong constructs the merge removed
 
 Both were correct in Wolfram and wrong in Mathics, so they were rewritten in
