@@ -120,6 +120,17 @@ packages loaded side by side:
 * `rationalQ` and `positiveIntegerQ` were defined three times, identically;
   `rationalRoots` meant two different things and the one that takes m-th
   roots of a rational is now `rationalMthRoots`.
+* A pass over the merged file afterwards folded what the four projects had
+  each written for themselves: one `Failure` constructor instead of three,
+  one nearest-candidate test with a separation margin (`nearestByMargin`)
+  for root indexing and factor selection, one primitive-integer-polynomial
+  helper, one `Options[RootToRadicals]`, one division over GF(q) that
+  yields both quotient and remainder, one `targetOf` that locates the input
+  among the roots of the Galois data for the three engines, and the
+  `unknownOptions`, `rootsIn`, `rootFunctionPolynomial` and
+  `clearDenominators` helpers where each had been an inline idiom in
+  several places. The file lost a few dozen lines net, and about a hundred
+  and forty lines of repeated code.
 * The functional decomposition of section 1 is what the radical descent
   recurses through, and on a kernel without `Decompose` it is what supplies
   that operation.
@@ -232,8 +243,13 @@ package before any package call.
 ```text
 cd algebraic/Tests
 wolfram -script RunTests.wl > /dev/null 2>&1; cat wolfram-report.txt
-python -X utf8 run_mathics.py
+python -X utf8 run_mathics.py MathicsSmoke.wlt
 ```
+
+The Wolfram kernel runs the full suite in about two minutes; the Mathics
+check that goes with every change is `MathicsSmoke.wlt`, one light case
+per operation in a few minutes. The full suite under Mathics
+(`python -X utf8 run_mathics.py`, hours) is run only on request.
 
 In the Wolfram kernel the report goes to `wolfram-report.txt`: `TestReport`
 redraws a progress line on standard output continuously, a script cannot
@@ -250,8 +266,9 @@ hours.
 
 `Algebraic.wlt` is the four suites of the four projects — 91, 94, 75 and 230
 tests, 490 in all — with their package names mapped onto the unified
-package; nothing was removed, and three tests of the inferred variable of
-`AlgebraicDecompose[p]` make 493. In the Wolfram kernel the runner uses
+package; nothing was removed, and seven tests added since (the inferred
+variable of `AlgebraicDecompose[p]`, trigonometric coefficients, two
+solvable quintics in radicals) make 497. In the Wolfram kernel the runner uses
 `TestReport`. Mathics has neither `TestReport` nor `VerificationTest`, so the
 runner defines its own `VerificationTest` before reading the same file: tests
 that expect a Wolfram message are judged on their value only, and a test that

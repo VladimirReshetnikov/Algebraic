@@ -414,7 +414,7 @@ withRootsAbstracted[f_, e_] := Module[{roots = rootsIn[e], syms},
    object's function in the variable kx: an exact univariate polynomial of
    positive degree, or $Failed *)
 rootsIn[e_] := DeleteDuplicates[Cases[e, _Root, {0, Infinity}]];
-rootPolynomial[f_] := With[{poly = kCheck[kExpand[f[kx]], $Failed]},
+rootFunctionPolynomial[f_] := With[{poly = kCheck[kExpand[f[kx]], $Failed]},
   If[poly === $Failed || ! TrueQ[kPolynomialQ[poly, kx]] || ! FreeQ[poly, _Real] || Exponent[poly, kx] < 1, $Failed, poly]];
 clearDenominators[c_List] := c LCM @@ (Denominator /@ c);
 
@@ -526,10 +526,10 @@ clDivide[a_List, b_List] := Catch[Module[{r = a, q, db = clDeg[b], da = clDeg[a]
   If[da < db, Throw[{{}, a}, ktag]];
   lb = clLC[b]; q = ConstantArray[0, da - db + 1];
   Do[t = If[k + db + 1 <= Length[r], r[[k + db + 1]], 0];
-    If[! FreeQ[t, Indeterminate | ComplexInfinity | DirectedInfinity], Throw[$Failed, ktag]];
+    If[degenerateQ[t], Throw[$Failed, ktag]];
     If[t =!= 0 && ! TrueQ[t == 0],
       t = Cancel[t/lb];
-      If[! FreeQ[t, Indeterminate | ComplexInfinity | DirectedInfinity], Throw[$Failed, ktag]];
+      If[degenerateQ[t], Throw[$Failed, ktag]];
       q[[k + 1]] = t;
       Do[r[[k + j + 1]] = Cancel[kExpand[r[[k + j + 1]] - t b[[j + 1]]]], {j, 0, db}]],
     {k, da - db, 0, -1}];
@@ -637,17 +637,20 @@ cyclotomicList[n_Integer] := cyclotomicList[n] = Module[{num, d},
 mTrim[c_List, q_] := Module[{d = Mod[c, q], k},
   k = Length[d]; While[k >= 1 && d[[k]] === 0, k--]; Take[d, k]];
 mMul[a_List, b_List, q_] := If[a === {} || b === {}, {}, mTrim[kConvolve[a, b], q]];
-mMod[a_List, b_List, q_] := Module[{r = Mod[a, q], db, inv, bb, n, k, t},
+(* quotient and remainder over GF(q), ascending lists *)
+mDivide[a_List, b_List, q_] := Module[{r = Mod[a, q], db, inv, bb, quo, n, k, t},
   If[b === {}, Return[$Failed]];
   db = Length[b] - 1; inv = PowerMod[Last[b], -1, q]; bb = Mod[b, q];
   n = Length[r];
-  If[n - 1 < db, Return[mTrim[r, q]]];
+  If[n - 1 < db, Return[{{}, mTrim[r, q]}]];
+  quo = ConstantArray[0, n - db];
   Do[t = r[[k + db + 1]];
     If[t =!= 0,
-      t = Mod[t inv, q];
+      t = Mod[t inv, q]; quo[[k + 1]] = t;
       r = Mod[r - t PadRight[PadLeft[bb, k + db + 1], n], q]],
     {k, n - 1 - db, 0, -1}];
-  mTrim[Take[r, Min[db, Length[r]]], q]];
+  {mTrim[quo, q], mTrim[Take[r, Min[db, Length[r]]], q]}];
+mMod[a_List, b_List, q_] := Replace[mDivide[a, b, q], {d_List :> Last[d], _ -> $Failed}];
 mGCD[a_List, b_List, q_] := Module[{u = mTrim[a, q], v = mTrim[b, q], w},
   While[v =!= {}, w = mMod[u, v, q]; u = v; v = w];
   If[u === {}, {}, mTrim[u PowerMod[Last[u], -1, q], q]]];
@@ -657,17 +660,7 @@ mPowerMod[base_List, e_Integer, f_List, q_] := Module[{r = {1}, b = mMod[base, f
     k = Quotient[k, 2];
     If[k > 0, b = mMod[mMul[b, b, q], f, q]]];
   r];
-mQuo[a_List, b_List, q_] := Module[{r = Mod[a, q], db, inv, bb, quo, n, k, t},
-  db = Length[b] - 1; inv = PowerMod[Last[b], -1, q]; bb = Mod[b, q];
-  n = Length[r];
-  If[n - 1 < db, Return[{}]];
-  quo = ConstantArray[0, n - db];
-  Do[t = r[[k + db + 1]];
-    If[t =!= 0,
-      t = Mod[t inv, q]; quo[[k + 1]] = t;
-      r = Mod[r - t PadRight[PadLeft[bb, k + db + 1], n], q]],
-    {k, n - 1 - db, 0, -1}];
-  mTrim[quo, q]];
+mQuo[a_List, b_List, q_] := Replace[mDivide[a, b, q], {d_List :> First[d], _ -> $Failed}];
 
 (* Padded subtraction and monic normalisation over GF(q). *)
 mSub[a_List, b_List, q_] := Module[{n = Max[Length[a], Length[b]]},
@@ -717,7 +710,8 @@ kRationalQ[e_] := IntegerQ[e] || Head[e] === Rational;
 (* NumberQ[Indeterminate] is True in Mathics, and a comparison against
    Indeterminate aborts its evaluator, so every numerical value is tested
    with this before it meets < or Sort. *)
-kFiniteNumberQ[v_] := NumberQ[v] && FreeQ[v, Indeterminate | ComplexInfinity | DirectedInfinity];
+degenerateQ[v_] := ! FreeQ[v, Indeterminate | ComplexInfinity | DirectedInfinity];
+kFiniteNumberQ[v_] := NumberQ[v] && ! degenerateQ[v];
 kGaussianQ[e_] := kRationalQ[e] || (Head[e] === Complex && kRationalQ[Re[e]] && kRationalQ[Im[e]]);
 
 (* ------------------------------------------------------------------ *)
@@ -849,7 +843,7 @@ minPolyOfTree[e_] := Which[
   True, $Failed];
 
 minPolyOfRoot[r_] := kMemo["minPolyOfRoot", r, minPolyOfRootCompute[r]];
-minPolyOfRootCompute[r_] := With[{poly = rootPolynomial[r[[1]]]}, If[poly === $Failed, $Failed, selectFactor[poly, r]]];
+minPolyOfRootCompute[r_] := With[{poly = rootFunctionPolynomial[r[[1]]]}, If[poly === $Failed, $Failed, selectFactor[poly, r]]];
 
 (* fold a Plus or a Times one operand at a time, eliminating ey each time *)
 minPolyOfFold[parts_List, op_] := Catch[Module[{p, acc, q, elim, i},
@@ -1034,7 +1028,7 @@ rootValuesCompute[c_List, prec_] := Module[{n = clDeg[c], m, scale, seeds, polis
   Join[reals, complexes]];
 
 (* the value of Root[f, k] at precision prec *)
-kRootValue[r_Root, prec_] := Module[{poly = rootPolynomial[r[[1]]], c, vals},
+kRootValue[r_Root, prec_] := Module[{poly = rootFunctionPolynomial[r[[1]]], c, vals},
   If[poly === $Failed || Length[r] < 2 || ! IntegerQ[r[[2]]], Return[N[r, prec]]];
   c = kCoefficientList[poly, kx];
   If[! AllTrue[c, kRationalQ] || r[[2]] < 1, Return[N[r, prec]]];
@@ -1223,7 +1217,7 @@ If[kNativeQ["RootReduce"],
       True, kExpand[v /. ey -> r]]];
   (* degree three and up: in degree one and two the canonical form is the
      rational or the radical, as in the Wolfram kernel *)
-  irreducibleRootFunctionQ[f_] := With[{poly = rootPolynomial[f]},
+  irreducibleRootFunctionQ[f_] := With[{poly = rootFunctionPolynomial[f]},
     poly =!= $Failed && Exponent[poly, kx] >= 3 &&
       AllTrue[kCoefficientList[poly, kx], kRationalQ] && kIrreduciblePolynomialQ[poly]];
   (* E^(I Pi r) with r rational, tested structurally: a pattern Complex[0, _]
@@ -1320,7 +1314,7 @@ algebraicShapeQ[e_] := Which[
 If[kNativeQ["ToRadicals"],
   kToRadicals[e_] := ToRadicals[e],
   kToRadicals[e_] := e /. r_Root :> radicalOfRoot[r]];
-radicalOfRoot[r_Root] := Module[{poly = rootPolynomial[r[[1]]], deg, sols, sel},
+radicalOfRoot[r_Root] := Module[{poly = rootFunctionPolynomial[r[[1]]], deg, sols, sel},
   If[poly === $Failed, Return[r]];
   deg = Exponent[poly, kx];
   If[deg > 4, Return[r]];
@@ -2385,6 +2379,13 @@ makeResult[a_, op_, terms_, lb_, scope_, method_, optimal_, scopeOptimal_, extra
     "Optimal" -> optimal, "ScopeOptimal" -> scopeOptimal, "Scope" -> scope, "Verified" -> v["Verified"],
     "Expression" -> Inactive[op] @@ terms, "Method" -> method|>, extra]];
 
+(* the index of a among the roots of the Galois data and its coordinates,
+   or the failure the three engines report; a caller unpacks it with
+   Replace[targetOf[gd, a], {f_Failure :> Return[f], tv_ :> ({target, va} = tv)}] *)
+targetOf[gd_, a_] := With[{target = locateTarget[gd, a]},
+  If[target === $Failed, failure["RootIndex", "Could not locate the input among the roots"],
+    {target, gd["RootCoordinates"][[target]]/gd["Scale"]}]];
+
 (* locate c*a among the roots of the Galois data; returns the index *)
 locateTarget[gd_, a_] := Module[{c = gd["Scale"], pos},
   (* kIndices returns the indices themselves, not Position's {{i}} *)
@@ -2493,9 +2494,7 @@ sumDecompositionCore[a_, in_, dmax_, lb0_, scope_, gaussian_, maxTerms_, prec_, 
   gd = RootGaloisData[poly, x, "WorkingPrecision" -> prec, "MaxGroupOrder" -> maxOrder, "MaxTries" -> maxTries];
   If[kFailureQ[gd], Return[If[res =!= $Failed && ! kFailureQ[res], res, gd]]];
   Module[{c = gd["Scale"], target, iCoord, iMult},
-    target = locateTarget[gd, a];
-    If[target === $Failed, Return[failure["RootIndex", "Could not locate the input among the roots"]]];
-    va = gd["RootCoordinates"][[target]]/c;
+    Replace[targetOf[gd, a], {f_Failure :> Return[f], tv_ :> ({target, va} = tv)}];
     stab = If[scope === "InputField", stabilizerOf[gd, target], None];
     lb = Max[lb, If[gaussian, gaussianExponentBound[gd["Exponent"]], exponentBound[gd["Exponent"]]]];
     If[gaussian,
@@ -2768,9 +2767,7 @@ productDecompositionCore[a_, in_, dmax_, lb0_, scope_, maxFactors_, depth_, tens
   gd = RootGaloisData[in["Polynomial"], x, "WorkingPrecision" -> prec, "MaxGroupOrder" -> maxOrder, "MaxTries" -> maxTries];
   If[kFailureQ[gd], Return[If[res =!= $Failed && ! kFailureQ[res], res, gd]]];
   Module[{c = gd["Scale"], target, va, stab},
-    target = locateTarget[gd, a];
-    If[target === $Failed, Return[failure["RootIndex", "Could not locate the input among the roots"]]];
-    va = gd["RootCoordinates"][[target]]/c;
+    Replace[targetOf[gd, a], {f_Failure :> Return[f], tv_ :> ({target, va} = tv)}];
     stab = If[scope === "InputField", stabilizerOf[gd, target], None];
     lb = Max[lb, exponentBound[gd["Exponent"]]];
     If[lb >= n,
@@ -2894,15 +2891,6 @@ RootBoundedDecomposition[_, _, _, _, _] := failure["InvalidBounds", "Expected Pl
    field and the coordinates of section 2 directly; the functional
    decomposition it recurses through is section 1.  Nonsolvability is proved
    by Frobenius cycle types or by the exact group. *)
-
-Options[RootToRadicals] = {  Method -> Automatic,            (* Automatic, "Structural", "Galois" *)
-  "Resolvents" -> Automatic,      (* Automatic (shorter of the two), "Fourier", "Eigenvector" *)
-  "MaxGroupOrder" -> 400,
-  "WorkingPrecision" -> 80,
-  "VerificationTimeLimit" -> 60,
-  "MaxDepth" -> 6,
-  "Extension" -> None             (* exact algebraic numbers generating a subfield over which p is factored first *)
-};Options[RootRadicalReport] = Options[RootToRadicals];
 
 (* The Galois engine, the exact-algebra helpers and the Frobenius tests of
    section 2 are used directly: the four operations now share one private
@@ -3194,9 +3182,7 @@ fixedByQ[gd_, v_, elems_] := AllTrue[elems, gd["Automorphisms"][[#]] . v == v &]
 (* the descent proper, for Galois data gd of p(x) Prod Phi_q(x); may throw "precision" *)
 descend[gd_, a_, primes_, resolventForm_] := Module[
   {ord = gd["Order"], c = gd["Scale"], target, va, zetaIdx, zetaMult, zeta, H, steps, baseBasis, rad, radCompute, branch},
-  target = locateTarget[gd, a];
-  If[target === $Failed, Return[failure["RootIndex", "Could not locate the input among the roots"]]];
-  va = gd["RootCoordinates"][[target]]/c;
+  Replace[targetOf[gd, a], {f_Failure :> Return[f], tv_ :> ({target, va} = tv)}];
   (* roots of unity zeta_q = Exp[2 Pi I/q] among the (scaled) roots, as multiplication matrices and as
      radical symbols; zeta_2 = -1 is handled by the same tables *)
   zetaIdx = Association @@ Table[q -> kFirstIndex[gd["Roots"], _?(kExactZeroQ[# - c Exp[2 Pi I/q]] &)], {q, primes}];
