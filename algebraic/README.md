@@ -22,8 +22,8 @@ each part came from.
 ```wolfram
 Get["algebraic/Algebraic.wl"];
 
-AlgebraicDecompose[(x^2 + √2 x)^3 + x^2 + √2 x, x]
-(* {x + x^3, √2 x + x^2} *)
+AlgebraicDecompose[(x^2 + √2 x)^3 + x^2 + √2 x]
+(* {x + x^3, √2 x + x^2} -- the variable is inferred when there is one *)
 
 RootProductDecomposition[Root[-1 - # + 3 #^3 - #^4 + #^5 - 3 #^6 + 2 #^7 + #^9 &, 1]]["Expression"]
 (* Inactive[Times][Root[1 + # + #^3 &, 1], Root[1 - # + #^3 &, 1]] *)

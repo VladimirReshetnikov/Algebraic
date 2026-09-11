@@ -58,6 +58,12 @@ VerificationTest[VerifyAlgebraicDecompositionData[original,
 VerificationTest[Module[{p = Expand[original /. x -> x^4 - x + 1], c},
   c = AlgebraicDecompose[p, x]; {degrees[c], goodChain[p, c]}],
   {{3, 2, 4}, True}, TestID -> "nested-degree-twenty-four"]
+VerificationTest[AlgebraicDecompose[(x^2 + Sqrt[2] x)^3 + x^2 + Sqrt[2] x],
+  AlgebraicDecompose[(x^2 + Sqrt[2] x)^3 + x^2 + Sqrt[2] x, x], TestID -> "inferred variable"]
+VerificationTest[AlgebraicDecompose[Root[#^3 - 2 &, 1] x^2 + x^4],
+  AlgebraicDecompose[Root[#^3 - 2 &, 1] x^2 + x^4, x], TestID -> "inferred variable beside a Root coefficient"]
+VerificationTest[MatchQ[AlgebraicDecompose[x^4 + y], _Failure] && MatchQ[AlgebraicDecompose[7], _Failure],
+  True, TestID -> "inferred variable needs exactly one"]
 VerificationTest[AlgebraicDecompose[x^4, x], {x^2, x^2},
   TestID -> "single-derivative-factor-counterexample"]
 VerificationTest[AlgebraicDecompose[x^8, x], {x^2, x^2, x^2},

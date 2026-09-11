@@ -48,7 +48,7 @@ BeginPackage["Algebraic`"];
 (* ------------------------------------------------------------------ *)
 
 AlgebraicDecompose::usage =
-  "AlgebraicDecompose[p,x] returns one complete composition chain, outermost first. It chooses the smallest successful right degree at each step. All components except the first are monic with zero constant term. Exact algebraic coefficients are required.";
+  "AlgebraicDecompose[p,x] returns one complete composition chain, outermost first. AlgebraicDecompose[p] infers the variable when p has exactly one. It chooses the smallest successful right degree at each step. All components except the first are monic with zero constant term. Exact algebraic coefficients are required.";
 AlgebraicDecompositions::usage =
   "AlgebraicDecompositions[p,x] returns all complete normalized composition chains, modulo affine changes at internal interfaces. With \"MaxDecompositions\" -> M, a genuinely truncated enumeration returns Failure[\"EnumerationLimit\", ...] with partial chains and \"Complete\" -> False; a list is always exhaustive.";
 AlgebraicDecompositionPairs::usage =
@@ -1706,6 +1706,19 @@ allChains[c_List, limit_] := Module[{pairs, atomic, walk, out = {}, capTag = Uni
 
 AlgebraicDecompose[p_, x_Symbol] := Catch[Module[{c = prepare[p, x]},
   expression[#, x] & /@ checkedChain[c, oneChain[c]]], $failureTag];
+(* the variable is inferred when the polynomial has exactly one *)
+AlgebraicDecompose[p_] := Catch[Module[{vars = polynomialVariables[p]},
+  If[Length[vars] =!= 1,
+    fail["VariableInference", If[vars === {},
+      "AlgebraicDecompose[p] needs a polynomial with a variable; give the variable as the second argument.",
+      "AlgebraicDecompose[p] needs a polynomial with exactly one variable; give the variable as the second argument."],
+      <|"Variables" -> vars|>]];
+  AlgebraicDecompose[p, First[vars]]], $failureTag];
+(* the symbols of a polynomial with algebraic coefficients: Root and
+   AlgebraicNumber objects are set aside first, since Variables lists a Root
+   object on a kernel where NumericQ of it is False *)
+polynomialVariables[p_] := Select[Variables[p /. {_Root -> 1, _AlgebraicNumber -> 1}],
+  Head[#] === Symbol && ! kNumericQ[#] &];
 AlgebraicDecompositions[p_, x_Symbol, opts : OptionsPattern[]] := Catch[
   Module[{c, limit, chains},
     checkOptions[AlgebraicDecompositions, {opts}];
