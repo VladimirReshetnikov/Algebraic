@@ -39,6 +39,11 @@ KeyDrop[a_?AssociationQ, keys_] := Association @@ Select[Algebraic`Private`kNorm
 Unprotect[Failure];
 Failure[tag_, a_?AssociationQ][key_String] := a[key];
 Protect[Failure];
+(* Normal of an association is a list of rules in the Wolfram kernel and
+   unevaluated in Mathics *)
+Unprotect[Normal];
+Normal[a_?AssociationQ] := Algebraic`Private`kNormalRules[a];
+Protect[Normal];
 
 SetAttributes[BeginTestSection, HoldAll];
 BeginTestSection[___] := Null; EndTestSection[___] := Null;

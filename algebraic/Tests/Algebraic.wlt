@@ -358,7 +358,7 @@ VerificationTest[Module[{data, headers, bad},
   And @@ Table[
     data = AlgebraicDecompositionData[p, x];
     bad = {"Unknown", True, False, False, "False", False};
-    VerifyAlgebraicDecompositionData[p, Association[Reverse[Normal[data]]], x] &&
+    VerifyAlgebraicDecompositionData[p, Association @@ Reverse[Normal[data]], x] &&
       VerifyAlgebraicDecompositionData[p, Append[data, "Extra" -> True], x] &&
       And @@ MapThread[!VerifyAlgebraicDecompositionData[p, Join[data, <|#1 -> #2|>], x] &,
         {headers, bad}] &&
