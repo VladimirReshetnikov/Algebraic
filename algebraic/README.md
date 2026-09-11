@@ -163,8 +163,11 @@ redraws a progress line on standard output continuously, a script cannot
 switch it off, and redirected to a file it reached Git Bash's 2 GB limit
 and blocked the kernel, so standard output is discarded. `run_mathics.py`
 feeds the suite to Mathics one statement at a time -- a Python-level abort
-inside one test then ends that test, not the run -- and prints each test ID
-as it starts; `python -X utf8 -m mathics --no-readline -q -f RunTests.wl`
+inside one test then ends that test, not the run -- gives every statement a
+wall-clock limit (`ALGEBRAIC_TEST_TIMEOUT` seconds, default 180; the
+kernel's own `TimeConstrained` does not stop a long SymPy computation, so
+the driver interrupts its evaluation thread itself and reports `TIMEOUT`),
+and prints each test ID as it starts; `python -X utf8 -m mathics --no-readline -q -f RunTests.wl`
 also works but prints nothing until it finishes. The Mathics run takes
 hours.
 

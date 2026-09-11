@@ -12,15 +12,65 @@ statement of the suite in a try/except: an abort is reported as ABORTED with
 the test it happened in, and the run continues.  Output is flushed after
 every statement, so progress is visible while the run is going.
 
-Exit code 0 when no test failed or aborted.
+Each statement also gets a wall-clock limit (ALGEBRAIC_TEST_TIMEOUT
+seconds, default 180): the kernel's own TimeConstrained does not stop a
+long SymPy computation here, so the driver evaluates in a worker thread
+and, past the limit, raises a BaseException in it -- which the
+`except Exception` clauses on the way cannot swallow -- and reports the
+statement as TIMEOUT.  The kernel's definitions survive; a memo the
+statement was filling may be incomplete, which the next statement recomputes.
+
+Exit code 0 when no test failed, aborted or timed out.
 """
 
 from __future__ import annotations
 
+import ctypes
 import os
 import sys
+import threading
 import time
 import traceback
+
+
+class HardTimeout(BaseException):
+    """Raised inside the evaluation thread when a statement exceeds its limit."""
+
+
+def async_raise(tid, exc_type):
+    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_ulong(tid), ctypes.py_object(exc_type))
+    if res > 1:
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_ulong(tid), None)
+
+
+def evaluate_bounded(evaluation, query, seconds):
+    """Evaluate query; return "ok", "timeout", or the exception raised."""
+    outcome = {}
+
+    def run():
+        try:
+            evaluation.evaluate(query, timeout=None)
+            outcome["result"] = "ok"
+        except HardTimeout:
+            outcome["result"] = "timeout"
+        except BaseException as exc:  # reported by the caller
+            outcome["result"] = exc
+
+    worker = threading.Thread(target=run, daemon=True)
+    worker.start()
+    worker.join(seconds)
+    if worker.is_alive():
+        evaluation.stopped = True          # the cooperative stop first
+        worker.join(5)
+        deadline = time.time() + 120
+        while worker.is_alive() and time.time() < deadline:
+            async_raise(worker.ident, HardTimeout)
+            worker.join(2)
+        evaluation.stopped = False
+        if worker.is_alive():
+            return "stuck"
+        return "timeout"
+    return outcome.get("result", "ok")
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SUITE = os.path.join(HERE, "Algebraic.wlt")
@@ -47,8 +97,10 @@ def main():
             text = getattr(out, "text", None)
             print(text if text is not None else str(out), flush=True)
 
+    limit = float(os.environ.get("ALGEBRAIC_TEST_TIMEOUT", "180"))
+
     def feed(path):
-        """Evaluate every top-level statement of a file; count Python aborts."""
+        """Evaluate every top-level statement of a file; count Python aborts and timeouts."""
         aborted = 0
         set_input_var(path)
         definitions.set_inputfile(path)
@@ -64,14 +116,21 @@ def main():
                     continue
                 if query is None:
                     continue
-                try:
-                    evaluation.evaluate(query, timeout=None)
-                except Exception as exc:
+                outcome = evaluate_bounded(evaluation, query, limit)
+                head = (source or "").strip().splitlines()[0][:140] if source else "?"
+                if outcome == "timeout":
                     aborted += 1
-                    head = (source or "").strip().splitlines()[0][:140] if source else "?"
-                    print(f"ABORTED (Python {type(exc).__name__}: {exc}) in: {head}", flush=True)
+                    print(f"TIMEOUT (over {limit:.0f} s) in: {head}", flush=True)
+                elif outcome == "stuck":
+                    aborted += 1
+                    print(f"TIMEOUT (over {limit:.0f} s, and the evaluation could not be stopped) in: {head}", flush=True)
+                    print("The kernel is no longer usable; stopping here.", flush=True)
+                    return aborted
+                elif outcome != "ok":
+                    aborted += 1
+                    print(f"ABORTED (Python {type(outcome).__name__}: {outcome}) in: {head}", flush=True)
                     if os.environ.get("ALGEBRAIC_TRACEBACK"):
-                        traceback.print_exc()
+                        traceback.print_exception(outcome)
         return aborted
 
     t0 = time.time()

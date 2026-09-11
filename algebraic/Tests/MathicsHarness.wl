@@ -69,7 +69,7 @@ VerificationTest[actual_, expected_: True, messages_List : {}, opts___] := Modul
 
 mathicsSummary[aborted_: 0] := (
   Print["Tests succeeded: ", $testsPassed, ", failed: ", $testsFailed,
-    ", aborted by the interpreter: ", aborted,
+    ", aborted by the interpreter or over the time limit: ", aborted,
     ", unavailable in this kernel: ", $testsUnavailable,
     " (", $testsValueOnly, " judged on value only because they expect Wolfram messages); wall time: ",
     Round[AbsoluteTime[] - $testsStarted], " s"];
