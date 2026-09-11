@@ -967,6 +967,25 @@ rootOrderedQ[a_, b_, tol_] := Which[
   Abs[Abs[Im[a]] - Abs[Im[b]]] > tol, Abs[Im[a]] < Abs[Im[b]],
   True, Im[a] < Im[b]];
 
+(* The machine-precision roots in the Wolfram order, or $Failed when two
+   ordering keys are too close for machine precision to order them.  This is
+   what a Root object evaluates to at machine precision (the kernel's own
+   N[Root] takes four to ten seconds per non-real root) and what decides a
+   root index when the margins allow. *)
+machineRootsOrdered[c_List] := kMemo["machineRootsOrdered", c, machineRootsOrderedCompute[c]];
+machineRootsOrderedCompute[c_List] := Catch[Module[{m, scale, tol, reals, complexes, i, a, b},
+  m = machineRoots[c];
+  If[m === $Failed, Throw[$Failed, ktag]];
+  scale = Max[1, Max[Abs[m]]]; tol = 10^-9 scale;
+  reals = Sort[Re /@ Select[m, Abs[Im[#]] < tol &]];
+  complexes = Sort[Select[m, Abs[Im[#]] >= tol &], rootOrderedQ[#1, #2, tol] &];
+  If[OddQ[Length[complexes]], Throw[$Failed, ktag]];
+  Do[If[Abs[reals[[i]] - reals[[i + 1]]] < 10^4 tol, Throw[$Failed, ktag]], {i, Length[reals] - 1}];
+  Do[a = complexes[[i]]; b = complexes[[i + 1]];
+    If[Abs[Re[a] - Re[b]] < 10^4 tol && Abs[Abs[Im[a]] - Abs[Im[b]]] < 10^4 tol && Abs[Im[a] - Im[b]] < 10^4 tol,
+      Throw[$Failed, ktag]], {i, Length[complexes] - 1}];
+  Join[reals, complexes]], ktag];
+
 kRootValues[c_List, prec_Integer] := kMemo["rootValues", {c, prec}, rootValuesCompute[c, prec]];
 rootValuesCompute[c_List, prec_] := Module[{n = clDeg[c], m, scale, seeds, polished, tol, reals, complexes, i, j},
   m = machineRoots[c];
@@ -994,10 +1013,10 @@ kRootValue[r_Root, prec_] := Module[{poly, c, vals},
   If[poly === $Failed || ! TrueQ[PolynomialQ[poly, kx]] || Length[r] < 2 || ! IntegerQ[r[[2]]],
     Return[N[r, prec]]];
   c = kCoefficientList[poly, kx];
-  If[! AllTrue[c, kRationalQ] || ! IntegerQ[prec] || prec <= 16, Return[N[r, prec]]];
+  If[! AllTrue[c, kRationalQ] || r[[2]] < 1, Return[N[r, prec]]];
   c = c LCM @@ (Denominator /@ c);
-  vals = kRootValues[c, prec];
-  If[vals === $Failed || r[[2]] > Length[vals] || r[[2]] < 1, N[r, prec], vals[[r[[2]]]]]];
+  vals = If[! IntegerQ[prec] || prec <= 16, machineRootsOrdered[c], kRootValues[c, prec]];
+  If[vals === $Failed || r[[2]] > Length[vals], N[r, prec], vals[[r[[2]]]]]];
 
 (* the bottom-up evaluator; w is the working precision *)
 numValue[r_Root, w_] := kRootValue[r, w];
@@ -1033,8 +1052,8 @@ numPower[v_, q_] := Which[
 If[kNativeQ["ComplexPower"],
   kN[e_] := N[e];
   kN[e_, prec_] := N[e, prec],
-  kN[e_] := N[e];
-  kN[e_, MachinePrecision] := N[e];
+  kN[e_] := If[FreeQ[e, _Root], N[e], N[numValue[e, 16]]];
+  kN[e_, MachinePrecision] := kN[e];
   kN[e_, prec_] := If[FreeQ[e, _Root | _Complex | _Power | Sqrt | Exp | Log], N[e, prec],
     N[numValue[e, prec + 10], prec]]];
 
@@ -1090,8 +1109,19 @@ If[kNativeQ["RootReduce"],
    exit is a tagged Throw, since Return[expr, Module] is not implemented in
    Mathics. *)
 kRootIndex[mp_, z_, degree_Integer] := Catch[Module[
-  {prec = 60, zv, vals, dists, ord, scale, attempt},
+  {prec = 60, zv, vals, dists, ord, scale, attempt, c},
   If[degree === 1, Throw[1, ktag]];
+  (* machine precision first: the ordered eigenvalues and the evaluator's
+     machine value of z decide when the nearest root is a million times
+     closer than the next; the polished values below decide otherwise *)
+  c = clOf[mp, kx];
+  If[AllTrue[c, kRationalQ],
+    vals = machineRootsOrdered[c LCM @@ (Denominator /@ c)];
+    zv = kCheck[kN[z], $Failed];
+    If[ListQ[vals] && Length[vals] === degree && kFiniteNumberQ[zv],
+      dists = Abs[vals - zv]; ord = kOrdering[dists]; scale = Max[1, Abs[zv]];
+      If[TrueQ[dists[[ord[[1]]]] < 10^-7 scale] && TrueQ[dists[[ord[[2]]]] > 10^6 dists[[ord[[1]]]]],
+        Throw[ord[[1]], ktag]]]];
   Do[
     zv = kCheck[kN[z, prec], $Failed];
     If[! kFiniteNumberQ[zv], Throw[$Failed, ktag]];
@@ -1121,15 +1151,13 @@ If[kNativeQ["RootReduce"],
     (* a polynomial in one Root object: its representative modulo the
        minimal polynomial, in milliseconds (elimination and the numerical
        root index took seconds per coefficient of a decomposition) *)
-    Head[e] =!= Root && singleRootPolynomialQ[e], With[{v = singleRootReduce[e]},
-      If[v === $Failed, kMemo["rootReduce", e, rootReduceByElimination[e]], v]],
     True, kMemo["rootReduce", e, rootReduceByElimination[e]]];
   (* The unique representative of degree below deg f of a polynomial in the
-     Root object r of the irreducible f: structurally canonical, so equal
-     values give identical expressions, which is what the exact zero test
-     and every === on reduced coefficients need.  The Wolfram kernel returns
-     a Root object of the same value; in degree one and two the rational or
-     the radical is returned here as well. *)
+     Root object r of the irreducible f, by one polynomial remainder: it
+     decides the exact zero test in milliseconds.  It is not the canonical
+     form -- that stays the Root object, which does not depend on which
+     generator the expression happened to contain -- so kRootReduce does
+     not return it. *)
   singleRootReduce[e_] := Module[{r, f, g, v},
     r = First[Cases[e, _Root, {0, Infinity}]];
     f = minPolyOfRoot[r];
