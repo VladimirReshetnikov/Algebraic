@@ -141,6 +141,20 @@ looks plausible.
   `Select[<|"p" -> True, "q" -> False|>, TrueQ]` is `<||>`, and
   `Select[..., ! TrueQ[#] &]` is the whole association. Both directions are
   wrong. Filter `Keys[assoc]` as a list and index back into the association.
+- **`Transpose` of a one-row matrix is a flat list.** `Transpose[{{1, 2,
+  3}}]` is `{1, 2, 3}` (Wolfram: `{{1}, {2}, {3}}`), and `MatrixQ` of the
+  result is `False`; `Transpose[{{1}, {2}, {3}}]` is right. `LinearSolve`
+  given that flat list aborts the evaluator (`TypeError: unsupported operand
+  type(s) for +: 'One' and 'list'`), which is how a decomposition through a
+  one-dimensional subspace died. The package uses `kTranspose`, a `Table`.
+- **`MatrixPower[{{2}}, 3]` is `{8}`**, not `{{8}}`; `kMatrixPower` folds
+  `Dot` over an identity matrix.
+- **`Indeterminate == 0` aborts the evaluator** (`TypeError: Invalid NaN
+  comparison`) instead of staying unevaluated, and so does any `==` whose
+  operand evaluates numerically to NaN. `Cancel` of a quotient of nested
+  radicals can return `Indeterminate`, which is how `Strad[(2^(1/3) -
+  1)^(1/3)]` reached it inside the coefficient-list division of section 0.
+  Test coefficients for `Indeterminate` before comparing them.
 - **Assignment through a negative part index writes a different element.**
   `Module[{l = {1, 2, 3}}, l[[-1]] = 9; l]` gives `{1, 9, 3}`. The positive
   form `l[[Length[l]]] = 9` is correct. (The package had one such assignment,
@@ -353,6 +367,27 @@ Measured with `z = N[7874506561843/12500000000000 - 545561817985861 I/10^14,
   and next to a catch-all `f[e_, w_]` the `Plus` rule is never chosen at
   all -- the same for `Times[a__]`. `f[e_Plus, w_]` with `List @@ e` works.
   `f[Plus[a_, b__], w_]` also works, binding `a` to the first term.
+
+### Every root of a polynomial numerically
+
+- `NSolve`, `NRoots` and `Roots` are not implemented. `Solve[N[p] == 0, x]`
+  returns every root as a machine number, but took 40 s on a degree-9
+  polynomial and 42 s on degree 12 (0.4 s on a sextic); `FindRoot` from a
+  complex start took 15 s and stopped at `FindRoot::maxiter` on a sextic.
+  `N[Root[f, k]]` at machine precision is 0.05 s for a real root and four
+  to ten seconds for each non-real root of a fresh polynomial.
+- **`Eigenvalues` of the machine-number companion matrix** is complete and
+  fast: 0.4 s for degree 5, 0.9 s for 6, 1.8 s for 9, 4.4 s for 12, 17 s for
+  20, with the same residuals as `Solve` (both go through NumPy). Real roots
+  come back with an imaginary part of order `10^-65`, so a tolerance
+  decides which roots are real. The package's `machineRoots` (section 0.5b)
+  is this, and `kRootValues` polishes each eigenvalue by Newton's method at
+  the requested precision and sorts the list into the Wolfram kernel's
+  `Root` order itself. (An earlier note here said `Eigenvalues` of a
+  numerical matrix was wrong or slow; that was on an exact matrix.)
+- Durand-Kerner written in the language is not an option: 61 s for a
+  sextic, 411 s for degree 12, at a millisecond or more per scalar
+  operation.
 
 ### Testing
 

@@ -36,12 +36,19 @@ If[Names["System`TestReport"] =!= {},
      unswitchably from a script; redirected to a file it reaches Git Bash's
      2 GB limit and the kernel then blocks, and a line filter never sees a
      line end.  Send standard output to the null device and read the file. *)
-  Module[{wall, tr, results, failed, report, say},
+  Module[{wall, tr, results, failed, report, say, lastTest = AbsoluteTime[]},
     report = OpenWrite["wolfram-report.txt"];
     say[args___] := (Print[args]; WriteString[report, StringJoin[ToString /@ {args}], "
 "]);
     say["Kernel: ", $Version];
-    {wall, tr} = AbsoluteTiming[TestReport["Algebraic.wlt"]];
+    (* one line per test as it finishes, so a run that takes hours can be
+       watched and the slow tests found *)
+    {wall, tr} = AbsoluteTiming[TestReport["Algebraic.wlt",
+      HandlerFunctions -> <|"TestEvaluated" -> Function[assoc,
+        WriteString[report, "  ", assoc["TestObject"]["TestID"], " ", assoc["Outcome"], " ",
+          Round[AbsoluteTime[] - lastTest, 0.01], " s
+"];
+        lastTest = AbsoluteTime[]]|>]];
     If[! IntegerQ[tr["TestsSucceededCount"]] || ! IntegerQ[tr["TestsFailedCount"]] ||
         tr["TestsSucceededCount"] + tr["TestsFailedCount"] == 0,
       say["FAILED: no valid nonempty test report was produced."]; Close[report]; Exit[2]];
