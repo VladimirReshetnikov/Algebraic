@@ -1558,10 +1558,26 @@ fail[tag_String, message_String, extra_: <||>] := Throw[failure[tag, message, ex
 invalid[] := failure["InvalidArguments", "Use a documented argument sequence and an unassigned polynomial variable."];
 
 (* This is the only algebraic-number normalization boundary. In particular,
-   RootReduce is applied to scalars, never to a polynomial containing x. *)
+   RootReduce is applied to scalars, never to a polynomial containing x.
+
+   Gaussian-rational combinations of square roots of positive rationals --
+   the coefficients of most inputs -- get one form per value from the
+   kernel's automatic evaluation once expanded (Sqrt[6]/2 and Sqrt[3/2] are
+   the same expression), and their sums vanish only when every coefficient
+   does; a nonzero one therefore needs no RootReduce, which is sixty times
+   slower and turns a sum of two radicals into a Root object.  A sum that is
+   numerically zero goes through the exact reduction, so zero recognition
+   stays exact; everything else (Root objects, other radicals) does too.
+   expression[] restores the RootReduce form when a result is handed back. *)
 red[z : (_Integer | _Rational)] := z;
-red[z_] := Module[{r},
+sqrtTermQ[t_] := kGaussianQ[t] || MatchQ[t, Power[_?positiveRationalQ, Rational[_, 2]]] ||
+  MatchQ[t, Times[_?kGaussianQ, Power[_?positiveRationalQ, Rational[_, 2]]]];
+sqrtSumQ[e_] := AllTrue[If[Head[e] === Plus, List @@ e, {e}], sqrtTermQ];
+positiveRationalQ[q_] := kRationalQ[q] && q > 0;
+red[z_] := Module[{r, e},
   If[!FreeQ[z, _Real], fail["InexactCoefficient", "Approximate coefficients are not accepted."]];
+  e = kCheck[kExpand[z], $Failed];
+  If[e =!= $Failed && sqrtSumQ[e] && TrueQ[Abs[kN[e]] > 10^-8], Return[e]];
   r = kCheck[kRootReduce[z], $Failed];
   If[r === $Failed || !FreeQ[r, _RootReduce | _kRootReduce],
     fail["AlgebraicArithmetic", "Exact algebraic-number reduction failed."]];
@@ -1600,7 +1616,7 @@ checkOptions[s_Symbol, opts_List] := If[unknownOptions[s, opts] =!= {},
   fail["UnknownOption", "An unknown option was supplied."]];
 unknownOptions[head_Symbol, rules_List] := Complement[First /@ Flatten[rules], kOptionNames[head]];
 
-expression[v_List, x_] := kExpand[kHorner[v, x]];
+expression[v_List, x_] := kExpand[kHorner[If[kRationalQ[#], #, kRootReduce[#]] & /@ v, x]];
 properDegrees[n_Integer] := If[n < 4, {}, Select[Divisors[n], 1 < # < n &]];
 properDegreeQ[n_Integer, d_] := IntegerQ[d] && 1 < d < n && Mod[n, d] === 0;
 
@@ -2016,13 +2032,69 @@ roundIntegerMatrix[m_] := Map[roundInteger, m, {2}];
 $AlgebraicResolventLimit = If[kNativeQ["RootReduce"], Infinity, 48];
 $kResolventLimit := $AlgebraicResolventLimit;
 
-galoisGroupNumerically[roots_List, nums_List, prec_, maxOrder_, maxTries_] :=
-  Module[{n = Length[roots], orbit, vals, thetaExact = 0, tower = {}, k, w, newTheta, m, md, mroots,
-          cand, matched, idx, used, ok, perms, set, mt, lastDeg, tol, dists, pos, rprec},
+(* The G-orbits of the ordered pairs of distinct roots, as a matrix of class
+   numbers (0 on the diagonal): the irreducible factors over Q of
+   Res_y(p(y), w^n p((x - y)/w)) / ((1 + w)^n p(x/(1 + w))), whose roots are
+   the sums r_a + w r_b with a != b, are those orbits, and each pair is read
+   off its factor numerically.  $Failed when a weight w makes two pairs
+   coincide, or a pair matches no factor at the working tolerance. *)
+pairOrbits[poly_, nums_, w_, rprec_, tol_] := Catch[Module[
+  {n = Length[nums], res, factors, roots, cls, hits},
+  res = kExpand[Cancel[kResultant[poly /. x -> y, kExpand[w^n (poly /. x -> (x - y)/w)], y]/
+      kExpand[(1 + w)^n (poly /. x -> x/(1 + w))]]];
+  If[! TrueQ[kPolynomialQ[res, x]] || Exponent[res, x] =!= n (n - 1), Throw[$Failed, quickTag]];
+  factors = Select[First /@ kFactorList[res], Exponent[#, x] > 0 &];
+  roots = rootValuesAt[#, rprec] & /@ factors;
+  cls = ConstantArray[0, {n, n}];
+  Do[If[a =!= b,
+      hits = Select[Range[Length[factors]], Min[Abs[nums[[a]] + w nums[[b]] - roots[[#]]]] < tol &];
+      If[Length[hits] =!= 1, Throw[$Failed, quickTag]];
+      cls[[a, b]] = First[hits]],
+    {a, n}, {b, n}];
+  cls], quickTag];
+
+galoisGroupNumerically[poly_, roots_List, nums_List, prec_, maxOrder_, maxTries_] :=
+  Module[{n = Length[roots], orbit, vals, thetaExact = 0, terms = {}, tower = {}, k, w, newTheta, m, md, mroots,
+          cand, matched, idx, used, ok, perms, set, mt, lastDeg, tol, dists, pos, rprec, pairs = None, extendInField, ext},
     orbit = {{}}; vals = {0};
     rprec = Max[30, Floor[prec/2]];
     tol = 10^(-Floor[rprec/2]);
+    (* A root r_k that already lies in the field built so far extends every
+       orbit tuple by one image without a new elimination (which would be a
+       resultant of degree |orbit| n and its factorisation, seconds each at
+       degree 36 and the bulk of the construction).  With B the roots at
+       which the field grew, whose pointwise stabiliser is trivial, sigma(r_k)
+       is the one root j with (sigma(r_l), j) in the orbit of (r_l, r_k) for
+       every l in B, read from the pair-orbit table.  The choice is certified
+       by the conjugates of theta + w r_k it produces forming an integer
+       polynomial at a precision that resolves its coefficients; a root
+       outside the field, or a coincidence, leaves an orbit element without
+       a unique image or fails the certificate, and the elimination step
+       follows. *)
+    extendInField[k_] := Catch[Module[{w = kRandomChoice[Range[2, 12]], base = tower[[All, 1]], js, hiPrec, hi, hiVals, cl},
+      If[base === {}, Throw[$Failed, quickTag]];
+      If[pairs === None,
+        Do[pairs = pairOrbits[poly, nums, pw, rprec, tol]; If[ListQ[pairs], Break[]], {pw, {3, 7, 12}}]];
+      If[pairs === $Failed, galoisPrint["galois: no pair-orbit table"]; Throw[$Failed, quickTag]];
+      js = Table[
+        Select[Complement[Range[n], orbit[[i]]],
+          Function[j, AllTrue[base, pairs[[orbit[[i, #]], j]] === pairs[[#, k]] &]]],
+        {i, Length[orbit]}];
+      If[! AllTrue[js, Length[#] === 1 &],
+        galoisPrint["galois: k=", k, " images not unique: ", Tally[Length /@ js]]; Throw[$Failed, quickTag]];
+      js = First /@ js;
+      hiPrec = Ceiling[Length[orbit] Log10[2 + (Total[Abs[terms[[All, 2]]]] + Abs[w]) Max[Abs[nums]]]] + 30;
+      hi = If[hiPrec <= prec, nums, kN[roots, hiPrec]];
+      hiVals = Table[Total[#[[2]] hi[[orbit[[i, #[[1]]]]]] & /@ terms] + w hi[[js[[i]]]], {i, Length[orbit]}];
+      cl = Fold[kConvolve[#1, {-#2, 1}] &, {1}, hiVals];
+      If[! AllTrue[cl, Abs[Im[#]] < 10^-10 && Abs[Re[#] - Round[Re[#]]] < 10^-10 &],
+        galoisPrint["galois: k=", k, " certificate failed at precision ", hiPrec, ": ",
+          Max[Abs[Re[#] - Round[Re[#]]] & /@ cl], " ", Max[Abs[Im[cl]]]]; Throw[$Failed, quickTag]];
+      galoisPrint["galois: k=", k, " in the field, orbit ", Length[orbit]];
+      Table[Append[orbit[[i]], js[[i]]], {i, Length[orbit]}]], quickTag];
     Do[
+      ext = If[k > 1, extendInField[k], $Failed];
+      If[ext =!= $Failed, orbit = ext; Continue[]];
       ok = False; used = {};
       Do[
         w = kRandomChoice[Complement[Range[1, Max[60, maxTries]], used]];
@@ -2054,7 +2126,7 @@ galoisGroupNumerically[roots_List, nums_List, prec_, maxOrder_, maxTries_] :=
         galoisPrint["galois:   matched ", Length[matched], " distinct ", Length[Union[idx]], " of ", md];
         If[Length[matched] == md && Length[Union[idx]] == md,
           orbit = matched[[All, 1]]; vals = matched[[All, 2]];
-          thetaExact = newTheta;
+          thetaExact = newTheta; AppendTo[terms, {k, w}];
           If[md > lastDeg, AppendTo[tower, {k, md/lastDeg}]];
           ok = True; Break[]],
         {maxTries}];
@@ -2085,9 +2157,12 @@ groupClosure[mt_, idElem_, gs_, visit_: None] := Module[{seen = ConstantArray[Fa
    The generator lists it records drive every fixed-field computation, and an
    association that silently stayed a single entry made the whole subgroup
    lattice collapse to the trivial subgroup. *)
-subgroupLattice[mt_, idElem_] := Module[{ord = Length[mt], seen, queue, H, J, g, pos = 1},
+subgroupLattice[mt_, idElem_] := Module[{ord = Length[mt], seen, reps, queue, H, J, g, pos = 1},
   seen = <|{idElem} -> {}|>;
   Do[J = groupClosure[mt, idElem, {g}]; If[! kKeyExistsQ[seen, J], kAssociateTo[seen, J -> {g}]], {g, ord}];
+  (* <H, g> depends on g only through the cyclic subgroup it generates, so
+     one generator per cyclic subgroup is adjoined instead of every element *)
+  reps = Flatten[DeleteCases[Values[seen], {}]];
   queue = Keys[seen];
   While[pos <= Length[queue],
     H = queue[[pos++]];
@@ -2095,7 +2170,7 @@ subgroupLattice[mt_, idElem_] := Module[{ord = Length[mt], seen, queue, H, J, g,
       If[! MemberQ[H, g],
         J = groupClosure[mt, idElem, Append[seen[H], g]];
         If[! kKeyExistsQ[seen, J], kAssociateTo[seen, J -> Join[seen[H], {g}]]; AppendTo[queue, J]]],
-      {g, ord}]];
+      {g, reps}]];
   Table[<|"Elements" -> k, "Generators" -> seen[k], "Order" -> Length[k], "Index" -> ord/Length[k]|>, {k, Keys[seen]}]];
 
 elementOrder[mt_, g_, idElem_] := Module[{h = g, k = 1}, While[h != idElem, h = mt[[h, g]]; k++]; k];
@@ -2136,7 +2211,7 @@ buildGaloisDataAtPrecision[poly_, prec_, maxOrder_, maxTries_] := Module[
   roots = allRoots[poly];
   n = Length[roots];
   nums = kN[roots, prec];
-  gg = galoisGroupNumerically[roots, nums, prec, maxOrder, maxTries];
+  gg = galoisGroupNumerically[poly, roots, nums, prec, maxOrder, maxTries];
   perms = gg["Permutations"]; ord = gg["Order"]; tower = gg["Tower"];
   basisExp = Tuples[Range[0, # - 1] & /@ tower[[All, 2]]];
   val = basisValues[nums, perms, tower, basisExp];
@@ -3373,7 +3448,7 @@ Options[DenestReport] = Options[DenestRadicals];
 $active = False;
 $cfg = kDefaultConfig[DenestRadicals];
 $deadline = Infinity;
-$stats = <||>; $limits = <||>; $trace = {}; $records = {}; $memo = <||>; $inProgress = <||>;
+$stats = <||>; $limits = <||>; $trace = {}; $records = {}; $memo = <||>; $inProgress = <||>; $certified = <||>; $costs = <||>;
 $recursion = 0; $lastCertificateMethod = "None";
 $x = Unique["Algebraic`Private`dx"];
 
@@ -3531,7 +3606,10 @@ bitSize[e_] := Which[
    True, Total[bitSize /@ (List @@ e)]];
 
 RadicalCost[e_] := {opaqueCount[e], RadicalDepth[e], radicalNodes[e], LeafCount[e], bitSize[e]};
-cheaperQ[new_, old_] := Order[RadicalCost[new], RadicalCost[old]] === 1;
+cheaperQ[new_, old_] := Order[costOf[new], costOf[old]] === 1;
+(* the cost of an expression is computed once per session: the incumbent is
+   compared against every candidate of an island *)
+costOf[e_] := If[kKeyExistsQ[$costs, e], $costs[e], With[{c = RadicalCost[e]}, kAssociateTo[$costs, e -> c]; c]];
 smallQ[e_] := If[LeafCount[e] > $cfg["MaxLeafCount"], limitHit["MaxLeafCount"]; False, True];
 
 (* ------------------------------------------------------------------ *)
@@ -3550,7 +3628,13 @@ numericallyDifferentQ[d_] := Module[{num},
    num = bounded[kN[d, 40]];
    TrueQ[NumberQ[num] && Accuracy[num] >= 25 && Abs[num] > 10^-20]];
 
-certify[a_, b_] := Module[{d, r},
+certify[a_, b_] := Module[{d, r, key = {a, b}},
+   (* the same pair is certified once per session; the statistics count the
+      certificates actually computed *)
+   If[kKeyExistsQ[$certified, key], $lastCertificateMethod = "Memo"; Return[$certified[key]]];
+   kAssociateTo[$certified, key -> certifyCompute[a, b]];
+   $certified[key]];
+certifyCompute[a_, b_] := Module[{d, r},
    bump["Certificates"]; $lastCertificateMethod = "None";
    If[! exactQ[a] || ! exactQ[b], bump["CertificatesUnknown"]; Return["Unknown"]];
    If[a === b, $lastCertificateMethod = "SameQ"; bump["CertificatesEqual"]; Return["Equal"]];
@@ -3572,7 +3656,7 @@ SetAttributes[session, HoldRest];
 session[cfg_, seconds_, body_] :=
   Block[{$active = True, $cfg = cfg, $deadline = AbsoluteTime[] + seconds,
     $stats = newStats[], $limits = <||>, $trace = {}, $records = {}, $memo = <||>, $inProgress = <||>,
-    $recursion = 0, $lastCertificateMethod = "None", $Assumptions = True}, body];
+    $certified = <||>, $costs = <||>, $recursion = 0, $lastCertificateMethod = "None", $Assumptions = True}, body];
 standalone[body_, failure_] := If[TrueQ[$active], body,
    session[kDefaultConfig[DenestRadicals], 20,
     kCheck[TimeConstrained[kMemoryConstrained[body, 1073741824], 20 $kTimeScale, failure], failure]]];
@@ -3583,13 +3667,16 @@ CertifiedEqualQ[a_, b_] := EqualityStatus[a, b] === "Equal";
 (* The single acceptance gate. A candidate replaces the incumbent only if it is
    an explicit radical expression, small, strictly cheaper than the incumbent,
    and certified equal to the ORIGINAL target of this island. *)
-accept[candidate_, target_, incumbent_, method_String] := Module[{},
+accept[candidate_, target_, incumbent_, method_String, known_: None] := Module[{verdict = known},
+   $lastVerdict = None;
    If[candidate === $Failed || candidate === target || ! RadicalExpressionQ[candidate] ||
      ! smallQ[candidate] || ! cheaperQ[candidate, incumbent], Return[incumbent]];
    (* optional heuristic pruning: skips the exact certificate of a candidate
       whose difference from the target is numerically far from zero *)
-   If[numericallyDifferentQ[candidate - target], bump["NumericRejections"]; Return[incumbent]];
-   If[certify[candidate, target] === "Equal",
+   If[verdict === None,
+    verdict = If[numericallyDifferentQ[candidate - target], bump["NumericRejections"]; "Different", certify[candidate, target]];
+    $lastVerdict = verdict];
+   If[verdict === "Equal",
     bump["CandidatesAccepted"];
     If[Length[$records] < $cfg["MaxTraceEntries"],
      AppendTo[$records, <|"Before" -> target, "After" -> candidate, "Method" -> method,
@@ -3600,17 +3687,22 @@ accept[candidate_, target_, incumbent_, method_String] := Module[{},
     incumbent]];
 
 (* variants of a candidate that may print more cheaply; each is re-gated *)
-acceptWithPolish[candidate_, target_, incumbent_, method_String] := Module[{best = incumbent, v},
+acceptWithPolish[candidate_, target_, incumbent_, method_String] := Module[{best = incumbent, verdict = None, offer, t, r},
    If[expiredQ[] || candidate === $Failed || ! smallQ[candidate] || ! exactQ[candidate], Return[best]];
-   best = accept[candidate, target, best, method];
-   v = bounded[kSimplify[candidate]];
-   best = accept[v, target, best, method <> "/Simplify"];
-   v = bounded[kExpand[candidate]];
-   best = accept[v, target, best, method <> "/Expand"];
-   v = bounded[Together[candidate]];
-   best = accept[v, target, best, method <> "/Together"];
-   v = rationalizeRaw[candidate];
-   best = accept[v, target, best, method <> "/Rationalize"];
+   (* The variants below are value-preserving rewrites of the candidate, so
+      the certificate of the first one that passes the cheap gates serves the
+      rest -- each still checked numerically against the candidate, so a
+      rewrite that did change the value would be certified on its own. *)
+   offer[v_, m_] := (
+     best = accept[v, target, best, m, If[v === candidate || ! numericallyDifferentQ[v - candidate], verdict, None]];
+     If[verdict === None && $lastVerdict =!= None, verdict = $lastVerdict]);
+   offer[candidate, method];
+   offer[bounded[kSimplify[candidate]], method <> "/Simplify"];
+   offer[bounded[kExpand[candidate]], method <> "/Expand"];
+   t = bounded[Together[candidate]];
+   offer[t, method <> "/Together"];
+   r = rationalizeRaw[candidate];
+   If[r =!= t, offer[r, method <> "/Rationalize"]];   (* a rational denominator gives Together's form again *)
    best];
 
 (* ------------------------------------------------------------------ *)

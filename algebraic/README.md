@@ -153,6 +153,53 @@ packages loaded side by side:
   [Wolfram notes](../WOLFRAM-NOTES.md#findings-from-merging-the-four-packages-into-algebraicalgebraicwl-wolfram-1501-september-2026)
   record why.
 
+### Where the time goes, and what was done about it
+
+Profiling the suite's slowest tests (the per-test times in
+`wolfram-report.txt`, then an instrumented run) found four hot spots, each
+of which was an algorithmic detour rather than slow arithmetic:
+
+* **Galois group construction.** After the splitting field is complete,
+  every further root still went through `RootReduce` of a sum of a
+  degree-36 primitive element and a root: a resultant of degree 324 and
+  its factorisation, one to two seconds each and most of the construction.
+  The engine now extends the permutations of a root that is already in the
+  field from the *pair-orbit table*: one resultant of the polynomial with
+  itself, factored once, partitions the ordered pairs of roots into orbits,
+  and the image of a root under an automorphism is the one root whose
+  pairs with the base roots lie in the right orbits; the choice is
+  certified by the conjugates it produces forming an integer polynomial.
+  Eliminations happen only where the field actually grows (three of nine
+  steps for the degree-9 S3 × S3 example: 12 s became 2 s). The subgroup
+  lattice adjoins one generator per cyclic subgroup instead of every
+  element.
+* **Coefficient reduction in the functional decomposition.** Every
+  coefficient operation on a polynomial with algebraic coefficients ended
+  in `RootReduce` (thirteen thousand calls for six random degree-24
+  examples). Gaussian-rational combinations of square roots of positive
+  rationals -- the coefficients of most inputs -- get one form per value
+  from the kernel's automatic evaluation, so a nonzero one is kept as
+  expanded; a numerically vanishing sum still goes through the exact
+  reduction, and results are reduced to the `RootReduce` form when they are
+  handed back (`expression`). Six examples: 35 s to 5 s.
+* **Multi-surd square roots in the denester.** A quadratic `Solve` system
+  per coset (up to sixteen unknowns) became one factorisation of
+  `x^2 - a rho` over the field of the radicands per coset representative
+  `a` (Kummer theory), and for a square root of a sum of surds rational
+  multipliers are provably redundant with that stage, so the multiplier
+  search proposes only multipliers carrying radicals and a square root that
+  does not denest costs a few trials instead of the 120-trial budget
+  (`Sqrt[15 + 2 Sqrt[6] + 2 Sqrt[10] + 2 Sqrt[15]]`: 17 s to 0.2 s).
+* **Certificates in the denester.** The polished variants of a candidate
+  (Simplify, Expand, Together, rationalised) are value-preserving rewrites,
+  so one exact certificate now serves all of them (each still checked
+  numerically against the candidate); the same pair is certified once per
+  session, and the cost of an expression is computed once per session.
+
+The suite went from 208 s to about 90 s of wall time on the same machine.
+The tests of the section-1 arithmetic that compared internal coefficient
+lists with `RootReduce` forms by `===` now compare values.
+
 ### Mathics3
 
 The package confines portability to one layer, section 0 of the file. Every

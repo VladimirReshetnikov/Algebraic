@@ -396,6 +396,25 @@ catch it because the Wolfram kernel never reaches that Mathics-only
 branch); the load-time message is the only signal, so a script that loads
 the package should not run with messages silenced.
 
+### Timings that mislead
+
+- `RootReduce[theta + w r]` for a primitive element theta of degree d and a
+  root r of degree n costs what factoring a degree-`d n` resultant costs,
+  whatever the weight `w` and almost whatever the height of theta: the
+  weights schedules 1, 2, 3, ...; 1, -1, 2, -2, ...; random in 1..60 all
+  gave 1.5 to 2.5 s per step at d = 36, n = 9. Small weights do not help.
+- `ToNumberField[r, theta]` for the same theta did not finish in 120 s;
+  `Factor[p, Extension -> theta]` neither. `RootReduce` of the sum is the
+  cheap operation among those.
+- `Factor[x^2 - rho, Extension -> {Sqrt[2], ..., Sqrt[p_k]}]` is
+  milliseconds for k <= 4 primes and seconds to minutes for k >= 5, so the
+  denester factors over the field of the radicands only and moves the
+  remaining square classes into the polynomial (`x^2 - a rho`).
+- Wall-clock timings on this machine vary by a factor of two between runs
+  (other sessions' kernels share the CPU); compare counts (trials,
+  operations, calls) or calibrate with a fixed `RootReduce` before trusting
+  a difference.
+
 ### Private helpers the suite calls directly
 
 `Tests/Algebraic.wlt` calls a few private names of the package on purpose

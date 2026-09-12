@@ -25,6 +25,9 @@ samePoly[u_, v_] := AllTrue[
   RootReduce /@ Algebraic`Private`kCoefficientList[Expand[u - v], x], # === 0 &];
 sameChain[u_List, v_List] := Length[u] === Length[v] &&
   And @@ MapThread[samePoly, {u, v}];
+(* coefficient vectors equal as values: the package's internal form of a
+   coefficient is not always the RootReduce form *)
+sameVector[u_List, v_List] := Length[u] === Length[v] && And @@ MapThread[RootReduce[#1 - #2] === 0 &, {u, v}];
 degrees[c_List] := Exponent[#, x] & /@ c;
 goodChain[p_, c_List] := TrueQ[VerifyAlgebraicDecomposition[p, c, x]] &&
   AllTrue[c, AlgebraicDecompositionPairs[#, x] === {} &] &&
@@ -332,8 +335,8 @@ VerificationTest[Module[{vectors, product, size},
   And @@ Flatten[Table[
     size = Min[Length[a] + Length[b] - 1, d];
     product = CoefficientList[Expand[FromDigits[Reverse[a], x] FromDigits[Reverse[b], x]], x];
-    Algebraic`Private`multiply[a, b, d] ===
-      Algebraic`Private`trim[RootReduce /@ Take[product, Min[size, Length[product]]]],
+    sameVector[Algebraic`Private`multiply[a, b, d],
+      Algebraic`Private`trim[RootReduce /@ Take[product, Min[size, Length[product]]]]],
     {a, vectors}, {b, vectors}, {d, {1, 2, 5, Infinity}}]]], True,
   TestID -> "exact convolution matches symbolic polynomial products"]
 VerificationTest[Module[{bases, digitSets},
@@ -341,10 +344,10 @@ VerificationTest[Module[{bases, digitSets},
   digitSets = {{}, {{0}}, {{1}}, {{1}, {2}, {3}}, {{Sqrt[2], 1}, {I, 2}, {3}},
     {{1, 2, 3, 4}, {0, Sqrt[3]}, {2}}, {{Root[#^5 - # - 1 &, 1], 1}, {2}}};
   And @@ Flatten[Table[
-    Algebraic`Private`digitCompose[digits, h] ===
+    sameVector[Algebraic`Private`digitCompose[digits, h],
       Algebraic`Private`trim[RootReduce /@ CoefficientList[Expand[Sum[
         FromDigits[Reverse[digits[[j]]], x] If[j === 1, 1, FromDigits[Reverse[h], x]^(j - 1)],
-        {j, Length[digits]}]], x]], {h, bases}, {digits, digitSets}]]], True,
+        {j, Length[digits]}]], x]]], {h, bases}, {digits, digitSets}]]], True,
   TestID -> "monomial digit blocks and Horner fallbacks match independent exact arithmetic"]
 VerificationTest[Module[{p, data, calls},
   And @@ Flatten[Table[
