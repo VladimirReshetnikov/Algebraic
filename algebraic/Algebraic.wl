@@ -3817,8 +3817,22 @@ multiSurdSquareRoots[rho_] := Module[{e, terms, parsed, surds, coeffs, primes, e
    (* stage 1: certified integer-relation proposals, one per coset *)
    out = firstNonempty[surdRelation[#, e] &, cosets];
    If[out =!= {}, Return[out]];
-   (* stage 2: the rational systems *)
-   firstNonempty[surdSystem[#, coeffs] &, DeleteDuplicates[Join[{Union[{1}, primes], Union[{1}, primes, surds]}, cosets]]]];
+   (* stage 2, Kummer theory: with F = Q(Sqrt[u] : u a radicand) and K the
+      field of all the primes, K = F(Sqrt[a] : a over the cosets), so rho is
+      a square in K exactly when a rho is a square in F for one coset
+      representative a -- and factoring x^2 - a rho over F then gives
+      Sqrt[rho] = y/Sqrt[a] exactly.  One factorisation over F per coset
+      replaces a quadratic system in up to sixteen unknowns per coset. *)
+   If[kNativeQ["FactorExtension"],
+    firstNonempty[squareRootOver[e, First[#], Sqrt /@ surds] &, cosets],
+    firstNonempty[surdSystem[#, coeffs] &, DeleteDuplicates[Join[{Union[{1}, primes], Union[{1}, primes, surds]}, cosets]]]]];
+
+(* the square roots of rho of the form y/Sqrt[a] with y in the field generated
+   by ext, or {} *)
+squareRootOver[rho_, a_Integer, ext_List] := Module[{fl},
+   bump["CosetSystems"];
+   fl = boundedList[kFactorListExtension[$x^2 - a rho, ext]];
+   exactRadicalForms[bounded[kExpand[# Sqrt[a]/a]] & /@ linearFactorRoots[fl]]];
 
 (* Gaussian square root: Sqrt[a + b I] with a^2 + b^2 a rational square *)
 gaussianSquareRoots[z_] := Module[{a = Re[z], b = Im[z], n},
@@ -3936,13 +3950,27 @@ complementaryMultiplier[term_] := Times @@ (complementaryFactor /@ If[Head[term]
 multiplierSearch[target_, initialBest_] := Module[
    {best = initialBest, q, rho, queue = {}, seen = <||>, admitted = 0, proposed = 0, cursor = 1,
     cap = $cfg["MultiplierCap"], proposalCap, admit, offer, roomQ, batchRoomQ, seeds, terms, m, theta, p, degree, gcd, gd,
-    roots, mroot, candidate, disc, primes, j, digits, batch, sol, trials = 0, sinceImprovement = 0, bestDegree = Infinity},
+    roots, mroot, candidate, disc, primes, j, digits, batch, sol, trials = 0, sinceImprovement = 0, bestDegree = Infinity,
+    rationalRedundant},
    If[cap === 0 || $cfg["MaxTrials"] === 0 || expiredQ[], Return[best]];
    q = reductionIndex[target]; If[q === $Failed, Return[best]];
    rho = bounded[kExpand[target^q]]; If[rho === $Failed || ! exactQ[rho], Return[best]];
    proposalCap = 4 cap;
+   (* For a square root of a sum of surds the Kummer stage of rootCandidates
+      is complete over rational multipliers: m rho a square in the field of
+      the radicands and of the coefficient primes makes m a coset
+      representative that stage has tried (a prime outside those has even
+      valuation in any such m).  Only multipliers carrying radicals are
+      proposed then, and a hopeless square root costs a handful of trials
+      instead of the whole budget. *)
+   rationalRedundant = q === 2 && kNativeQ["FactorExtension"] && ! kKeyExistsQ[$limits, "MaxCosets"] &&
+     AllTrue[If[Head[rho] === Plus, List @@ rho, {rho}], surdTerm[#] =!= $Failed &];
    (* the only insertion point: caps admissions, counts proposals, dedups by exact canonical value *)
-   admit[value_] := Module[{canonical, key},
+   admit[value0_] := Module[{value = value0, canonical, key},
+     (* in that mode a multiplier stands for its class up to rational factors *)
+     If[rationalRedundant,
+       value = Replace[value, Times[_?kRationalQ, rest__] :> Times[rest]];
+       If[kRationalQ[value], Return[False]]];
      If[admitted >= cap, limitHit["MultiplierCap"]; Return[False]];
      If[proposed >= proposalCap, limitHit["MultiplierProposals"]; Return[False]];
      proposed++; bump["MultipliersProposed"];
@@ -3991,7 +4019,11 @@ multiplierSearch[target_, initialBest_] := Module[
     trace["Trial", <|"Multiplier" -> m, "Degree" -> degree, "Index" -> q|>];
     (* roots of x^q == m rho: linear factors over the radicals of the radicand, then the
        proper GCD factor with the minimal polynomial of the principal root *)
-    roots = If[m === 1, {}, linearRoots[theta, q]];
+    roots = Which[m === 1, {},
+      (* the trial stands for every rational multiple of m: the square-root
+         recipes, with their Kummer stage, are complete over those *)
+      rationalRedundant, boundedList[rootCandidates[theta, q]],
+      True, linearRoots[theta, q]];
     gcd = bounded[kPolynomialGCDExtension[p, $x^q - theta]];
     If[validPolynomialQ[gcd, $x],
      gd = Exponent[gcd, $x];
